@@ -3,6 +3,8 @@ const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const mailer = require("nodemailer");
+const countryCodes = require("country-codes-list");
+console.log(countryCodes.customArray(fields = {name: "{countryNameEn} ({countryCode})", value: "{countryCallingCode}"}, {sortBy, sortDataBy, filter} = {}));
 const Nexmo = require("nexmo");
 const dontenv = require("dotenv").config();
 const baseUrl = process.env.BASE_URL;
