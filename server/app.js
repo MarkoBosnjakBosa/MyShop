@@ -4,7 +4,6 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const mailer = require("nodemailer");
 const countryCodes = require("country-codes-list");
-console.log(countryCodes.customArray(fields = {name: "{countryNameEn} ({countryCode})", value: "{countryCallingCode}"}, {sortBy, sortDataBy, filter} = {}));
 const Nexmo = require("nexmo");
 const dontenv = require("dotenv").config();
 const baseUrl = process.env.BASE_URL;
@@ -18,6 +17,7 @@ app.use(cors({origin: "*"}));
 app.use(express.json());
 
 const login = require("./routes/login.js")(app, nexmo);
+const countries = require("./routes/countries.js")(app, countryCodes);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const database = mongoose.connection;
