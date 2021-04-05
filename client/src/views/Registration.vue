@@ -110,9 +110,9 @@
 					<div v-if="usernameError || emailError || passwordError || firstNameError || lastNameError || mobileNumberError || addressError || houseNumberError || cityError || zipCodeError || countryError || reCaptchaError" class="alert alert-danger" role="alert">Please insert missing data!</div>
 					<div v-if="alreadyExists == 'username'" class="alert alert-danger" role="alert">Username already exists!</div>
 					<div v-if="alreadyExists == 'email'" class="alert alert-danger" role="alert">Email already exists!</div>
+					<p :class="{'errorInput' : reCaptchaError && submitting}">Please confirm that you are not a robot.</p>
 					<div class="form-group text-xs-center">
 						<div class="g-recaptcha" :data-sitekey="reCaptchaSiteKey"></div>
-						<small v-if="reCaptchaError && submitting" class="form-text errorInput">Please check reCaptcha!</small>
 					</div>
 					<button type="button" class="btn btn-info previousButton" @click="toggleAddressTab()"><i class="fas fa-angle-double-left"></i> Previous</button>
 					<button type="submit" class="btn btn-primary nextButton">Submit <i class="fas fa-check"></i></button>
