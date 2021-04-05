@@ -362,8 +362,6 @@
 		float: right;
 	}
 	.text-xs-center {
-		margin-top: 20px;
-		margin-bottom: 10px;
 		text-align: center;
 	}
 	.g-recaptcha {
