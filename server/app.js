@@ -19,10 +19,11 @@ const transporter = getTransporter();
 app.use(cors({origin: "*"}));
 app.use(express.json());
 
-const registration = require("./routes/registration.js")(app, reCaptchav2SecretKey, axios, bcryptjs, models, transporter, emailUser, baseUrl, port);
+const registration = require("./routes/registration.js")(app, reCaptchav2SecretKey, axios, bcryptjs, models);
 const login = require("./routes/login.js")(app, nexmo);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.set("useCreateIndex", true);
 const database = mongoose.connection;
 database.on("error", function(error) {
     console.log("Connection to the database has not been established!");

@@ -13,11 +13,15 @@
             </ul>
             <div class="tab-content">
                 <div id="accountTab" class="tab-pane fade active show">
+					<div v-if="userCreated" class="alert alert-success" role="alert">
+						<div>User has been successfully created!</div>
+						<div>Please visit your inbox and confirm your registration!</div>
+					</div>
                     <div class="form-group">
                         <label for="username" class="form-label">Username:</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
-                            <input type="text" id="username" class="form-control" :class="{'errorField' : usernameError && submitting}" v-model="user.username" @focus="clearUsernameStatus()" @keypress="clearUsernameStatus()"/>
+                            <input type="text" id="username" class="form-control" :class="{'errorField' : usernameError && submitting}" v-model="user.username" ref="first" @focus="clearUsernameStatus()" @keypress="clearUsernameStatus()"/>
                         </div>
 						<small v-if="usernameError && submitting" class="form-text errorInput">Please provide a valid username!</small>
                     </div>
@@ -103,14 +107,10 @@
                     </div>
                 </div>
 				<div id="checkTab" class="tab-pane fade">
-					<div v-if="userCreated" class="alert alert-success" role="alert">
-						<div>User has been successfully created!</div>
-						<div>Please visit your inbox and confirm your registration!</div>
-					</div>
-					<div v-if="usernameError || emailError || passwordError || firstNameError || lastNameError || mobileNumberError || addressError || houseNumberError || cityError || zipCodeError || countryError || reCaptchaError" class="alert alert-danger" role="alert">Please insert missing data!</div>
+					<div v-if="usernameError || emailError || passwordError || firstNameError || lastNameError || mobileNumberError || addressError || houseNumberError || cityError || zipCodeError || countryError || reCaptchaTokenError" class="alert alert-danger" role="alert">Please insert missing data!</div>
 					<div v-if="alreadyExists == 'username'" class="alert alert-danger" role="alert">Username already exists!</div>
 					<div v-if="alreadyExists == 'email'" class="alert alert-danger" role="alert">Email already exists!</div>
-					<p :class="{'errorInput' : reCaptchaError && submitting}">Please confirm that you are not a robot.</p>
+					<p :class="{'errorInput' : reCaptchaTokenError && submitting}">Please confirm that you are not a robot.</p>
 					<div class="form-group text-xs-center">
 						<div class="g-recaptcha" :data-sitekey="reCaptchaSiteKey"></div>
 					</div>
@@ -144,7 +144,7 @@
 				cityError: false,
 				zipCodeError: false,
 				countryError: false,
-				reCaptchaError: false,
+				reCaptchaTokenError: false,
 				user: {
 					username: "",
 					email: "",
@@ -179,7 +179,7 @@
 				this.clearAddressStatus();
 				this.clearCityStatus();
 				this.clearCountryStatus();
-				this.clearReCaptchaStatus();
+				this.clearReCaptchaTokenStatus();
 				var allowSubmit = true;
 				if(this.invalidUsername) {
 					this.usernameError = true;
@@ -226,7 +226,7 @@
 					allowSubmit = false;
 				}
 				if(grecaptcha.getResponse() == "" || grecaptcha.getResponse() == undefined || grecaptcha.getResponse() == null) {
-					this.reCaptchaError = true;
+					this.reCaptchaTokenError = true;
 					allowSubmit = false;
 				}
 				if(!allowSubmit) {
@@ -234,9 +234,38 @@
 					this.userCreated = false;
 					return;
 				}
-				var body = {username: this.user.username, email: this.user.email, password: this.user.password, firstName: this.user.firstName, lastName: this.user.lastName, mobileNumber: this.user.mobileNumber, reCaptchaToken: grecaptcha.getResponse()};
+				var body = {username: this.user.username, email: this.user.email, password: this.user.password, firstName: this.user.firstName, lastName: this.user.lastName, mobileNumber: this.user.mobileNumber, address: this.user.address, houseNumber: this.user.houseNumber, city: this.user.city, zipCode: this.user.zipCode, country: this.user.country, reCaptchaToken: grecaptcha.getResponse()};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createUser", body).then(response => {
-					console.log(response.data);
+					if(response.data.created) {
+						this.userCreated = true;
+						this.user = {username: "", email: "", password: "", firstName: "", lastName: "", mobileNumber: "", address: "", houseNumber: "", city: "", zipCode: "", country: ""};
+						grecaptcha.reset();
+						this.alreadyExists = "";
+						this.usernameError = false, this.emailError = false, this.passwordError = false, this.firstNameError = false, this.lastNameError = false, this.mobileNumberError = false, this.addressError = false, this.houseNumberError = false, this.cityError = false, this.zipCodeError = false, this.countryError = false, this.reCaptchaTokenError = false, this.submitting = false;
+						this.$refs.first.focus();
+						this.toggleAccountTab();
+					} else {
+						if(response.data.alreadyExists) {
+							this.alreadyExists = response.data.field;
+							this.userCreated = false;
+						} else {
+							var errorFields = response.data.errorFields;
+							if(errorFields.includes("username")) this.usernameError = true;
+							if(errorFields.includes("email")) this.emailError = true;
+							if(errorFields.includes("password")) this.passwordError = true;
+							if(errorFields.includes("firstName")) this.firstNameError = true;
+							if(errorFields.includes("lastName")) this.lastNameError = true;
+							if(errorFields.includes("mobileNumber")) this.mobileNumberError = true;
+							if(errorFields.includes("address")) this.addressError = true;
+							if(errorFields.includes("houseNumber")) this.houseNumberError = true;
+							if(errorFields.includes("city")) this.cityError = true;
+							if(errorFields.includes("zipCode")) this.zipCodeError = true;
+							if(errorFields.includes("country")) this.countryError = true;
+							if(errorFields.includes("reCaptchaToken")) this.reCaptchaTokenError = true;
+							this.alreadyExists = "";
+							this.userCreated = false;
+						}
+					}
 				}).catch(error => console.log(error));
 			},
 			clearUsernameStatus() { this.usernameError = false; },
@@ -256,8 +285,8 @@
 			clearCountryStatus() {
 				this.countryError = false;
 			},
-			clearReCaptchaStatus() {
-				this.reCaptchaError = false;
+			clearReCaptchaTokenStatus() {
+				this.reCaptchaTokenError = false;
 			},
             togglePassword() {
 				var type = document.getElementById("password").getAttribute("type");

@@ -1,20 +1,21 @@
 module.exports = function(mongoose) {
 	const userScheme = new mongoose.Schema({
-		username: String,
-		email: String,
-		password: String,
-		firstName: String,
-		lastName: String,
-        mobileNumber: Number,
-		address: String,
-        postalCode: Number,
-        city: String,
-        country: String,
-		accepted: Boolean,
-		acceptanceToken: String,
-        enableAuthentication: Boolean,
-        authenticationCode: Number,
-		isAdmin: Boolean
+		username: {type: String, required: true, index: {unique: true}},
+		email: {type: String, required: true, index: {unique: true}},
+		password: {type: String, required: true},
+		firstName: {type: String, required: true},
+		lastName: {type: String, required: true},
+        mobileNumber: {type: Number, required: true, index: {unique: true}},
+		address: {type: String, required: true},
+		houseNumber: {type: Number, required: true},
+        city: {type: String, required: true},
+        zipCode: {type: Number, required: true},
+        country: {type: String, required: true},
+		accepted: {type: Boolean, required: true},
+		acceptanceToken: {type: String, required: true},
+        authenticationEnabled: {type: Boolean, required: true},
+        authenticationToken: {type: String},
+		isAdmin: {type: Boolean, required: true}
 	});
     const models = {
 		User: mongoose.model("User", userScheme)
