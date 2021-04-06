@@ -1,4 +1,4 @@
-module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models) {
+module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent) {
     const User = models.User;
     app.post("/createUser", (request, response) => {
         var allowRegistration = true;
@@ -86,6 +86,7 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models) {
                         bcryptjs.hash(newUser.password, salt, (error, hashedPassword) => {
                             newUser.password = hashedPassword;
                             newUser.save().then(user => {
+                                notifier.emit("sendConfirmationEmail", user.email, user.firstName, user.username, user.acceptanceToken);
                                 response.status(200).json({created: true});
                                 response.end();
                             }).catch(error => console.log(error));

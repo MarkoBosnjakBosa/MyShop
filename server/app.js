@@ -4,6 +4,7 @@ const cors = require("cors");
 const bcryptjs = require("bcryptjs");
 const mongoose = require("mongoose");
 const models = require("./models/models.js")(mongoose);
+const EventEmitter = require("events").EventEmitter;
 const mailer = require("nodemailer");
 const axios = require("axios");
 const Nexmo = require("nexmo");
@@ -16,10 +17,11 @@ const emailPassword = process.env.EMAIL_PASSWORD;
 const reCaptchav2SecretKey = process.env.RECAPTCHA_v2_SECRET_KEY;
 const nexmo = new Nexmo({apiKey: process.env.NEXMO_API_KEY, apiSecret: process.env.NEXMO_API_SECRET});
 const transporter = getTransporter();
+const emailEvent = require("./events/emailEvent.js")(EventEmitter, transporter);
 app.use(cors({origin: "*"}));
 app.use(express.json());
 
-const registration = require("./routes/registration.js")(app, reCaptchav2SecretKey, axios, bcryptjs, models);
+const registration = require("./routes/registration.js")(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent);
 const login = require("./routes/login.js")(app, nexmo);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
