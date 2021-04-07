@@ -1,4 +1,4 @@
-module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent) {
+module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent, baseUrl, port, loginUrl, emailUser) {
     const User = models.User;
     app.post("/createUser", (request, response) => {
         var allowRegistration = true;
@@ -86,7 +86,7 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
                         bcryptjs.hash(newUser.password, salt, (error, hashedPassword) => {
                             newUser.password = hashedPassword;
                             newUser.save().then(user => {
-                                notifier.emit("sendConfirmationEmail", user.email, user.firstName, user.username, user.acceptanceToken);
+                                emailEvent.emit("sendConfirmationEmail", user.email, user.firstName, user.username, user.acceptanceToken);
                                 response.status(200).json({created: true});
                                 response.end();
                             }).catch(error => console.log(error));
@@ -99,6 +99,19 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
             response.end();
         }
     });
+    app.get("/confirm/registration", (request, response) => {
+		var username = request.query.username;
+		var acceptanceToken = request.query.acceptanceToken;
+		var query = {$and: [{username: username}, {acceptanceToken: acceptanceToken}]}; 
+		var update = {accepted: true, acceptanceToken: ""};
+		User.findOneAndUpdate(query, update, {new: true}).then(user => {
+			if(!isEmpty(user)) {
+				response.render("registration.html", {confirmed: true, baseUrl: baseUrl, port: port, loginUrl: loginUrl});
+			} else {
+				response.render("registration.html", {confirmed: false, baseUrl: baseUrl, port: port, adminEmail: emailUser});
+			}
+		}).catch(error => console.log(error));
+	});
 
     function getUserScheme(User, username, email, password, firstName, lastName, mobileNumber, address, houseNumber, city, zipCode, country, accepted, acceptanceToken, authenticationEnabled, authenticationToken, isAdmin) {
 		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, mobileNumber: mobileNumber, address: address, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, accepted: accepted, acceptanceToken: acceptanceToken, authenticationEnabled: authenticationEnabled, authenticationToken: authenticationToken, isAdmin: isAdmin});
