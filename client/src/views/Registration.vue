@@ -13,9 +13,12 @@
             </ul>
             <div class="tab-content">
                 <div id="accountTab" class="tab-pane fade active show">
-					<div v-if="userCreated" class="alert alert-success" role="alert">
+					<div v-if="userCreated" class="alert alert-success alert-dismissible" role="alert">
 						<div>User has been successfully created!</div>
 						<div>Please visit your inbox and confirm your registration!</div>
+						<button type="button" class="close" @click="closeRegistrationAlert()">
+							<span aria-hidden="true">&times;</span>
+						</button>
 					</div>
                     <div class="form-group">
                         <label for="username" class="form-label">Username:</label>
@@ -64,6 +67,7 @@
                         <label for="mobileNumber" class="form-label">Mobile number:</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+							<span class="input-group-text countryCodePrefix">+</span>
                             <input type="text" id="mobileNumber" class="form-control" :class="{'errorField' : mobileNumberError && submitting}" v-model="user.mobileNumber" @focus="clearMobileNumberStatus()" @keypress="clearMobileNumberStatus()"/>
                         </div>
 						<small class="form-text text-muted">Please insert the mobile number with country calling code.</small>
@@ -313,6 +317,9 @@
 			},
 			toggleCheckTab() {
 				document.getElementById("checkNavTab").click();
+			},
+			closeRegistrationAlert() {
+				this.userCreated = false;
 			}
         },
         computed: {
@@ -383,6 +390,9 @@
 	}
 	.tab-content {
 		margin-top: 10px;
+	}
+	.countryCodePrefix {
+		background-color: #fff;
 	}
 	.previousButton {
 		float: left;
