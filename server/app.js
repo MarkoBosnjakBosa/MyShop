@@ -27,7 +27,7 @@ app.engine("html", require("ejs").renderFile);
 app.set("view engine", "html");
 
 const registration = require("./routes/registration.js")(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent, baseUrl, port, loginUrl, emailUser);
-const login = require("./routes/login.js")(app, nexmo);
+const login = require("./routes/login.js")(app, models, nexmo);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);
