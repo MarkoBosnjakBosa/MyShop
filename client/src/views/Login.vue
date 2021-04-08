@@ -92,9 +92,9 @@
 						const isAdmin = response.data.isAdmin;
 						this.$store.dispatch("login", {token, user, isAdmin});
 						if(isAdmin) {
-							this.$router.push("/admin/overview");
+							this.$router.push("/adminHome");
 						} else {
-							this.$router.push("/overview");
+							this.$router.push("/home");
 						}
 					} else {
 						if(response.data.allowed) {

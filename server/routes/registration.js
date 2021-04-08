@@ -1,4 +1,4 @@
-module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent, baseUrl, port, loginUrl, emailUser) {
+module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent) {
     const User = models.User;
     app.post("/createUser", (request, response) => {
         var allowRegistration = true;
@@ -106,10 +106,11 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
 		var update = {accepted: true, acceptanceToken: ""};
 		User.findOneAndUpdate(query, update, {new: true}).then(user => {
 			if(!isEmpty(user)) {
-				response.render("registration.html", {confirmed: true, baseUrl: baseUrl, port: port, loginUrl: loginUrl});
+				response.status(200).json({confirmed: true});
 			} else {
-				response.render("registration.html", {confirmed: false, baseUrl: baseUrl, port: port, adminEmail: emailUser});
+				response.status(200).json({confirmed: false});
 			}
+            response.end();
 		}).catch(error => console.log(error));
 	});
 
