@@ -48,14 +48,15 @@
                     this.authenticationTokenError = true;
                     return;
                 }
-                var options = {headers: {["Authentication"]: this.authenticationToken}};
+                var options = {headers: {["authentication"]: this.authenticationToken}};
                 var username = this.$store.getters.isAuthenticated;
                 var body = {username: username, authenticationToken: this.authenticationToken};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/login", body, options).then(response => {
                     if(response.data.authentication && response.data.valid) {
                         const token = response.data.token;
                         const user = response.data.user;
-                        this.$store.dispatch("login", {token, user});
+                        const isAdmin = response.data.isAdmin;
+                        this.$store.dispatch("login", {token, user, isAdmin});
                         this.$store.dispatch("clearAuthentication");
                         this.$router.push("/home");
                     } else {

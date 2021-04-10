@@ -9,14 +9,23 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" @click="openHome()">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <li v-if="!isAdmin" class="nav-item">
+                        <a class="nav-link" href="#" @click="openContact()">Contact</a>
+                    </li>
+                    <li v-if="!userLoggedIn" class="nav-item">
                         <a class="nav-link" href="#" @click="openRegistration()">Registration</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" @click="openLogin()">Login</a>
+                    <li v-if="userLoggedIn" class="nav-item dropdown">
+                        <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
+                            <a class="dropdown-item" href="#" @click="openProfile()">Profile</a>
+                            <a class="dropdown-item" href="#" @click="openAuthentication()">Authentication</a>
+                            <a v-if="!isAdmin" class="dropdown-item" href="#" @click="openOrders()">Orders</a>
+                            <a class="dropdown-item" href="#" @click="logout()">Log out</a>
+                        </div>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" @click="openContact()">Contact</a>
+                    <li v-else class="nav-item">
+                        <a class="nav-link" href="#" @click="openLogin()">Login</a>
                     </li>
                 </ul>
             </div>
@@ -27,16 +36,39 @@
 <script>
     export default {
         name: "navigation",
+        data() {
+			return {
+				userLoggedIn: false,
+                username: "",
+                isAdmin: false
+			}
+		},
         methods: {
+            isLoggedIn() {
+                if(this.$store.getters.isLoggedIn) this.userLoggedIn = true;
+                this.username = this.$store.getters.getUser;
+                this.isAdmin = this.$store.getters.isAdmin;
+            },
             openHome() {
                 this.$router.push("/home");
+            },
+            openContact() {
+                this.$router.push("/contact");
             },
             openRegistration() {
                 this.$router.push("/registration");
             },
             openLogin() {
                 this.$router.push("/login");
-            }
+            },
+            logout() {
+                this.$store.dispatch("logout");
+                this.$router.push("/login");
+            },
+        },
+        mounted() {
+            this.isLoggedIn();
+            //var currentPage = this.$route.fullPath;
         }
     }
 </script>

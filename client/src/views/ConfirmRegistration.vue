@@ -29,9 +29,6 @@
                 registrationConfirmed: false
             }
         },
-        mounted() {
-            this.getRegistrationConfirmation();
-        },
         methods: {
             getRegistrationConfirmation() {
                 var username = this.$route.query.username;
@@ -43,6 +40,9 @@
             openLogin() {
                 this.$router.push("/login");
             }
+        },
+        mounted() {
+            this.getRegistrationConfirmation();
         }
     }
 </script>

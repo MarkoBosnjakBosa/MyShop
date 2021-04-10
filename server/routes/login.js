@@ -30,7 +30,7 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent) {
 									const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});
 									var update = {authenticationToken: ""};
 									User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-										response.status(200).json({authentication: true, valid: true, token: token, user: updatedUser.username}).end();
+										response.status(200).json({authentication: true, valid: true, token: token, user: updatedUser.username, isAdmin: updatedUser.isAdmin}).end();
 									}).catch(error => console.log(error));
 								} else {
 									response.status(200).json({authentication: true, valid: false, authenticationToken: false}).end();
@@ -40,7 +40,7 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent) {
             					var update = {authenticationToken: authenticationToken};
 								User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
 									//smsEvent.emit("sendAuthenticationToken", updatedUser.mobileNumber, updatedUser.firstName, updatedUser.authenticationToken);
-									response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: user.username}).end();
+									response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: user.username, isAdmin: updatedUser.isAdmin}).end();
 								}).catch(error => console.log(error));
 							}
 						} else {

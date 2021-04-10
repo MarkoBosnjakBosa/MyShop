@@ -173,11 +173,6 @@
 				alreadyExists: ""
 			}
 		},
-		mounted() {
-			var reCaptchaScript = document.createElement("script");
-			reCaptchaScript.setAttribute("src", "https://www.google.com/recaptcha/api.js");
-			document.head.appendChild(reCaptchaScript);
-		},
         methods: {
 			createUser() {
 				this.submitting = true;
@@ -329,6 +324,11 @@
 				this.userCreated = false;
 			}
         },
+		mounted() {
+			var reCaptchaScript = document.createElement("script");
+			reCaptchaScript.setAttribute("src", "https://www.google.com/recaptcha/api.js");
+			document.head.appendChild(reCaptchaScript);
+		},
         computed: {
 			invalidUsername() { 
 				var usernameFormat = /^[a-z0-9_.-]*$/;
