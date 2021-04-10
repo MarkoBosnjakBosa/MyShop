@@ -21,11 +21,12 @@ const reCaptchav2SecretKey = process.env.RECAPTCHA_v2_SECRET_KEY;
 const nexmo = new Nexmo({apiKey: process.env.NEXMO_API_KEY, apiSecret: process.env.NEXMO_API_SECRET});
 const transporter = getTransporter();
 const emailEvent = require("./events/emailEvent.js")(EventEmitter, transporter, emailUser, baseUrl, clientPort);
+const smsEvent = require("./events/smsEvent.js")(EventEmitter, nexmo);
 app.use(cors({origin: "*"}));
 app.use(express.json());
 
 const registration = require("./routes/registration.js")(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent);
-const login = require("./routes/login.js")(app, jwt, bcryptjs, nexmo, models);
+const login = require("./routes/login.js")(app, jwt, bcryptjs, models, smsEvent);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);

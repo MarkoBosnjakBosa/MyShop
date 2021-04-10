@@ -73,8 +73,7 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
                     } else {
                         error.field = "email";
                     }
-                    response.status(200).json(error);
-                    response.end();
+                    response.status(200).json(error).end();
                 } else {
                     var accepted = false;
                     var acceptanceToken = Math.floor(100000 + Math.random() * 900000);
@@ -87,16 +86,14 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
                             newUser.password = hashedPassword;
                             newUser.save().then(user => {
                                 emailEvent.emit("sendConfirmationEmail", user.email, user.firstName, user.username, user.acceptanceToken);
-                                response.status(200).json({created: true});
-                                response.end();
+                                response.status(200).json({created: true}).end();
                             }).catch(error => console.log(error));
                         });
                     });
                 }
             }).catch(error => console.log(error));
         } else {
-            response.status(200).json({created: false, alreadyExists: false, errorFields: errorFields});
-            response.end();
+            response.status(200).json({created: false, alreadyExists: false, errorFields: errorFields}).end();
         }
     });
     app.get("/confirm/registration", (request, response) => {
@@ -106,11 +103,10 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
 		var update = {accepted: true, acceptanceToken: ""};
 		User.findOneAndUpdate(query, update, {new: true}).then(user => {
 			if(!isEmpty(user)) {
-				response.status(200).json({confirmed: true});
+				response.status(200).json({confirmed: true}).end();
 			} else {
-				response.status(200).json({confirmed: false});
+				response.status(200).json({confirmed: false}).end();
 			}
-            response.end();
 		}).catch(error => console.log(error));
 	});
 

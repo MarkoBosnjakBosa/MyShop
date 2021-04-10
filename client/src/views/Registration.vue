@@ -1,138 +1,145 @@
 <template>
 	<div id="registration" class="container-fluid">
-		<form autocomplete="off" @submit.prevent="createUser()">
-			<div class="registrationTitle">
-				<h1>Register</h1>
-				<p>Please fill in this form to create an account.</p>
-				<hr>
-			</div>
-            <ul class="nav nav-tabs">
-                <li class="nav-item"><a id="accountNavTab"  data-toggle="tab" href="#accountTab" class="nav-link active">Account</a></li>
-                <li class="nav-item"><a id="addressNavTab" data-toggle="tab" href="#addressTab" class="nav-link">Address</a></li>
-				<li class="nav-item"><a id="checkNavTab" data-toggle="tab" href="#checkTab" class="nav-link">Check</a></li>
-            </ul>
-            <div class="tab-content">
-                <div id="accountTab" class="tab-pane fade active show">
-					<div v-if="userCreated" class="alert alert-success alert-dismissible" role="alert">
-						<div>User has been successfully created!</div>
-						<div>Please visit your inbox and confirm your registration!</div>
-						<button type="button" class="close" @click="closeRegistrationAlert()">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-                    <div class="form-group">
-                        <label for="username" class="form-label">Username:</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                            <input type="text" id="username" class="form-control" :class="{'errorField' : usernameError && submitting}" v-model="user.username" ref="first" @focus="clearUsernameStatus()" @keypress="clearUsernameStatus()"/>
-                        </div>
-						<small v-if="usernameError && submitting" class="form-text errorInput">Please provide a valid username!</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="email" class="form-label">Email:</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                            <input type="text" id="email" class="form-control" :class="{'errorField' : emailError && submitting}" v-model="user.email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
-                        </div>
-						<small v-if="emailError && submitting" class="form-text errorInput">Please provide a valid email!</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password:</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
-							<div class="input-group-append">
-                                <button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+		<navigation></navigation>
+		<div class="registrationForm">
+			<form autocomplete="off" @submit.prevent="createUser()">
+				<div class="registrationTitle">
+					<h1>Register</h1>
+					<p>Please fill in this form to create an account.</p>
+					<hr>
+				</div>
+				<ul class="nav nav-tabs">
+					<li class="nav-item"><a id="accountNavTab"  data-toggle="tab" href="#accountTab" class="nav-link active">Account</a></li>
+					<li class="nav-item"><a id="addressNavTab" data-toggle="tab" href="#addressTab" class="nav-link">Address</a></li>
+					<li class="nav-item"><a id="checkNavTab" data-toggle="tab" href="#checkTab" class="nav-link">Check</a></li>
+				</ul>
+				<div class="tab-content">
+					<div id="accountTab" class="tab-pane fade active show">
+						<div v-if="userCreated" class="alert alert-success alert-dismissible" role="alert">
+							<div>User has been successfully created!</div>
+							<div>Please visit your inbox and confirm your registration!</div>
+							<button type="button" class="close" @click="closeRegistrationAlert()">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="form-group">
+							<label for="username" class="form-label">Username:</label>
+							<div class="input-group">
+								<span class="input-group-text"><i class="fas fa-user"></i></span>
+								<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError && submitting}" v-model="user.username" ref="first" @focus="clearUsernameStatus()" @keypress="clearUsernameStatus()"/>
 							</div>
-                        </div>
-						<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="firstName" class="form-label">First name:</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-pencil-alt"></i></span>
-                            <input type="text" id="firstName" class="form-control" :class="{'errorField' : firstNameError && submitting}" v-model="user.firstName" @focus="clearFirstNameStatus()" @keypress="clearFirstNameStatus()"/>
-                        </div>
-						<small v-if="firstNameError && submitting" class="form-text errorInput">Please provide a valid first name!</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName" class="form-label">Last name:</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-pen"></i></span>
-                            <input type="text" id="lastName" class="form-control" :class="{'errorField' : lastNameError && submitting}" v-model="user.lastName" @focus="clearLastNameStatus()" @keypress="clearLastNameStatus()"/>
-                        </div>
-						<small v-if="lastNameError && submitting" class="form-text errorInput">Please provide a valid last name!</small>
-                    </div>
-					<div class="form-group">
-                        <label for="mobileNumber" class="form-label">Mobile number:</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
-							<span class="input-group-text countryCodePrefix">+</span>
-                            <input type="text" id="mobileNumber" class="form-control" :class="{'errorField' : mobileNumberError && submitting}" v-model="user.mobileNumber" @focus="clearMobileNumberStatus()" @keypress="clearMobileNumberStatus()"/>
-                        </div>
-						<small class="form-text text-muted">Please insert the mobile number with country calling code.</small>
-						<small v-if="mobileNumberError && submitting" class="form-text errorInput">Please provide a valid last name!</small>
-                    </div>
-					<div class="form-group">
-						<button type="button" class="btn btn-info nextButton" @click="toggleAddressTab()">Next <i class="fas fa-angle-double-right"></i></button>
-                    </div>
-                </div>
-                <div id="addressTab" class="tab-pane fade">
-					<div class="form-row">
-						<div class="form-group col-md-8">
-							<label for="address">Address:</label>
-							<input type="text" id="address" class="form-control" :class="{'errorField' : addressError && submitting}" v-model="user.address" @focus="clearAddressStatus()" @keypress="clearAddressStatus()"/>
-							<small v-if="(addressError || houseNumberError) && submitting" class="form-text errorInput">Please provide a valid address!</small>
+							<small v-if="usernameError && submitting" class="form-text errorInput">Please provide a valid username!</small>
 						</div>
-						<div class="form-group col-md-4">
-							<label for="houseNumber">House number:</label>
-							<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : houseNumberError && submitting}" v-model="user.houseNumber" @focus="clearAddressStatus()" @keypress="clearAddressStatus()"/>
+						<div class="form-group">
+							<label for="email" class="form-label">Email:</label>
+							<div class="input-group">
+								<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+								<input type="text" id="email" class="form-control" :class="{'errorField' : emailError && submitting}" v-model="user.email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
+							</div>
+							<small v-if="emailError && submitting" class="form-text errorInput">Please provide a valid email!</small>
 						</div>
-					</div>
-					<div class="form-row">
-						<div class="form-group col-md-8">
-							<label for="city">City:</label>
-							<input type="text" id="city" class="form-control" :class="{'errorField' : cityError && submitting}" v-model="user.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
-							<small v-if="(cityError || zipCodeError) && submitting" class="form-text errorInput">Please provide a valid city!</small>
+						<div class="form-group">
+							<label for="password" class="form-label">Password:</label>
+							<div class="input-group">
+								<span class="input-group-text"><i class="fas fa-lock"></i></span>
+								<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
+								<div class="input-group-append">
+									<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+								</div>
+							</div>
+							<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
 						</div>
-						<div class="form-group col-md-4">
-							<label for="zipCode">Zip code:</label>
-							<input type="number" id="zipCode" class="form-control" :class="{'errorField' : zipCodeError && submitting}" v-model="user.zipCode" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
+						<div class="form-group">
+							<label for="firstName" class="form-label">First name:</label>
+							<div class="input-group">
+								<span class="input-group-text"><i class="fas fa-pencil-alt"></i></span>
+								<input type="text" id="firstName" class="form-control" :class="{'errorField' : firstNameError && submitting}" v-model="user.firstName" @focus="clearFirstNameStatus()" @keypress="clearFirstNameStatus()"/>
+							</div>
+							<small v-if="firstNameError && submitting" class="form-text errorInput">Please provide a valid first name!</small>
+						</div>
+						<div class="form-group">
+							<label for="lastName" class="form-label">Last name:</label>
+							<div class="input-group">
+								<span class="input-group-text"><i class="fas fa-pen"></i></span>
+								<input type="text" id="lastName" class="form-control" :class="{'errorField' : lastNameError && submitting}" v-model="user.lastName" @focus="clearLastNameStatus()" @keypress="clearLastNameStatus()"/>
+							</div>
+							<small v-if="lastNameError && submitting" class="form-text errorInput">Please provide a valid last name!</small>
+						</div>
+						<div class="form-group">
+							<label for="mobileNumber" class="form-label">Mobile number:</label>
+							<div class="input-group">
+								<span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+								<span class="input-group-text countryCodePrefix">+</span>
+								<input type="text" id="mobileNumber" class="form-control" :class="{'errorField' : mobileNumberError && submitting}" v-model="user.mobileNumber" @focus="clearMobileNumberStatus()" @keypress="clearMobileNumberStatus()"/>
+							</div>
+							<small class="form-text text-muted">Please insert the mobile number with country calling code.</small>
+							<small v-if="mobileNumberError && submitting" class="form-text errorInput">Please provide a valid last name!</small>
+						</div>
+						<div class="form-group">
+							<button type="button" class="btn btn-info nextButton" @click="toggleAddressTab()">Next <i class="fas fa-angle-double-right"></i></button>
 						</div>
 					</div>
-					<div class="form-group">
-                        <label for="country" class="form-label">Country:</label>
-						<input type="text" id="country" class="form-control" :class="{'errorField' : countryError && submitting}" v-model="user.country" @focus="clearCountryStatus()" @keypress="clearCountryStatus()"/>
-						<small v-if="countryError && submitting" class="form-text errorInput">Please provide a valid country!</small>
-                    </div>
-					<div class="form-group">
-						<button type="button" class="btn btn-info previousButton" @click="toggleAccountTab()"><i class="fas fa-angle-double-left"></i> Previous</button>
-						<button type="button" class="btn btn-info nextButton" @click="toggleCheckTab()">Next <i class="fas fa-angle-double-right"></i></button>
-                    </div>
-                </div>
-				<div id="checkTab" class="tab-pane fade">
-					<div v-if="usernameError || emailError || passwordError || firstNameError || lastNameError || mobileNumberError || addressError || houseNumberError || cityError || zipCodeError || countryError || reCaptchaTokenError" class="alert alert-danger" role="alert">Please insert missing data!</div>
-					<div v-if="alreadyExists == 'username'" class="alert alert-danger" role="alert">Username already exists!</div>
-					<div v-if="alreadyExists == 'email'" class="alert alert-danger" role="alert">Email already exists!</div>
-					<p :class="{'errorInput' : reCaptchaTokenError && submitting}">Please confirm that you are not a robot.</p>
-					<div class="form-group text-xs-center">
-						<div class="g-recaptcha" :data-sitekey="reCaptchaSiteKey"></div>
+					<div id="addressTab" class="tab-pane fade">
+						<div class="form-row">
+							<div class="form-group col-md-8">
+								<label for="address">Address:</label>
+								<input type="text" id="address" class="form-control" :class="{'errorField' : addressError && submitting}" v-model="user.address" @focus="clearAddressStatus()" @keypress="clearAddressStatus()"/>
+								<small v-if="(addressError || houseNumberError) && submitting" class="form-text errorInput">Please provide a valid address!</small>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="houseNumber">House number:</label>
+								<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : houseNumberError && submitting}" v-model="user.houseNumber" @focus="clearAddressStatus()" @keypress="clearAddressStatus()"/>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-8">
+								<label for="city">City:</label>
+								<input type="text" id="city" class="form-control" :class="{'errorField' : cityError && submitting}" v-model="user.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
+								<small v-if="(cityError || zipCodeError) && submitting" class="form-text errorInput">Please provide a valid city!</small>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="zipCode">Zip code:</label>
+								<input type="number" id="zipCode" class="form-control" :class="{'errorField' : zipCodeError && submitting}" v-model="user.zipCode" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="country" class="form-label">Country:</label>
+							<input type="text" id="country" class="form-control" :class="{'errorField' : countryError && submitting}" v-model="user.country" @focus="clearCountryStatus()" @keypress="clearCountryStatus()"/>
+							<small v-if="countryError && submitting" class="form-text errorInput">Please provide a valid country!</small>
+						</div>
+						<div class="form-group">
+							<button type="button" class="btn btn-info previousButton" @click="toggleAccountTab()"><i class="fas fa-angle-double-left"></i> Previous</button>
+							<button type="button" class="btn btn-info nextButton" @click="toggleCheckTab()">Next <i class="fas fa-angle-double-right"></i></button>
+						</div>
 					</div>
-					<button type="button" class="btn btn-info previousButton" @click="toggleAddressTab()"><i class="fas fa-angle-double-left"></i> Previous</button>
-					<button type="submit" class="btn btn-primary nextButton">Submit <i class="fas fa-check"></i></button>
-                </div>
-            </div>
-		</form>
+					<div id="checkTab" class="tab-pane fade">
+						<div v-if="usernameError || emailError || passwordError || firstNameError || lastNameError || mobileNumberError || addressError || houseNumberError || cityError || zipCodeError || countryError || reCaptchaTokenError" class="alert alert-danger" role="alert">Please insert missing data!</div>
+						<div v-if="alreadyExists == 'username'" class="alert alert-danger" role="alert">Username already exists!</div>
+						<div v-if="alreadyExists == 'email'" class="alert alert-danger" role="alert">Email already exists!</div>
+						<p :class="{'errorInput' : reCaptchaTokenError && submitting}">Please confirm that you are not a robot.</p>
+						<div class="form-group text-xs-center">
+							<div class="g-recaptcha" :data-sitekey="reCaptchaSiteKey"></div>
+						</div>
+						<button type="button" class="btn btn-info previousButton" @click="toggleAddressTab()"><i class="fas fa-angle-double-left"></i> Previous</button>
+						<button type="submit" class="btn btn-primary nextButton">Submit <i class="fas fa-check"></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
 	</div>
 </template>
 
 <script>
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
+	import Navigation from "@/components/Navigation.vue";
 
 	var axios = require("axios");
 	export default {
 		name: "registration",
+		components: {
+            Navigation
+        },
 		data() {
 			return {
 				reCaptchaSiteKey: process.env.VUE_APP_RECAPTCHA_v2_SITE_KEY,
@@ -381,7 +388,7 @@
 </script>
 
 <style scoped>
-	#registration {
+	.registrationForm {
 		margin: 0 auto;
 		max-width: 500px;
 	}

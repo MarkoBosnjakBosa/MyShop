@@ -1,43 +1,50 @@
 <template>
 	<div id="login" class="container-fluid">
-		<form autocomplete="off" @submit.prevent="loginUser()">
-			<div class="loginTitle">
-				<h1>Login</h1>
-				<p>Please fill in this form to log in.</p>
-				<hr>
-			</div>
-			<div class="form-group">
-				<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
-				<small v-if="usernameError" class="form-text errorInput">Please provide a valid username!</small>
-			</div>
-			<div class="form-group">
-				<div class="input-group">
-					<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
-					<div class="input-group-append">
-						<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
-					</div>
+		<navigation></navigation>
+		<div class="loginForm">
+			<form autocomplete="off" @submit.prevent="loginUser()">
+				<div class="loginTitle">
+					<h1>Login</h1>
+					<p>Please fill in this form to log in.</p>
+					<hr>
 				</div>
-				<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
-			</div>
-			<div v-if="noPasswordMatch" class="form-group loginFailed">Password does not match!</div>
-			<div class="form-group forgotCredentialsDiv">
-				<a href="#" @click="forgotCredentials()">Forgot credentials?</a>
-			</div>
-			<div class="form-group submitDiv">
-				<button type="submit" class="btn btn-primary submitButton">Log in</button>
-			</div>
-			<div class="form-group registerDiv">Not a member? <a href="#" @click="register()">Register</a></div>
-		</form>
+				<div class="form-group">
+					<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
+					<small v-if="usernameError" class="form-text errorInput">Please provide a valid username!</small>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
+						<div class="input-group-append">
+							<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+						</div>
+					</div>
+					<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
+				</div>
+				<div v-if="noPasswordMatch" class="form-group loginFailed">Password does not match!</div>
+				<div class="form-group forgotCredentialsDiv">
+					<a href="#" @click="forgotCredentials()">Forgot credentials?</a>
+				</div>
+				<div class="form-group submitDiv">
+					<button type="submit" class="btn btn-primary submitButton">Log in</button>
+				</div>
+				<div class="form-group registerDiv">Not a member? <a href="#" @click="register()">Register</a></div>
+			</form>
+		</div>
 	</div>
 </template>
 
 <script>
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
+	import Navigation from "@/components/Navigation.vue"; 
 	var axios = require("axios");
 	
 	export default {
 		name: "login",
+		components: {
+            Navigation
+        },
 		data() {
 			return {
 				submitting: false,
@@ -84,26 +91,29 @@
 				}
 				var body = {username: this.user.username, password: this.user.password};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/login", body).then(response => {
-					if(response.data.valid) {
+					if(response.data.authentication && !response.data.valid && response.data.authenticationToken) {
 						this.user = {username: "", password: ""};
 						this.usernameError = false, this.passwordError = false, this.noPasswordMatch = false, this.submitting = false;
-						const token = response.data.token;
-						const user = response.data.user;
-						const isAdmin = response.data.isAdmin;
-						this.$store.dispatch("login", {token, user, isAdmin});
-						if(isAdmin) {
-							this.$router.push("/adminHome");
-						} else {
-							this.$router.push("/home");
-						}
+						const username = response.data.username;
+						this.$store.dispatch("authenticate", {username});
+						this.$router.push("/authentication");
 					} else {
-						if(response.data.allowed) {
-							this.noPasswordMatch = true;
+						if(response.data.valid) {
+							this.user = {username: "", password: ""};
+							this.usernameError = false, this.passwordError = false, this.noPasswordMatch = false, this.submitting = false;
+							const token = response.data.token;
+							const user = response.data.user;
+							this.$store.dispatch("login", {token, user});
+							this.$router.push("/home");
 						} else {
-							var errorFields = response.data.errorFields;
-							if(errorFields.includes("username")) this.usernameError = true;
-							if(errorFields.includes("password")) this.passwordError = true;
-							this.noPasswordMatch = false;
+							if(response.data.allowed) {
+								this.noPasswordMatch = true;
+							} else {
+								var errorFields = response.data.errorFields;
+								if(errorFields.includes("username")) this.usernameError = true;
+								if(errorFields.includes("password")) this.passwordError = true;
+								this.noPasswordMatch = false;
+							}
 						}
 					}
 				}).catch(error => console.log(error));
@@ -156,7 +166,7 @@
 </script>
 
 <style scoped>
-	#login {
+	.loginForm {
 		margin: 0 auto;
 		max-width: 400px;
 	}

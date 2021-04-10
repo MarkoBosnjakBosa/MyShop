@@ -3,6 +3,7 @@ import Home from "../views/Home.vue";
 import Registration from "../views/Registration.vue";
 import ConfirmRegistration from "../views/ConfirmRegistration.vue";
 import Login from "../views/Login.vue";
+import Authentication from "../views/Authentication.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 
 const routes = [
@@ -25,6 +26,11 @@ const routes = [
 		path: "/login",
 		name: "Login",
 		component: Login
+	},
+	{
+		path: "/authentication",
+		name: "Authentication",
+		component: Authentication
 	},
 	{
 		path: "/:catchAll(.*)",
