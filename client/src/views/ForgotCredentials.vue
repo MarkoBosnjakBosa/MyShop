@@ -3,9 +3,11 @@
         <navigation></navigation>
         <div class="forgotCredentialsForm">
             <form autocomplete="off" @submit.prevent="sendEmail()">
-                <div class="forgotCredentialsIcon">
-                    <i class="fas fa-question fa-7x"></i>
-                </div>
+                <div class="forgotCredentialsTitle">
+					<h1>Forgot credentials</h1>
+					<p>Please check an option.</p>
+					<hr>
+				</div>
                 <fieldset class="form-group">
                     <div class="row">
                         <legend class="col-form-label col-sm-2 pt-0">Forgot:</legend>
@@ -44,10 +46,14 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
+    import Navigation from "@/components/Navigation.vue"; 
     var axios = require("axios");
 
     export default {
         name: "forgotCredentials",
+        components: {
+            Navigation
+        },
         data() {
             return {
                 emailError: false,
@@ -99,11 +105,11 @@
 </script>
 
 <style scoped>
-    #forgotCredentials {
+    .forgotCredentialsForm {
         margin: 0 auto;
         max-width: 400px;
     }
-    .forgotCredentialsIcon {
+    .forgotCredentialsTitle {
         margin-top: 20px;
         margin-bottom: 20px;
         text-align: center;
