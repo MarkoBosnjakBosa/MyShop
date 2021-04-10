@@ -5,9 +5,12 @@
             <div class="alert alert-success" role="alert">Your registration has been confirmed!</div>
             <button type="button" class="btn btn-info"  @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
         </div>
-        <div v-else class="container confirmationDiv">
+        <div v-if="emailSent" class="container confirmationDiv">
+            <div class="alert alert-success" role="alert">Confirmation email sent!</div>
+        </div>
+        <div v-if="!registrationConfirmed && !emailSent" class="container confirmationDiv">
             <div class="alert alert-danger" role="alert">Your registration could not be confirmed!</div>
-            <a :href="'mailto:' + adminEmail" class="btn btn-info" role="button">Contact the Admin team <i class="fas fa-envelope"></i></a>
+            <button type="button" class="btn btn-info"  @click="sendConfirmationEmail()">Send confirmation email <i class="fas fa-envelope"></i></button>
         </div>
     </div>
 </template>
@@ -25,8 +28,8 @@
         },
         data() {
             return {
-                adminEmail: process.env.VUE_APP_EMAIL_USER,
-                registrationConfirmed: false
+                registrationConfirmed: false,
+                emailSent: false
             }
         },
         methods: {
@@ -35,6 +38,13 @@
                 var acceptanceToken = this.$route.query.acceptanceToken;
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/confirm/registration?username=" + username + "&acceptanceToken=" + acceptanceToken).then(response => {
                     this.registrationConfirmed = response.data.confirmed;
+                }).catch(error => console.log(error));
+            },
+            sendConfirmationEmail() {
+                var username = this.$route.query.username;
+                var body = {username: username};
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/sendConfirmationEmail", body).then(response => {
+                    this.emailSent = response.data.emailSent;
                 }).catch(error => console.log(error));
             },
             openLogin() {

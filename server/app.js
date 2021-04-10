@@ -14,7 +14,6 @@ const baseUrl = process.env.BASE_URL;
 const serverPort = process.env.SERVER_PORT;
 const clientPort = process.env.CLIENT_PORT;
 const databaseUrl = process.env.DATABASE_URL;
-const loginUrl = process.env.LOGIN_URL;
 const emailUser = process.env.EMAIL_USER;
 const emailPassword = process.env.EMAIL_PASSWORD;
 const reCaptchav2SecretKey = process.env.RECAPTCHA_v2_SECRET_KEY;
@@ -27,6 +26,7 @@ app.use(express.json());
 
 const registration = require("./routes/registration.js")(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent);
 const login = require("./routes/login.js")(app, jwt, bcryptjs, models, smsEvent);
+const forgotCredentials = require("./routes/forgotCredentials.js")(app, bcryptjs, models, emailEvent);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);
