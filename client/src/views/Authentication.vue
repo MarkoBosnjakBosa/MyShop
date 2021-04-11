@@ -79,6 +79,7 @@
         text-align: center;
     }
     .authenticationTitle {
+        margin-top: 20px;
         text-align: left;
     }
     .errorField {

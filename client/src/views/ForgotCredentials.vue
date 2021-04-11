@@ -8,7 +8,7 @@
 					<p>Please check an option.</p>
 					<hr>
 				</div>
-                <fieldset class="form-group">
+                <fieldset class="form-group options">
                     <div class="row">
                         <legend class="col-form-label col-sm-2 pt-0">Forgot:</legend>
                         <div class="col-sm-10">
@@ -83,9 +83,6 @@
                     }
                 }).catch(error => console.log(error));
             },
-            login() {
-                this.$router.push("/login");
-            },
             clearEmailStatus() { 
                 this.emailError = false;
                 this.emailSent = false; 
@@ -108,11 +105,14 @@
     .forgotCredentialsForm {
         margin: 0 auto;
         max-width: 400px;
+        text-align: center;
     }
     .forgotCredentialsTitle {
         margin-top: 20px;
-        margin-bottom: 20px;
-        text-align: center;
+        text-align: left;
+    }
+    .options {
+        text-align: left;
     }
     .emailDiv, .submitDiv, .loginDiv {
         text-align: center;

@@ -8,11 +8,19 @@ module.exports = function(app, bcryptjs, models, emailEvent) {
 			User.findOne(query).then(user => {
 				if(!isEmpty(user)) {
 					if(option == "password") {
-                        emailEvent.emit("sendResetPasswordEmail", user.email, user.firstName, user.username, user.acceptanceToken);
+						var acceptanceToken = Math.floor(100000 + Math.random() * 900000);
+						var update = {acceptanceToken: acceptanceToken};
+						User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
+                        	emailEvent.emit("sendResetPasswordEmail", updatedUser.email, updatedUser.firstName, updatedUser.username, updatedUser.acceptanceToken);
+						}).catch(error => console.log(error));
 					} else if(option == "username") {
                         emailEvent.emit("sendForgotUsernameEmail", user.email, user.firstName, user.username);
 					} else {
-                        emailEvent.emit("sendConfirmationEmail", user.email, user.firstName, user.username, user.acceptanceToken);
+						var acceptanceToken = Math.floor(100000 + Math.random() * 900000);
+						var update = {acceptanceToken: acceptanceToken};
+						User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
+                        	emailEvent.emit("sendConfirmationEmail", updatedUser.email, updatedUser.firstName, updatedUser.username, updatedUser.acceptanceToken);
+						}).catch(error => console.log(error));
 					}
 					response.status(200).json({sent: true}).end();
 				} else {
@@ -41,7 +49,7 @@ module.exports = function(app, bcryptjs, models, emailEvent) {
 			var query = {$and: [{username: username}, {acceptanceToken: acceptanceToken}]}; 
 			bcryptjs.genSalt(10, (error, salt) => {
 				bcryptjs.hash(password, salt, (error, hashedPassword) => {
-					var update = {password: hashedPassword};
+					var update = {password: hashedPassword, acceptanceToken: ""};
 					User.findOneAndUpdate(query, update, {new: true}).then(user => {
 						if(!isEmpty(user)) {
 							response.status(200).json({reset: true}).end();
