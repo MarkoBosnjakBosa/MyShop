@@ -17,7 +17,7 @@
                     <form autocomplete="off" @submit.prevent="editAccount()">
                         <div v-if="accountEdited" class="alert alert-success alert-dismissible" role="alert">
                             <div>Your account has been successfully edited!</div>
-                            <button type="button" class="close" @click="closeAccountEditedAlert()">
+                            <button type="button" class="close" @click="closeAlert('accountEdited')">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -59,11 +59,12 @@
                                 <span class="input-group-text countryCodePrefix">+</span>
                                 <input type="text" id="mobileNumber" class="form-control" :class="{'errorField' : mobileNumberError && accountSubmitting}" v-model="account.mobileNumber" @focus="clearMobileNumberStatus()" @keypress="clearMobileNumberStatus()"/>
                             </div>
-                            <small class="form-text text-muted">Please insert the mobile number with country calling code.</small>
+                            <small class="form-text text-muted">Please insert your mobile number with the country calling code.</small>
                             <small v-if="mobileNumberError && accountSubmitting" class="form-text errorInput">Please provide a valid last name!</small>
                         </div>
                         <div class="form-group">
-                            <button type="button" class="btn btn-info nextButton" @click="toggleAddressTab()">Next <i class="fas fa-angle-double-right"></i></button>
+                            <button type="button" class="btn btn-info nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
+                            <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
                         </div>
                     </form>
                 </div>
@@ -71,40 +72,41 @@
                     <form autocomplete="off" @submit.prevent="editAddress()">
                         <div v-if="addressEdited" class="alert alert-success alert-dismissible" role="alert">
                             <div>Your address has been successfully edited!</div>
-                            <button type="button" class="close" @click="closeAddressEditedAlert()">
+                            <button type="button" class="close" @click="closeAlert('address')">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
 						<div class="form-row">
 							<div class="form-group col-md-8">
-								<label for="address">Address:</label>
-								<input type="text" id="address" class="form-control" :class="{'errorField' : addressError && submitting}" v-model="address.address" @focus="clearAddressStatus()" @keypress="clearAddressStatus()"/>
-								<small v-if="(addressError || houseNumberError) && submitting" class="form-text errorInput">Please provide a valid address!</small>
+								<label for="street">Street:</label>
+								<input type="text" id="street" class="form-control" :class="{'errorField' : streetError && addressSubmitting}" v-model="address.street" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
+								<small v-if="(streetError || houseNumberError) && addressSubmitting" class="form-text errorInput">Please provide a valid street / house number!</small>
 							</div>
 							<div class="form-group col-md-4">
 								<label for="houseNumber">House number:</label>
-								<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : houseNumberError && submitting}" v-model="address.houseNumber" @focus="clearAddressStatus()" @keypress="clearAddressStatus()"/>
+								<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : houseNumberError && addressSubmitting}" v-model="address.houseNumber" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-md-8">
 								<label for="city">City:</label>
-								<input type="text" id="city" class="form-control" :class="{'errorField' : cityError && submitting}" v-model="address.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
-								<small v-if="(cityError || zipCodeError) && submitting" class="form-text errorInput">Please provide a valid city!</small>
+								<input type="text" id="city" class="form-control" :class="{'errorField' : cityError && addressSubmitting}" v-model="address.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
+								<small v-if="(cityError || zipCodeError) && addressSubmitting" class="form-text errorInput">Please provide a valid city / zip code!</small>
 							</div>
 							<div class="form-group col-md-4">
 								<label for="zipCode">Zip code:</label>
-								<input type="number" id="zipCode" class="form-control" :class="{'errorField' : zipCodeError && submitting}" v-model="address.zipCode" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
+								<input type="number" id="zipCode" class="form-control" :class="{'errorField' : zipCodeError && addressSubmitting}" v-model="address.zipCode" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="country" class="form-label">Country:</label>
-							<input type="text" id="country" class="form-control" :class="{'errorField' : countryError && submitting}" v-model="address.country" @focus="clearCountryStatus()" @keypress="clearCountryStatus()"/>
-							<small v-if="countryError && submitting" class="form-text errorInput">Please provide a valid country!</small>
+							<input type="text" id="country" class="form-control" :class="{'errorField' : countryError && addressSubmitting}" v-model="address.country" @focus="clearCountryStatus()" @keypress="clearCountryStatus()"/>
+							<small v-if="countryError && addressSubmitting" class="form-text errorInput">Please provide a valid country!</small>
 						</div>
 						<div class="form-group">
-							<button type="button" class="btn btn-info previousButton" @click="toggleAccountTab()"><i class="fas fa-angle-double-left"></i> Previous</button>
-							<button type="button" class="btn btn-info nextButton" @click="toggleCheckTab()">Next <i class="fas fa-angle-double-right"></i></button>
+							<button type="button" class="btn btn-info previousButton" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
+							<button type="button" class="btn btn-info nextButton" @click="toggleTab('resetPassword')">Next <i class="fas fa-angle-double-right"></i></button>
+                            <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
 						</div>
                     </form>
                 </div>
@@ -112,7 +114,7 @@
                     <form autocomplete="off" @submit.prevent="resetPassword()">
                         <div v-if="passwordReset" class="alert alert-success alert-dismissible" role="alert">
                             <div>Your password has been successfully reset!</div>
-                            <button type="button" class="close" @click="closePasswordResetAlert()">
+                            <button type="button" class="close" @click="closeAlert('resetPassword')">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -120,12 +122,16 @@
 							<label for="password" class="form-label">Password:</label>
 							<div class="input-group">
 								<span class="input-group-text"><i class="fas fa-lock"></i></span>
-								<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" v-model="account.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
+								<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError}" v-model="password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
 								<div class="input-group-append">
-									<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+									<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
 								</div>
 							</div>
-							<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
+							<small v-if="passwordError" class="form-text errorInput">Please provide a valid password!</small>
+						</div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-info previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                            <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
 						</div>
                     </form>
                 </div>
@@ -163,13 +169,13 @@
 				},
                 accountEdited: false,
                 addressSubmitting: false,
-                addressError: false,
+                streetError: false,
 				houseNumberError: false,
 				cityError: false,
 				zipCodeError: false,
 				countryError: false,
                 address: {
-                    address: "",
+                    street: "",
 					houseNumber: "",
 					city: "",
 					zipCode: "",
@@ -194,30 +200,29 @@
 				this.clearFirstNameStatus();
 				this.clearLastNameStatus();
 				this.clearMobileNumberStatus();
-				var allowAccountSubmit = true;
+				var allowSubmit = true;
 				if(this.invalidEmail) {
 					this.emailError = true;
-					allowAccountSubmit = false;
+					allowSubmit = false;
 				}
 				if(this.invalidFirstName) {
 					this.firstNameError = true;
-					allowAccountSubmit = false;
+					allowSubmit = false;
 				}
 				if(this.invalidLastName) {
 					this.lastNameError = true;
-					allowAccountSubmit = false;
+					allowSubmit = false;
 				}
 				if(this.invalidMobileNumber) {
 					this.mobileNumberError = true;
-					allowAccountSubmit = false;
+					allowSubmit = false;
 				}
-				if(!allowAccountSubmit) {
-					this.alreadyExists = "";
-					this.userCreated = false;
-					return;
+				if(!allowSubmit) {
+					this.accountEdited = false;
+                    return;
 				}
 				var body = {username: this.username, email: this.account.email, firstName: this.account.firstName, lastName: this.account.lastName, mobileNumber: this.account.mobileNumber};
-				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editAccount", body).then(response => {
+				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editAccount", body).then(response => {
 					if(response.data.edited) {
 						this.accountEdited = true;
                         this.emailError = false, this.firstNameError = false, this.lastNameError = false, this.mobileNumberError = false, this.accountSubmitting = false;
@@ -231,13 +236,77 @@
 					}
 				}).catch(error => console.log(error));
 			},
+            editAddress() {
+				this.addressSubmitting = true;
+				this.clearStreetStatus();
+				this.clearCityStatus();
+                this.clearCountryStatus();
+				var allowSubmit = true;
+				if(this.invalidStreet) {
+					this.streetError = true;
+					allowSubmit = false;
+				}
+				if(this.invalidHouseNumber) {
+					this.houseNumberError = true;
+					allowSubmit = false;
+				}
+				if(this.invalidCity) {
+					this.cityError = true;
+					allowSubmit = false;
+				}
+				if(this.invalidZipCode) {
+					this.zipCodeError = true;
+					allowSubmit = false;
+				}
+                if(this.invalidCountry) {
+					this.countryError = true;
+					allowSubmit = false;
+				}
+				if(!allowSubmit) {
+					this.addressEdited = false;
+					return;
+				}
+				var body = {username: this.username, street: this.address.street, houseNumber: this.address.houseNumber, city: this.address.city, zipCode: this.address.zipCode, country: this.address.country};
+				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editAddress", body).then(response => {
+					if(response.data.edited) {
+						this.addressEdited = true;
+                        this.streetError = false, this.houseNumberError = false, this.cityError = false, this.zipCodeError = false, this.countryError = false, this.accountSubmitting = false;
+					} else {
+						var errorFields = response.data.errorFields;
+                        if(errorFields.includes("street")) this.streetError = true;
+                        if(errorFields.includes("houseNumber")) this.houseNumberError = true;
+                        if(errorFields.includes("city")) this.cityError = true;
+                        if(errorFields.includes("zipCode")) this.zipCodeError = true;
+                        if(errorFields.includes("country")) this.countryError = true;
+                        this.userEdited = false;
+					}
+				}).catch(error => console.log(error));
+			},
+            resetPassword() {
+                this.clearPasswordStatus();
+                if(this.invalidPassword) {
+                    this.passwordError = true;
+                    this.passwordReset = false;
+                    return;
+                }
+                var body = {username: this.username, isLoggedIn: true, password: this.password};
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/resetPassword", body).then(response => {
+                    if(response.data.reset) {
+                        this.passwordReset = true;
+                        this.password = "";
+                        this.passwordError = false;
+                    } else {
+                        this.passwordError = true;
+                        this.passwordReset = false;
+                    }
+                }).catch(error => console.log(error));
+            },
 			clearEmailStatus() { this.emailError = false; },
-			clearPasswordStatus() { this.passwordError = false; },
 			clearFirstNameStatus() { this.firstNameError = false; },
 			clearLastNameStatus() { this.lastNameError = false; },
 			clearMobileNumberStatus() { this.mobileNumberError = false; },
-			clearAddressStatus() { 
-				this.addressError = false; 
+			clearStreetStatus() { 
+				this.streetError = false; 
 				this.houseNumberError = false;
 			},
 			clearCityStatus() { 
@@ -247,6 +316,7 @@
 			clearCountryStatus() {
 				this.countryError = false;
 			},
+            clearPasswordStatus() { this.passwordError = false; },
             togglePassword() {
 				var type = document.getElementById("password").getAttribute("type");
 				switch(type) {
@@ -264,65 +334,79 @@
 					}
 				}
 			},
-			toggleAccountTab() {
-				document.getElementById("accountNavTab").click();
+			toggleTab(tab) {
+                switch(tab) {
+                    case "account":
+                        document.getElementById("accountNavTab").click();
+                        break;
+                    case "address":
+                        document.getElementById("addressNavTab").click();
+                        break;
+                    case "resetPassword":
+                        document.getElementById("resetPasswordNavTab").click();
+                        break;
+                }
 			},
-			toggleAddressTab() {
-				document.getElementById("addressNavTab").click();
-			},
-			toggleCheckTab() {
-				document.getElementById("checkNavTab").click();
-			},
-			closeRegistrationAlert() {
-				this.userCreated = false;
+			closeAlert(type) {
+                switch (type) {
+                    case "account":
+                        this.accountEdited = false;
+                        break;
+                    case "address":
+                        this.addressEdited = false;
+                        break;
+                    case "resetPassword":
+                        this.passwordReset = false;
+                        break;
+                }
 			}
         },
         computed: {
 			invalidEmail() {
 				var emailFormat = /\S+@\S+\.\S+/;
-				if(this.user.email != "" && emailFormat.test(this.user.email)) {
+				if(this.account.email != "" && emailFormat.test(this.account.email)) {
 					return false;
 				} else {
 					return true;
 				}
 			},
-			invalidPassword() {
-				var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-				if(this.user.password != "" && passwordFormat.test(this.user.password)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidFirstName() { return this.user.firstName === ""; },
-			invalidLastName() { return this.user.lastName === ""; },
+			invalidFirstName() { return this.account.firstName === ""; },
+			invalidLastName() { return this.account.lastName === ""; },
 			invalidMobileNumber() {
 				var mobileNumberFormat = /^[0-9]\d*$/;
-				if(this.user.mobileNumber != "" && mobileNumberFormat.test(this.user.mobileNumber)) {
+				if(this.account.mobileNumber != "" && mobileNumberFormat.test(this.account.mobileNumber)) {
 					return false;
 				} else {
 					return true;
 				}
 			},
-			invalidAddress() { return this.user.address === ""; },
+			invalidStreet() { return this.address.street === ""; },
 			invalidHouseNumber() {
 				var houseNumberFormat = /^[0-9]\d*$/;
-				if(this.user.houseNumber != "" && houseNumberFormat.test(this.user.houseNumber)) {
+				if(this.address.houseNumber != "" && houseNumberFormat.test(this.address.houseNumber)) {
 					return false;
 				} else {
 					return true;
 				}
 			},
-			invalidCity() { return this.user.address === ""; },
+			invalidCity() { return this.address.city === ""; },
 			invalidZipCode() {
 				var zipCodeFormat = /^[0-9]\d*$/;
-				if(this.user.zipCode != "" && zipCodeFormat.test(this.user.zipCode)) {
+				if(this.address.zipCode != "" && zipCodeFormat.test(this.address.zipCode)) {
 					return false;
 				} else {
 					return true;
 				}
 			},
-			invalidCountry() { return this.user.country === ""; }
+			invalidCountry() { return this.address.country === ""; },
+            invalidPassword() {
+				var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+				if(this.password != "" && passwordFormat.test(this.password)) {
+					return false;
+				} else {
+					return true;
+				}
+			}
 		},
         created() {
             this.getUser();
@@ -346,10 +430,14 @@
 	}
 	.previousButton {
 		float: left;
-	}
-	.nextButton {
+	} 
+    .nextButton {
 		float: right;
+        margin-left: 5px;
 	}
+    .submitButton {
+        float: right;
+    }
     .input-group-text {
         border-right: 0px;
         border-radius: 0px;

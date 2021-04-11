@@ -33,9 +33,9 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
             errorFields.push("mobileNumber");
             allowRegistration = false;
         }
-        var address = request.body.address;
-        if(!address) {
-            errorFields.push("address");
+        var street = request.body.street;
+        if(!street) {
+            errorFields.push("street");
             allowRegistration = false;
         }
         var houseNumber = request.body.houseNumber;
@@ -80,7 +80,7 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
                     var authenticationEnabled = true;
                     var authenticationToken = "";
                     var isAdmin = false;
-                    var newUser = getUserScheme(User, username, email, password, firstName, lastName, mobileNumber, address, houseNumber, city, zipCode, country, accepted, acceptanceToken, authenticationEnabled, authenticationToken, isAdmin);
+                    var newUser = getUserScheme(User, username, email, password, firstName, lastName, mobileNumber, street, houseNumber, city, zipCode, country, accepted, acceptanceToken, authenticationEnabled, authenticationToken, isAdmin);
                     bcryptjs.genSalt(10, (error, salt) => {
                         bcryptjs.hash(newUser.password, salt, (error, hashedPassword) => {
                             newUser.password = hashedPassword;
@@ -110,8 +110,8 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
 		}).catch(error => console.log(error));
 	});
 
-    function getUserScheme(User, username, email, password, firstName, lastName, mobileNumber, address, houseNumber, city, zipCode, country, accepted, acceptanceToken, authenticationEnabled, authenticationToken, isAdmin) {
-		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, mobileNumber: mobileNumber, address: address, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, accepted: accepted, acceptanceToken: acceptanceToken, authenticationEnabled: authenticationEnabled, authenticationToken: authenticationToken, isAdmin: isAdmin});
+    function getUserScheme(User, username, email, password, firstName, lastName, mobileNumber, street, houseNumber, city, zipCode, country, accepted, acceptanceToken, authenticationEnabled, authenticationToken, isAdmin) {
+		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, mobileNumber: mobileNumber, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, accepted: accepted, acceptanceToken: acceptanceToken, authenticationEnabled: authenticationEnabled, authenticationToken: authenticationToken, isAdmin: isAdmin});
 	}
     function invalidUsername(username) {
 		var usernameFormat = /^[a-z0-9_.-]*$/;

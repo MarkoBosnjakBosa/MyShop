@@ -72,30 +72,30 @@
 								<span class="input-group-text countryCodePrefix">+</span>
 								<input type="text" id="mobileNumber" class="form-control" :class="{'errorField' : mobileNumberError && submitting}" v-model="user.mobileNumber" @focus="clearMobileNumberStatus()" @keypress="clearMobileNumberStatus()"/>
 							</div>
-							<small class="form-text text-muted">Please insert the mobile number with country calling code.</small>
+							<small class="form-text text-muted">Please insert your mobile number with the country calling code.</small>
 							<small v-if="mobileNumberError && submitting" class="form-text errorInput">Please provide a valid last name!</small>
 						</div>
 						<div class="form-group">
-							<button type="button" class="btn btn-info nextButton" @click="toggleAddressTab()">Next <i class="fas fa-angle-double-right"></i></button>
+							<button type="button" class="btn btn-info nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
 						</div>
 					</div>
 					<div id="addressTab" class="tab-pane fade">
 						<div class="form-row">
 							<div class="form-group col-md-8">
-								<label for="address">Address:</label>
-								<input type="text" id="address" class="form-control" :class="{'errorField' : addressError && submitting}" v-model="user.address" @focus="clearAddressStatus()" @keypress="clearAddressStatus()"/>
-								<small v-if="(addressError || houseNumberError) && submitting" class="form-text errorInput">Please provide a valid address!</small>
+								<label for="street">Street:</label>
+								<input type="text" id="street" class="form-control" :class="{'errorField' : streetError && submitting}" v-model="user.street" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
+								<small v-if="(streetError || houseNumberError) && submitting" class="form-text errorInput">Please provide a valid street / house number!</small>
 							</div>
 							<div class="form-group col-md-4">
 								<label for="houseNumber">House number:</label>
-								<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : houseNumberError && submitting}" v-model="user.houseNumber" @focus="clearAddressStatus()" @keypress="clearAddressStatus()"/>
+								<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : houseNumberError && submitting}" v-model="user.houseNumber" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-md-8">
 								<label for="city">City:</label>
 								<input type="text" id="city" class="form-control" :class="{'errorField' : cityError && submitting}" v-model="user.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
-								<small v-if="(cityError || zipCodeError) && submitting" class="form-text errorInput">Please provide a valid city!</small>
+								<small v-if="(cityError || zipCodeError) && submitting" class="form-text errorInput">Please provide a valid city / zip code!</small>
 							</div>
 							<div class="form-group col-md-4">
 								<label for="zipCode">Zip code:</label>
@@ -108,20 +108,20 @@
 							<small v-if="countryError && submitting" class="form-text errorInput">Please provide a valid country!</small>
 						</div>
 						<div class="form-group">
-							<button type="button" class="btn btn-info previousButton" @click="toggleAccountTab()"><i class="fas fa-angle-double-left"></i> Previous</button>
-							<button type="button" class="btn btn-info nextButton" @click="toggleCheckTab()">Next <i class="fas fa-angle-double-right"></i></button>
+							<button type="button" class="btn btn-info previousButton" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
+							<button type="button" class="btn btn-info nextButton" @click="toggleTab('check')">Next <i class="fas fa-angle-double-right"></i></button>
 						</div>
 					</div>
 					<div id="checkTab" class="tab-pane fade">
-						<div v-if="usernameError || emailError || passwordError || firstNameError || lastNameError || mobileNumberError || addressError || houseNumberError || cityError || zipCodeError || countryError || reCaptchaTokenError" class="alert alert-danger" role="alert">Please insert missing data!</div>
+						<div v-if="usernameError || emailError || passwordError || firstNameError || lastNameError || mobileNumberError || streetError || houseNumberError || cityError || zipCodeError || countryError || reCaptchaTokenError" class="alert alert-danger" role="alert">Please insert missing data!</div>
 						<div v-if="alreadyExists == 'username'" class="alert alert-danger" role="alert">Username already exists!</div>
 						<div v-if="alreadyExists == 'email'" class="alert alert-danger" role="alert">Email already exists!</div>
 						<p :class="{'errorInput' : reCaptchaTokenError && submitting}">Please confirm that you are not a robot.</p>
 						<div class="form-group text-xs-center">
 							<div class="g-recaptcha" :data-sitekey="reCaptchaSiteKey"></div>
 						</div>
-						<button type="button" class="btn btn-info previousButton" @click="toggleAddressTab()"><i class="fas fa-angle-double-left"></i> Previous</button>
-						<button type="submit" class="btn btn-primary nextButton">Submit <i class="fas fa-check"></i></button>
+						<button type="button" class="btn btn-info previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
+						<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
 					</div>
 				</div>
 			</form>
@@ -150,7 +150,7 @@
 				firstNameError: false,
 				lastNameError: false,
 				mobileNumberError: false,
-				addressError: false,
+				streetError: false,
 				houseNumberError: false,
 				cityError: false,
 				zipCodeError: false,
@@ -163,7 +163,7 @@
 					firstName: "",
 					lastName: "",
 					mobileNumber: "",
-					address: "",
+					street: "",
 					houseNumber: "",
 					city: "",
 					zipCode: "",
@@ -182,7 +182,7 @@
 				this.clearFirstNameStatus();
 				this.clearLastNameStatus();
 				this.clearMobileNumberStatus();
-				this.clearAddressStatus();
+				this.clearStreetStatus();
 				this.clearCityStatus();
 				this.clearCountryStatus();
 				this.clearReCaptchaTokenStatus();
@@ -211,8 +211,8 @@
 					this.mobileNumberError = true;
 					allowSubmit = false;
 				}
-				if(this.invalidAddress) {
-					this.addressError = true;
+				if(this.invalidStreet) {
+					this.streetError = true;
 					allowSubmit = false;
 				}
 				if(this.invalidHouseNumber) {
@@ -240,16 +240,16 @@
 					this.userCreated = false;
 					return;
 				}
-				var body = {username: this.user.username, email: this.user.email, password: this.user.password, firstName: this.user.firstName, lastName: this.user.lastName, mobileNumber: this.user.mobileNumber, address: this.user.address, houseNumber: this.user.houseNumber, city: this.user.city, zipCode: this.user.zipCode, country: this.user.country, reCaptchaToken: grecaptcha.getResponse()};
+				var body = {username: this.user.username, email: this.user.email, password: this.user.password, firstName: this.user.firstName, lastName: this.user.lastName, mobileNumber: this.user.mobileNumber, street: this.user.street, houseNumber: this.user.houseNumber, city: this.user.city, zipCode: this.user.zipCode, country: this.user.country, reCaptchaToken: grecaptcha.getResponse()};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createUser", body).then(response => {
 					if(response.data.created) {
 						this.userCreated = true;
-						this.user = {username: "", email: "", password: "", firstName: "", lastName: "", mobileNumber: "", address: "", houseNumber: "", city: "", zipCode: "", country: ""};
+						this.user = {username: "", email: "", password: "", firstName: "", lastName: "", mobileNumber: "", street: "", houseNumber: "", city: "", zipCode: "", country: ""};
 						grecaptcha.reset();
 						this.alreadyExists = "";
-						this.usernameError = false, this.emailError = false, this.passwordError = false, this.firstNameError = false, this.lastNameError = false, this.mobileNumberError = false, this.addressError = false, this.houseNumberError = false, this.cityError = false, this.zipCodeError = false, this.countryError = false, this.reCaptchaTokenError = false, this.submitting = false;
-						this.$refs.first.focus();
+						this.usernameError = false, this.emailError = false, this.passwordError = false, this.firstNameError = false, this.lastNameError = false, this.mobileNumberError = false, this.streetError = false, this.houseNumberError = false, this.cityError = false, this.zipCodeError = false, this.countryError = false, this.reCaptchaTokenError = false, this.submitting = false;
 						this.toggleAccountTab();
+						this.$refs.first.focus();
 					} else {
 						if(response.data.alreadyExists) {
 							this.alreadyExists = response.data.field;
@@ -262,7 +262,7 @@
 							if(errorFields.includes("firstName")) this.firstNameError = true;
 							if(errorFields.includes("lastName")) this.lastNameError = true;
 							if(errorFields.includes("mobileNumber")) this.mobileNumberError = true;
-							if(errorFields.includes("address")) this.addressError = true;
+							if(errorFields.includes("street")) this.streetError = true;
 							if(errorFields.includes("houseNumber")) this.houseNumberError = true;
 							if(errorFields.includes("city")) this.cityError = true;
 							if(errorFields.includes("zipCode")) this.zipCodeError = true;
@@ -280,8 +280,8 @@
 			clearFirstNameStatus() { this.firstNameError = false; },
 			clearLastNameStatus() { this.lastNameError = false; },
 			clearMobileNumberStatus() { this.mobileNumberError = false; },
-			clearAddressStatus() { 
-				this.addressError = false; 
+			clearStreetStatus() { 
+				this.streetError = false; 
 				this.houseNumberError = false;
 			},
 			clearCityStatus() { 
@@ -311,14 +311,18 @@
 					}
 				}
 			},
-			toggleAccountTab() {
-				document.getElementById("accountNavTab").click();
-			},
-			toggleAddressTab() {
-				document.getElementById("addressNavTab").click();
-			},
-			toggleCheckTab() {
-				document.getElementById("checkNavTab").click();
+			toggleTab(tab) {
+                switch(tab) {
+                    case "account":
+                        document.getElementById("accountNavTab").click();
+                        break;
+                    case "address":
+                        document.getElementById("addressNavTab").click();
+                        break;
+                    case "check":
+                        document.getElementById("checkNavTab").click();
+                        break;
+                }
 			},
 			closeRegistrationAlert() {
 				this.userCreated = false;
@@ -364,7 +368,7 @@
 					return true;
 				}
 			},
-			invalidAddress() { return this.user.address === ""; },
+			invalidStreet() { return this.user.street === ""; },
 			invalidHouseNumber() {
 				var houseNumberFormat = /^[0-9]\d*$/;
 				if(this.user.houseNumber != "" && houseNumberFormat.test(this.user.houseNumber)) {
@@ -373,7 +377,7 @@
 					return true;
 				}
 			},
-			invalidCity() { return this.user.address === ""; },
+			invalidCity() { return this.user.city === ""; },
 			invalidZipCode() {
 				var zipCodeFormat = /^[0-9]\d*$/;
 				if(this.user.zipCode != "" && zipCodeFormat.test(this.user.zipCode)) {
@@ -404,7 +408,7 @@
 	.previousButton {
 		float: left;
 	}
-	.nextButton {
+	.nextButton, .submitButton {
 		float: right;
 	}
 	.text-xs-center {

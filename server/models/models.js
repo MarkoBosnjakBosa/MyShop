@@ -6,7 +6,7 @@ module.exports = function(mongoose) {
 		firstName: {type: String, required: true},
 		lastName: {type: String, required: true},
         mobileNumber: {type: Number, required: true, index: {unique: true}},
-		address: {type: String, required: true},
+		street: {type: String, required: true},
 		houseNumber: {type: Number, required: true},
         city: {type: String, required: true},
         zipCode: {type: Number, required: true},

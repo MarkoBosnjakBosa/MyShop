@@ -43,10 +43,16 @@ module.exports = function(app, bcryptjs, models, emailEvent) {
     });
 	app.put("/resetPassword", (request, response) => {
 		var username = request.body.username;
-		var acceptanceToken = request.body.acceptanceToken;
+		var isLoggedIn = request.body.isLoggedIn;
 		var password = request.body.password;
 		if(username && validPassword(password)) {
-			var query = {$and: [{username: username}, {acceptanceToken: acceptanceToken}]}; 
+			var query;
+			if(isLoggedIn) {
+				query = {username: username};
+			} else {
+				var acceptanceToken = request.body.acceptanceToken;
+				query = {$and: [{username: username}, {acceptanceToken: acceptanceToken}]};
+			} 
 			bcryptjs.genSalt(10, (error, salt) => {
 				bcryptjs.hash(password, salt, (error, hashedPassword) => {
 					var update = {password: hashedPassword, acceptanceToken: ""};

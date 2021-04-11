@@ -23,7 +23,7 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent) {
 			User.findOne(query).then(user => {
 				if(!isEmpty(user)) {
 					if(user.accepted) {
-						if(user.authenticationEnabled) {
+						if(user.authenticationToken) {
 							if(request.headers["authentication"]) {
 								var authenticationToken = request.headers["authentication"];
 								if(authenticationToken == user.authenticationToken) {
@@ -36,20 +36,24 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent) {
 									response.status(200).json({authentication: true, valid: false, authenticationToken: false}).end();
 								}
 							} else {
-								var authenticationToken = Math.floor(100000 + Math.random() * 900000);
-            					var update = {authenticationToken: authenticationToken};
-								User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-									//smsEvent.emit("sendAuthenticationToken", updatedUser.mobileNumber, updatedUser.firstName, updatedUser.authenticationToken);
-									response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: user.username, isAdmin: updatedUser.isAdmin}).end();
-								}).catch(error => console.log(error));
+								response.status(200).json({authentication: true, valid: false, authenticationToken: false}).end();
 							}
 						} else {
 							var password = request.body.password;
 							if(validPassword(password)) {
 								bcryptjs.compare(password, user.password, function(error, foundPassword) {
 									if(foundPassword) {
-										const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});
-										response.status(200).json({authentication: false, valid: true, token: token, user: user.username}).end();
+										if(user.authenticationEnabled) {
+											var authenticationToken = Math.floor(100000 + Math.random() * 900000);
+											var update = {authenticationToken: authenticationToken};
+											User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
+												//smsEvent.emit("sendAuthenticationToken", updatedUser.mobileNumber, updatedUser.firstName, updatedUser.authenticationToken);
+												response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: user.username, isAdmin: updatedUser.isAdmin}).end();
+											}).catch(error => console.log(error));
+										} else {
+											const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});
+											response.status(200).json({authentication: false, valid: true, token: token, user: user.username}).end();
+										}
 									} else {
 										response.status(200).json({authentication: false, valid: false, allowed: true}).end();
 									}

@@ -59,7 +59,7 @@
 					this.passwordReset = false;
 					return;
 				}
-				var body = {username: this.user.username, acceptanceToken: this.user.acceptanceToken, password: this.user.password};
+				var body = {username: this.user.username, isLoggedIn: false, acceptanceToken: this.user.acceptanceToken, password: this.user.password};
 				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/resetPassword", body).then(response => {
 					if(response.data.reset) {
 						this.passwordReset = true;
