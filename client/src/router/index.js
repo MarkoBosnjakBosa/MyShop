@@ -6,6 +6,7 @@ import Login from "../views/Login.vue";
 import Authentication from "../views/Authentication.vue";
 import ForgotCredentials from "../views/ForgotCredentials.vue";
 import ResetPassword from "../views/ResetPassword.vue";
+import Profile from "../views/Profile.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 
 const routes = [
@@ -43,6 +44,11 @@ const routes = [
 		path: "/reset/password",
 		name: "ResetPassword",
 		component: ResetPassword
+	},
+	{
+		path: "/profile",
+		name: "Profile",
+		component: Profile
 	},
 	{
 		path: "/:catchAll(.*)",

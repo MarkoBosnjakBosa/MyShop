@@ -58,6 +58,15 @@
             openRegistration() {
                 this.$router.push("/registration");
             },
+            openProfile() {
+                this.$router.push("/profile");
+            },
+            openAuthentication() {
+                this.$router.push("/authentication");
+            },
+            openOrders() {
+                this.$router.push("/orders");
+            },
             openLogin() {
                 this.$router.push("/login");
             },

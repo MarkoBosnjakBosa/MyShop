@@ -27,6 +27,7 @@ app.use(express.json());
 const registration = require("./routes/registration.js")(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent);
 const login = require("./routes/login.js")(app, jwt, bcryptjs, models, smsEvent);
 const forgotCredentials = require("./routes/forgotCredentials.js")(app, bcryptjs, models, emailEvent);
+const profile = require("./routes/profile.js")(app, models);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);
