@@ -62,7 +62,7 @@
                 this.$router.push("/profile");
             },
             openAuthentication() {
-                this.$router.push("/authentication");
+                this.$router.push("/setup");
             },
             openOrders() {
                 this.$router.push("/orders");
