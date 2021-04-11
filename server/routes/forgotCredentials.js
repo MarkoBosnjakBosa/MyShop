@@ -1,12 +1,12 @@
-module.exports = function(app, bcryptjs, models, emailEvent) {
+module.exports = function(app, bcryptjs, models, emailEvent, validation) {
     const User = models.User;
     app.post("/forgotCredentials", (request, response) => {
 		var email = request.body.email;
 		var option = request.body.option;
-		if(validEmail(email) && option) {
+		if(validation.validEmail(email) && option) {
 			var query = {email: email}; 
 			User.findOne(query).then(user => {
-				if(!isEmpty(user)) {
+				if(!validation.isEmpty(user)) {
 					if(option == "password") {
 						var acceptanceToken = Math.floor(100000 + Math.random() * 900000);
 						var update = {acceptanceToken: acceptanceToken};
@@ -45,7 +45,7 @@ module.exports = function(app, bcryptjs, models, emailEvent) {
 		var username = request.body.username;
 		var isLoggedIn = request.body.isLoggedIn;
 		var password = request.body.password;
-		if(username && validPassword(password)) {
+		if(username && validation.validPassword(password)) {
 			var query;
 			if(isLoggedIn) {
 				query = {username: username};
@@ -57,7 +57,7 @@ module.exports = function(app, bcryptjs, models, emailEvent) {
 				bcryptjs.hash(password, salt, (error, hashedPassword) => {
 					var update = {password: hashedPassword, acceptanceToken: ""};
 					User.findOneAndUpdate(query, update, {new: true}).then(user => {
-						if(!isEmpty(user)) {
+						if(!validation.isEmpty(user)) {
 							response.status(200).json({reset: true}).end();
 						} else {
 							response.status(200).json({reset: false}).end();
@@ -70,24 +70,4 @@ module.exports = function(app, bcryptjs, models, emailEvent) {
 			response.end();
 		}
 	});
-
-    function validEmail(email) {
-		var emailFormat = /\S+@\S+\.\S+/;
-		if(email != "" && emailFormat.test(email)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	function validPassword(password) {
-		var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-		if(password != "" && passwordFormat.test(password)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-    function isEmpty(object) {
-		return !object || Object.keys(object).length === 0;
-	}
 }

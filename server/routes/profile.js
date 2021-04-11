@@ -1,4 +1,4 @@
-module.exports = function(app, models) {
+module.exports = function(app, models, validation) {
     const User = models.User;
     app.get("/getUser/:username", (request, response) => {
         var username = request.params.username;
@@ -14,7 +14,7 @@ module.exports = function(app, models) {
         var errorFields = [];
         var username = request.body.username;
         var email = request.body.email;
-        if(!username && invalidEmail(email)) {
+        if(!username || validation.invalidEmail(email)) {
             errorFields.push("email");
             allowEdit = false;
         }
@@ -29,7 +29,7 @@ module.exports = function(app, models) {
             allowEdit = false;
         }
         var mobileNumber = request.body.mobileNumber;
-        if(invalidMobileNumber(mobileNumber)) {
+        if(validation.invalidMobileNumber(mobileNumber)) {
             errorFields.push("mobileNumber");
             allowEdit = false;
         }
@@ -53,7 +53,7 @@ module.exports = function(app, models) {
             allowEdit = false;
         }
         var houseNumber = request.body.houseNumber;
-        if(invalidHouseNumber(houseNumber)) {
+        if(validation.invalidHouseNumber(houseNumber)) {
             errorFields.push("houseNumber");
             allowEdit = false;
         }
@@ -63,7 +63,7 @@ module.exports = function(app, models) {
             allowEdit = false;
         }
         var zipCode = request.body.zipCode;
-        if(invalidZipCode(zipCode)) {
+        if(validation.invalidZipCode(zipCode)) {
             errorFields.push("zipCode");
             allowEdit = false;
         }
@@ -82,37 +82,4 @@ module.exports = function(app, models) {
             response.status(200).json({edited: false, errorFields: errorFields}).end();
         }
     });
-
-    function invalidEmail(email) {
-		var emailFormat = /\S+@\S+\.\S+/;
-		if(email != "" && emailFormat.test(email)) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-    function invalidMobileNumber(mobileNumber) {
-        var mobileNumberFormat = /^[0-9]\d*$/;
-        if(mobileNumber != "" && mobileNumberFormat.test(mobileNumber)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    function invalidHouseNumber(houseNumber) {
-        var houseNumberFormat = /^[0-9]\d*$/;
-        if(houseNumber != "" && houseNumberFormat.test(houseNumber)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    function invalidZipCode(zipCode) {
-        var zipCodeFormat = /^[0-9]\d*$/;
-        if(zipCode != "" && zipCodeFormat.test(zipCode)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 }

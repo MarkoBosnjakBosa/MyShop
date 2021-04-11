@@ -1,20 +1,20 @@
-module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent) {
+module.exports = function(app, bcryptjs, models, emailEvent, validation, reCaptchav2SecretKey, axios) {
     const User = models.User;
     app.post("/createUser", (request, response) => {
         var allowRegistration = true;
         var errorFields = [];
         var username = request.body.username;
-        if(invalidUsername(username)) {
+        if(validation.invalidUsername(username)) {
             errorFields.push("username");
             allowRegistration = false;
         }
         var email = request.body.email;
-        if(invalidEmail(email)) {
+        if(validation.invalidEmail(email)) {
             errorFields.push("email");
             allowRegistration = false;
         }
         var password = request.body.password;
-        if(invalidPassword(password)) {
+        if(validation.invalidPassword(password)) {
             errorFields.push("password");
             allowRegistration = false;
         }
@@ -29,7 +29,7 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
             allowRegistration = false;
         }
         var mobileNumber = request.body.mobileNumber;
-        if(invalidMobileNumber(mobileNumber)) {
+        if(validation.invalidMobileNumber(mobileNumber)) {
             errorFields.push("mobileNumber");
             allowRegistration = false;
         }
@@ -39,7 +39,7 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
             allowRegistration = false;
         }
         var houseNumber = request.body.houseNumber;
-        if(invalidHouseNumber(houseNumber)) {
+        if(validation.invalidHouseNumber(houseNumber)) {
             errorFields.push("houseNumber");
             allowRegistration = false;
         }
@@ -49,7 +49,7 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
             allowRegistration = false;
         }
         var zipCode = request.body.zipCode;
-        if(invalidZipCode(zipCode)) {
+        if(validation.invalidZipCode(zipCode)) {
             errorFields.push("zipCode");
             allowRegistration = false;
         }
@@ -59,14 +59,14 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
             allowRegistration = false;
         }
         var reCaptchaToken = request.body.reCaptchaToken;
-        if(invalidReCaptchaToken(reCaptchaToken, request.connection.remoteAddress)) {
+        if(validation.invalidReCaptchaToken(reCaptchav2SecretKey, axios, reCaptchaToken, request.connection.remoteAddress)) {
             errorFields.push("reCaptchaToken");
             allowRegistration = false;
         }
         if(allowRegistration) {
             var query = {$or: [{username: username}, {email: email}, {mobileNumber: mobileNumber}]};
             User.findOne(query).then(user => {
-                if(!isEmpty(user)) {
+                if(!validation.isEmpty(user)) {
                     var error = {created: false, alreadyExists: true};
                     if(user.username == username) {
                         error.field = "username";
@@ -102,7 +102,7 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
 		var query = {$and: [{username: username}, {acceptanceToken: acceptanceToken}]}; 
 		var update = {accepted: true, acceptanceToken: ""};
 		User.findOneAndUpdate(query, update, {new: true}).then(user => {
-			if(!isEmpty(user)) {
+			if(!validation.isEmpty(user)) {
 				response.status(200).json({confirmed: true}).end();
 			} else {
 				response.status(200).json({confirmed: false}).end();
@@ -112,70 +112,5 @@ module.exports = function(app, reCaptchav2SecretKey, axios, bcryptjs, models, em
 
     function getUserScheme(User, username, email, password, firstName, lastName, mobileNumber, street, houseNumber, city, zipCode, country, accepted, acceptanceToken, authenticationEnabled, authenticationToken, isAdmin) {
 		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, mobileNumber: mobileNumber, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, accepted: accepted, acceptanceToken: acceptanceToken, authenticationEnabled: authenticationEnabled, authenticationToken: authenticationToken, isAdmin: isAdmin});
-	}
-    function invalidUsername(username) {
-		var usernameFormat = /^[a-z0-9_.-]*$/;
-		if(username != "" && usernameFormat.test(username)) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	function invalidEmail(email) {
-		var emailFormat = /\S+@\S+\.\S+/;
-		if(email != "" && emailFormat.test(email)) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	function invalidPassword(password) {
-		var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-		if(password != "" && passwordFormat.test(password)) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-    function invalidMobileNumber(mobileNumber) {
-        var mobileNumberFormat = /^[0-9]\d*$/;
-        if(mobileNumber != "" && mobileNumberFormat.test(mobileNumber)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    function invalidHouseNumber(houseNumber) {
-        var houseNumberFormat = /^[0-9]\d*$/;
-        if(houseNumber != "" && houseNumberFormat.test(houseNumber)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    function invalidZipCode(zipCode) {
-        var zipCodeFormat = /^[0-9]\d*$/;
-        if(zipCode != "" && zipCodeFormat.test(zipCode)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    function invalidReCaptchaToken(reCaptchaToken, remoteIp) {
-        if(reCaptchaToken == "" || reCaptchaToken == undefined || reCaptchaToken == null) {
-            return true;
-        } else {
-            var reCaptchaVerificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + reCaptchav2SecretKey + "&response=" + reCaptchaToken + "&remoteip=" + remoteIp;
-            axios.get(reCaptchaVerificationUrl).then(reCaptchaResponse => {
-                if(reCaptchaResponse.data.success) {
-                    return false;
-                } else {
-                    return true;
-                }
-            });
-        }
-    }
-	function isEmpty(object) {
-		return !object || Object.keys(object).length === 0;
 	}
 }

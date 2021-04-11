@@ -248,7 +248,7 @@
 						grecaptcha.reset();
 						this.alreadyExists = "";
 						this.usernameError = false, this.emailError = false, this.passwordError = false, this.firstNameError = false, this.lastNameError = false, this.mobileNumberError = false, this.streetError = false, this.houseNumberError = false, this.cityError = false, this.zipCodeError = false, this.countryError = false, this.reCaptchaTokenError = false, this.submitting = false;
-						this.toggleAccountTab();
+						this.toggleTab("account");
 						this.$refs.first.focus();
 					} else {
 						if(response.data.alreadyExists) {

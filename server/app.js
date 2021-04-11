@@ -21,13 +21,14 @@ const nexmo = new Nexmo({apiKey: process.env.NEXMO_API_KEY, apiSecret: process.e
 const transporter = getTransporter();
 const emailEvent = require("./events/emailEvent.js")(EventEmitter, transporter, emailUser, baseUrl, clientPort);
 const smsEvent = require("./events/smsEvent.js")(EventEmitter, nexmo);
+const validation = require("./helpers/validation.js");
 app.use(cors({origin: "*"}));
 app.use(express.json());
 
-const registration = require("./routes/registration.js")(app, reCaptchav2SecretKey, axios, bcryptjs, models, emailEvent);
-const login = require("./routes/login.js")(app, jwt, bcryptjs, models, smsEvent);
-const forgotCredentials = require("./routes/forgotCredentials.js")(app, bcryptjs, models, emailEvent);
-const profile = require("./routes/profile.js")(app, models);
+const registration = require("./routes/registration.js")(app, bcryptjs, models, emailEvent, validation, reCaptchav2SecretKey, axios);
+const login = require("./routes/login.js")(app, jwt, bcryptjs, models, smsEvent, validation);
+const forgotCredentials = require("./routes/forgotCredentials.js")(app, bcryptjs, models, emailEvent, validation);
+const profile = require("./routes/profile.js")(app, models, validation);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);
