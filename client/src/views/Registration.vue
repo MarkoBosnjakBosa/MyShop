@@ -133,8 +133,10 @@
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
 	import Navigation from "@/components/Navigation.vue";
-
+	import Validation from "@/components/Validation.vue"; 
+	import Helper from "@/components/Helper.vue"; 
 	var axios = require("axios");
+
 	export default {
 		name: "registration",
 		components: {
@@ -295,34 +297,10 @@
 				this.reCaptchaTokenError = false;
 			},
             togglePassword() {
-				var type = document.getElementById("password").getAttribute("type");
-				switch(type) {
-					case "password": {
-						document.getElementById("password").setAttribute("type", "text");
-						document.getElementById("togglePassword").classList.remove("fa-eye");
-						document.getElementById("togglePassword").classList.add("fa-eye-slash");
-						return;
-					}
-					case "text": {
-						document.getElementById("password").setAttribute("type", "password");
-						document.getElementById("togglePassword").classList.remove("fa-eye-slash");
-						document.getElementById("togglePassword").classList.add("fa-eye");
-						return;
-					}
-				}
+				Helper.methods.togglePassword();
 			},
 			toggleTab(tab) {
-                switch(tab) {
-                    case "account":
-                        document.getElementById("accountNavTab").click();
-                        break;
-                    case "address":
-                        document.getElementById("addressNavTab").click();
-                        break;
-                    case "check":
-                        document.getElementById("checkNavTab").click();
-                        break;
-                }
+                Helper.methods.toggleTab(tab);
 			},
 			closeRegistrationAlert() {
 				this.userCreated = false;
@@ -334,59 +312,17 @@
 			document.head.appendChild(reCaptchaScript);
 		},
         computed: {
-			invalidUsername() { 
-				var usernameFormat = /^[a-z0-9_.-]*$/;
-				if(this.user.username != "" && usernameFormat.test(this.user.username)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidEmail() {
-				var emailFormat = /\S+@\S+\.\S+/;
-				if(this.user.email != "" && emailFormat.test(this.user.email)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidPassword() {
-				var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-				if(this.user.password != "" && passwordFormat.test(this.user.password)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidFirstName() { return this.user.firstName === ""; },
-			invalidLastName() { return this.user.lastName === ""; },
-			invalidMobileNumber() {
-				var mobileNumberFormat = /^[0-9]\d*$/;
-				if(this.user.mobileNumber != "" && mobileNumberFormat.test(this.user.mobileNumber)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidStreet() { return this.user.street === ""; },
-			invalidHouseNumber() {
-				var houseNumberFormat = /^[0-9]\d*$/;
-				if(this.user.houseNumber != "" && houseNumberFormat.test(this.user.houseNumber)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidCity() { return this.user.city === ""; },
-			invalidZipCode() {
-				var zipCodeFormat = /^[0-9]\d*$/;
-				if(this.user.zipCode != "" && zipCodeFormat.test(this.user.zipCode)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidCountry() { return this.user.country === ""; }
+			invalidUsername() { return Validation.methods.invalidUsername(this.user.username); },
+			invalidEmail() { return Validation.methods.invalidEmail(this.user.email); },
+			invalidPassword() { return Validation.methods.invalidPassword(this.user.password); },
+			invalidFirstName() { return Validation.methods.invalidFirstName(this.user.firstName); },
+			invalidLastName() { return Validation.methods.invalidLastName(this.user.lastName); },
+			invalidMobileNumber() { return Validation.methods.invalidMobileNumber(this.user.mobileNumber); },
+			invalidStreet() { return Validation.methods.invalidStreet(this.user.street); },
+			invalidHouseNumber() { return Validation.methods.invalidHouseNumber(this.user.houseNumber); },
+			invalidCity() { return Validation.methods.invalidCity(this.user.city); },
+			invalidZipCode() { return Validation.methods.invalidZipCode(this.user.zipCode); },
+			invalidCountry() { return Validation.methods.invalidCountry(this.user.country); }
 		}
 	}
 </script>

@@ -27,6 +27,7 @@
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
     import Navigation from "@/components/Navigation.vue";
+    import Validation from "@/components/Validation.vue";
     var axios = require("axios");
 	
     export default {
@@ -67,7 +68,7 @@
             clearAuthenticationTokenStatus() { this.authenticationTokenError = false; }
         },
         computed: {
-            invalidAuthenticationToken() { return this.authenticationToken === ""; }
+            invalidAuthenticationToken() { return Validation.methods.invalidAuthenticationToken(this.authenticationToken); }
         }
     }
 </script>

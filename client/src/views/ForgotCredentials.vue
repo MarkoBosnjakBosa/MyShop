@@ -47,6 +47,7 @@
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
     import Navigation from "@/components/Navigation.vue"; 
+    import Validation from "@/components/Validation.vue"; 
     var axios = require("axios");
 
     export default {
@@ -89,14 +90,7 @@
             }
         },
         computed: {
-            invalidEmail() {
-                var emailFormat = /\S+@\S+\.\S+/;
-                if(this.email != "" && emailFormat.test(this.email)) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
+            invalidEmail() { return Validation.methods.invalidEmail(this.email); }
         }
     }
 </script>

@@ -144,6 +144,8 @@
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
 	import Navigation from "@/components/Navigation.vue";
+	import Validation from "@/components/Validation.vue";
+	import Helper from "@/components/Helper.vue";
 
 	var axios = require("axios");
 	export default {
@@ -318,95 +320,26 @@
 			},
             clearPasswordStatus() { this.passwordError = false; },
             togglePassword() {
-				var type = document.getElementById("password").getAttribute("type");
-				switch(type) {
-					case "password": {
-						document.getElementById("password").setAttribute("type", "text");
-						document.getElementById("togglePassword").classList.remove("fa-eye");
-						document.getElementById("togglePassword").classList.add("fa-eye-slash");
-						return;
-					}
-					case "text": {
-						document.getElementById("password").setAttribute("type", "password");
-						document.getElementById("togglePassword").classList.remove("fa-eye-slash");
-						document.getElementById("togglePassword").classList.add("fa-eye");
-						return;
-					}
-				}
+				Helper.methods.togglePassword();
 			},
 			toggleTab(tab) {
-                switch(tab) {
-                    case "account":
-                        document.getElementById("accountNavTab").click();
-                        break;
-                    case "address":
-                        document.getElementById("addressNavTab").click();
-                        break;
-                    case "resetPassword":
-                        document.getElementById("resetPasswordNavTab").click();
-                        break;
-                }
+                Helper.methods.toggleTab(tab);
 			},
 			closeAlert(type) {
-                switch (type) {
-                    case "account":
-                        this.accountEdited = false;
-                        break;
-                    case "address":
-                        this.addressEdited = false;
-                        break;
-                    case "resetPassword":
-                        this.passwordReset = false;
-                        break;
-                }
+                Helper.methods.closeAlert(type);
 			}
         },
         computed: {
-			invalidEmail() {
-				var emailFormat = /\S+@\S+\.\S+/;
-				if(this.account.email != "" && emailFormat.test(this.account.email)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidFirstName() { return this.account.firstName === ""; },
-			invalidLastName() { return this.account.lastName === ""; },
-			invalidMobileNumber() {
-				var mobileNumberFormat = /^[0-9]\d*$/;
-				if(this.account.mobileNumber != "" && mobileNumberFormat.test(this.account.mobileNumber)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidStreet() { return this.address.street === ""; },
-			invalidHouseNumber() {
-				var houseNumberFormat = /^[0-9]\d*$/;
-				if(this.address.houseNumber != "" && houseNumberFormat.test(this.address.houseNumber)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidCity() { return this.address.city === ""; },
-			invalidZipCode() {
-				var zipCodeFormat = /^[0-9]\d*$/;
-				if(this.address.zipCode != "" && zipCodeFormat.test(this.address.zipCode)) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			invalidCountry() { return this.address.country === ""; },
-            invalidPassword() {
-				var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-				if(this.password != "" && passwordFormat.test(this.password)) {
-					return false;
-				} else {
-					return true;
-				}
-			}
+			invalidEmail() { return Validation.methods.invalidEmail(this.account.email); },
+			invalidFirstName() { return Validation.methods.invalidFirstName(this.account.firstName); },
+			invalidLastName() { return Validation.methods.invalidLastName(this.account.lastName); },
+			invalidMobileNumber() { return Validation.methods.invalidMobileNumber(this.account.mobileNumber); },
+			invalidStreet() { return Validation.methods.invalidStreet(this.address.street); },
+			invalidHouseNumber() { return Validation.methods.invalidHouseNumber(this.address.houseNumber); },
+			invalidCity() { return Validation.methods.invalidCity(this.address.city); },
+			invalidZipCode() { return Validation.methods.invalidZipCode(this.address.zipCode); },
+			invalidCountry() { return Validation.methods.invalidCountry(this.address.country); },
+            invalidPassword() { return Validation.methods.invalidPassword(this.account.password); }
 		},
         created() {
             this.getUser();

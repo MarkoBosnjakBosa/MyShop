@@ -33,6 +33,8 @@
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
     import Navigation from "@/components/Navigation.vue";
+	import Validation from "@/components/Validation.vue";
+	import Helper from "@/components/Helper.vue";
 	var axios = require("axios");
 
 	export default {
@@ -74,32 +76,11 @@
 			},
 			clearPasswordStatus() { this.passwordError = false; },
 			togglePassword() {
-				var type = document.getElementById("password").getAttribute("type");
-				switch(type) {
-					case "password": {
-						document.getElementById("password").setAttribute("type", "text");
-						document.getElementById("togglePassword").classList.remove("fa-eye");
-						document.getElementById("togglePassword").classList.add("fa-eye-slash");
-						return;
-					}
-					case "text": {
-						document.getElementById("password").setAttribute("type", "password");
-						document.getElementById("togglePassword").classList.remove("fa-eye-slash");
-						document.getElementById("togglePassword").classList.add("fa-eye");
-						return;
-					}
-				}
+				Helper.methods.togglePassword();
 			}
 		},
 		computed: {
-			invalidPassword() {
-				var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-				if(this.user.password != "" && passwordFormat.test(this.user.password)) {
-					return false;
-				} else {
-					return true;
-				}
-			}
+			invalidPassword() { return Validation.methods.invalidPassword(this.user.password); },
 		},
 		created() {
 			this.user.username = this.$route.query.username;
