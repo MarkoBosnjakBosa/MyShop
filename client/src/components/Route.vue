@@ -1,37 +1,40 @@
 <script>
+    import store from "../store/index.js";
+    import router from "../router/index.js";
+
     export default {
         name: "route",
         methods: {
             openHome() {
-                this.$router.push("/home");
+                router.push("/home");
             },
             openContact() {
-                this.$router.push("/contact");
+                router.push("/contact");
             },
             openRegistration() {
-                this.$router.push("/registration");
+                router.push("/registration");
             },
             openForgotCredentials() {
-				this.$router.push("/forgot/credentials");
+				router.push("/forgot/credentials");
 			},
             openProfile() {
-                this.$router.push("/profile");
+                router.push("/profile");
             },
             openSetup() {
-                this.$router.push("/setup");
+                router.push("/setup");
             },
             openOrders() {
-                this.$router.push("/orders");
+                router.push("/orders");
             },
             openLogin() {
-                this.$router.push("/login");
+                router.push("/login");
             },
             openAuthentication() {
-                this.$router.push("/authentication");
+                router.push("/authentication");
             },
             logout() {
-                this.$store.dispatch("logout");
-                this.$router.push("/login");
+                store.dispatch("logout");
+                router.push("/login");
             }
         }
     }
