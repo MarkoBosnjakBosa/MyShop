@@ -18,7 +18,8 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
-    import Navigation from "@/components/Navigation.vue"; 
+    import Navigation from "@/components/Navigation.vue";
+    import Route from "@/components/Route.vue"; 
     var axios = require("axios");
 
     export default {
@@ -48,7 +49,7 @@
                 }).catch(error => console.log(error));
             },
             openLogin() {
-                this.$router.push("/login");
+                Route.methods.openLogin();
             }
         },
         mounted() {

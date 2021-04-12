@@ -36,7 +36,7 @@
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
                 <div class="form-group loginDiv">
-                    <button type="button" class="btn btn-info" @click="login()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
+                    <button type="button" class="btn btn-info" @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
                 </div>
             </form>
         </div>
@@ -47,7 +47,8 @@
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
     import Navigation from "@/components/Navigation.vue"; 
-    import Validation from "@/components/Validation.vue"; 
+    import Validation from "@/components/Validation.vue";
+    import Route from "@/components/Route.vue";
     var axios = require("axios");
 
     export default {
@@ -87,6 +88,9 @@
             clearEmailStatus() { 
                 this.emailError = false;
                 this.emailSent = false; 
+            },
+            openLogin() {
+                Route.methods.openLogin();
             }
         },
         computed: {

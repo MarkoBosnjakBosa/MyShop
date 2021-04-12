@@ -19,7 +19,7 @@
                         <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
                             <a class="dropdown-item" href="#" @click="openProfile()">Profile</a>
-                            <a class="dropdown-item" href="#" @click="openAuthentication()">Authentication</a>
+                            <a class="dropdown-item" href="#" @click="openSetup()">Authentication</a>
                             <a v-if="!isAdmin" class="dropdown-item" href="#" @click="openOrders()">Orders</a>
                             <a class="dropdown-item" href="#" @click="logout()">Log out</a>
                         </div>
@@ -34,6 +34,8 @@
 </template>
 
 <script>
+    import Route from "@/components/Route.vue";
+
     export default {
         name: "navigation",
         data() {
@@ -50,29 +52,28 @@
                 this.isAdmin = this.$store.getters.isAdmin;
             },
             openHome() {
-                this.$router.push("/home");
+                Route.methods.openHome();
             },
             openContact() {
-                this.$router.push("/contact");
+                Route.methods.openContact();
             },
             openRegistration() {
-                this.$router.push("/registration");
+                Route.methods.openRegistration();
             },
             openProfile() {
-                this.$router.push("/profile");
+                Route.methods.openProfile();
             },
-            openAuthentication() {
-                this.$router.push("/setup");
+            openSetup() {
+                Route.methods.openSetup();
             },
             openOrders() {
-                this.$router.push("/orders");
+                Route.methods.openOrders();
             },
             openLogin() {
-                this.$router.push("/login");
+                Route.methods.openLogin();
             },
             logout() {
-                this.$store.dispatch("logout");
-                this.$router.push("/login");
+                Route.methods.logout();
             },
         },
         mounted() {

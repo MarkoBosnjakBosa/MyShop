@@ -80,7 +80,7 @@
 			}
 		},
 		computed: {
-			invalidPassword() { return Validation.methods.invalidPassword(this.user.password); },
+			invalidPassword() { return Validation.methods.invalidPassword(this.user.password); }
 		},
 		created() {
 			this.user.username = this.$route.query.username;

@@ -23,12 +23,12 @@
 				</div>
 				<div v-if="noPasswordMatch" class="form-group loginFailed">Password does not match!</div>
 				<div class="form-group forgotCredentialsDiv">
-					<a href="#" @click="forgotCredentials()">Forgot credentials?</a>
+					<a href="#" @click="openForgotCredentials()">Forgot credentials?</a>
 				</div>
 				<div class="form-group submitDiv">
 					<button type="submit" class="btn btn-primary submitButton">Log in</button>
 				</div>
-				<div class="form-group registerDiv">Not a member? <a href="#" @click="register()">Register</a></div>
+				<div class="form-group registerDiv">Not a member? <a href="#" @click="openRegistration()">Register</a></div>
 			</form>
 		</div>
 	</div>
@@ -40,6 +40,7 @@
 	import Navigation from "@/components/Navigation.vue"; 
 	import Validation from "@/components/Validation.vue";
 	import Helper from "@/components/Helper.vue"; 
+	import Route from "@/components/Route.vue"; 
 	var axios = require("axios");
 	
 	export default {
@@ -98,7 +99,7 @@
 						this.usernameError = false, this.passwordError = false, this.noPasswordMatch = false, this.submitting = false;
 						const username = response.data.username;
 						this.$store.dispatch("authenticate", {username});
-						this.$router.push("/authentication");
+						Route.method.openAuthentication();
 					} else {
 						if(response.data.valid) {
 							this.user = {username: "", password: ""};
@@ -107,7 +108,7 @@
 							const user = response.data.user;
 							const isAdmin = response.data.isAdmin;
 							this.$store.dispatch("login", {token, user, isAdmin});
-							this.$router.push("/home");
+							Route.method.openLogin();
 						} else {
 							if(response.data.allowed) {
 								this.noPasswordMatch = true;
@@ -121,11 +122,11 @@
 					}
 				}).catch(error => console.log(error));
 			},
-			forgotCredentials() {
-				this.$router.push("/forgot/credentials");
+			openForgotCredentials() {
+				Route.method.openForgotCredentials();
 			},
-			register() {
-				this.$router.push("/registration");
+			openRegistration() {
+				Route.method.openRegistration();
 			},
 			clearUsernameStatus() { this.usernameError = false; },
 			clearPasswordStatus() { this.passwordError = false; },

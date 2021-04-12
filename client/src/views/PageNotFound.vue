@@ -2,7 +2,7 @@
     <div id="overview" class="container-fluid">
         <div class="container pageNotFoundDiv">
             <div class="alert alert-danger" role="alert">Page not found!</div>
-            <button type="button" class="btn btn-info" @click="login()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
+            <button type="button" class="btn btn-info" @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
         </div>
     </div>
 </template>
@@ -10,12 +10,13 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
+    import Route from "@/components/Route.vue";
+
     export default {
         name: "pageNotFound",
         methods: {
-            login() {
-                this.$store.dispatch("logout");
-                this.$router.push("/login");
+            openLogin() {
+                Route.methods.openLogin();
             }
         }
     }

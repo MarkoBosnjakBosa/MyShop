@@ -28,6 +28,7 @@
     import "bootstrap/dist/css/bootstrap.min.css";
     import Navigation from "@/components/Navigation.vue";
     import Validation from "@/components/Validation.vue";
+    import Route from "@/components/Route.vue";
     var axios = require("axios");
 	
     export default {
@@ -59,7 +60,7 @@
                         const isAdmin = response.data.isAdmin;
                         this.$store.dispatch("login", {token, user, isAdmin});
                         this.$store.dispatch("clearAuthentication");
-                        this.$router.push("/home");
+                        Route.methods.openHome();
                     } else {
                         this.authenticationTokenError = true;
                     }
