@@ -34,22 +34,23 @@
 </template>
 
 <script>
+    import checkLogin from "@/components/CheckLogin.vue";
     import route from "@/components/Route.vue";
 
     export default {
         name: "navigation",
         data() {
 			return {
-				userLoggedIn: false,
-                username: "",
-                isAdmin: false
+                userData: {
+                    userLoggedIn: false,
+                    username: "",
+                    isAdmin: false
+                }
 			}
 		},
         methods: {
-            isLoggedIn() {
-                if(this.$store.getters.isLoggedIn) this.userLoggedIn = true;
-                this.username = this.$store.getters.getUser;
-                this.isAdmin = this.$store.getters.isAdmin;
+            getUserData() {
+                this.userData = checkLogin.methods.getUserData();
             },
             openHome() {
                 route.methods.openHome();
@@ -77,8 +78,7 @@
             },
         },
         mounted() {
-            this.isLoggedIn();
-            //var currentPage = this.$route.fullPath;
+            this.getUserData();
         }
     }
 </script>
