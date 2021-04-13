@@ -32,15 +32,15 @@
 <script>
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
-    import Navigation from "@/components/Navigation.vue";
-	import Validation from "@/components/Validation.vue";
-	import Helper from "@/components/Helper.vue";
+    import navigation from "@/components/Navigation.vue";
+	import validation from "@/components/Validation.vue";
+	import helper from "@/components/Helper.vue";
 	var axios = require("axios");
 
 	export default {
 		name: "resetPassword",
         components: {
-            Navigation
+            navigation
         },
 		data() {
 			return {
@@ -76,11 +76,11 @@
 			},
 			clearPasswordStatus() { this.passwordError = false; },
 			togglePassword() {
-				Helper.methods.togglePassword();
+				helper.methods.togglePassword();
 			}
 		},
 		computed: {
-			invalidPassword() { return Validation.methods.invalidPassword(this.user.password); }
+			invalidPassword() { return validation.methods.invalidPassword(this.user.password); }
 		},
 		created() {
 			this.user.username = this.$route.query.username;

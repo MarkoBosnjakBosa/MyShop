@@ -32,13 +32,13 @@
 <script>
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
-	import Navigation from "@/components/Navigation.vue"; 
+	import navigation from "@/components/Navigation.vue"; 
 	var axios = require("axios");
 	
 	export default {
 		name: "setup",
 		components: {
-            Navigation
+            navigation
         },
 		data() {
 			return {

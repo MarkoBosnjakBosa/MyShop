@@ -46,15 +46,15 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
-    import Navigation from "@/components/Navigation.vue"; 
-    import Validation from "@/components/Validation.vue";
-    import Route from "@/components/Route.vue";
+    import navigation from "@/components/Navigation.vue"; 
+    import validation from "@/components/Validation.vue";
+    import route from "@/components/Route.vue";
     var axios = require("axios");
 
     export default {
         name: "forgotCredentials",
         components: {
-            Navigation
+            navigation
         },
         data() {
             return {
@@ -90,11 +90,11 @@
                 this.emailSent = false; 
             },
             openLogin() {
-                Route.methods.openLogin();
+                route.methods.openLogin();
             }
         },
         computed: {
-            invalidEmail() { return Validation.methods.invalidEmail(this.email); }
+            invalidEmail() { return validation.methods.invalidEmail(this.email); }
         }
     }
 </script>

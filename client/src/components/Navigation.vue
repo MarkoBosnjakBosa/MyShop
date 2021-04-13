@@ -34,7 +34,7 @@
 </template>
 
 <script>
-    import Route from "@/components/Route.vue";
+    import route from "@/components/Route.vue";
 
     export default {
         name: "navigation",
@@ -52,28 +52,28 @@
                 this.isAdmin = this.$store.getters.isAdmin;
             },
             openHome() {
-                Route.methods.openHome();
+                route.methods.openHome();
             },
             openContact() {
-                Route.methods.openContact();
+                route.methods.openContact();
             },
             openRegistration() {
-                Route.methods.openRegistration();
+                route.methods.openRegistration();
             },
             openProfile() {
-                Route.methods.openProfile();
+                route.methods.openProfile();
             },
             openSetup() {
-                Route.methods.openSetup();
+                route.methods.openSetup();
             },
             openOrders() {
-                Route.methods.openOrders();
+                route.methods.openOrders();
             },
             openLogin() {
-                Route.methods.openLogin();
+                route.methods.openLogin();
             },
             logout() {
-                Route.methods.logout();
+                route.methods.logout();
             },
         },
         mounted() {

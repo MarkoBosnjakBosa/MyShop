@@ -1,8 +1,8 @@
 <script>
-    import store from "../store/index.js";
     import router from "../router/index.js";
-    
+    import store from "../store/index.js";
     var axios = require("axios");
+    
     export default {
         name: "checkLogin",
         methods: {

@@ -143,15 +143,15 @@
 <script>
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
-	import Navigation from "@/components/Navigation.vue";
-	import Validation from "@/components/Validation.vue";
-	import Helper from "@/components/Helper.vue";
-
+	import navigation from "@/components/Navigation.vue";
+	import validation from "@/components/Validation.vue";
+	import helper from "@/components/Helper.vue";
 	var axios = require("axios");
+	
 	export default {
 		name: "profile",
 		components: {
-            Navigation
+            navigation
         },
 		data() {
 			return {
@@ -320,26 +320,26 @@
 			},
             clearPasswordStatus() { this.passwordError = false; },
             togglePassword() {
-				Helper.methods.togglePassword();
+				helper.methods.togglePassword();
 			},
 			toggleTab(tab) {
-                Helper.methods.toggleTab(tab);
+                helper.methods.toggleTab(tab);
 			},
 			closeAlert(type) {
-                Helper.methods.closeAlert(type);
+                helper.methods.closeAlert(type);
 			}
         },
         computed: {
-			invalidEmail() { return Validation.methods.invalidEmail(this.account.email); },
-			invalidFirstName() { return Validation.methods.invalidFirstName(this.account.firstName); },
-			invalidLastName() { return Validation.methods.invalidLastName(this.account.lastName); },
-			invalidMobileNumber() { return Validation.methods.invalidMobileNumber(this.account.mobileNumber); },
-			invalidStreet() { return Validation.methods.invalidStreet(this.address.street); },
-			invalidHouseNumber() { return Validation.methods.invalidHouseNumber(this.address.houseNumber); },
-			invalidCity() { return Validation.methods.invalidCity(this.address.city); },
-			invalidZipCode() { return Validation.methods.invalidZipCode(this.address.zipCode); },
-			invalidCountry() { return Validation.methods.invalidCountry(this.address.country); },
-            invalidPassword() { return Validation.methods.invalidPassword(this.account.password); }
+			invalidEmail() { return validation.methods.invalidEmail(this.account.email); },
+			invalidFirstName() { return validation.methods.invalidFirstName(this.account.firstName); },
+			invalidLastName() { return validation.methods.invalidLastName(this.account.lastName); },
+			invalidMobileNumber() { return validation.methods.invalidMobileNumber(this.account.mobileNumber); },
+			invalidStreet() { return validation.methods.invalidStreet(this.address.street); },
+			invalidHouseNumber() { return validation.methods.invalidHouseNumber(this.address.houseNumber); },
+			invalidCity() { return validation.methods.invalidCity(this.address.city); },
+			invalidZipCode() { return validation.methods.invalidZipCode(this.address.zipCode); },
+			invalidCountry() { return validation.methods.invalidCountry(this.address.country); },
+            invalidPassword() { return validation.methods.invalidPassword(this.account.password); }
 		},
         created() {
             this.getUser();

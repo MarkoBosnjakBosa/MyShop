@@ -132,15 +132,15 @@
 <script>
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
-	import Navigation from "@/components/Navigation.vue";
-	import Validation from "@/components/Validation.vue"; 
-	import Helper from "@/components/Helper.vue"; 
+	import navigation from "@/components/Navigation.vue";
+	import validation from "@/components/Validation.vue"; 
+	import helper from "@/components/Helper.vue"; 
 	var axios = require("axios");
 
 	export default {
 		name: "registration",
 		components: {
-            Navigation
+            navigation
         },
 		data() {
 			return {
@@ -297,10 +297,10 @@
 				this.reCaptchaTokenError = false;
 			},
             togglePassword() {
-				Helper.methods.togglePassword();
+				helper.methods.togglePassword();
 			},
 			toggleTab(tab) {
-                Helper.methods.toggleTab(tab);
+                helper.methods.toggleTab(tab);
 			},
 			closeRegistrationAlert() {
 				this.userCreated = false;
@@ -312,17 +312,17 @@
 			document.head.appendChild(reCaptchaScript);
 		},
         computed: {
-			invalidUsername() { return Validation.methods.invalidUsername(this.user.username); },
-			invalidEmail() { return Validation.methods.invalidEmail(this.user.email); },
-			invalidPassword() { return Validation.methods.invalidPassword(this.user.password); },
-			invalidFirstName() { return Validation.methods.invalidFirstName(this.user.firstName); },
-			invalidLastName() { return Validation.methods.invalidLastName(this.user.lastName); },
-			invalidMobileNumber() { return Validation.methods.invalidMobileNumber(this.user.mobileNumber); },
-			invalidStreet() { return Validation.methods.invalidStreet(this.user.street); },
-			invalidHouseNumber() { return Validation.methods.invalidHouseNumber(this.user.houseNumber); },
-			invalidCity() { return Validation.methods.invalidCity(this.user.city); },
-			invalidZipCode() { return Validation.methods.invalidZipCode(this.user.zipCode); },
-			invalidCountry() { return Validation.methods.invalidCountry(this.user.country); }
+			invalidUsername() { return validation.methods.invalidUsername(this.user.username); },
+			invalidEmail() { return validation.methods.invalidEmail(this.user.email); },
+			invalidPassword() { return validation.methods.invalidPassword(this.user.password); },
+			invalidFirstName() { return validation.methods.invalidFirstName(this.user.firstName); },
+			invalidLastName() { return validation.methods.invalidLastName(this.user.lastName); },
+			invalidMobileNumber() { return validation.methods.invalidMobileNumber(this.user.mobileNumber); },
+			invalidStreet() { return validation.methods.invalidStreet(this.user.street); },
+			invalidHouseNumber() { return validation.methods.invalidHouseNumber(this.user.houseNumber); },
+			invalidCity() { return validation.methods.invalidCity(this.user.city); },
+			invalidZipCode() { return validation.methods.invalidZipCode(this.user.zipCode); },
+			invalidCountry() { return validation.methods.invalidCountry(this.user.country); }
 		}
 	}
 </script>

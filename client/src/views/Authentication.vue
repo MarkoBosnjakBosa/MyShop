@@ -26,15 +26,15 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
-    import Navigation from "@/components/Navigation.vue";
-    import Validation from "@/components/Validation.vue";
-    import Route from "@/components/Route.vue";
+    import navigation from "@/components/Navigation.vue";
+    import validation from "@/components/Validation.vue";
+    import route from "@/components/Route.vue";
     var axios = require("axios");
 	
     export default {
         name: "authentication",
         components: {
-            Navigation
+            navigation
         },
         data() {
             return {
@@ -60,7 +60,7 @@
                         const isAdmin = response.data.isAdmin;
                         this.$store.dispatch("login", {token, user, isAdmin});
                         this.$store.dispatch("clearAuthentication");
-                        Route.methods.openHome();
+                        route.methods.openHome();
                     } else {
                         this.authenticationTokenError = true;
                     }
@@ -69,7 +69,7 @@
             clearAuthenticationTokenStatus() { this.authenticationTokenError = false; }
         },
         computed: {
-            invalidAuthenticationToken() { return Validation.methods.invalidAuthenticationToken(this.authenticationToken); }
+            invalidAuthenticationToken() { return validation.methods.invalidAuthenticationToken(this.authenticationToken); }
         }
     }
 </script>

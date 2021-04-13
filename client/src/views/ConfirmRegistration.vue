@@ -18,14 +18,14 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
-    import Navigation from "@/components/Navigation.vue";
-    import Route from "@/components/Route.vue"; 
+    import navigation from "@/components/Navigation.vue";
+    import route from "@/components/Route.vue"; 
     var axios = require("axios");
 
     export default {
         name: "confirmRegistration",
         components: {
-            Navigation
+            navigation
         },
         data() {
             return {
@@ -49,7 +49,7 @@
                 }).catch(error => console.log(error));
             },
             openLogin() {
-                Route.methods.openLogin();
+                route.methods.openLogin();
             }
         },
         mounted() {

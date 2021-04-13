@@ -37,16 +37,16 @@
 <script>
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
-	import Navigation from "@/components/Navigation.vue"; 
-	import Validation from "@/components/Validation.vue";
-	import Helper from "@/components/Helper.vue"; 
-	import Route from "@/components/Route.vue"; 
+	import navigation from "@/components/Navigation.vue"; 
+	import validation from "@/components/Validation.vue";
+	import helper from "@/components/Helper.vue"; 
+	import route from "@/components/Route.vue"; 
 	var axios = require("axios");
 	
 	export default {
 		name: "login",
 		components: {
-            Navigation
+            navigation
         },
 		data() {
 			return {
@@ -99,7 +99,7 @@
 						this.usernameError = false, this.passwordError = false, this.noPasswordMatch = false, this.submitting = false;
 						const username = response.data.username;
 						this.$store.dispatch("authenticate", {username});
-						Route.method.openAuthentication();
+						route.method.openAuthentication();
 					} else {
 						if(response.data.valid) {
 							this.user = {username: "", password: ""};
@@ -108,7 +108,7 @@
 							const user = response.data.user;
 							const isAdmin = response.data.isAdmin;
 							this.$store.dispatch("login", {token, user, isAdmin});
-							Route.method.openLogin();
+							route.method.openLogin();
 						} else {
 							if(response.data.allowed) {
 								this.noPasswordMatch = true;
@@ -123,23 +123,23 @@
 				}).catch(error => console.log(error));
 			},
 			openForgotCredentials() {
-				Route.method.openForgotCredentials();
+				route.method.openForgotCredentials();
 			},
 			openRegistration() {
-				Route.method.openRegistration();
+				route.method.openRegistration();
 			},
 			clearUsernameStatus() { this.usernameError = false; },
 			clearPasswordStatus() { this.passwordError = false; },
 			togglePassword() {
-				Helper.methods.togglePassword();
+				helper.methods.togglePassword();
 			}
 		},
 		computed: {
 			invalidUsername: function() {
-				return Validation.methods.invalidUsername(this.user.username);
+				return validation.methods.invalidUsername(this.user.username);
 			},
 			invalidPassword() {
-				return Validation.methods.invalidPassword(this.user.password);
+				return validation.methods.invalidPassword(this.user.password);
 			}
 		}
 	}

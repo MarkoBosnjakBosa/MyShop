@@ -10,13 +10,13 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
-    import Route from "@/components/Route.vue";
+    import route from "@/components/Route.vue";
 
     export default {
         name: "pageNotFound",
         methods: {
             openLogin() {
-                Route.methods.openLogin();
+                route.methods.openLogin();
             }
         }
     }
