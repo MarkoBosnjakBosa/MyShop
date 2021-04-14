@@ -24,6 +24,14 @@
                     Enable 2fa authentication.<br>
                     SMS authentication will be required, when logging in.
                 </small>
+                <form autocomplete="off" @submit.prevent="testAuthenticationToken()">
+                    <div class="input-group">
+                        <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : newMessageError}" placeholder="New message..." v-model="authenticationTestToken" @focus="clearNewMessageStatus()" @keypress="clearNewMessageStatus()"/>
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
             </div>
 		</div>
 	</div>
@@ -43,7 +51,8 @@
 		data() {
 			return {
                 username: this.$store.getters.getUser,
-                authenticationEnabled: false
+                authenticationEnabled: false,
+                authenticationTestToken: ""
 			}
 		},
         methods: {
@@ -57,7 +66,13 @@
                 axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/setAuthentication/", body).then(response => {
                     this.authenticationEnabled = response.data.authenticationEnabled;
                 }).catch(error => console.log(error));
-            }
+            },
+            testAuthenticationToken() {
+                var body = {username: this.username, authenticationTestToken: this.authenticationTestToken};
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/testAuthenticationToken/", body).then(response => {
+                    this.authenticationEnabled = response.data.authenticationEnabled;
+                }).catch(error => console.log(error));
+            },
         },
         created() {
             this.getAuthentication();

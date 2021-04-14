@@ -123,10 +123,10 @@
 				}).catch(error => console.log(error));
 			},
 			openForgotCredentials() {
-				route.method.openForgotCredentials();
+				route.methods.openForgotCredentials();
 			},
 			openRegistration() {
-				route.method.openRegistration();
+				route.methods.openRegistration();
 			},
 			clearUsernameStatus() { this.usernameError = false; },
 			clearPasswordStatus() { this.passwordError = false; },

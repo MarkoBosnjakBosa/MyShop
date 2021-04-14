@@ -31,19 +31,6 @@
                         document.getElementById("checkNavTab").click();
                         break;
                 }
-			},
-            closeAlert(type) {
-                switch (type) {
-                    case "account":
-                        this.accountEdited = false;
-                        break;
-                    case "address":
-                        this.addressEdited = false;
-                        break;
-                    case "resetPassword":
-                        this.passwordReset = false;
-                        break;
-                }
 			}
         }
     }
