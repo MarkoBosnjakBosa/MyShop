@@ -1,4 +1,4 @@
-module.exports = function(app, models) {
+module.exports = function(app, models, smsEvent) {
     const User = models.User;
     app.get("/getAuthentication/:username", (request, response) => {
         var username = request.params.username;
@@ -13,25 +13,34 @@ module.exports = function(app, models) {
         var query = {username: username};
         var update = {};
         if(authenticationEnabled) {
-            var authenticationTestToken = Math.floor(100000 + Math.random() * 900000);
-            update = {authenticationTestToken: authenticationTestToken};
-            User.findOneAndUpdate(query, update, {new: true}).then(user => {
-                //smsEvent.emit("sendAuthenticationTestseToken", updatedUser.mobileNumber, updatedUser.firstName, updatedUser.authenticationToken);
-                response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: user.username, isAdmin: updatedUser.isAdmin}).end();
+            User.findOne(query).then(user => {
+                var authenticationEnablingToken = request.body.authenticationEnablingToken;
+                if(authenticationEnablingToken == user.authenticationEnablingToken) {
+                    update = {authenticationEnabled: authenticationEnabled, authenticationEnablingToken: ""};
+                    User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
+                        response.status(200).json({valid: true, authenticationEnabled: updatedUser.authenticationEnabled}).end();
+                    }).catch(error => console.log(error));
+                }
+                else {
+                    var errorFields = ["authenticationEnablingToken"];
+                    response.status(200).json({valid: false, errorFields: errorFields}).end();
+                }
             }).catch(error => console.log(error));
         } else {
             update = {authenticationEnabled: authenticationEnabled};
             User.findOneAndUpdate(query, update, {new: true}).then(user => {
-                response.status(200).json({authenticationEnabled: user.authenticationEnabled}).end();
+                response.status(200).json({valid: true, authenticationEnabled: user.authenticationEnabled}).end();
             }).catch(error => console.log(error));
         }
     });
-    app.put("/confirmAuthentication", (request, response) => {
+    app.put("/sendAuthenticationEnablingToken", (request, response) => {
         var username = request.body.username;
         var query = {username: username};
-        var update = {authenticationEnabled: authenticationEnabled};
+        var authenticationEnablingToken = Math.floor(100000 + Math.random() * 900000);
+        var update = {authenticationEnablingToken: authenticationEnablingToken};
         User.findOneAndUpdate(query, update, {new: true}).then(user => {
-            response.status(200).json({authenticationEnabled: user.authenticationEnabled}).end();
+            //smsEvent.emit("sendAuthenticationEnablingToken", user.mobileNumber, user.firstName, user.authenticationEnablingToken);
+            response.status(200).json({authenticationEnablingTokenSent: true}).end();
         }).catch(error => console.log(error));
     });
 }

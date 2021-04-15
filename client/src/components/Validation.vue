@@ -56,7 +56,7 @@
 			},
 			invalidCountry(country) { return country === ""; },
 			invalidAuthenticationToken(authenticationToken) { 
-				var authenticationToken = /\d{6}/;
+				var authenticationTokenFormat = /\d{6}/;
 				if(authenticationToken != "" && authenticationTokenFormat.test(authenticationToken)) {
 					return false;
 				} else {

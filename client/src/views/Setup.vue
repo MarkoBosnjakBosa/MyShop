@@ -12,26 +12,32 @@
                 <hr>
             </div>
             <div v-if="authenticationEnabled">
-                <small class="form-text">
+                <p>
                     Disable 2fa authentication.<br>
                     SMS authentication will not be required, when logging in.
-                </small>
+                </p>
                 <button type="button" class="btn btn-danger" @click="setAuthentication(false)">Disable authentication</button>
             </div>
             <div v-else>
-                <small class="form-text">
+                <p>
                     Enable 2fa authentication.<br>
                     SMS authentication will be required, when logging in.
-                </small>
-                <button type="button" class="btn btn-primary" @click="setAuthentication(true)">Enable authentication</button>
-                <form autocomplete="off" @submit.prevent="verifyAuthentication()">
+                </p>
+                <p>
+                    <button type="button" class="btn btn-primary" @click="sendAuthenticationEnablingToken()">Send token</button>
+                    <small v-if="authenticationEnablingTokenSent" class="form-text authenticationEnablingTokenSent">
+                        Authentication token has been sent to your mobile phone.<br>
+                        Insert the token and enable the authentication.
+                    </small>
+                </p>
+                <form autocomplete="off" @submit.prevent="setAuthentication(true)">
                     <div class="input-group">
-                        <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : authenticationTestTokenError}" placeholder="Authentication test token" v-model="authenticationTestToken" @focus="clearAuthenticationTestTokenStatus()" @keypress="clearAuthenticationTestTokenStatus()"/>
+                        <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : authenticationEnablingTokenError}" placeholder="Authentication token" v-model="authenticationEnablingToken" @focus="clearAuthenticationEnablingTokenStatus()" @keypress="clearAuthenticationEnablingTokenStatus()"/>
                         <div class="input-group-append">
-                            <button type="submit" class="btn btn-primary">Verify</button>
+                            <button type="submit" class="btn btn-primary">Enable</button>
                         </div>
                     </div>
-                    <small v-if="authenticationTestTokenError" class="form-text errorInput">Please provide a valid authentication test token!</small>
+                    <small v-if="authenticationEnablingTokenError" class="form-text errorInput">Please provide a valid authentication token!</small>
                 </form>
             </div>
 		</div>
@@ -42,6 +48,7 @@
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
 	import navigation from "@/components/Navigation.vue"; 
+    import validation from "@/components/Validation.vue";
 	var axios = require("axios");
 	
 	export default {
@@ -53,8 +60,9 @@
 			return {
                 username: this.$store.getters.getUser,
                 authenticationEnabled: false,
-                authenticationTestTokenError: false,
-                authenticationTestToken: ""
+                authenticationEnablingTokenError: false,
+                authenticationEnablingToken: "",
+                authenticationEnablingTokenSent: false
 			}
 		},
         methods: {
@@ -64,26 +72,38 @@
                 }).catch(error => console.log(error));
             },
             setAuthentication(authenticationEnabled) {
-                var body = {username: this.username, authenticationEnabled: authenticationEnabled};
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/setAuthentication", body).then(response => {
-                    this.authenticationEnabled = response.data.authenticationEnabled;
-                }).catch(error => console.log(error));
-            },
-            verifyAuthentication() {
-                this.clearAuthenticationTokenStatus();
-                if(this.invalidAuthenticationTestToken) {
-                    this.authenticationTestTokenError = true;
-                    return;
+                var body = {};
+                if(authenticationEnabled) {
+                    this.clearAuthenticationEnablingTokenStatus();
+                    if(this.invalidAuthenticationEnablingToken) {
+                        this.authenticationEnablingTokenError = true;
+                        return;
+                    }
+                    body = {username: this.username, authenticationEnabled: authenticationEnabled, authenticationEnablingToken: this.authenticationEnablingToken};
+                } else {
+                    body = {username: this.username, authenticationEnabled: authenticationEnabled};
                 }
-                var body = {username: this.username, authenticationTestToken: this.authenticationTestToken};
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/verifyAuthentication", body).then(response => {
-                    this.authenticationEnabled = response.data.authenticationEnabled;
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/setAuthentication", body).then(response => {
+                    if(response.data.valid) {
+                        this.authenticationEnabled = response.data.authenticationEnabled;
+                        this.authenticationEnablingToken = "";
+                        this.authenticationEnablingTokenError = false, this.authenticationEnablingTokenSent = false;
+                    } else {
+                        var errorFields = response.data.errorFields;
+                        if(errorFields.includes("authenticationEnablingToken")) this.authenticationEnablingTokenError = true;
+                    }
                 }).catch(error => console.log(error));
             },
-            clearAuthenticationTestTokenStatus() { this.authenticationTestTokenError = false; }
+            sendAuthenticationEnablingToken() {
+                var body = {username: this.username};
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/sendAuthenticationEnablingToken", body).then(response => {
+                    this.authenticationEnablingTokenSent = response.data.authenticationEnablingTokenSent;
+                }).catch(error => console.log(error));
+            },
+            clearAuthenticationEnablingTokenStatus() { this.authenticationEnablingTokenError = false; }
         },
         computed: {
-            invalidAuthenticationTestToken() { return validation.methods.invalidAuthenticationToken(this.authenticationTestToken); }
+            invalidAuthenticationEnablingToken() { return validation.methods.invalidAuthenticationToken(this.authenticationEnablingToken); }
         },
         created() {
             this.getAuthentication();
@@ -94,7 +114,7 @@
 <style scoped>
 	.setupDialog {
 		margin: 0 auto;
-		max-width: 400px;
+		max-width: 450px;
 	}
 	.setupTitle {
 		margin-top: 20px;
@@ -102,6 +122,9 @@
     .badge {
         float: right;
     }
+    .authenticationEnablingTokenSent {
+		color: #008000;
+	}
     .errorField {
         border: 1px solid #ff0000;
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;

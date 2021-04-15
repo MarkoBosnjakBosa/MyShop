@@ -15,7 +15,7 @@ module.exports = function(mongoose) {
 		acceptanceToken: {type: String, required: true},
         authenticationEnabled: {type: Boolean, required: true},
         authenticationToken: {type: String},
-		authenticationTestToken: {type: String, expires: 120},
+		authenticationEnablingToken: {type: String, expires: 120},
 		isAdmin: {type: Boolean, required: true}
 	});
     const models = {

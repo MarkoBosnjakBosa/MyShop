@@ -108,7 +108,7 @@
 							const user = response.data.user;
 							const isAdmin = response.data.isAdmin;
 							this.$store.dispatch("login", {token, user, isAdmin});
-							route.methods.openLogin();
+							route.methods.openHome();
 						} else {
 							if(response.data.allowed) {
 								this.noPasswordMatch = true;

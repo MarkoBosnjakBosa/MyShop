@@ -79,8 +79,9 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation, reCaptc
                     var acceptanceToken = Math.floor(100000 + Math.random() * 900000);
                     var authenticationEnabled = true;
                     var authenticationToken = "";
+                    var authenticationEnablingToken = "";
                     var isAdmin = false;
-                    var newUser = getUserScheme(User, username, email, password, firstName, lastName, mobileNumber, street, houseNumber, city, zipCode, country, accepted, acceptanceToken, authenticationEnabled, authenticationToken, isAdmin);
+                    var newUser = getUserScheme(User, username, email, password, firstName, lastName, mobileNumber, street, houseNumber, city, zipCode, country, accepted, acceptanceToken, authenticationEnabled, authenticationToken, authenticationEnablingToken, isAdmin);
                     bcryptjs.genSalt(10, (error, salt) => {
                         bcryptjs.hash(newUser.password, salt, (error, hashedPassword) => {
                             newUser.password = hashedPassword;
@@ -110,7 +111,7 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation, reCaptc
 		}).catch(error => console.log(error));
 	});
 
-    function getUserScheme(User, username, email, password, firstName, lastName, mobileNumber, street, houseNumber, city, zipCode, country, accepted, acceptanceToken, authenticationEnabled, authenticationToken, isAdmin) {
-		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, mobileNumber: mobileNumber, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, accepted: accepted, acceptanceToken: acceptanceToken, authenticationEnabled: authenticationEnabled, authenticationToken: authenticationToken, isAdmin: isAdmin});
+    function getUserScheme(User, username, email, password, firstName, lastName, mobileNumber, street, houseNumber, city, zipCode, country, accepted, acceptanceToken, authenticationEnabled, authenticationToken, authenticationEnablingToken, isAdmin) {
+		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, mobileNumber: mobileNumber, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, accepted: accepted, acceptanceToken: acceptanceToken, authenticationEnabled: authenticationEnabled, authenticationToken: authenticationToken, authenticationEnablingToken: authenticationEnablingToken, isAdmin: isAdmin});
 	}
 }
