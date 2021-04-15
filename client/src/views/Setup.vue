@@ -12,25 +12,26 @@
                 <hr>
             </div>
             <div v-if="authenticationEnabled">
-                <button type="button" class="btn btn-danger" @click="setAuthentication(false)">Disable authentication</button>
                 <small class="form-text">
                     Disable 2fa authentication.<br>
                     SMS authentication will not be required, when logging in.
                 </small>
+                <button type="button" class="btn btn-danger" @click="setAuthentication(false)">Disable authentication</button>
             </div>
             <div v-else>
-                <button type="button" class="btn btn-primary" @click="setAuthentication(true)">Enable authentication</button>
                 <small class="form-text">
                     Enable 2fa authentication.<br>
                     SMS authentication will be required, when logging in.
                 </small>
-                <form autocomplete="off" @submit.prevent="testAuthenticationToken()">
+                <button type="button" class="btn btn-primary" @click="setAuthentication(true)">Enable authentication</button>
+                <form autocomplete="off" @submit.prevent="verifyAuthentication()">
                     <div class="input-group">
-                        <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : newMessageError}" placeholder="New message..." v-model="authenticationTestToken" @focus="clearNewMessageStatus()" @keypress="clearNewMessageStatus()"/>
+                        <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : authenticationTestTokenError}" placeholder="Authentication test token" v-model="authenticationTestToken" @focus="clearAuthenticationTestTokenStatus()" @keypress="clearAuthenticationTestTokenStatus()"/>
                         <div class="input-group-append">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">Verify</button>
                         </div>
                     </div>
+                    <small v-if="authenticationTestTokenError" class="form-text errorInput">Please provide a valid authentication test token!</small>
                 </form>
             </div>
 		</div>
@@ -52,6 +53,7 @@
 			return {
                 username: this.$store.getters.getUser,
                 authenticationEnabled: false,
+                authenticationTestTokenError: false,
                 authenticationTestToken: ""
 			}
 		},
@@ -63,16 +65,25 @@
             },
             setAuthentication(authenticationEnabled) {
                 var body = {username: this.username, authenticationEnabled: authenticationEnabled};
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/setAuthentication/", body).then(response => {
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/setAuthentication", body).then(response => {
                     this.authenticationEnabled = response.data.authenticationEnabled;
                 }).catch(error => console.log(error));
             },
-            testAuthenticationToken() {
+            verifyAuthentication() {
+                this.clearAuthenticationTokenStatus();
+                if(this.invalidAuthenticationTestToken) {
+                    this.authenticationTestTokenError = true;
+                    return;
+                }
                 var body = {username: this.username, authenticationTestToken: this.authenticationTestToken};
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/testAuthenticationToken/", body).then(response => {
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/verifyAuthentication", body).then(response => {
                     this.authenticationEnabled = response.data.authenticationEnabled;
                 }).catch(error => console.log(error));
             },
+            clearAuthenticationTestTokenStatus() { this.authenticationTestTokenError = false; }
+        },
+        computed: {
+            invalidAuthenticationTestToken() { return validation.methods.invalidAuthenticationToken(this.authenticationTestToken); }
         },
         created() {
             this.getAuthentication();
@@ -90,5 +101,12 @@
 	}
     .badge {
         float: right;
+    }
+    .errorField {
+        border: 1px solid #ff0000;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;
+    }
+    .errorInput {
+        color: #ff0000;
     }
 </style>

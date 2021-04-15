@@ -99,7 +99,7 @@
 						this.usernameError = false, this.passwordError = false, this.noPasswordMatch = false, this.submitting = false;
 						const username = response.data.username;
 						this.$store.dispatch("authenticate", {username});
-						route.method.openAuthentication();
+						route.methods.openAuthentication();
 					} else {
 						if(response.data.valid) {
 							this.user = {username: "", password: ""};
@@ -108,7 +108,7 @@
 							const user = response.data.user;
 							const isAdmin = response.data.isAdmin;
 							this.$store.dispatch("login", {token, user, isAdmin});
-							route.method.openLogin();
+							route.methods.openLogin();
 						} else {
 							if(response.data.allowed) {
 								this.noPasswordMatch = true;

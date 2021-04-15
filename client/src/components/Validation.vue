@@ -55,7 +55,14 @@
 				}
 			},
 			invalidCountry(country) { return country === ""; },
-			invalidAuthenticationToken(authenticationToken) { return authenticationToken === ""; }
+			invalidAuthenticationToken(authenticationToken) { 
+				var authenticationToken = /\d{6}/;
+				if(authenticationToken != "" && authenticationTokenFormat.test(authenticationToken)) {
+					return false;
+				} else {
+					return true;
+				} 
+			}
         }
     }
 </script>
