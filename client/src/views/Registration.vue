@@ -306,11 +306,6 @@
 				this.userCreated = false;
 			}
         },
-		mounted() {
-			var reCaptchaScript = document.createElement("script");
-			reCaptchaScript.setAttribute("src", "https://www.google.com/recaptcha/api.js");
-			document.head.appendChild(reCaptchaScript);
-		},
         computed: {
 			invalidUsername() { return validation.methods.invalidUsername(this.user.username); },
 			invalidEmail() { return validation.methods.invalidEmail(this.user.email); },
@@ -323,6 +318,11 @@
 			invalidCity() { return validation.methods.invalidCity(this.user.city); },
 			invalidZipCode() { return validation.methods.invalidZipCode(this.user.zipCode); },
 			invalidCountry() { return validation.methods.invalidCountry(this.user.country); }
+		},
+		mounted() {
+			var reCaptchaScript = document.createElement("script");
+			reCaptchaScript.setAttribute("src", "https://www.google.com/recaptcha/api.js");
+			document.head.appendChild(reCaptchaScript);
 		}
 	}
 </script>

@@ -1,4 +1,4 @@
-module.exports = function(app, bcryptjs, models, emailEvent, validation, reCaptchav2SecretKey, axios) {
+module.exports = function(app, bcryptjs, models, emailEvent, validation, reCaptcha_v2_SecretKey, axios) {
     const User = models.User;
     app.post("/createUser", (request, response) => {
         var allowRegistration = true;
@@ -59,7 +59,7 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation, reCaptc
             allowRegistration = false;
         }
         var reCaptchaToken = request.body.reCaptchaToken;
-        if(validation.invalidReCaptchaToken(reCaptchav2SecretKey, axios, reCaptchaToken, request.connection.remoteAddress)) {
+        if(validation.invalidReCaptchaToken(reCaptcha_v2_SecretKey, axios, reCaptchaToken, request.connection.remoteAddress)) {
             errorFields.push("reCaptchaToken");
             allowRegistration = false;
         }

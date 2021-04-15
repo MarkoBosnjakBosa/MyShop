@@ -46,11 +46,11 @@ function invalidZipCode(zipCode) {
         return true;
     }
 }
-function invalidReCaptchaToken(reCaptchav2SecretKey, axios, reCaptchaToken, remoteIp) {
+function invalidReCaptchaToken(reCaptcha_v2_SecretKey, axios, reCaptchaToken, remoteIp) {
     if(reCaptchaToken == "" || reCaptchaToken == undefined || reCaptchaToken == null) {
         return true;
     } else {
-        var reCaptchaVerificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + reCaptchav2SecretKey + "&response=" + reCaptchaToken + "&remoteip=" + remoteIp;
+        var reCaptchaVerificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + reCaptcha_v2_SecretKey + "&response=" + reCaptchaToken + "&remoteip=" + remoteIp;
         axios.get(reCaptchaVerificationUrl).then(reCaptchaResponse => {
             if(reCaptchaResponse.data.success) {
                 return false;
