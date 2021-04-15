@@ -47,8 +47,9 @@
 <script>
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
-	import navigation from "@/components/Navigation.vue"; 
-    import validation from "@/components/Validation.vue";
+    import checkLogin from "../components/CheckLogin.vue";
+	import navigation from "../components/Navigation.vue"; 
+    import validation from "../components/Validation.vue";
 	var axios = require("axios");
 	
 	export default {
@@ -106,6 +107,7 @@
             invalidAuthenticationEnablingToken() { return validation.methods.invalidAuthenticationToken(this.authenticationEnablingToken); }
         },
         created() {
+            checkLogin.methods.isLoggedIn();
             this.getAuthentication();
         }
     }

@@ -7,7 +7,7 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
-    import Navigation from "@/components/Navigation.vue"; 
+    import Navigation from "../components/Navigation.vue"; 
     var axios = require("axios");
 
     export default {

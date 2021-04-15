@@ -143,9 +143,10 @@
 <script>
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
-	import navigation from "@/components/Navigation.vue";
-	import validation from "@/components/Validation.vue";
-	import helper from "@/components/Helper.vue";
+	import checkLogin from "../components/CheckLogin.vue";
+	import navigation from "../components/Navigation.vue";
+	import validation from "../components/Validation.vue";
+	import helper from "../components/Helper.vue";
 	var axios = require("axios");
 	
 	export default {
@@ -352,6 +353,7 @@
             invalidPassword() { return validation.methods.invalidPassword(this.account.password); }
 		},
         created() {
+			checkLogin.methods.isLoggedIn();
             this.getUser();
         }
 	}

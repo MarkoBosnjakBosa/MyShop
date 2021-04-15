@@ -84,7 +84,7 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation) {
 			request.userData = decodedToken;
 			response.status(200).json({loggedIn: true}).end();
 		} catch(error) {
-			response.status(401).json({loggedIn: false}).end();
+			response.status(200).json({loggedIn: false}).end();
 		}
 	});
 }

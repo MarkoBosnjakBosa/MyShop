@@ -34,8 +34,8 @@
 </template>
 
 <script>
-    import checkLogin from "@/components/CheckLogin.vue";
-    import route from "@/components/Route.vue";
+    import checkLogin from "../components/CheckLogin.vue";
+    import route from "../components/Route.vue";
 
     export default {
         name: "navigation",

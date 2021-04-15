@@ -10,7 +10,7 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
-    import route from "@/components/Route.vue";
+    import route from "../components/Route.vue";
 
     export default {
         name: "pageNotFound",

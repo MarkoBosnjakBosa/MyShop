@@ -37,10 +37,10 @@
 <script>
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
-	import navigation from "@/components/Navigation.vue"; 
-	import validation from "@/components/Validation.vue";
-	import helper from "@/components/Helper.vue"; 
-	import route from "@/components/Route.vue"; 
+	import navigation from "../components/Navigation.vue"; 
+	import validation from "../components/Validation.vue";
+	import helper from "../components/Helper.vue"; 
+	import route from "../components/Route.vue"; 
 	var axios = require("axios");
 	
 	export default {
