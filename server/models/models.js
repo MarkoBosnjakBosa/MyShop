@@ -12,14 +12,31 @@ module.exports = function(mongoose) {
         zipCode: {type: Number, required: true},
         country: {type: String, required: true},
 		accepted: {type: Boolean, required: true},
-		acceptanceToken: {type: String, required: true},
+		acceptanceToken: {type: String},
         authenticationEnabled: {type: Boolean, required: true},
         authenticationToken: {type: String},
-		authenticationEnablingToken: {type: String, expires: 120},
+		authenticationEnablingToken: {type: String},
 		isAdmin: {type: Boolean, required: true}
 	});
+	const productScheme = new mongoose.Schema({
+		title: {type: String, required: true},
+		description: {type: String, required: true},
+		price: {type: Number, required: true},
+		categoryId: {type: Number, required: true},
+		technicalData: {type: Array, required: true},
+        review: {type: String}
+	});
+	const technicalDataScheme = new mongoose.Schema({
+		title: {type: String, required: true}
+	});
+	const categoryScheme = new mongoose.Schema({
+		title: {type: String, required: true}
+	});
     const models = {
-		User: mongoose.model("User", userScheme)
+		User: mongoose.model("User", userScheme),
+		Product: mongoose.model("Product", productScheme),
+		TechnicalData: mongoose.model("TechnicalData", technicalDataScheme),
+		Category: mongoose.model("Category", categoryScheme)
 	}
 	return models;
 }

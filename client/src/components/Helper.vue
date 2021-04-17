@@ -31,7 +31,17 @@
                         document.getElementById("checkNavTab").click();
                         break;
                 }
-			}
+			},
+            toggleSidebar() {
+                var bars = document.getElementById("barsDiv");
+                var toggleSidebar = document.getElementById("toggleSidebar");
+                bars.classList.toggle("toggled");
+                if(bars.classList.contains("toggled")) {
+                    toggleSidebar.innerHTML = "<i class='fas fa-angle-double-right'></i>";
+                } else {
+                    toggleSidebar.innerHTML = "<i class='fas fa-angle-double-left'></i>";
+                }
+            }
         }
     }
 </script>

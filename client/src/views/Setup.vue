@@ -1,46 +1,51 @@
 <template>
 	<div id="setup" class="container-fluid">
-		<navigation></navigation>
-		<div class="setupDialog">
-            <div class="setupTitle">
-                <h1>Setup</h1>
-                <p>
-                    <span>Enable / disable authentication.</span>
-                    <span v-if="authenticationEnabled" class="badge bg-primary text-light">Enabled</span>
-                    <span v-else class="badge bg-danger text-light">Disabled</span>
-                </p>
-                <hr>
-            </div>
-            <div v-if="authenticationEnabled">
-                <p>
-                    Disable 2fa authentication.<br>
-                    SMS authentication will not be required, when logging in.
-                </p>
-                <button type="button" class="btn btn-danger" @click="setAuthentication(false)">Disable authentication</button>
-            </div>
-            <div v-else>
-                <p>
-                    Enable 2fa authentication.<br>
-                    SMS authentication will be required, when logging in.
-                </p>
-                <p>
-                    <button type="button" class="btn btn-primary" @click="sendAuthenticationEnablingToken()">Send token</button>
-                    <small v-if="authenticationEnablingTokenSent" class="form-text authenticationEnablingTokenSent">
-                        Authentication token has been sent to your mobile phone.<br>
-                        Insert the token and enable the authentication.
-                    </small>
-                </p>
-                <form autocomplete="off" @submit.prevent="setAuthentication(true)">
-                    <div class="input-group">
-                        <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : authenticationEnablingTokenError}" placeholder="Authentication token" v-model="authenticationEnablingToken" @focus="clearAuthenticationEnablingTokenStatus()" @keypress="clearAuthenticationEnablingTokenStatus()"/>
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-primary">Enable</button>
-                        </div>
+        <div class="d-flex" id="barsDiv">
+			<sidebar></sidebar>
+            <div id="pageDiv">
+                <navigation></navigation>
+                <div class="setupDialog">
+                    <div class="setupTitle">
+                        <h1>Setup</h1>
+                        <p>
+                            <span>Enable / disable authentication.</span>
+                            <span v-if="authenticationEnabled" class="badge bg-primary text-light">Enabled</span>
+                            <span v-else class="badge bg-danger text-light">Disabled</span>
+                        </p>
+                        <hr>
                     </div>
-                    <small v-if="authenticationEnablingTokenError" class="form-text errorInput">Please provide a valid authentication token!</small>
-                </form>
+                    <div v-if="authenticationEnabled">
+                        <p>
+                            Disable 2fa authentication.<br>
+                            SMS authentication will not be required, when logging in.
+                        </p>
+                        <button type="button" class="btn btn-danger" @click="setAuthentication(false)">Disable authentication</button>
+                    </div>
+                    <div v-else>
+                        <p>
+                            Enable 2fa authentication.<br>
+                            SMS authentication will be required, when logging in.
+                        </p>
+                        <p>
+                            <button type="button" class="btn btn-primary" @click="sendAuthenticationEnablingToken()">Send token</button>
+                            <small v-if="authenticationEnablingTokenSent" class="form-text authenticationEnablingTokenSent">
+                                Authentication token has been sent to your mobile phone.<br>
+                                Insert the token and enable the authentication.
+                            </small>
+                        </p>
+                        <form autocomplete="off" @submit.prevent="setAuthentication(true)">
+                            <div class="input-group">
+                                <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : authenticationEnablingTokenError}" placeholder="Authentication token" v-model="authenticationEnablingToken" @focus="clearAuthenticationEnablingTokenStatus()" @keypress="clearAuthenticationEnablingTokenStatus()"/>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">Enable</button>
+                                </div>
+                            </div>
+                            <small v-if="authenticationEnablingTokenError" class="form-text errorInput">Please provide a valid authentication token!</small>
+                        </form>
+                    </div>
+                </div>
             </div>
-		</div>
+        </div>
 	</div>
 </template>
 
@@ -48,14 +53,16 @@
 	import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
     import checkLogin from "../components/CheckLogin.vue";
-	import navigation from "../components/Navigation.vue"; 
+	import navigation from "../components/Navigation.vue";
+    import sidebar from "../components/Sidebar.vue";  
     import validation from "../components/Validation.vue";
 	var axios = require("axios");
 	
 	export default {
 		name: "setup",
 		components: {
-            navigation
+            navigation,
+            sidebar
         },
 		data() {
 			return {

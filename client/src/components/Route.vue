@@ -32,6 +32,15 @@
             openAuthentication() {
                 router.push("/authentication");
             },
+            openProducts() {
+                router.push("/products");
+            },
+            openCategories() {
+                router.push("/categories");
+            },
+            openTechnicalData() {
+                router.push("/technical/data");
+            },
             logout() {
                 store.dispatch("logout");
                 router.push("/login");

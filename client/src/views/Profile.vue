@@ -1,141 +1,146 @@
 <template>
 	<div id="profile" class="container-fluid">
-		<navigation></navigation>
-		<div class="profileForm">
-            <div class="profileTitle">
-                <h1>Profile</h1>
-                <p>Here you can edit your account's information.</p>
-                <hr>
-            </div>
-            <ul class="nav nav-tabs">
-                <li class="nav-item"><a id="accountNavTab"  data-toggle="tab" href="#accountTab" class="nav-link active">Account</a></li>
-                <li class="nav-item"><a id="addressNavTab" data-toggle="tab" href="#addressTab" class="nav-link">Address</a></li>
-                <li class="nav-item"><a id="resetPasswordNavTab" data-toggle="tab" href="#resetPasswordTab" class="nav-link">Reset password</a></li>
-            </ul>
-            <div class="tab-content">
-                <div id="accountTab" class="tab-pane fade active show">
-                    <form autocomplete="off" @submit.prevent="editAccount()">
-                        <div v-if="accountEdited" class="alert alert-success alert-dismissible" role="alert">
-                            <div>Your account has been successfully edited!</div>
-                            <button type="button" class="close" @click="closeAlert('accountEdited')">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="form-group">
-                            <label for="username" class="form-label">Username:</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" id="username" class="form-control" :value="account.username" disabled/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="email" class="form-label">Email:</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input type="text" id="email" class="form-control" :class="{'errorField' : emailError && accountSubmitting}" v-model="account.email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
-                            </div>
-                            <small v-if="emailError && accountSubmitting" class="form-text errorInput">Please provide a valid email!</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="firstName" class="form-label">First name:</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-pencil-alt"></i></span>
-                                <input type="text" id="firstName" class="form-control" :class="{'errorField' : firstNameError && accountSubmitting}" v-model="account.firstName" @focus="clearFirstNameStatus()" @keypress="clearFirstNameStatus()"/>
-                            </div>
-                            <small v-if="firstNameError && accountSubmitting" class="form-text errorInput">Please provide a valid first name!</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastName" class="form-label">Last name:</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-pen"></i></span>
-                                <input type="text" id="lastName" class="form-control" :class="{'errorField' : lastNameError && accountSubmitting}" v-model="account.lastName" @focus="clearLastNameStatus()" @keypress="clearLastNameStatus()"/>
-                            </div>
-                            <small v-if="lastNameError && accountSubmitting" class="form-text errorInput">Please provide a valid last name!</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="mobileNumber" class="form-label">Mobile number:</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
-                                <span class="input-group-text countryCodePrefix">+</span>
-                                <input type="text" id="mobileNumber" class="form-control" :class="{'errorField' : mobileNumberError && accountSubmitting}" v-model="account.mobileNumber" @focus="clearMobileNumberStatus()" @keypress="clearMobileNumberStatus()"/>
-                            </div>
-                            <small class="form-text text-muted">Please insert your mobile number with the country calling code.</small>
-                            <small v-if="mobileNumberError && accountSubmitting" class="form-text errorInput">Please provide a valid last name!</small>
-                        </div>
-                        <div class="form-group">
-                            <button type="button" class="btn btn-info nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
-                            <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
-                        </div>
-                    </form>
-                </div>
-                <div id="addressTab" class="tab-pane fade">
-                    <form autocomplete="off" @submit.prevent="editAddress()">
-                        <div v-if="addressEdited" class="alert alert-success alert-dismissible" role="alert">
-                            <div>Your address has been successfully edited!</div>
-                            <button type="button" class="close" @click="closeAlert('address')">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-						<div class="form-row">
-							<div class="form-group col-md-8">
-								<label for="street">Street:</label>
-								<input type="text" id="street" class="form-control" :class="{'errorField' : streetError && addressSubmitting}" v-model="address.street" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
-								<small v-if="(streetError || houseNumberError) && addressSubmitting" class="form-text errorInput">Please provide a valid street / house number!</small>
-							</div>
-							<div class="form-group col-md-4">
-								<label for="houseNumber">House number:</label>
-								<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : houseNumberError && addressSubmitting}" v-model="address.houseNumber" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
-							</div>
-						</div>
-						<div class="form-row">
-							<div class="form-group col-md-8">
-								<label for="city">City:</label>
-								<input type="text" id="city" class="form-control" :class="{'errorField' : cityError && addressSubmitting}" v-model="address.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
-								<small v-if="(cityError || zipCodeError) && addressSubmitting" class="form-text errorInput">Please provide a valid city / zip code!</small>
-							</div>
-							<div class="form-group col-md-4">
-								<label for="zipCode">Zip code:</label>
-								<input type="number" id="zipCode" class="form-control" :class="{'errorField' : zipCodeError && addressSubmitting}" v-model="address.zipCode" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="country" class="form-label">Country:</label>
-							<input type="text" id="country" class="form-control" :class="{'errorField' : countryError && addressSubmitting}" v-model="address.country" @focus="clearCountryStatus()" @keypress="clearCountryStatus()"/>
-							<small v-if="countryError && addressSubmitting" class="form-text errorInput">Please provide a valid country!</small>
-						</div>
-						<div class="form-group">
-							<button type="button" class="btn btn-info previousButton" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
-							<button type="button" class="btn btn-info nextButton" @click="toggleTab('resetPassword')">Next <i class="fas fa-angle-double-right"></i></button>
-                            <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
-						</div>
-                    </form>
-                </div>
-                <div id="resetPasswordTab" class="tab-pane fade">
-                    <form autocomplete="off" @submit.prevent="resetPassword()">
-                        <div v-if="passwordReset" class="alert alert-success alert-dismissible" role="alert">
-                            <div>Your password has been successfully reset!</div>
-                            <button type="button" class="close" @click="closeAlert('resetPassword')">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="form-group">
-							<label for="password" class="form-label">Password:</label>
-							<div class="input-group">
-								<span class="input-group-text"><i class="fas fa-lock"></i></span>
-								<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError}" v-model="password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
-								<div class="input-group-append">
-									<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+		<div class="d-flex" id="barsDiv">
+			<sidebar></sidebar>
+			<div id="pageDiv">
+				<navigation></navigation>
+				<div class="profileForm">
+					<div class="profileTitle">
+						<h1>Profile</h1>
+						<p>Here you can edit your account's information.</p>
+						<hr>
+					</div>
+					<ul class="nav nav-tabs">
+						<li class="nav-item"><a id="accountNavTab"  data-toggle="tab" href="#accountTab" class="nav-link active">Account</a></li>
+						<li class="nav-item"><a id="addressNavTab" data-toggle="tab" href="#addressTab" class="nav-link">Address</a></li>
+						<li class="nav-item"><a id="resetPasswordNavTab" data-toggle="tab" href="#resetPasswordTab" class="nav-link">Reset password</a></li>
+					</ul>
+					<div class="tab-content">
+						<div id="accountTab" class="tab-pane fade active show">
+							<form autocomplete="off" @submit.prevent="editAccount()">
+								<div v-if="accountEdited" class="alert alert-success alert-dismissible" role="alert">
+									<div>Your account has been successfully edited!</div>
+									<button type="button" class="close" @click="closeAlert('accountEdited')">
+										<span aria-hidden="true">&times;</span>
+									</button>
 								</div>
-							</div>
-							<small v-if="passwordError" class="form-text errorInput">Please provide a valid password!</small>
+								<div class="form-group">
+									<label for="username" class="form-label">Username:</label>
+									<div class="input-group">
+										<span class="input-group-text"><i class="fas fa-user"></i></span>
+										<input type="text" id="username" class="form-control" :value="account.username" disabled/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="email" class="form-label">Email:</label>
+									<div class="input-group">
+										<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+										<input type="text" id="email" class="form-control" :class="{'errorField' : emailError && accountSubmitting}" v-model="account.email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
+									</div>
+									<small v-if="emailError && accountSubmitting" class="form-text errorInput">Please provide a valid email!</small>
+								</div>
+								<div class="form-group">
+									<label for="firstName" class="form-label">First name:</label>
+									<div class="input-group">
+										<span class="input-group-text"><i class="fas fa-pencil-alt"></i></span>
+										<input type="text" id="firstName" class="form-control" :class="{'errorField' : firstNameError && accountSubmitting}" v-model="account.firstName" @focus="clearFirstNameStatus()" @keypress="clearFirstNameStatus()"/>
+									</div>
+									<small v-if="firstNameError && accountSubmitting" class="form-text errorInput">Please provide a valid first name!</small>
+								</div>
+								<div class="form-group">
+									<label for="lastName" class="form-label">Last name:</label>
+									<div class="input-group">
+										<span class="input-group-text"><i class="fas fa-pen"></i></span>
+										<input type="text" id="lastName" class="form-control" :class="{'errorField' : lastNameError && accountSubmitting}" v-model="account.lastName" @focus="clearLastNameStatus()" @keypress="clearLastNameStatus()"/>
+									</div>
+									<small v-if="lastNameError && accountSubmitting" class="form-text errorInput">Please provide a valid last name!</small>
+								</div>
+								<div class="form-group">
+									<label for="mobileNumber" class="form-label">Mobile number:</label>
+									<div class="input-group">
+										<span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+										<span class="input-group-text countryCodePrefix">+</span>
+										<input type="text" id="mobileNumber" class="form-control" :class="{'errorField' : mobileNumberError && accountSubmitting}" v-model="account.mobileNumber" @focus="clearMobileNumberStatus()" @keypress="clearMobileNumberStatus()"/>
+									</div>
+									<small class="form-text text-muted">Please insert your mobile number with the country calling code.</small>
+									<small v-if="mobileNumberError && accountSubmitting" class="form-text errorInput">Please provide a valid last name!</small>
+								</div>
+								<div class="form-group">
+									<button type="button" class="btn btn-info nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
+									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+								</div>
+							</form>
 						</div>
-                        <div class="form-group">
-                            <button type="button" class="btn btn-info previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
-                            <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+						<div id="addressTab" class="tab-pane fade">
+							<form autocomplete="off" @submit.prevent="editAddress()">
+								<div v-if="addressEdited" class="alert alert-success alert-dismissible" role="alert">
+									<div>Your address has been successfully edited!</div>
+									<button type="button" class="close" @click="closeAlert('address')">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="form-row">
+									<div class="form-group col-md-8">
+										<label for="street">Street:</label>
+										<input type="text" id="street" class="form-control" :class="{'errorField' : streetError && addressSubmitting}" v-model="address.street" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
+										<small v-if="(streetError || houseNumberError) && addressSubmitting" class="form-text errorInput">Please provide a valid street / house number!</small>
+									</div>
+									<div class="form-group col-md-4">
+										<label for="houseNumber">House number:</label>
+										<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : houseNumberError && addressSubmitting}" v-model="address.houseNumber" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="form-group col-md-8">
+										<label for="city">City:</label>
+										<input type="text" id="city" class="form-control" :class="{'errorField' : cityError && addressSubmitting}" v-model="address.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
+										<small v-if="(cityError || zipCodeError) && addressSubmitting" class="form-text errorInput">Please provide a valid city / zip code!</small>
+									</div>
+									<div class="form-group col-md-4">
+										<label for="zipCode">Zip code:</label>
+										<input type="number" id="zipCode" class="form-control" :class="{'errorField' : zipCodeError && addressSubmitting}" v-model="address.zipCode" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="country" class="form-label">Country:</label>
+									<input type="text" id="country" class="form-control" :class="{'errorField' : countryError && addressSubmitting}" v-model="address.country" @focus="clearCountryStatus()" @keypress="clearCountryStatus()"/>
+									<small v-if="countryError && addressSubmitting" class="form-text errorInput">Please provide a valid country!</small>
+								</div>
+								<div class="form-group">
+									<button type="button" class="btn btn-info previousButton" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
+									<button type="button" class="btn btn-info nextButton" @click="toggleTab('resetPassword')">Next <i class="fas fa-angle-double-right"></i></button>
+									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+								</div>
+							</form>
 						</div>
-                    </form>
-                </div>
-            </div>
+						<div id="resetPasswordTab" class="tab-pane fade">
+							<form autocomplete="off" @submit.prevent="resetPassword()">
+								<div v-if="passwordReset" class="alert alert-success alert-dismissible" role="alert">
+									<div>Your password has been successfully reset!</div>
+									<button type="button" class="close" @click="closeAlert('resetPassword')">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="form-group">
+									<label for="password" class="form-label">Password:</label>
+									<div class="input-group">
+										<span class="input-group-text"><i class="fas fa-lock"></i></span>
+										<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError}" v-model="password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
+										<div class="input-group-append">
+											<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+										</div>
+									</div>
+									<small v-if="passwordError" class="form-text errorInput">Please provide a valid password!</small>
+								</div>
+								<div class="form-group">
+									<button type="button" class="btn btn-info previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
+									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -145,6 +150,7 @@
 	import "bootstrap/dist/css/bootstrap.min.css";
 	import checkLogin from "../components/CheckLogin.vue";
 	import navigation from "../components/Navigation.vue";
+	import sidebar from "../components/Sidebar.vue";
 	import validation from "../components/Validation.vue";
 	import helper from "../components/Helper.vue";
 	var axios = require("axios");
@@ -152,7 +158,8 @@
 	export default {
 		name: "profile",
 		components: {
-            navigation
+            navigation,
+			sidebar
         },
 		data() {
 			return {
