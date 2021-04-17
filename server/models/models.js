@@ -22,9 +22,17 @@ module.exports = function(mongoose) {
 		title: {type: String, required: true},
 		description: {type: String, required: true},
 		price: {type: Number, required: true},
+		quantity: {type: Number, required: true},
 		categoryId: {type: Number, required: true},
 		technicalData: {type: Array, required: true},
-        review: {type: String}
+		images:{type: Array, required: true},
+        review: {type: Object, required: true}
+	});
+	const productCommentScheme = new mongoose.Schema({
+		productId: {type: Number, required: true},
+		username: {type: String, required: true},
+		description: {type: String, required: true},
+		date: {type: String, required: true}
 	});
 	const technicalDataScheme = new mongoose.Schema({
 		title: {type: String, required: true}
@@ -35,6 +43,7 @@ module.exports = function(mongoose) {
     const models = {
 		User: mongoose.model("User", userScheme),
 		Product: mongoose.model("Product", productScheme),
+		ProductComment: mongoose.model("ProductComment", productCommentScheme),
 		TechnicalData: mongoose.model("TechnicalData", technicalDataScheme),
 		Category: mongoose.model("Category", categoryScheme)
 	}
