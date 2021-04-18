@@ -10,12 +10,12 @@ module.exports = function(app, models, validation) {
         var allowCreation = true;
         var errorFields = [];
         var title = request.body.title;
-        if(validation.invalidTitle()) {
+        if(validation.invalidTitle(title)) {
             errorFields.push("title");
             allowCreation = false;
         }
         var icon = request.body.icon;
-        if(validation.invalidIcon()) {
+        if(validation.invalidIcon(icon)) {
             errorFields.push("icon");
             allowCreation = false;
         }

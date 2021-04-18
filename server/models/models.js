@@ -34,8 +34,9 @@ module.exports = function(mongoose) {
 		description: {type: String, required: true},
 		date: {type: String, required: true}
 	});
-	const technicalDataScheme = new mongoose.Schema({
-		title: {type: String, required: true}
+	const technicalInformationScheme = new mongoose.Schema({
+		title: {type: String, required: true},
+		type: {type: String, required: true}
 	});
 	const categoryScheme = new mongoose.Schema({
 		title: {type: String, required: true},
@@ -45,7 +46,7 @@ module.exports = function(mongoose) {
 		User: mongoose.model("User", userScheme),
 		Product: mongoose.model("Product", productScheme),
 		ProductComment: mongoose.model("ProductComment", productCommentScheme),
-		TechnicalData: mongoose.model("TechnicalData", technicalDataScheme),
+		TechnicalInformation: mongoose.model("TechnicalInformation", technicalInformationScheme),
 		Category: mongoose.model("Category", categoryScheme)
 	}
 	return models;

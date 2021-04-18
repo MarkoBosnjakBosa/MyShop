@@ -66,6 +66,13 @@ function invalidTitle(title) {
 function invalidIcon(icon) {
     return icon == "";
 }
+function invalidType(type) {
+    if(type != "" && (type == "textfield" || type == "textarea" || type == "number")) {
+        return false;
+    } else {
+        return true;
+    }
+}
 function validUsername(username) {
     var usernameFormat = /^[a-z0-9_.-]*$/;
     if(username != "" && usernameFormat.test(username)) {
@@ -104,6 +111,7 @@ module.exports = {
     invalidReCaptchaToken: invalidReCaptchaToken,
     invalidTitle: invalidTitle,
     invalidIcon: invalidIcon,
+    invalidType: invalidType,
     validUsername: validUsername,
     validEmail: validEmail,
     validPassword: validPassword,

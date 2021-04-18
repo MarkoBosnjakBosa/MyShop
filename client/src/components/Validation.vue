@@ -26,8 +26,8 @@
 					return true;
 				}
 			},
-			invalidFirstName(firstName) { return firstName === ""; },
-			invalidLastName(lastName) { return lastName === ""; },
+			invalidFirstName(firstName) { return firstName == ""; },
+			invalidLastName(lastName) { return lastName == ""; },
 			invalidMobileNumber(mobileNumber) {
 				var mobileNumberFormat = /^[0-9]\d*$/;
 				if(mobileNumber != "" && mobileNumberFormat.test(mobileNumber)) {
@@ -36,7 +36,7 @@
 					return true;
 				}
 			},
-			invalidStreet(street) { return street === ""; },
+			invalidStreet(street) { return street == ""; },
 			invalidHouseNumber(houseNumber) {
 				var houseNumberFormat = /^[0-9]\d*$/;
 				if(houseNumber != "" && houseNumberFormat.test(houseNumber)) {
@@ -45,7 +45,7 @@
 					return true;
 				}
 			},
-			invalidCity(city) { return city === ""; },
+			invalidCity(city) { return city == ""; },
 			invalidZipCode(zipCode) {
 				var zipCodeFormat = /^[0-9]\d*$/;
 				if(zipCode != "" && zipCodeFormat.test(zipCode)) {
@@ -54,7 +54,7 @@
 					return true;
 				}
 			},
-			invalidCountry(country) { return country === ""; },
+			invalidCountry(country) { return country == ""; },
 			invalidAuthenticationToken(authenticationToken) { 
 				var authenticationTokenFormat = /\d{6}/;
 				if(authenticationToken != "" && authenticationTokenFormat.test(authenticationToken)) {
@@ -63,8 +63,15 @@
 					return true;
 				} 
 			},
-			invalidTitle(title) { return title === ""; },
-			invalidIcon(icon) { return icon === ""; }
+			invalidTitle(title) { return title == ""; },
+			invalidIcon(icon) { return icon == ""; },
+			invalidType(type) {
+				if(type != "" && (type == "textfield" || type == "textarea" || type == "number")) {
+					return false;
+				} else {
+					return true;
+				}
+			}
         }
     }
 </script>

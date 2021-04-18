@@ -10,11 +10,11 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <input type="text" id="title" class="form-control" :class="{'errorField' : titleError && submitting}" placeholder="Title" v-model="category.title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
-                                <small v-if="titleError" class="form-text errorInput">Please provide a valid title!</small>
+                                <small v-if="titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
                             </div>
                             <div class="form-group col-md-5">
                                 <input type="text" id="icon" class="form-control" :class="{'errorField' : iconError && submitting}" placeholder="Icon" v-model="category.icon" @focus="clearIconStatus()" @keyPress="clearIconStatus()"/>
-                                <small v-if="iconError" class="form-text errorInput">Please provide a valid icon!</small>
+                                <small v-if="iconError && submitting" class="form-text errorInput">Please provide a valid icon!</small>
                             </div>
                             <div class="form-group col-md-1">
                                 <button type="submit" class="btn btn-primary">Create</button>
