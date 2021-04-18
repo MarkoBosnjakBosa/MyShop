@@ -62,7 +62,9 @@
 				} else {
 					return true;
 				} 
-			}
+			},
+			invalidTitle(title) { return title === ""; },
+			invalidIcon(icon) { return icon === ""; }
         }
     }
 </script>

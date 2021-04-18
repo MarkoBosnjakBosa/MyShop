@@ -36,10 +36,10 @@
                 router.push("/products");
             },
             openCategories() {
-                router.push("/categories");
+                router.push("/admin/categories");
             },
             openTechnicalData() {
-                router.push("/technical/data");
+                router.push("/admin/technical/data");
             },
             logout() {
                 store.dispatch("logout");

@@ -38,7 +38,8 @@ module.exports = function(mongoose) {
 		title: {type: String, required: true}
 	});
 	const categoryScheme = new mongoose.Schema({
-		title: {type: String, required: true}
+		title: {type: String, required: true},
+		icon: {type: String, required: true}
 	});
     const models = {
 		User: mongoose.model("User", userScheme),

@@ -60,6 +60,12 @@ function invalidReCaptchaToken(reCaptcha_v2_SecretKey, axios, reCaptchaToken, re
         });
     }
 }
+function invalidTitle(title) {
+    return title == "";
+}
+function invalidIcon(icon) {
+    return icon == "";
+}
 function validUsername(username) {
     var usernameFormat = /^[a-z0-9_.-]*$/;
     if(username != "" && usernameFormat.test(username)) {
@@ -96,6 +102,8 @@ module.exports = {
     invalidHouseNumber: invalidHouseNumber,
     invalidZipCode: invalidZipCode,
     invalidReCaptchaToken: invalidReCaptchaToken,
+    invalidTitle: invalidTitle,
+    invalidIcon: invalidIcon,
     validUsername: validUsername,
     validEmail: validEmail,
     validPassword: validPassword,
