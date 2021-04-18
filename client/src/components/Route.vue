@@ -33,7 +33,7 @@
                 router.push("/authentication");
             },
             openProducts() {
-                router.push("/products");
+                router.push("/admin/products");
             },
             openCategories() {
                 router.push("/admin/categories");

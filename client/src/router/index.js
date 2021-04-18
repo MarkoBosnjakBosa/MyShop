@@ -10,6 +10,7 @@ import Profile from "../views/Profile.vue";
 import Setup from "../views/Setup.vue";
 import Categories from "../views/admin/Categories.vue";
 import TechnicalData from "../views/admin/TechnicalData.vue";
+import Products from "../views/admin/Products.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 
 const routes = [
@@ -24,6 +25,7 @@ const routes = [
 	{path: "/setup", name: "Setup", component: Setup},
 	{path: "/admin/categories", name: "Categories", component: Categories},
 	{path: "/admin/technical/data", name: "TechnicalData", component: TechnicalData},
+	{path: "/admin/products", name: "Products", component: Products},
 	{path: "/:catchAll(.*)", name: "PageNotFound", component: PageNotFound}
 ]
 
