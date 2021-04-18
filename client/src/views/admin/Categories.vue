@@ -33,6 +33,9 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="!categories.length">
+                            <td colspan="6" class="noCategories">No categories found!</td>
+                        </tr>
                         <tr v-for="(category, index) in categories" :key="category._id">
                             <th scope="row">{{++index}}</th>
                             <td v-if="editing == category._id"><input type="text" class="form-control" v-model="category.title"/></td>
@@ -176,6 +179,11 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
+    .noCategories {
+		font-weight: bold;
+		text-align: center;
+		margin-top: 20px;
+	}
     tbody .fas, tbody .far {
         cursor: pointer;
         margin-right: 5px;

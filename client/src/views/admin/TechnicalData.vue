@@ -35,10 +35,21 @@
                             <th scope="col">Title</th>
                             <th scope="col">Type</th>
                             <th scope="col">Actions</th>
+                            <th scope="col">
+                                <select id="filter" class="form-control" v-model="filter">
+                                    <option value="all" selected>All</option>
+                                    <option value="textfield">Textfield</option>
+                                    <option value="textarea">Textarea</option>
+                                    <option value="number">Number</option>
+                                </select>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(technicalInformation, index) in technicalData" :key="technicalInformation._id">
+                        <tr v-if="!filterByType.length">
+                            <td colspan="6" class="noTechnicalData">No technical data found!</td>
+                        </tr>
+                        <tr v-for="(technicalInformation, index) in filterByType" :key="technicalInformation._id">
                             <th scope="row">{{++index}}</th>
                             <td v-if="editing == technicalInformation._id"><input type="text" class="form-control" v-model="technicalInformation.title"/></td>
                             <td v-else>{{technicalInformation.title}}</td>
@@ -58,6 +69,7 @@
                                 <i class="fas fa-pencil-alt" @click="enableEditing(technicalInformation)"></i>
                                 <i class="fas fa-trash" @click="deleteTechnicalInformation(technicalInformation._id, technicalInformation.title)"></i>
                             </td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>
@@ -92,7 +104,8 @@
                     type: ""
                 },
                 technicalInformationCreated: false,
-                editing: null
+                editing: null,
+                filter: "all"
 			}
 		},
         methods: {
@@ -168,7 +181,18 @@
         },
         computed: {
             invalidTitle() { return validation.methods.invalidTitle(this.technicalInformation.title); },
-            invalidType() { return validation.methods.invalidType(this.technicalInformation.type); }
+            invalidType() { return validation.methods.invalidType(this.technicalInformation.type); },
+            filterByType() {
+				if(this.filter == "textfield") {
+					return this.technicalData.filter(technicalInformation => technicalInformation.type == "textfield");
+				} else if(this.filter == "textarea") {
+					return this.technicalData.filter(technicalInformation => technicalInformation.type == "textarea");
+				} else if(this.filter == "number") {
+					return this.technicalData.filter(technicalInformation => technicalInformation.type == "number");
+				} else {
+					return this.technicalData;
+				}
+			}
         },
         created() {
 			checkLogin.methods.isLoggedIn();
@@ -187,6 +211,11 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
+    .noTechnicalData {
+		font-weight: bold;
+		text-align: center;
+		margin-top: 20px;
+	}
     tbody .fas, tbody .far {
         cursor: pointer;
         margin-right: 5px;
