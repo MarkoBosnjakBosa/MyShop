@@ -1,7 +1,7 @@
 <template>
     <div id="sidebarDiv" class="bg-light border-right">
         <div class="heading">
-            <span v-if="isAdmin">MyShop Admin</span>
+            <span v-if="userData.isAdmin">MyShop Admin</span>
             <span v-else>MyShop</span>    
         </div>
         <ul class="list list-group-flush">
@@ -14,6 +14,7 @@
 </template>
 
 <script>
+    import checkLogin from "../components/CheckLogin.vue";
     import route from "../components/Route.vue";
 
     export default {
@@ -28,6 +29,9 @@
 			}
 		},
         methods: {
+            getUserData() {
+                this.userData = checkLogin.methods.getUserData();
+            },
             openHome() {
                 route.methods.openHome();
             },

@@ -52,7 +52,7 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation) {
 											}).catch(error => console.log(error));
 										} else {
 											const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});
-											response.status(200).json({authentication: false, valid: true, token: token, user: user.username}).end();
+											response.status(200).json({authentication: false, valid: true, token: token, user: user.username, isAdmin: user.isAdmin}).end();
 										}
 									} else {
 										response.status(200).json({authentication: false, valid: false, allowed: true}).end();
