@@ -80,11 +80,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="image in product.images" :key="image.index">
-                                            <td>{{image.index}}</td>
+                                        <tr v-for="(image, index) in product.images" :key="image.name">
+                                            <td>{{index + 1}}</td>
                                             <td>{{image.name}}</td>
                                             <td><img :src="image.src" :alt="image.name" class="img-fluid rounded" width="100" height="100"/></td>
-                                            <td><button type="button" class="btn btn-danger" @click="removeImage(image.index)">Delete</button></td>
+                                            <td><button type="button" class="btn btn-danger" @click="removeImage(index)">Delete</button></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -218,7 +218,6 @@
             selectImages(event) {
 				var files = event.target.files;
                 var temp = this;
-                var index = 0;
 				for (var i = 0, file; file = files[i]; i++) {
                     if (!file.type.match('image.*')) {
                         continue;
@@ -226,8 +225,7 @@
                     var reader = new FileReader();
                     reader.onload = (function(theFile) {
                         return function(e) {
-                            index++;
-                            var newImage = {index: index, name: theFile.name, src: e.target.result, file: theFile};
+                            var newImage = {name: theFile.name, src: e.target.result, file: theFile};
                             temp.product.images = [...temp.product.images, newImage];
                         };
                     })(file);
@@ -235,14 +233,9 @@
                 }
                 document.getElementById("imagesLabel").innerHTML = files.length + " images selected";
 			},
-            removeImage(index) {
-                this.product.images = this.product.images.filter(image => image.index != index);
-                var index = 0;
-                for(var i = 0; i < this.product.images.length; i++) {
-                    index++;
-                    this.product.images[i].index = index;
-                }
-                document.getElementById("imagesLabel").innerHTML = index + " images selected";
+            removeImage(indexId) {
+                this.product.images = this.product.images.filter((image, index) => index != indexId);
+                document.getElementById("imagesLabel").innerHTML = this.product.images.length + " images selected";
             }
         },
         computed: {
