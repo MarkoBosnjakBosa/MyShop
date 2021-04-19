@@ -13,7 +13,7 @@
 					<div id="overviewTab" class="tab-pane fade active show">
 					</div>
 					<div id="createProductTab" class="tab-pane fade">
-                        <form autocomplete="off" @submit.prevent="createCategory()">
+                        <form autocomplete="off" @submit.prevent="createCategory()" enctype="multipart/form-data">
                             <div class="form-group row">
                                 <label for="title" class="col-md-2 col-form-label">Title:</label>
                                 <div class="col-md-10">
@@ -60,6 +60,35 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Upload</span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" id="images" name="images[]" class="custom-file-input" @change="selectImages($event)" multiple/>
+                                        <label id="imagesLabel" for="images" class="custom-file-label">Choose files</label>
+                                    </div>
+                                </div>
+                                <table v-if="product.images.length" id="previewImages" class="table">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Image</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="image in product.images" :key="image.index">
+                                            <td>{{image.index}}</td>
+                                            <td>{{image.name}}</td>
+                                            <td><img :src="image.src" :alt="image.name" class="img-fluid rounded" width="100" height="100"/></td>
+                                            <td><button type="button" class="btn btn-danger" @click="removeImage(image.index)">Delete</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </form>
                     </div>	
                 </div>
@@ -99,7 +128,8 @@
                     price: "",
                     quantity: "",
                     category: "",
-                    technicalData: []
+                    technicalData: [],
+                    images: []
                 },
                 productCreated: false,
                 editing: null
@@ -185,6 +215,35 @@
             },
             clearTitleStatus() { this.titleError = false, this.categoryCreated = false; },
             clearIconStatus() { this.iconError = false, this.categoryCreated = false; },
+            selectImages(event) {
+				var files = event.target.files;
+                var temp = this;
+                var index = 0;
+				for (var i = 0, file; file = files[i]; i++) {
+                    if (!file.type.match('image.*')) {
+                        continue;
+                    }
+                    var reader = new FileReader();
+                    reader.onload = (function(theFile) {
+                        return function(e) {
+                            index++;
+                            var newImage = {index: index, name: theFile.name, src: e.target.result, file: theFile};
+                            temp.product.images = [...temp.product.images, newImage];
+                        };
+                    })(file);
+                    reader.readAsDataURL(file);
+                }
+                document.getElementById("imagesLabel").innerHTML = files.length + " images selected";
+			},
+            removeImage(index) {
+                this.product.images = this.product.images.filter(image => image.index != index);
+                var index = 0;
+                for(var i = 0; i < this.product.images.length; i++) {
+                    index++;
+                    this.product.images[i].index = index;
+                }
+                document.getElementById("imagesLabel").innerHTML = index + " images selected";
+            }
         },
         computed: {
             invalidTitle() { return validation.methods.invalidTitle(this.category.title); },
