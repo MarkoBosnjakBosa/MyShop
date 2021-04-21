@@ -1,102 +1,3 @@
-<template>
-    <div id="products" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
-			<sidebar></sidebar>
-			<div id="pageDiv">
-				<navigation></navigation>
-                <h1>Products</h1>
-                <ul class="nav nav-tabs">
-					<li class="nav-item"><a data-toggle="tab" href="#overviewTab" class="nav-link active">Overview</a></li>
-					<li class="nav-item"><a data-toggle="tab" href="#createProductTab" class="nav-link">Create Product</a></li>
-				</ul>
-                <div class="tab-content">
-					<div id="overviewTab" class="tab-pane fade active show">
-					</div>
-					<div id="createProductTab" class="tab-pane fade">
-                        <form autocomplete="off" @submit.prevent="createCategory()" enctype="multipart/form-data">
-                            <div class="form-group row">
-                                <label for="title" class="col-md-2 col-form-label">Title:</label>
-                                <div class="col-md-10">
-                                    <input type="text" id="title" class="form-control" :class="{'errorField' : titleError && submitting}" v-model="product.title" ref="first" @focus="clearTitleStatus()" @keypress="clearTitleStatus()"/>
-                                    <small v-if="titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="description" class="col-md-2 col-form-label">Description:</label>
-                                <div class="col-md-10">
-                                    <textarea id="email" class="form-control" :class="{'errorField' : descriptionError && submitting}" v-model="product.description" @focus="clearDescriptionStatus()" @keypress="clearDescriptionStatus()"/>
-                                    <small v-if="descriptionError && submitting" class="form-text errorInput">Please provide a valid description!</small>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="price" class="col-md-2 col-form-label">Price:</label>
-                                <div class="col-md-10">
-                                    <input type="text" id="price" class="form-control" :class="{'errorField' : priceError && submitting}" v-model="product.price" @focus="clearPriceStatus()" @keypress="clearPriceStatus()"/>
-                                    <small v-if="priceError && submitting" class="form-text errorInput">Please provide a valid price!</small>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="quantity" class="col-md-2 col-form-label">Quantity:</label>
-                                <div class="col-md-10">
-                                    <input type="number" id="quantity" class="form-control" :class="{'errorField' : quantityError && submitting}" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
-                                    <small v-if="quantityError && submitting" class="form-text errorInput">Please provide a valid quantity!</small>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="category" class="col-md-2 col-form-label">Category:</label>
-                                <div class="col-md-10">
-                                    <select id="category" class="form-control" :class="{'errorField' : categoryError && submitting}" v-model="product.category" @focus="clearCategoryStatus()" @keypress="clearCategoryStatus()">
-                                        <option value="" disabled selected>Select category...</option>
-                                        <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
-                                    </select>
-                                    <small v-if="categoryError && submitting" class="form-text errorInput">Please provide a valid category!</small>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="technicalData" class="col-md-2 col-form-label">Technical Data:</label>
-                                <div class="col-md-10">
-                                    <select id="technicalData" class="form-control" v-model="product.category">
-                                        <option v-for="technicalInformation in technicalData" :key="technicalInformation._id" :value="technicalInformation._id">{{technicalInformation.title}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Upload</span>
-                                    </div>
-                                    <div class="custom-file">
-                                        <input type="file" id="images" name="images[]" class="custom-file-input" @change="selectImages($event)" multiple/>
-                                        <label id="imagesLabel" for="images" class="custom-file-label">Choose files</label>
-                                    </div>
-                                </div>
-                                <table v-if="product.images.length" id="previewImages" class="table">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Image</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="(image, index) in product.images" :key="image.name">
-                                            <td>{{index + 1}}</td>
-                                            <td>{{image.name}}</td>
-                                            <td><img :src="image.src" :alt="image.name" class="img-fluid rounded" width="100" height="100"/></td>
-                                            <td><button type="button" class="btn btn-danger" @click="removeImage(index)">Delete</button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </form>
-                    </div>	
-                </div>
-            </div>
-        </div> 
-    </div>
-</template>
-
 <script>
     import "bootstrap";
 	import "bootstrap/dist/css/bootstrap.min.css";
@@ -104,6 +5,7 @@
 	import navigation from "../../components/Navigation.vue";
 	import sidebar from "../../components/Sidebar.vue";
 	import validation from "../../components/Validation.vue";
+    import helper from "../../components/Helper.vue"; 
 	var axios = require("axios");
 	
 	export default {
@@ -129,6 +31,7 @@
                     quantity: "",
                     category: "",
                     technicalData: [],
+                    primaryImage: "",
                     images: []
                 },
                 productCreated: false,
@@ -215,28 +118,59 @@
             },
             clearTitleStatus() { this.titleError = false, this.categoryCreated = false; },
             clearIconStatus() { this.iconError = false, this.categoryCreated = false; },
-            selectImages(event) {
+            selectTechnicalData() {
+                var technicalInformationTitle = document.getElementById("technicalData").value;
+                var newTechnicalInformation = {title: technicalInformationTitle};
+                this.product.technicalData = [...this.product.technicalData, newTechnicalInformation];
+                document.getElementById("technicalData").value = "";
+            },
+            removeTechnicalInformation(currentIndex) {
+                this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index != currentIndex);
+            },
+            selectImages(event, type) {
 				var files = event.target.files;
                 var temp = this;
-				for (var i = 0, file; file = files[i]; i++) {
-                    if (!file.type.match('image.*')) {
-                        continue;
+                if(files && files.length > 0) {
+                    if(type == "primaryImage") {
+                        var file = files[0];
+                        var fileReader = new FileReader();
+                        fileReader.onload = function(e) {
+                            var previewPrimaryImage = document.getElementById("previewPrimaryImage");
+                            previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "'/>";
+                        }
+                        this.product.primaryImage = file;
+                        document.getElementById("dropzone").classList.remove("onDragOver");
+					    //this.clearPrimaryImageStatus();
+                        fileReader.readAsDataURL(file);
+                    } else {
+                        for (var i = 0, file; file = files[i]; i++) {
+                            if (!file.type.match("image.*")) {
+                                continue;
+                            }
+                            var fileReader = new FileReader();
+                            fileReader.onload = (function(theFile) {
+                                return function(e) {
+                                    var newImage = {name: theFile.name, src: e.target.result, file: theFile};
+                                    temp.product.images = [...temp.product.images, newImage];
+                                };
+                            })(file);
+                            fileReader.readAsDataURL(file);
+                        }
                     }
-                    var reader = new FileReader();
-                    reader.onload = (function(theFile) {
-                        return function(e) {
-                            var newImage = {name: theFile.name, src: e.target.result, file: theFile};
-                            temp.product.images = [...temp.product.images, newImage];
-                        };
-                    })(file);
-                    reader.readAsDataURL(file);
                 }
-                document.getElementById("imagesLabel").innerHTML = files.length + " images selected";
 			},
-            removeImage(indexId) {
-                this.product.images = this.product.images.filter((image, index) => index != indexId);
-                document.getElementById("imagesLabel").innerHTML = this.product.images.length + " images selected";
-            }
+            removeImage(currentIndex) {
+                this.product.images = this.product.images.filter((image, index) => index != currentIndex);
+            },
+            addDragOver(event) {
+                document.getElementById("dropzone").className = "onDragOver";
+            },
+            removeDragOver(event) {
+                document.getElementById("dropzone").classList.remove("onDragOver");
+            },
+            toggleTab(tab) {
+                helper.methods.toggleTab(tab);
+			}
         },
         computed: {
             invalidTitle() { return validation.methods.invalidTitle(this.category.title); },
@@ -250,44 +184,3 @@
         }
     }
 </script>
-
-<style scoped>
-    #categoriesForm, #categoriesTable {
-        margin: 0 auto;
-        max-width: 900px;
-    }
-    h1 {
-        text-align: center;
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
-    .noProducts {
-		font-weight: bold;
-		text-align: center;
-		margin-top: 20px;
-	}
-    tbody .fas, tbody .far {
-        cursor: pointer;
-        margin-right: 5px;
-    }
-    .padded {
-        padding-top: 20px;
-    }
-    .editProduct {
-        color: #008000;
-    }
-    .disableEditing {
-        color: #ff0000;
-    }
-    .creationSuccessful {
-        color: #008000;
-        margin-bottom: 10px;
-    }
-    .errorField {
-        border: 1px solid #ff0000;
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;
-    }
-    .errorInput {
-        color: #ff0000;
-    }
-</style>

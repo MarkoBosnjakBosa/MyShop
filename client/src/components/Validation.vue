@@ -65,13 +65,25 @@
 			},
 			invalidTitle(title) { return title == ""; },
 			invalidIcon(icon) { return icon == ""; },
-			invalidType(type) {
-				if(type != "" && (type == "textfield" || type == "textarea" || type == "number")) {
+			invalidDescription(description) { return description == ""; },
+			invalidPrice(price) {
+				var priceFormat = /^(?:\d*\.\d{1,2}|\d+)$/;
+				if(price != "" && priceFormat.test(price)) {
 					return false;
 				} else {
 					return true;
 				}
-			}
+			},
+			invalidQuantity(quantity) {
+				var quantityFormat = /^[0-9]\d*$/;
+				if(quantity != "" && quantityFormat.test(quantity)) {
+					return false;
+				} else {
+					return true;
+				}
+			},
+			invalidCategory(category) { return category == ""; },
+			invalidPrimaryImage(primaryImage) { return primaryImage == ""; }
         }
     }
 </script>

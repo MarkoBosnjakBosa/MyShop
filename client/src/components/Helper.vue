@@ -30,6 +30,15 @@
                     case "check":
                         document.getElementById("checkNavTab").click();
                         break;
+                    case "main":
+                        document.getElementById("mainNavTab").click();
+                        break;
+                    case "technicalData":
+                        document.getElementById("technicalDataNavTab").click();
+                        break;
+                    case "images":
+                        document.getElementById("imagesNavTab").click();
+                        break;
                 }
 			},
             toggleSidebar() {

@@ -35,6 +35,9 @@
             openProducts() {
                 router.push("/admin/products");
             },
+            openCreateProduct() {
+                router.push("/admin/create/product");
+            },
             openCategories() {
                 router.push("/admin/categories");
             },

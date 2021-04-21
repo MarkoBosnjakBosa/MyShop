@@ -7,6 +7,7 @@
         <ul class="list list-group-flush">
             <li class="list-group-item list-group-item-action bg-light" @click="openHome()">Home</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openProducts()">Products</li>
+            <li class="list-group-item list-group-item-action bg-light" @click="openCreateProduct()"> Create Product</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openCategories()">Categories</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openTechnicalData()">Technical Data</li>
         </ul>
@@ -37,6 +38,9 @@
             },
             openProducts() {
                 route.methods.openProducts();
+            },
+            openCreateProduct() {
+                route.methods.openCreateProduct();
             },
             openCategories() {
                 route.methods.openCategories();
