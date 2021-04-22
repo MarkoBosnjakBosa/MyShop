@@ -242,6 +242,14 @@
                     this.primaryImageError = true;
                     allowSubmit = false;
                 }
+                grecaptcha.ready(function() {
+                    grecaptcha.execute(process.env.VUE_APP_RECAPTCHA_v3_SITE_KEY, {action: "submit"}).then(function(reCaptchaToken) {
+                        if(reCaptchaToken == "" || reCaptchaToken == undefined || reCaptchaToken == null) {
+                            this.reCaptchaTokenError = true;
+					        allowSubmit = false;
+                        }
+                    });
+                });
                 if(!allowSubmit) {
                     this.productCreated = false;
                     return;
@@ -329,6 +337,11 @@
             invalidQuantity() { return validation.methods.invalidQuantity(this.product.quantity); },
             invalidCategory() { return validation.methods.invalidCategory(this.product.category); },
             invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); }
+        },
+        mounted() {
+            var reCaptchaScript = document.createElement("script");
+			reCaptchaScript.setAttribute("src", "https://www.google.com/recaptcha/api.js?render=" + process.env.VUE_APP_RECAPTCHA_v3_SITE_KEY);
+			document.head.appendChild(reCaptchaScript);
         },
         created() {
 			checkLogin.methods.isLoggedIn();
