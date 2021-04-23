@@ -1,7 +1,7 @@
 module.exports = function(app, models, multer, validation) {
     var storage = multer.diskStorage({
 		destination: function (request, file, callback) {
-			callback(null, "../images/products");
+			callback(null, "images/products");
 		},
 		filename: function (request, file, callback) {
 			var fileArray = file.originalname.split(".");
@@ -12,16 +12,15 @@ module.exports = function(app, models, multer, validation) {
 	var upload = multer({
 		storage: storage,
 		fileFilter: function (request, file, callback) {
-			if(file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
+			if(file.mimetype.match("image.*")) {
 				callback(null, true);
 			} else {
 				request.extensionValidationError = true;
 				return callback(null, false, request.extensionValidationError);
 			}
-		},
-		limits: {fileSize: 500000}
+		}
 	});
-    app.post("/createProduct", upload.single("images"), (request, response) => {
+    app.post("/createProduct", upload.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), (request, response) => {
 		var allowRegistration = true;
 		var errorFields = [];
 		var username = request.body.username;

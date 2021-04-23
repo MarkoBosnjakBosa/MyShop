@@ -33,7 +33,7 @@ const profile = require("./routes/profile.js")(app, models, validation);
 const setup = require("./routes/setup.js")(app, models, smsEvent);
 const categories = require("./routes/admin/categories.js")(app, models, validation);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
-const products = require("./routes/admin/technicalData.js")(app, models, multer, validation);
+const products = require("./routes/admin/products.js")(app, models, multer, validation);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);

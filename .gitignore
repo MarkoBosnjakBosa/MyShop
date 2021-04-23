@@ -1,4 +1,4 @@
 node_modules/
 .env
-server/images/avatars/*
-!server/images/avatars/.gitkeep
+server/images/products/*
+!server/images/products/.gitkeep

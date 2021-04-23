@@ -20,7 +20,7 @@
                                     </div>
                                     <input type="text" id="title" class="form-control" v-model="product.title" ref="first" @focus="clearTitleStatus()" @keypress="clearTitleStatus()"/>
                                 </div>
-                                <small v-if="titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
+                                <small v-if="error.titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
@@ -29,7 +29,7 @@
                                     </div>
                                     <textarea id="email" class="form-control" v-model="product.description" @focus="clearDescriptionStatus()" @keypress="clearDescriptionStatus()"/>
                                 </div>
-                                <small v-if="descriptionError && submitting" class="form-text errorInput">Please provide a valid description!</small>
+                                <small v-if="error.descriptionError && submitting" class="form-text errorInput">Please provide a valid description!</small>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
@@ -41,7 +41,7 @@
                                         <span class="input-group-text">.00</span>
                                     </div>
                                 </div>
-                                <small v-if="priceError && submitting" class="form-text errorInput">Please provide a valid price!</small>
+                                <small v-if="error.priceError && submitting" class="form-text errorInput">Please provide a valid price!</small>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
@@ -50,7 +50,7 @@
                                     </div>
                                     <input type="number" id="quantity" class="form-control" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
                                 </div>
-                                <small v-if="quantityError && submitting" class="form-text errorInput">Please provide a valid quantity!</small>
+                                <small v-if="error.quantityError && submitting" class="form-text errorInput">Please provide a valid quantity!</small>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
@@ -62,7 +62,7 @@
                                         <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
                                     </select>
                                 </div>
-                                <small v-if="categoryError && submitting" class="form-text errorInput">Please provide a valid category!</small>
+                                <small v-if="error.categoryError && submitting" class="form-text errorInput">Please provide a valid category!</small>
                             </div>
                             <div class="form-group">
                                 <button type="button" class="btn btn-info nextButton" @click="toggleTab('technicalData')">Next <i class="fas fa-angle-double-right"></i></button>
@@ -80,7 +80,7 @@
                                     <button type="button" class="btn btn-primary" @click="selectTechnicalData()">Add</button>
                                 </div>
                             </div>
-                            <table v-if="product.technicalData.length" id="selectedTechnicalData" class="table">
+                            <table v-if="selectedTechnicalData.length" id="selectedTechnicalData" class="table">
                                 <thead class="thead-light">
                                     <tr>
                                         <th scope="col">#</th>
@@ -90,10 +90,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(technicalInformation, index) in product.technicalData" :key="technicalInformation.title">
+                                    <tr v-for="(technicalInformation, index) in selectedTechnicalData" :key="technicalInformation.title" :row="technicalInformation.title">
                                         <td>{{index + 1}}</td>
-                                        <td>{{technicalInformation.title}}</td>
-                                        <td><textarea class="form-control" rows="1"></textarea></td>
+                                        <td :id="'title_' + technicalInformation.title">{{technicalInformation.title}}</td>
+                                        <td><textarea :id="'value_' + technicalInformation.title" class="form-control" rows="1"></textarea></td>
                                         <td><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
                                     </tr>
                                 </tbody>
@@ -114,7 +114,7 @@
                                         <label for="primaryImage" class="custom-file-label">Choose image</label>
                                     </div>
                                 </div>
-                                <small v-if="primaryImageError && submitting" class="form-text errorInput">Please provide a valid primary image!</small>
+                                <small v-if="error.primaryImageError && submitting" class="form-text errorInput">Please provide a valid primary image!</small>
                             </div>
                             <div id="previewPrimaryImage"></div>
                             <h3>Images</h3>
@@ -177,22 +177,24 @@
 			return {
                 categories: [],
                 technicalData: [],
+                selectedTechnicalData: [],
                 submitting: false,
-                titleError: false,
-                descriptionError: false,
-                priceError: false,
-                quantityError: false,
-                categoryError: false,
-                primaryImageError: false,
                 product: {
                     title: "",
                     description: "",
                     price: "",
                     quantity: "",
                     category: "",
-                    technicalData: [],
                     primaryImage: "",
                     images: []
+                },
+                error: {
+                    titleError: false,
+                    descriptionError: false,
+                    priceError: false,
+                    quantityError: false,
+                    categoryError: false,
+                    primaryImageError: false,
                 },
                 productCreated: false,
                 editing: null
@@ -210,7 +212,7 @@
                 }).catch(error => console.log(error));
             },
             createProduct() {
-                this.submitting = true;
+                /*this.submitting = true;
                 this.clearTitleStatus();
                 this.clearDescriptionStatus();
                 this.clearPriceStatus();
@@ -219,67 +221,84 @@
                 this.clearPrimaryImageStatus();
                 var allowSubmit = true;
                 if(this.invalidTitle) {
-                    this.titleError = true;
+                    this.error.titleError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidDescription) {
-                    this.descriptionError = true;
+                    this.error.descriptionError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidPrice) {
-                    this.priceError = true;
+                    this.error.priceError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidQuantity) {
-                    this.quantityError = true;
+                    this.error.quantityError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidCategory) {
-                    this.categoryError = true;
+                    this.error.categoryError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidPrimaryImage) {
-                    this.primaryImageError = true;
+                    this.error.primaryImageError = true;
                     allowSubmit = false;
                 }
-                grecaptcha.ready(function() {
-                    grecaptcha.execute(process.env.VUE_APP_RECAPTCHA_v3_SITE_KEY, {action: "submit"}).then(function(reCaptchaToken) {
-                        if(reCaptchaToken == "" || reCaptchaToken == undefined || reCaptchaToken == null) {
-                            this.reCaptchaTokenError = true;
-					        allowSubmit = false;
-                        }
-                    });
-                });
                 if(!allowSubmit) {
                     this.productCreated = false;
                     return;
-                }
-                var body = {title: this.category.title, icon: this.category.icon};
-                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createProduct", body).then(response => {
-                    if(response.data.created) {
-                        var newCategory = response.data.category;
-                        this.categories = [...this.categories, newCategory];
-                        this.categoryCreated = true;
-                        this.category = {title: "", icon: ""};
-                        this.titleError = false, this.iconError = false, this.submitting = false;
-                    } else {
-                        var errorFields = response.data.errorFields;
-                        if(errorFields.includes("title")) this.titleError = true;
-                        if(errorFields.includes("icon")) this.iconError = true;
-                        this.categoryCreated = false;
-                    }
-                }).catch(error => console.log(error));
+                }*/
+                var temp = this;
+                grecaptcha.ready(function() {
+                    grecaptcha.execute(process.env.VUE_APP_RECAPTCHA_v3_SITE_KEY, {action: "submit"}).then(function(reCaptchaToken) {
+                        if(reCaptchaToken != "" && reCaptchaToken != undefined && reCaptchaToken != null) {
+                            var technicalDataRows = document.querySelectorAll("#selectedTechnicalData tbody tr");
+                            var selectedTechnicalData = [];
+                            for(var i = 0; i < technicalDataRows.length; i++) {
+                                var row = technicalDataRows[i].getAttribute("row");
+                                var newTechnicalInformation = {title: document.getElementById("title_" + row).innerText, value: document.getElementById("value_" + row).value};
+                                selectedTechnicalData = [...selectedTechnicalData, newTechnicalInformation];
+                            }
+                            var formData = new FormData();
+                            formData.append("title", temp.product.title);
+                            formData.append("description", temp.product.description);
+                            formData.append("price", temp.product.price);
+                            formData.append("quantity", temp.product.quantity);
+                            formData.append("category", temp.product.category);
+                            formData.append("technicalData", selectedTechnicalData);
+                            formData.append("primaryImage", temp.product.primaryImage);
+                            for(var image = 0 ; image < temp.product.images.length; image++){
+                                formData.append("images", temp.product.images[image])
+                            }
+                            formData.append("reCaptchaToken", reCaptchaToken);
+                            axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createProduct", formData).then(response => {
+                                /*if(response.data.created) {
+                                    var newCategory = response.data.category;
+                                    this.categories = [...this.categories, newCategory];
+                                    this.categoryCreated = true;
+                                    this.category = {title: "", icon: ""};
+                                    this.titleError = false, this.iconError = false, this.submitting = false;
+                                } else {
+                                    var errorFields = response.data.errorFields;
+                                    if(errorFields.includes("title")) this.titleError = true;
+                                    if(errorFields.includes("icon")) this.iconError = true;
+                                    this.categoryCreated = false;
+                                }*/
+                            }).catch(error => console.log(error));
+                        }
+                    });
+                });
             },
-            clearTitleStatus() { this.titleError = false },
-            clearDescriptionStatus() { this.descriptionError = false },
-            clearPriceStatus() { this.priceError = false },
-            clearQuantityStatus() { this.quantityError = false },
-            clearCategoryStatus() { this.categoryError = false },
-            clearPrimaryImageStatus() { this.primaryImageError = false },
+            clearTitleStatus() { this.error.titleError = false },
+            clearDescriptionStatus() { this.error.descriptionError = false },
+            clearPriceStatus() { this.error.priceError = false },
+            clearQuantityStatus() { this.error.quantityError = false },
+            clearCategoryStatus() { this.error.categoryError = false },
+            clearPrimaryImageStatus() { this.error.primaryImageError = false },
             selectTechnicalData() {
                 var technicalInformationTitle = document.getElementById("technicalData").value;
                 var newTechnicalInformation = {title: technicalInformationTitle};
-                this.product.technicalData = [...this.product.technicalData, newTechnicalInformation];
+                this.selectedTechnicalData = [...this.selectedTechnicalData, newTechnicalInformation];
                 document.getElementById("technicalData").value = "";
             },
             removeTechnicalInformation(currentIndex) {
@@ -297,7 +316,6 @@
                             previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "'/>";
                         }
                         this.product.primaryImage = file;
-                        document.getElementById("dropzone").classList.remove("onDragOver");
 					    this.clearPrimaryImageStatus();
                         fileReader.readAsDataURL(file);
                     } else {
@@ -308,8 +326,7 @@
                             var fileReader = new FileReader();
                             fileReader.onload = (function(theFile) {
                                 return function(e) {
-                                    var newImage = {name: theFile.name, src: e.target.result, file: theFile};
-                                    temp.product.images = [...temp.product.images, newImage];
+                                    temp.product.images = [...temp.product.images, theFile];
                                 };
                             })(file);
                             fileReader.readAsDataURL(file);
