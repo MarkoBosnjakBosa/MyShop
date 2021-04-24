@@ -44,6 +44,9 @@
             openTechnicalData() {
                 router.push("/admin/technical/data");
             },
+            openEditProduct(productId) {
+                router.push("/admin/product/" + productId);
+            },
             logout() {
                 store.dispatch("logout");
                 router.push("/login");

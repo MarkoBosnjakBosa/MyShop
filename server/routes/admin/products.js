@@ -21,6 +21,12 @@ module.exports = function(app, models, multer, fs, validation) {
 			}
 		}
 	});
+	app.get("/getProducts", (request, response) => {
+        var query = {};
+        Product.find(query).then(products => {
+            response.status(200).json({products: products}).end();
+        }).catch(error => console.log(error));
+    });
     app.post("/createProduct", upload.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), (request, response) => {
 		var allowCreation = true;
 		var errorFields = [];
@@ -61,11 +67,13 @@ module.exports = function(app, models, multer, fs, validation) {
 			var primaryImageObject = {name: primaryImage.filename, contentType: primaryImage.mimetype, image: Buffer.from(encodedPrimaryImage, "base64")};
 			var images = request.files["images"];
 			var imagesObjects = [];
-			for(var image = 0; image < images.length; image++) {
-				var imageRead = fs.readFileSync(images[image].path);
-				var encodedImage = imageRead.toString("base64");
-				var imageObject = {name: primaryImage.filename, contentType: image.mimetype, image: Buffer.from(encodedImage, "base64")};
-				imagesObjects.push(imageObject);
+			if(images != null && images != "" && images.length > 0) {
+				for(var image = 0; image < images.length; image++) {
+					var imageRead = fs.readFileSync(images[image].path);
+					var encodedImage = imageRead.toString("base64");
+					var imageObject = {name: primaryImage.filename, contentType: image.mimetype, image: Buffer.from(encodedImage, "base64")};
+					imagesObjects.push(imageObject);
+				}
 			}
 			var review = {votes: 0, rating: 0, averageRating: 0};
 			var newProduct = getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, review);

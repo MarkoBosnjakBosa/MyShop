@@ -141,7 +141,7 @@
                                         <td>{{index + 1}}</td>
                                         <td>{{image.name}}</td>
                                         <td><img :src="image.src" :alt="image.name" class="img-fluid rounded" width="100" height="100"/></td>
-                                        <td><button type="button" class="btn btn-danger" @click="removeImage(index)">Delete</button></td>
+                                        <td><i class="fas fa-times fa-2x" @click="removeImage(index)"></i></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -393,7 +393,7 @@
 	}
     tbody .fas {
         cursor: pointer;
-        color: #ff0000;;
+        color: #ff0000;
     }
     #dropzone {
         border: 2px dashed #91b0b3;
