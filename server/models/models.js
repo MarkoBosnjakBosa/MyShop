@@ -23,8 +23,9 @@ module.exports = function(mongoose) {
 		description: {type: String, required: true},
 		price: {type: Number, required: true},
 		quantity: {type: Number, required: true},
-		categoryId: {type: Number, required: true},
+		category: {type: String, required: true},
 		technicalData: {type: Array, required: true},
+		primaryImage: {name: String, contentType: String, image: Buffer},
 		images:{type: Array, required: true},
         review: {type: Object, required: true}
 	});

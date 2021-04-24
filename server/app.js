@@ -6,6 +6,7 @@ const bcryptjs = require("bcryptjs");
 const mongoose = require("mongoose");
 const models = require("./models/models.js")(mongoose);
 const multer = require("multer");
+const fs = require("fs");
 const EventEmitter = require("events").EventEmitter;
 const mailer = require("nodemailer");
 const axios = require("axios");
@@ -33,7 +34,7 @@ const profile = require("./routes/profile.js")(app, models, validation);
 const setup = require("./routes/setup.js")(app, models, smsEvent);
 const categories = require("./routes/admin/categories.js")(app, models, validation);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
-const products = require("./routes/admin/products.js")(app, models, multer, validation);
+const products = require("./routes/admin/products.js")(app, models, multer, fs, validation);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);

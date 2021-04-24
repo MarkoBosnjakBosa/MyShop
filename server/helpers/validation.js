@@ -66,12 +66,30 @@ function invalidTitle(title) {
 function invalidIcon(icon) {
     return icon == "";
 }
-function invalidType(type) {
-    if(type != "" && (type == "textfield" || type == "textarea" || type == "number")) {
+function invalidDescription(description) { 
+    return description == ""; 
+}
+function invalidPrice(price) {
+    var priceFormat = /^[0-9]*\.[0-9]{2}$/;
+    if(price != "" && priceFormat.test(price)) {
         return false;
     } else {
         return true;
     }
+}
+function invalidQuantity(quantity) {
+    var quantityFormat = /^[0-9]\d*$/;
+    if(quantity != "" && quantityFormat.test(quantity)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+function invalidCategory(category) { 
+    return category == ""; 
+}
+function invalidPrimaryImage(primaryImage) { 
+    return primaryImage == ""; 
 }
 function validUsername(username) {
     var usernameFormat = /^[a-z0-9_.-]*$/;
@@ -111,7 +129,11 @@ module.exports = {
     invalidReCaptchaToken: invalidReCaptchaToken,
     invalidTitle: invalidTitle,
     invalidIcon: invalidIcon,
-    invalidType: invalidType,
+    invalidDescription: invalidDescription,
+    invalidPrice: invalidPrice,
+    invalidQuantity: invalidQuantity,
+    invalidCategory: invalidCategory,
+    invalidPrimaryImage: invalidPrimaryImage,
     validUsername: validUsername,
     validEmail: validEmail,
     validPassword: validPassword,

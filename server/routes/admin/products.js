@@ -1,4 +1,5 @@
-module.exports = function(app, models, multer, validation) {
+module.exports = function(app, models, multer, fs, validation) {
+	const Product = models.Product;
     var storage = multer.diskStorage({
 		destination: function (request, file, callback) {
 			callback(null, "images/products");
@@ -21,74 +22,62 @@ module.exports = function(app, models, multer, validation) {
 		}
 	});
     app.post("/createProduct", upload.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), (request, response) => {
-		var allowRegistration = true;
+		var allowCreation = true;
 		var errorFields = [];
-		var username = request.body.username;
-		if(!username || invalidUsername(username)) {
-			errorFields.push("username");
-			allowRegistration = false;
+		var title = request.body.title;
+		if(validation.invalidTitle(title)) {
+			errorFields.push("title");
+			allowCreation = false;
 		}
-		var email = request.body.email;
-		if(!email || invalidEmail(email)) {
-			errorFields.push("email");
-			allowRegistration = false;
+		var description = request.body.description;
+		if(validation.invalidDescription(description)) {
+			errorFields.push("description");
+			allowCreation = false;
 		}
-		var password = request.body.password;
-		if(!password || invalidPassword(password)) {
-			errorFields.push("password");
-			allowRegistration = false;
+		var price = request.body.price;
+		if(validation.invalidPrice(price)) {
+			errorFields.push("price");
+			allowCreation = false;
 		}
-		var firstName = request.body.firstName;
-		if(!firstName) {
-			errorFields.push("firstName");
-			allowRegistration = false;
+		var quantity = request.body.quantity;
+		if(validation.invalidQuantity(quantity)) {
+			errorFields.push("quantity");
+			allowCreation = false;
 		}
-		var lastName = request.body.lastName;
-		if(!lastName) {
-			errorFields.push("lastName");
-			allowRegistration = false;
+		var category = request.body.category;
+		if(validation.invalidCategory(category)) {
+			errorFields.push("category");
+			allowCreation = false;
 		}
-		var avatar = request.file;
-		if(!avatar && request.extensionValidationError) {
-			errorFields.push("avatar");
-			allowRegistration = false;
+		var primaryImage = request.files["primaryImage"][0];
+		if(validation.invalidPrimaryImage(primaryImage) || request.extensionValidationError) {
+			errorFields.push("primaryImage");
+			allowCreation = false;
 		}
-		if(allowRegistration) {
-			var query = {$or: [{username: username}, {email: email}]};
-			User.findOne(query).then(user => {
-				if(!isEmpty(user)) {
-					var error = {created: false, alreadyExists: true};
-					if(user.username == username) {
-						error.field = "username";
-					} else {
-						error.field = "email";
-					}
-					response.status(200).json(error);
-					response.end();
-				} else {
-					var sendNewsletters = true;
-					var accepted = false;
-					var acceptanceToken = Math.floor((Math.random() * 100) + 54);
-					var isAdmin = false;
-					var avatarImage = fs.readFileSync(avatar.path);
-					var encodedAvatarImage = avatarImage.toString("base64");
-					var avatarObject = {name: avatar.filename, contentType: avatar.mimetype, image: Buffer.from(encodedAvatarImage, "base64")};
-					var newUser = getUserScheme(User, username, email, password, firstName, lastName, avatarObject, sendNewsletters, accepted, acceptanceToken, isAdmin);
-					bcryptjs.genSalt(10, (error, salt) => {
-						bcryptjs.hash(newUser.password, salt, (error, hash) => {
-							newUser.password = hash;
-							newUser.save().then(user => {
-								sendConfirmationEmail(user.email, user.firstName, user.username, acceptanceToken);
-								response.status(200).json({created: true});
-								response.end();
-							}).catch(error => console.log(error));
-						});
-					});
-				}
+		if(allowCreation) {
+			var technicalData = request.body.technicalData;
+			var primaryImageRead = fs.readFileSync(primaryImage.path);
+			var encodedPrimaryImage = primaryImageRead.toString("base64");
+			var primaryImageObject = {name: primaryImage.filename, contentType: primaryImage.mimetype, image: Buffer.from(encodedPrimaryImage, "base64")};
+			var images = request.files["images"];
+			var imagesObjects = [];
+			for(var image = 0; image < images.length; image++) {
+				var imageRead = fs.readFileSync(images[image].path);
+				var encodedImage = imageRead.toString("base64");
+				var imageObject = {name: primaryImage.filename, contentType: image.mimetype, image: Buffer.from(encodedImage, "base64")};
+				imagesObjects.push(imageObject);
+			}
+			var review = {votes: 0, rating: 0, averageRating: 0};
+			var newProduct = getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, review);
+			newProduct.save().then(product => {
+				response.status(200).json({created: true}).end();
 			}).catch(error => console.log(error));
 		} else {
-			response.status(200).json({created: false, alreadyExists: false, errorFields: errorFields});
-			response.end();
+			response.status(200).json({created: false, errorFields: errorFields}).end();
 		}
 	});
+
+	function getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, review) {
+		return new Product({title: title, description: description, price: price, quantity: quantity, category: category, technicalData: technicalData, primaryImage: primaryImageObject, images: imagesObjects, review: review});
+	}
 }

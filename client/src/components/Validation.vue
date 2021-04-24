@@ -67,7 +67,7 @@
 			invalidIcon(icon) { return icon == ""; },
 			invalidDescription(description) { return description == ""; },
 			invalidPrice(price) {
-				var priceFormat = /^(?:\d*\.\d{1,2}|\d+)$/;
+				var priceFormat = /^[0-9]*\.[0-9]{2}$/;
 				if(price != "" && priceFormat.test(price)) {
 					return false;
 				} else {

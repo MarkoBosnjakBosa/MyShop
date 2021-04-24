@@ -212,7 +212,7 @@
                 }).catch(error => console.log(error));
             },
             createProduct() {
-                /*this.submitting = true;
+                this.submitting = true;
                 this.clearTitleStatus();
                 this.clearDescriptionStatus();
                 this.clearPriceStatus();
@@ -247,7 +247,7 @@
                 if(!allowSubmit) {
                     this.productCreated = false;
                     return;
-                }*/
+                }
                 var temp = this;
                 grecaptcha.ready(function() {
                     grecaptcha.execute(process.env.VUE_APP_RECAPTCHA_v3_SITE_KEY, {action: "submit"}).then(function(reCaptchaToken) {
