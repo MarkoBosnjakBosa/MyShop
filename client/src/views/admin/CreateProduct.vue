@@ -20,7 +20,7 @@
                                     </div>
                                     <input type="text" id="title" class="form-control" v-model="product.title" ref="first" @focus="clearTitleStatus()" @keypress="clearTitleStatus()"/>
                                 </div>
-                                <small v-if="error.titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
+                                <small v-if="errors.titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
@@ -29,7 +29,7 @@
                                     </div>
                                     <textarea id="email" class="form-control" v-model="product.description" @focus="clearDescriptionStatus()" @keypress="clearDescriptionStatus()"/>
                                 </div>
-                                <small v-if="error.descriptionError && submitting" class="form-text errorInput">Please provide a valid description!</small>
+                                <small v-if="errors.descriptionError && submitting" class="form-text errorInput">Please provide a valid description!</small>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
@@ -41,7 +41,7 @@
                                         <span class="input-group-text">.00</span>
                                     </div>
                                 </div>
-                                <small v-if="error.priceError && submitting" class="form-text errorInput">Please provide a valid price!</small>
+                                <small v-if="errors.priceError && submitting" class="form-text errorInput">Please provide a valid price!</small>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
@@ -50,7 +50,7 @@
                                     </div>
                                     <input type="number" id="quantity" class="form-control" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
                                 </div>
-                                <small v-if="error.quantityError && submitting" class="form-text errorInput">Please provide a valid quantity!</small>
+                                <small v-if="errors.quantityError && submitting" class="form-text errorInput">Please provide a valid quantity!</small>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
@@ -62,7 +62,7 @@
                                         <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
                                     </select>
                                 </div>
-                                <small v-if="error.categoryError && submitting" class="form-text errorInput">Please provide a valid category!</small>
+                                <small v-if="errors.categoryError && submitting" class="form-text errorInput">Please provide a valid category!</small>
                             </div>
                             <div class="form-group">
                                 <button type="button" class="btn btn-info nextButton" @click="toggleTab('technicalData')">Next <i class="fas fa-angle-double-right"></i></button>
@@ -111,10 +111,10 @@
                                     </div>
                                     <div class="custom-file">
                                         <input type="file" id="primaryImage" name="primaryImage" class="custom-file-input" @change="selectImages($event, 'primaryImage')"/>
-                                        <label for="primaryImage" class="custom-file-label">Choose image</label>
+                                        <label id="primaryImageLabel" for="primaryImage" class="custom-file-label">Choose image</label>
                                     </div>
                                 </div>
-                                <small v-if="error.primaryImageError && submitting" class="form-text errorInput">Please provide a valid primary image!</small>
+                                <small v-if="errors.primaryImageError && submitting" class="form-text errorInput">Please provide a valid primary image!</small>
                             </div>
                             <div id="previewPrimaryImage"></div>
                             <h3>Images</h3>
@@ -188,7 +188,7 @@
                     primaryImage: "",
                     images: []
                 },
-                error: {
+                errors: {
                     titleError: false,
                     descriptionError: false,
                     priceError: false,
@@ -221,27 +221,27 @@
                 this.clearPrimaryImageStatus();
                 var allowSubmit = true;
                 if(this.invalidTitle) {
-                    this.error.titleError = true;
+                    this.errors.titleError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidDescription) {
-                    this.error.descriptionError = true;
+                    this.errors.descriptionError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidPrice) {
-                    this.error.priceError = true;
+                    this.errors.priceError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidQuantity) {
-                    this.error.quantityError = true;
+                    this.errors.quantityError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidCategory) {
-                    this.error.categoryError = true;
+                    this.errors.categoryError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidPrimaryImage) {
-                    this.error.primaryImageError = true;
+                    this.errors.primaryImageError = true;
                     allowSubmit = false;
                 }
                 if(!allowSubmit) {
@@ -268,7 +268,7 @@
                             formData.append("technicalData", selectedTechnicalData);
                             formData.append("primaryImage", temp.product.primaryImage);
                             for(var image = 0 ; image < temp.product.images.length; image++){
-                                formData.append("images", temp.product.images[image])
+                                formData.append("images", temp.product.images[image].file)
                             }
                             formData.append("reCaptchaToken", reCaptchaToken);
                             axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createProduct", formData).then(response => {
@@ -289,12 +289,12 @@
                     });
                 });
             },
-            clearTitleStatus() { this.error.titleError = false },
-            clearDescriptionStatus() { this.error.descriptionError = false },
-            clearPriceStatus() { this.error.priceError = false },
-            clearQuantityStatus() { this.error.quantityError = false },
-            clearCategoryStatus() { this.error.categoryError = false },
-            clearPrimaryImageStatus() { this.error.primaryImageError = false },
+            clearTitleStatus() { this.errors.titleError = false },
+            clearDescriptionStatus() { this.errors.descriptionError = false },
+            clearPriceStatus() { this.errors.priceError = false },
+            clearQuantityStatus() { this.errors.quantityError = false },
+            clearCategoryStatus() { this.errors.categoryError = false },
+            clearPrimaryImageStatus() { this.errors.primaryImageError = false },
             selectTechnicalData() {
                 var technicalInformationTitle = document.getElementById("technicalData").value;
                 var newTechnicalInformation = {title: technicalInformationTitle};
@@ -314,6 +314,7 @@
                         fileReader.onload = function(e) {
                             var previewPrimaryImage = document.getElementById("previewPrimaryImage");
                             previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "'/>";
+                            document.getElementById("primaryImageLabel").innerText = file.name;
                         }
                         this.product.primaryImage = file;
 					    this.clearPrimaryImageStatus();
@@ -324,9 +325,10 @@
                                 continue;
                             }
                             var fileReader = new FileReader();
-                            fileReader.onload = (function(theFile) {
+                            fileReader.onload = (function(specificFile) {
                                 return function(e) {
-                                    temp.product.images = [...temp.product.images, theFile];
+                                    var newImage = {name: specificFile.name, src: e.target.result, file: specificFile};
+                                    temp.product.images = [...temp.product.images, newImage];
                                 };
                             })(file);
                             fileReader.readAsDataURL(file);
