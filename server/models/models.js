@@ -24,9 +24,9 @@ module.exports = function(mongoose) {
 		price: {type: Number, required: true},
 		quantity: {type: Number, required: true},
 		category: {type: String, required: true},
-		technicalData: {type: Array, required: true},
+		technicalData: {type: Array},
 		primaryImage: {name: String, contentType: String, image: Buffer},
-		images:{type: Array, required: true},
+		images: [{name: String, contentType: String, image: Buffer}],
         review: {type: Object, required: true}
 	});
 	const productCommentScheme = new mongoose.Schema({

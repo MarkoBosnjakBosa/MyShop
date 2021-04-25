@@ -50,6 +50,13 @@
                 } else {
                     toggleSidebar.innerHTML = "<i class='fas fa-angle-double-left'></i>";
                 }
+            },
+            createDecimalNumber(price) {
+                if(!price.includes(".")) {
+                    return price + ".00";
+                } else {
+                    return price;
+                }
             }
         }
     }

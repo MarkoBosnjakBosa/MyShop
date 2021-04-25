@@ -45,7 +45,7 @@
                 router.push("/admin/technical/data");
             },
             openEditProduct(productId) {
-                router.push("/admin/product/" + productId);
+                router.push("/admin/edit/product/" + productId);
             },
             logout() {
                 store.dispatch("logout");

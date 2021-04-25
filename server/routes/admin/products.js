@@ -27,6 +27,13 @@ module.exports = function(app, models, multer, fs, validation) {
             response.status(200).json({products: products}).end();
         }).catch(error => console.log(error));
     });
+	app.get("/getProduct/:productId", (request, response) => {
+		var productId = request.params.productId;
+		var query = {_id: productId};
+        Product.findOne(query).then(product => {
+            response.status(200).json({product: product}).end();
+        }).catch(error => console.log(error));
+	});
     app.post("/createProduct", upload.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), (request, response) => {
 		var allowCreation = true;
 		var errorFields = [];
@@ -61,7 +68,7 @@ module.exports = function(app, models, multer, fs, validation) {
 			allowCreation = false;
 		}
 		if(allowCreation) {
-			var technicalData = request.body.technicalData;
+			var technicalData = JSON.parse(request.body.technicalData);
 			var primaryImageRead = fs.readFileSync(primaryImage.path);
 			var encodedPrimaryImage = primaryImageRead.toString("base64");
 			var primaryImageObject = {name: primaryImage.filename, contentType: primaryImage.mimetype, image: Buffer.from(encodedPrimaryImage, "base64")};
@@ -71,7 +78,7 @@ module.exports = function(app, models, multer, fs, validation) {
 				for(var image = 0; image < images.length; image++) {
 					var imageRead = fs.readFileSync(images[image].path);
 					var encodedImage = imageRead.toString("base64");
-					var imageObject = {name: primaryImage.filename, contentType: image.mimetype, image: Buffer.from(encodedImage, "base64")};
+					var imageObject = {name: images[image].filename, contentType: images[image].mimetype, image: Buffer.from(encodedImage, "base64")};
 					imagesObjects.push(imageObject);
 				}
 			}

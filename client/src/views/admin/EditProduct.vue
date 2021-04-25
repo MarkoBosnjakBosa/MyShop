@@ -4,7 +4,7 @@
 			<sidebar></sidebar>
 			<div id="pageDiv">
 				<navigation></navigation>
-                <form autocomplete="off" enctype="multipart/form-data" @submit.prevent="createProduct()">
+                <form autocomplete="off" enctype="multipart/form-data" @submit.prevent="editPRoduct()">
                     <h1>Create Product</h1>
                     <ul class="nav nav-tabs justify-content-center">
                         <li class="nav-item"><a id="mainNavTab" data-toggle="tab" href="#mainTab" class="nav-link active">Main</a></li>
@@ -93,7 +93,7 @@
                                     <tr v-for="(technicalInformation, index) in selectedTechnicalData" :key="technicalInformation.title" :row="technicalInformation.title">
                                         <td>{{index + 1}}</td>
                                         <td :id="'title_' + technicalInformation.title">{{technicalInformation.title}}</td>
-                                        <td><textarea :id="'value_' + technicalInformation.title" class="form-control" rows="1"></textarea></td>
+                                        <td><textarea :id="'value_' + technicalInformation.title" class="form-control" rows="1">{{technicalInformation.value}}</textarea></td>
                                         <td><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
                                     </tr>
                                 </tbody>
@@ -116,7 +116,9 @@
                                 </div>
                                 <small v-if="errors.primaryImageError && submitting" class="form-text errorInput">Please provide a valid primary image!</small>
                             </div>
-                            <div id="previewPrimaryImage"></div>
+                            <div id="previewPrimaryImage">
+                                <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="img-fluid rounded" width="100" height="100"/>
+                            </div>
                             <h3>Images</h3>
                             <div class="form-group">
                                 <div id="dropzone" @dragover.prevent="addDragOver($event)" @dragleave.prevent="removeDragOver($event)" @drop="removeDragOver($event)" @change="selectImages($event, 'images')">
@@ -127,24 +129,14 @@
                                     <input type="file" id="images" name="images[]" class="images" multiple/>
                                 </div>
                             </div>
-                            <table v-if="product.images.length" id="previewImages" class="table">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Image</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(image, index) in product.images" :key="image.name">
-                                        <td>{{index + 1}}</td>
-                                        <td>{{image.name}}</td>
-                                        <td><img :src="image.src" :alt="image.name" class="img-fluid rounded" width="100" height="100"/></td>
-                                        <td><i class="fas fa-times fa-2x" @click="removeImage(index)"></i></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div v-for="(image, index) in product.images" :key="image.name" class="col-md-3">
+                                        <img :src="renderImage(image)" :alt="image.name" class="img-fluid rounded image"/>
+                                        <i class="fas fa-times-circle removeImage" @click="removeImage(index)"></i>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <button type="button" class="btn btn-info previousButton" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
 						        <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
@@ -153,7 +145,7 @@
                     </div>
                 </form>
             </div>
-        </div> 
+        </div>
     </div>
 </template>
 
@@ -175,6 +167,7 @@
         },
         data() {
 			return {
+                productId: "",
                 categories: [],
                 technicalData: [],
                 selectedTechnicalData: [],
@@ -201,6 +194,19 @@
 			}
 		},
         methods: {
+            getProduct() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProduct/" + this.productId).then(response => {
+                    this.product.title = response.data.product.title;
+                    this.product.description = response.data.product.description;
+                    this.product.price = helper.methods.createDecimalNumber(response.data.product.price.toString());
+                    this.product.quantity = response.data.product.quantity;
+                    this.product.category = response.data.product.category;
+                    this.selectedTechnicalData = response.data.product.technicalData;
+                    this.product.primaryImage = response.data.product.primaryImage;
+                    this.product.images = response.data.product.images;
+                    console.log(this.product.images);
+                }).catch(error => console.log(error));
+            },
             getCategories() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategories").then(response => {
                     this.categories = response.data.categories;
@@ -211,7 +217,7 @@
                     this.technicalData = response.data.technicalData;
                 }).catch(error => console.log(error));
             },
-            createProduct() {
+            editProduct() {
                 this.submitting = true;
                 this.clearTitleStatus();
                 this.clearDescriptionStatus();
@@ -265,7 +271,7 @@
                             formData.append("price", temp.product.price);
                             formData.append("quantity", temp.product.quantity);
                             formData.append("category", temp.product.category);
-                            formData.append("technicalData", JSON.stringify(selectedTechnicalData));
+                            formData.append("technicalData", selectedTechnicalData);
                             formData.append("primaryImage", temp.product.primaryImage);
                             for(var image = 0 ; image < temp.product.images.length; image++){
                                 formData.append("images", temp.product.images[image].file)
@@ -295,6 +301,15 @@
             clearQuantityStatus() { this.errors.quantityError = false },
             clearCategoryStatus() { this.errors.categoryError = false },
             clearPrimaryImageStatus() { this.errors.primaryImageError = false },
+            renderImage(image) {
+                console.log(image.image);
+                if(image && !(image instanceof File)) {
+                    console.log(1);
+                    return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
+                } else {
+                    return "";
+                }
+            },
             selectTechnicalData() {
                 var technicalInformationTitle = document.getElementById("technicalData").value;
                 var newTechnicalInformation = {title: technicalInformationTitle};
@@ -364,6 +379,8 @@
         },
         created() {
 			checkLogin.methods.isLoggedIn();
+            this.productId = this.$route.params.productId;
+            this.getProduct();
             this.getCategories();
             this.getTechnicalData();
         }
@@ -418,6 +435,18 @@
         height: 150px;
         cursor: pointer;
         opacity: 0;
+    }
+    .image {
+        width: 100%;
+        height: 150px;
+    }
+    .removeImage {
+        position: absolute;
+        top: 0px;
+        right: 15px;
+        color: #ff0000;
+        background-color: #fff;
+        cursor: pointer;
     }
     #dropzone:hover, #dropzone.onDragOver {
         background: #ecf0f5;

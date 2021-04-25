@@ -12,6 +12,7 @@ import Categories from "../views/admin/Categories.vue";
 import TechnicalData from "../views/admin/TechnicalData.vue";
 import Products from "../views/admin/Products.vue";
 import CreateProduct from "../views/admin/CreateProduct.vue";
+import EditProduct from "../views/admin/EditProduct.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 
 const routes = [
@@ -28,6 +29,7 @@ const routes = [
 	{path: "/admin/technical/data", name: "TechnicalData", component: TechnicalData},
 	{path: "/admin/products", name: "Products", component: Products},
 	{path: "/admin/create/product", name: "CreateProduct", component: CreateProduct},
+	{path: "/admin/edit/product/:productId", name: "EditProduct", component: EditProduct},
 	{path: "/:catchAll(.*)", name: "PageNotFound", component: PageNotFound}
 ]
 
