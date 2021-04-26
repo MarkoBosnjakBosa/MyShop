@@ -4,8 +4,8 @@
 			<sidebar></sidebar>
 			<div id="pageDiv">
 				<navigation></navigation>
-                <form autocomplete="off" enctype="multipart/form-data" @submit.prevent="editPRoduct()">
-                    <h1>Create Product</h1>
+                <form autocomplete="off" enctype="multipart/form-data" @submit.prevent="editProduct()">
+                    <h1>Edit Product</h1>
                     <ul class="nav nav-tabs justify-content-center">
                         <li class="nav-item"><a id="mainNavTab" data-toggle="tab" href="#mainTab" class="nav-link active">Main</a></li>
                         <li class="nav-item"><a id="technicalDataNavTab" data-toggle="tab" href="#technicalDataTab" class="nav-link">Technical Data</a></li>
@@ -13,6 +13,12 @@
                     </ul>
                     <div class="tab-content">
                         <div id="mainTab" class="tab-pane fade active show">
+                            <div v-if="productEdited" class="alert alert-success alert-dismissible" role="alert">
+                                <div>Product has been successfully edited!</div>
+                                <button type="button" class="close" @click="closeEditionAlert()">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -160,7 +166,7 @@
 	var axios = require("axios");
 	
 	export default {
-		name: "createProduct",
+		name: "editProduct",
 		components: {
             navigation,
 			sidebar
@@ -188,8 +194,9 @@
                     quantityError: false,
                     categoryError: false,
                     primaryImageError: false,
+                    imagesError: false
                 },
-                productCreated: false,
+                productEdited: false,
                 editing: null
 			}
 		},
@@ -204,7 +211,6 @@
                     this.selectedTechnicalData = response.data.product.technicalData;
                     this.product.primaryImage = response.data.product.primaryImage;
                     this.product.images = response.data.product.images;
-                    console.log(this.product.images);
                 }).catch(error => console.log(error));
             },
             getCategories() {
@@ -250,6 +256,10 @@
                     this.errors.primaryImageError = true;
                     allowSubmit = false;
                 }
+                if(this.invalidImages) {
+                    this.errors.imagesError = true;
+                    allowSubmit = false;
+                }
                 if(!allowSubmit) {
                     this.productCreated = false;
                     return;
@@ -286,9 +296,13 @@
                                     this.titleError = false, this.iconError = false, this.submitting = false;
                                 } else {
                                     var errorFields = response.data.errorFields;
-                                    if(errorFields.includes("title")) this.titleError = true;
-                                    if(errorFields.includes("icon")) this.iconError = true;
-                                    this.categoryCreated = false;
+                                    if(errorFields.includes("title")) temp.errors.titleError = true;
+                                    if(errorFields.includes("description")) temp.errors.descriptionError = true;
+                                    if(errorFields.includes("price")) temp.errors.priceError = true;
+                                    if(errorFields.includes("quantity")) temp.errors.quantityError = true;
+                                    if(errorFields.includes("category")) temp.errors.categoryError = true;
+                                    if(errorFields.includes("primaryImage")) temp.errors.primaryImageError = true;
+                                    temp.productEdited = false;
                                 }*/
                             }).catch(error => console.log(error));
                         }
@@ -302,9 +316,7 @@
             clearCategoryStatus() { this.errors.categoryError = false },
             clearPrimaryImageStatus() { this.errors.primaryImageError = false },
             renderImage(image) {
-                console.log(image.image);
                 if(image && !(image instanceof File)) {
-                    console.log(1);
                     return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
                 } else {
                     return "";
@@ -324,17 +336,19 @@
                 var temp = this;
                 if(files && files.length > 0) {
                     if(type == "primaryImage") {
+                        temp.errors.primaryImageError = false;
                         var file = files[0];
                         var fileReader = new FileReader();
                         fileReader.onload = function(e) {
                             var previewPrimaryImage = document.getElementById("previewPrimaryImage");
-                            previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "'/>";
+                            previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "' style='height: 150px; width: 150px;'/>";
                             document.getElementById("primaryImageLabel").innerText = file.name;
                         }
                         this.product.primaryImage = file;
 					    this.clearPrimaryImageStatus();
                         fileReader.readAsDataURL(file);
                     } else {
+                        temp.errors.imagesError = false;
                         for (var i = 0, file; file = files[i]; i++) {
                             if (!file.type.match("image.*")) {
                                 continue;
@@ -353,11 +367,12 @@
 			},
             removeImage(currentIndex) {
                 this.product.images = this.product.images.filter((image, index) => index != currentIndex);
+                this.errors.imagesError = false;
             },
-            addDragOver(event) {
+            addDragOver() {
                 document.getElementById("dropzone").className = "onDragOver";
             },
-            removeDragOver(event) {
+            removeDragOver() {
                 document.getElementById("dropzone").classList.remove("onDragOver");
             },
             toggleTab(tab) {
@@ -370,7 +385,8 @@
             invalidPrice() { return validation.methods.invalidPrice(this.product.price); },
             invalidQuantity() { return validation.methods.invalidQuantity(this.product.quantity); },
             invalidCategory() { return validation.methods.invalidCategory(this.product.category); },
-            invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); }
+            invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); },
+            invalidImages() { return validation.methods.invalidImages(this.product.images.length); }
         },
         mounted() {
             var reCaptchaScript = document.createElement("script");
@@ -443,7 +459,7 @@
     .removeImage {
         position: absolute;
         top: 0px;
-        right: 15px;
+        right: 0px;
         color: #ff0000;
         background-color: #fff;
         cursor: pointer;

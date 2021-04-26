@@ -326,7 +326,7 @@
                         var fileReader = new FileReader();
                         fileReader.onload = function(e) {
                             var previewPrimaryImage = document.getElementById("previewPrimaryImage");
-                            previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "' style='height: 150px; weight: 150px;'/>";
+                            previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "' style='height: 150px; weight: 150px; margin-bottom: 5px;'/>";
                             document.getElementById("primaryImageLabel").innerText = file.name;
                         }
                         this.product.primaryImage = file;
