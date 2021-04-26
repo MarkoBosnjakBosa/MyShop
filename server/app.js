@@ -19,6 +19,7 @@ const databaseUrl = process.env.DATABASE_URL;
 const emailUser = process.env.EMAIL_USER;
 const emailPassword = process.env.EMAIL_PASSWORD;
 const reCaptcha_v2_SecretKey = process.env.RECAPTCHA_v2_SECRET_KEY;
+const reCaptcha_v3_SecretKey = process.env.RECAPTCHA_v3_SECRET_KEY;
 const nexmo = new Nexmo({apiKey: process.env.NEXMO_API_KEY, apiSecret: process.env.NEXMO_API_SECRET});
 const transporter = getTransporter();
 const emailEvent = require("./events/emailEvent.js")(EventEmitter, transporter, emailUser, baseUrl, clientPort);
@@ -34,7 +35,7 @@ const profile = require("./routes/profile.js")(app, models, validation);
 const setup = require("./routes/setup.js")(app, models, smsEvent);
 const categories = require("./routes/admin/categories.js")(app, models, validation);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
-const products = require("./routes/admin/products.js")(app, models, multer, fs, validation);
+const products = require("./routes/admin/products.js")(app, models, multer, fs, validation, reCaptcha_v3_SecretKey, axios);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);

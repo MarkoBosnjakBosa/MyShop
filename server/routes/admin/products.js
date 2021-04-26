@@ -1,4 +1,4 @@
-module.exports = function(app, models, multer, fs, validation) {
+module.exports = function(app, models, multer, fs, validation, reCaptcha_v3_SecretKey, axios) {
 	const Product = models.Product;
     var storage = multer.diskStorage({
 		destination: function (request, file, callback) {
@@ -67,6 +67,11 @@ module.exports = function(app, models, multer, fs, validation) {
 			errorFields.push("primaryImage");
 			allowCreation = false;
 		}
+		var reCaptchaToken = request.body.reCaptchaToken;
+        if(validation.invalidReCaptchaToken(reCaptcha_v3_SecretKey, axios, reCaptchaToken, request.connection.remoteAddress)) {
+            errorFields.push("reCaptchaToken");
+            allowRegistration = false;
+        }
 		if(allowCreation) {
 			var technicalData = JSON.parse(request.body.technicalData);
 			var primaryImageRead = fs.readFileSync(primaryImage.path);

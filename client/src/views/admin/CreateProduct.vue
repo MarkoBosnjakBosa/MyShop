@@ -13,12 +13,18 @@
                     </ul>
                     <div class="tab-content">
                         <div id="mainTab" class="tab-pane fade active show">
+                            <div v-if="productCreated" class="alert alert-success alert-dismissible" role="alert">
+                                <div>Product has been successfully created!</div>
+                                <button type="button" class="close" @click="closeCreationAlert()">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <label for="title" class="input-group-text">Title</label>
                                     </div>
-                                    <input type="text" id="title" class="form-control" v-model="product.title" ref="first" @focus="clearTitleStatus()" @keypress="clearTitleStatus()"/>
+                                    <input type="text" id="title" class="form-control" v-model="product.title" @focus="clearTitleStatus()" @keypress="clearTitleStatus()"/>
                                 </div>
                                 <small v-if="errors.titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
                             </div>
@@ -104,6 +110,7 @@
                             </div>
                         </div>
                         <div id="imagesTab" class="tab-pane fade">
+                            <div v-if="errors.titleError || errors.descriptionError || errors.priceError || errors.quantityError || errors.categoryError || errors.primaryImageError" class="alert alert-danger" role="alert">Please insert missing data!</div>
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -119,7 +126,7 @@
                             <div id="previewPrimaryImage"></div>
                             <h3>Images</h3>
                             <div class="form-group">
-                                <div id="dropzone" @dragover.prevent="addDragOver($event)" @dragleave.prevent="removeDragOver($event)" @drop="removeDragOver($event)" @change="selectImages($event, 'images')">
+                                <div id="dropzone" @dragover.prevent="addDragOver()" @dragleave.prevent="removeDragOver()" @drop="removeDragOver()" @change="selectImages($event, 'images')">
                                 <div id="dropzoneDescription">
                                     <i class="fas fa-upload fa-2x"></i>
                                     <p>Choose more images or drag them here.</p>
@@ -127,24 +134,14 @@
                                     <input type="file" id="images" name="images[]" class="images" multiple/>
                                 </div>
                             </div>
-                            <table v-if="product.images.length" id="previewImages" class="table">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Image</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(image, index) in product.images" :key="image.name">
-                                        <td>{{index + 1}}</td>
-                                        <td>{{image.name}}</td>
-                                        <td><img :src="image.src" :alt="image.name" class="img-fluid rounded" width="100" height="100"/></td>
-                                        <td><i class="fas fa-times fa-2x" @click="removeImage(index)"></i></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div v-for="(image, index) in product.images" :key="image.name" class="col-md-3">
+                                        <img :src="image.src" :alt="image.name" class="img-fluid rounded image"/>
+                                        <i class="fas fa-times-circle removeImage" @click="removeImage(index)"></i>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <button type="button" class="btn btn-info previousButton" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
 						        <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
@@ -272,18 +269,25 @@
                             }
                             formData.append("reCaptchaToken", reCaptchaToken);
                             axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createProduct", formData).then(response => {
-                                /*if(response.data.created) {
-                                    var newCategory = response.data.category;
-                                    this.categories = [...this.categories, newCategory];
-                                    this.categoryCreated = true;
-                                    this.category = {title: "", icon: ""};
-                                    this.titleError = false, this.iconError = false, this.submitting = false;
+                                if(response.data.created) {
+                                    temp.productCreated = true;
+                                    temp.product = {title: "", description: "", price: "", quantity: "", category: "", primaryImage: "", images: []};
+                                    temp.selectedTechnicalData = [];
+                                    document.getElementById("primaryImage").value = "";
+                                    document.getElementById("primaryImageLabel").innerText = "";
+                                    document.getElementById("images").value = "";
+                                    temp.errors = {titleError: false, descriptionError: false, priceError: false, quantityError: false, categoryError: false, primaryImageError: false};
+                                    temp.toggleTab("main");
                                 } else {
                                     var errorFields = response.data.errorFields;
-                                    if(errorFields.includes("title")) this.titleError = true;
-                                    if(errorFields.includes("icon")) this.iconError = true;
-                                    this.categoryCreated = false;
-                                }*/
+                                    if(errorFields.includes("title")) temp.errors.titleError = true;
+                                    if(errorFields.includes("description")) temp.errors.descriptionError = true;
+                                    if(errorFields.includes("price")) temp.errors.priceError = true;
+                                    if(errorFields.includes("quantity")) temp.errors.quantityError = true;
+                                    if(errorFields.includes("category")) temp.errors.categoryError = true;
+                                    if(errorFields.includes("primaryImage")) temp.errors.primaryImageError = true;
+                                    temp.productCreated = false;
+                                }
                             }).catch(error => console.log(error));
                         }
                     });
@@ -339,14 +343,17 @@
             removeImage(currentIndex) {
                 this.product.images = this.product.images.filter((image, index) => index != currentIndex);
             },
-            addDragOver(event) {
+            addDragOver() {
                 document.getElementById("dropzone").className = "onDragOver";
             },
-            removeDragOver(event) {
+            removeDragOver() {
                 document.getElementById("dropzone").classList.remove("onDragOver");
             },
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
+			},
+            closeCreationAlert() {
+				this.productCreated = false;
 			}
         },
         computed: {
@@ -418,6 +425,18 @@
         height: 150px;
         cursor: pointer;
         opacity: 0;
+    }
+    .image {
+        width: 100%;
+        height: 150px;
+    }
+    .removeImage {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        color: #ff0000;
+        background-color: #fff;
+        cursor: pointer;
     }
     #dropzone:hover, #dropzone.onDragOver {
         background: #ecf0f5;
