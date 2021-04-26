@@ -80,6 +80,7 @@
                                     <label for="technicalData" class="input-group-text">Technical Data</label>
                                 </div>
                                 <select id="technicalData" class="form-control">
+                                    <option value="" disabled selected>Select technical information...</option>
                                     <option v-for="technicalInformation in technicalData" :key="technicalInformation._id" :value="technicalInformation.title" :type="technicalInformation.type">{{technicalInformation.title}}</option>
                                 </select>
                                 <div class="input-group-append">
@@ -133,6 +134,7 @@
                                 </div>
                                     <input type="file" id="images" name="images[]" class="images" multiple/>
                                 </div>
+                                <small v-if="errors.imagesError && submitting" class="form-text errorInput">Please provide less than 10 images!</small>
                             </div>
                             <div class="form-group">
                                 <div class="row">
@@ -192,6 +194,7 @@
                     quantityError: false,
                     categoryError: false,
                     primaryImageError: false,
+                    imagesError: false
                 },
                 productCreated: false,
                 editing: null
@@ -241,6 +244,10 @@
                     this.errors.primaryImageError = true;
                     allowSubmit = false;
                 }
+                if(this.invalidImages) {
+                    this.errors.imagesError = true;
+                    allowSubmit = false;
+                }
                 if(!allowSubmit) {
                     this.productCreated = false;
                     return;
@@ -275,6 +282,7 @@
                                     temp.selectedTechnicalData = [];
                                     document.getElementById("primaryImage").value = "";
                                     document.getElementById("primaryImageLabel").innerText = "";
+                                    document.getElementById("previewPrimaryImage").innerText = "";
                                     document.getElementById("images").value = "";
                                     temp.errors = {titleError: false, descriptionError: false, priceError: false, quantityError: false, categoryError: false, primaryImageError: false};
                                     temp.toggleTab("main");
@@ -313,17 +321,19 @@
                 var temp = this;
                 if(files && files.length > 0) {
                     if(type == "primaryImage") {
+                        temp.errors.primaryImageError = false;
                         var file = files[0];
                         var fileReader = new FileReader();
                         fileReader.onload = function(e) {
                             var previewPrimaryImage = document.getElementById("previewPrimaryImage");
-                            previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "'/>";
+                            previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "' style='height: 150px; weight: 150px;'/>";
                             document.getElementById("primaryImageLabel").innerText = file.name;
                         }
                         this.product.primaryImage = file;
 					    this.clearPrimaryImageStatus();
                         fileReader.readAsDataURL(file);
                     } else {
+                        temp.errors.imagesError = false;
                         for (var i = 0, file; file = files[i]; i++) {
                             if (!file.type.match("image.*")) {
                                 continue;
@@ -342,6 +352,7 @@
 			},
             removeImage(currentIndex) {
                 this.product.images = this.product.images.filter((image, index) => index != currentIndex);
+                this.errors.imagesError = false;
             },
             addDragOver() {
                 document.getElementById("dropzone").className = "onDragOver";
@@ -362,7 +373,8 @@
             invalidPrice() { return validation.methods.invalidPrice(this.product.price); },
             invalidQuantity() { return validation.methods.invalidQuantity(this.product.quantity); },
             invalidCategory() { return validation.methods.invalidCategory(this.product.category); },
-            invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); }
+            invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); },
+            invalidImages() { return validation.methods.invalidImages(this.product.images.length); }
         },
         mounted() {
             var reCaptchaScript = document.createElement("script");

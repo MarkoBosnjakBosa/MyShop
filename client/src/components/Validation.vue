@@ -83,7 +83,14 @@
 				}
 			},
 			invalidCategory(category) { return category == ""; },
-			invalidPrimaryImage(primaryImage) { return primaryImage == ""; }
+			invalidPrimaryImage(primaryImage) { return primaryImage == ""; },
+			invalidImages(images) {
+				if(images < 10) {
+					return false;
+				} else {
+					return true;
+				}
+			}
         }
     }
 </script>
