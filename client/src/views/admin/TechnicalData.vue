@@ -8,7 +8,7 @@
                     <form autocomplete="off" @submit.prevent="createTechnicalInformation()">
                         <h1>Technical Data</h1>
                         <div class="form-row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-11">
                                 <input type="text" id="title" class="form-control" :class="{'errorField' : titleError && submitting}" placeholder="Title" v-model="technicalInformation.title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
                                 <small v-if="titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
                             </div>
