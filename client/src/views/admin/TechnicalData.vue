@@ -12,15 +12,6 @@
                                 <input type="text" id="title" class="form-control" :class="{'errorField' : titleError && submitting}" placeholder="Title" v-model="technicalInformation.title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
                                 <small v-if="titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
                             </div>
-                            <div class="form-group col-md-4">
-                                <select id="type" class="form-control" :class="{'errorField' : typeError && submitting}" v-model="technicalInformation.type" @focus="clearTypeStatus()" @keypress="clearTypeStatus()">
-                                    <option value="" disabled selected>Select type...</option>
-                                    <option value="textfield">Textfield</option>
-                                    <option value="textarea">Textarea</option>
-                                    <option value="number">Number</option>
-                                </select>
-                                <small v-if="typeError && submitting" class="form-text errorInput">Please provide a valid type!</small>
-                            </div>
                             <div class="form-group col-md-1">
                                 <button type="submit" class="btn btn-primary">Create</button>
                             </div>
@@ -33,34 +24,17 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
-                            <th scope="col">Type</th>
                             <th scope="col">Actions</th>
-                            <th scope="col">
-                                <select id="filter" class="form-control" v-model="filter">
-                                    <option value="all" selected>All</option>
-                                    <option value="textfield">Textfield</option>
-                                    <option value="textarea">Textarea</option>
-                                    <option value="number">Number</option>
-                                </select>
-                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="!filterByType.length">
+                        <tr v-if="!technicalData.length">
                             <td colspan="6" class="noTechnicalData">No technical data found!</td>
                         </tr>
-                        <tr v-for="(technicalInformation, index) in filterByType" :key="technicalInformation._id">
+                        <tr v-for="(technicalInformation, index) in technicalData" :key="technicalInformation._id">
                             <th scope="row">{{++index}}</th>
                             <td v-if="editing == technicalInformation._id"><input type="text" class="form-control" v-model="technicalInformation.title"/></td>
                             <td v-else>{{technicalInformation.title}}</td>
-                            <td v-if="editing == technicalInformation._id">
-                                <select class="form-control" v-model="technicalInformation.type">
-                                    <option value="textfield">Textfield</option>
-                                    <option value="textarea">Textarea</option>
-                                    <option value="number">Number</option>
-                                </select>
-                            </td>
-                            <td v-else style="text-transform: capitalize">{{technicalInformation.type}}</td>
                             <td v-if="editing == technicalInformation._id" class="padded">
                                 <i class="far fa-check-circle editTechnicalInformation" @click="editTechnicalInformation(technicalInformation)"></i>
                                 <i class="far fa-times-circle disableEditing" @click="disableEditing(technicalInformation)"></i>
@@ -69,7 +43,6 @@
                                 <i class="fas fa-pencil-alt" @click="enableEditing(technicalInformation)"></i>
                                 <i class="fas fa-trash" @click="deleteTechnicalInformation(technicalInformation._id, technicalInformation.title)"></i>
                             </td>
-                            <td></td>
                         </tr>
                     </tbody>
                 </table>
@@ -98,14 +71,11 @@
                 technicalData: [],
                 submitting: false,
                 titleError: false,
-                typeError: false,
                 technicalInformation: {
-                    title: "",
-                    type: ""
+                    title: ""
                 },
                 technicalInformationCreated: false,
-                editing: null,
-                filter: "all"
+                editing: null
 			}
 		},
         methods: {
@@ -117,32 +87,26 @@
             createTechnicalInformation() {
                 this.submitting = true;
                 this.clearTitleStatus();
-                this.clearTypeStatus();
                 var allowSubmit = true;
                 if(this.invalidTitle) {
                     this.titleError = true;
-                    allowSubmit = false;
-                }
-                if(this.invalidType) {
-                    this.typeError = true;
                     allowSubmit = false;
                 }
                 if(!allowSubmit) {
                     this.technicalInformationCreated = false;
                     return;
                 }
-                var body = {title: this.technicalInformation.title, type: this.technicalInformation.type};
+                var body = {title: this.technicalInformation.title};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createTechnicalInformation", body).then(response => {
                     if(response.data.created) {
                         var newTechnicalInformation = response.data.technicalInformation;
                         this.technicalData = [...this.technicalData, newTechnicalInformation];
                         this.technicalInformationCreated = true;
-                        this.technicalInformation = {title: "", type: ""};
-                        this.titleError = false, this.typeError = false, this.submitting = false;
+                        this.technicalInformation = {title: ""};
+                        this.titleError = false, this.submitting = false;
                     } else {
                         var errorFields = response.data.errorFields;
                         if(errorFields.includes("title")) this.titleError = true;
-                        if(errorFields.includes("type")) this.typeError = true;
                         this.technicalInformationCreated = false;
                     }
                 }).catch(error => console.log(error));
@@ -156,8 +120,8 @@
                 this.editing = null;
             },
             editTechnicalInformation(updatedTechnicalInformation) {
-                if(!validation.methods.invalidTitle(updatedTechnicalInformation.title) && !validation.methods.invalidType(updatedTechnicalInformation.type)) {
-                    var body = {technicalInformationId: updatedTechnicalInformation._id, title: updatedTechnicalInformation.title, type: updatedTechnicalInformation.type};
+                if(!validation.methods.invalidTitle(updatedTechnicalInformation.title)) {
+                    var body = {technicalInformationId: updatedTechnicalInformation._id, title: updatedTechnicalInformation.title};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editTechnicalInformation", body).then(response => {
                         if(response.data.edited) {
                             this.technicalData = this.technicalData.map(technicalInformation => technicalInformation._id == updatedTechnicalInformation._id ? updatedTechnicalInformation : technicalInformation);
@@ -176,23 +140,10 @@
                     }).catch(error => console.log(error));
                 }
             },
-            clearTitleStatus() { this.titleError = false, this.technicalInformationCreated = false; },
-            clearTypeStatus() { this.typeError = false, this.technicalInformationCreated = false; },
+            clearTitleStatus() { this.titleError = false, this.technicalInformationCreated = false; }
         },
         computed: {
-            invalidTitle() { return validation.methods.invalidTitle(this.technicalInformation.title); },
-            invalidType() { return validation.methods.invalidType(this.technicalInformation.type); },
-            filterByType() {
-				if(this.filter == "textfield") {
-					return this.technicalData.filter(technicalInformation => technicalInformation.type == "textfield");
-				} else if(this.filter == "textarea") {
-					return this.technicalData.filter(technicalInformation => technicalInformation.type == "textarea");
-				} else if(this.filter == "number") {
-					return this.technicalData.filter(technicalInformation => technicalInformation.type == "number");
-				} else {
-					return this.technicalData;
-				}
-			}
+            invalidTitle() { return validation.methods.invalidTitle(this.technicalInformation.title); }
         },
         created() {
 			checkLogin.methods.isLoggedIn();

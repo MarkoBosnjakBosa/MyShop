@@ -36,8 +36,7 @@ module.exports = function(mongoose) {
 		date: {type: String, required: true}
 	});
 	const technicalInformationScheme = new mongoose.Schema({
-		title: {type: String, required: true},
-		type: {type: String, required: true}
+		title: {type: String, required: true}
 	});
 	const categoryScheme = new mongoose.Schema({
 		title: {type: String, required: true},

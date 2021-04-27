@@ -14,13 +14,8 @@ module.exports = function(app, models, validation) {
             errorFields.push("title");
             allowCreation = false;
         }
-        var type = request.body.type;
-        if(validation.invalidType(type)) {
-            errorFields.push("type");
-            allowCreation = false;
-        }
         if(allowCreation) {
-            var newTechnicalInformation = getTechnicalInformationScheme(TechnicalInformation, title, type);
+            var newTechnicalInformation = getTechnicalInformationScheme(TechnicalInformation, title);
             newTechnicalInformation.save().then(technicalInformation => {
                 response.status(200).json({created: true, technicalInformation: technicalInformation}).end();
             }).catch(error => console.log(error));
@@ -31,10 +26,9 @@ module.exports = function(app, models, validation) {
     app.put("/editTechnicalInformation", (request, response) => {
         var technicalInformationId = request.body.technicalInformationId;
         var title = request.body.title;
-        var type = request.body.type;
-        if(technicalInformationId && !validation.invalidTitle(title) && !validation.invalidType(type)) {
+        if(technicalInformationId && !validation.invalidTitle(title)) {
             var query = {_id: technicalInformationId};
-            var update = {title: title, type: type};
+            var update = {title: title};
             TechnicalInformation.findOneAndUpdate(query, update, {new: true}).then(technicalInformation => {
                 if(!validation.isEmpty(technicalInformation)) {
                     response.status(200).json({edited: true}).end();
@@ -62,7 +56,7 @@ module.exports = function(app, models, validation) {
         }
     });
 
-    function getTechnicalInformationScheme(TechnicalInformation, title, type) {
-        return new TechnicalInformation({title: title, type: type});
+    function getTechnicalInformationScheme(TechnicalInformation, title) {
+        return new TechnicalInformation({title: title});
     }
 }
