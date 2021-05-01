@@ -4,8 +4,8 @@
 			<sidebar></sidebar>
 			<div id="pageDiv">
 				<navigation></navigation>
+                <h1>Create Product</h1>
                 <form autocomplete="off" enctype="multipart/form-data" @submit.prevent="createProduct()">
-                    <h1>Create Product</h1>
                     <ul class="nav nav-tabs justify-content-center">
                         <li class="nav-item"><a id="mainNavTab" data-toggle="tab" href="#mainTab" class="nav-link active">Main</a></li>
                         <li class="nav-item"><a id="technicalDataNavTab" data-toggle="tab" href="#technicalDataTab" class="nav-link">Technical Data</a></li>

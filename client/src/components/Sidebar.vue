@@ -5,9 +5,9 @@
             <span v-else>MyShop</span>    
         </div>
         <ul class="list list-group-flush">
-            <li class="list-group-item list-group-item-action bg-light" @click="openHome()">Home</li>
+            <li class="list-group-item list-group-item-action bg-light" @click="openHomeSettings()">Home Settings</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openProducts()">Products</li>
-            <li class="list-group-item list-group-item-action bg-light" @click="openCreateProduct()"> Create Product</li>
+            <li class="list-group-item list-group-item-action bg-light" @click="openCreateProduct()">Create Product</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openCategories()">Categories</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openTechnicalData()">Technical Data</li>
         </ul>
@@ -33,8 +33,8 @@
             getUserData() {
                 this.userData = checkLogin.methods.getUserData();
             },
-            openHome() {
-                route.methods.openHome();
+            openHomeSettings() {
+                route.methods.openHomeSettings();
             },
             openProducts() {
                 route.methods.openProducts();

@@ -90,7 +90,8 @@
 				} else {
 					return true;
 				}
-			}
+			},
+			invalidMessage(message) { return message == ""; },
         }
     }
 </script>

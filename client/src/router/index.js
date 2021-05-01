@@ -8,6 +8,7 @@ import ForgotCredentials from "../views/ForgotCredentials.vue";
 import ResetPassword from "../views/ResetPassword.vue";
 import Profile from "../views/Profile.vue";
 import Setup from "../views/Setup.vue";
+import HomeSettings from "../views/admin/HomeSettings.vue";
 import Categories from "../views/admin/Categories.vue";
 import TechnicalData from "../views/admin/TechnicalData.vue";
 import Products from "../views/admin/Products.vue";
@@ -25,6 +26,7 @@ const routes = [
 	{path: "/reset/password", name: "ResetPassword", component: ResetPassword},
 	{path: "/profile", name: "Profile", component: Profile},
 	{path: "/setup", name: "Setup", component: Setup},
+	{path: "/admin/home/settings", name: "HomeSettings", component: HomeSettings},
 	{path: "/admin/categories", name: "Categories", component: Categories},
 	{path: "/admin/technical/data", name: "TechnicalData", component: TechnicalData},
 	{path: "/admin/products", name: "Products", component: Products},

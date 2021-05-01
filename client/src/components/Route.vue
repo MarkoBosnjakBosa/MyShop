@@ -32,6 +32,9 @@
             openAuthentication() {
                 router.push("/authentication");
             },
+            openHomeSettings() {
+                router.push("/admin/home/settings");
+            },
             openProducts() {
                 router.push("/admin/products");
             },
