@@ -43,7 +43,7 @@ module.exports = function(mongoose) {
 		icon: {type: String, required: true}
 	});
 	const homeSettingsScheme = new mongoose.Schema({
-		message: {type: String, required: true},
+		message: {type: String},
 		images: [{name: String, contentType: String, image: Buffer}]
 	});
     const models = {
