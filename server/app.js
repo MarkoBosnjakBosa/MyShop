@@ -36,6 +36,7 @@ const setup = require("./routes/setup.js")(app, models, smsEvent);
 const categories = require("./routes/admin/categories.js")(app, models, validation);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
 const products = require("./routes/admin/products.js")(app, models, multer, fs, validation, reCaptcha_v3_SecretKey, axios);
+const homeSettings = require("./routes/admin/homeSettings.js")(app, models, multer, fs, validation);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);

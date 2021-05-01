@@ -91,6 +91,9 @@ function invalidCategory(category) {
 function invalidPrimaryImage(primaryImage) { 
     return primaryImage == ""; 
 }
+function invalidMessage(message) { 
+    return message == ""; 
+}
 function validUsername(username) {
     var usernameFormat = /^[a-z0-9_.-]*$/;
     if(username != "" && usernameFormat.test(username)) {
@@ -134,6 +137,7 @@ module.exports = {
     invalidQuantity: invalidQuantity,
     invalidCategory: invalidCategory,
     invalidPrimaryImage: invalidPrimaryImage,
+    invalidMessage: invalidMessage,
     validUsername: validUsername,
     validEmail: validEmail,
     validPassword: validPassword,

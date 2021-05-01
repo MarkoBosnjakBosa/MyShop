@@ -271,8 +271,8 @@
                             formData.append("category", temp.product.category);
                             formData.append("technicalData", JSON.stringify(selectedTechnicalData));
                             formData.append("primaryImage", temp.product.primaryImage);
-                            for(var image = 0 ; image < temp.product.images.length; image++){
-                                formData.append("images", temp.product.images[image].file)
+                            for(var image = 0 ; image < temp.product.images.length; image++) {
+                                formData.append("images", temp.product.images[image].file);
                             }
                             formData.append("reCaptchaToken", reCaptchaToken);
                             axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createProduct", formData).then(response => {

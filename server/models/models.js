@@ -42,12 +42,17 @@ module.exports = function(mongoose) {
 		title: {type: String, required: true},
 		icon: {type: String, required: true}
 	});
+	const homeSettingsScheme = new mongoose.Schema({
+		message: {type: String, required: true},
+		images: [{name: String, contentType: String, image: Buffer}]
+	});
     const models = {
 		User: mongoose.model("User", userScheme),
 		Product: mongoose.model("Product", productScheme),
 		ProductComment: mongoose.model("ProductComment", productCommentScheme),
 		TechnicalInformation: mongoose.model("TechnicalInformation", technicalInformationScheme),
-		Category: mongoose.model("Category", categoryScheme)
+		Category: mongoose.model("Category", categoryScheme),
+		HomeSettings: mongoose.model("HomeSettings", homeSettingsScheme)
 	}
 	return models;
 }
