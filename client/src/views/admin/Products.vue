@@ -5,6 +5,19 @@
 			<div id="pageDiv">
 				<navigation></navigation>
                 <h1>Products</h1>
+                <form autocomplete="off" class="productsForm" @submit.prevent="getProducts()">
+                    <div class="form-row">
+                        <div class="form-group col-md-8">
+                            <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <input type="number" id="limit" min="1" class="form-control" placeholder="Limit" v-model="limit"/>
+                        </div>
+                        <div class="form-group col-md-1">
+                            <button type="submit" class="btn btn-primary md-1">Search</button>
+                        </div>
+                    </div>
+                </form>
                 <table v-if="products.length" class="table">
                     <thead class="thead-light">
                         <tr>
@@ -55,12 +68,16 @@
         },
         data() {
 			return {
-                products: []
+                products: [],
+                search: "",
+                page: 1,
+                limit: 20
 			}
 		},
         methods: {
             getProducts() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProducts").then(response => {
+                var body = {search: this.search, page: this.page, limit: this.limit};
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProducts", body).then(response => {
                     this.products = response.data.products;
                 }).catch(error => console.log(error));
             },
@@ -90,6 +107,10 @@
         text-align: center;
         margin-top: 20px;
         margin-bottom: 20px;
+    }
+    .productsForm {
+        margin: 0 auto;
+		max-width: 800px;
     }
     tbody .fas {
         cursor: pointer;

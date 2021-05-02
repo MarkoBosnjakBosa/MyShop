@@ -10,7 +10,6 @@
 		name: "modal",
         methods: {
             openModal(event) {
-                console.log(event);
                 var modal = document.getElementById("modal");
                 var modalImage = document.getElementById("modalImage");
                 modal.style.display = "block";

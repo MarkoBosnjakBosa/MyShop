@@ -21,11 +21,23 @@ module.exports = function(app, models, multer, fs, validation, reCaptcha_v3_Secr
 			}
 		}
 	});
-	app.get("/getProducts", (request, response) => {
-        var query = {};
-        Product.find(query).then(products => {
-            response.status(200).json({products: products}).end();
-        }).catch(error => console.log(error));
+	app.post("/getProducts", (request, response) => {
+		var search = request.body.search;
+		var page = Number(request.body.page) - 1; 
+		var limit = Number(request.body.limit);
+		var skip = page * limit;
+		var query;
+		if(search != "") {
+			query = {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]};
+		} else {
+			query = {};
+		}
+		var productsQuery = Product.find(query).skip(skip).limit(limit);
+		var totalQuery = Product.find(productsQuery).countDocuments();
+		var queries = [productsQuery, totalQuery];
+		Promise.all(queries).then(results => {
+			response.status(200).json({products: results[0], total: results[1]}).end();
+		});
     });
 	app.get("/getProduct/:productId", (request, response) => {
 		var productId = request.params.productId;
