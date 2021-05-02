@@ -4,6 +4,7 @@
 			<sidebar></sidebar>
 			<div id="pageDiv">
 				<navigation></navigation>
+                <h1>Products</h1>
                 <table v-if="products.length" class="table">
                     <thead class="thead-light">
                         <tr>
@@ -21,14 +22,15 @@
                             <td>{{product.title}}</td>
                             <td>{{product.price}}</td>
                             <td>{{product.quantity}}</td>
-                            <td><img :src="renderPrimaryImage(product.primaryImage)" :alt="product.title" class="rounded img-fluid primaryImage"></td>
+                            <td><img :src="renderPrimaryImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid primaryImage" @click="openModal($event)"></td>
                             <td>
                                 <i class="fas fa-external-link-alt" @click="openEditProduct(product._id)"></i>
-                                <i class="fas fa-trash" @click="deleteProduct(index)"></i>
+                                <i class="fas fa-trash" @click="deleteProduct(product._id)"></i>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <modal></modal>
             </div>
         </div>
     </div>
@@ -41,13 +43,15 @@
 	import navigation from "../../components/Navigation.vue";
 	import sidebar from "../../components/Sidebar.vue";
     import route from "../../components/Route.vue";
+    import modal from "../../components/Modal.vue";
 	var axios = require("axios");
 	
 	export default {
 		name: "products",
 		components: {
             navigation,
-			sidebar
+			sidebar,
+            modal
         },
         data() {
 			return {
@@ -69,6 +73,9 @@
             },
             openEditProduct(productId) {
                 route.methods.openEditProduct(productId);
+            },
+            openModal(event) {
+                modal.methods.openModal(event);
             }
         },
         created() {
@@ -79,6 +86,11 @@
 </script>
 
 <style scoped>
+    h1 {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
     tbody .fas {
         cursor: pointer;
         margin-right: 5px;
@@ -86,5 +98,6 @@
     .primaryImage {
         height: 50px;
         width: 50px;
+        cursor: pointer;
     }
 </style>
