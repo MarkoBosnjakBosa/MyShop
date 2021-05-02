@@ -143,7 +143,6 @@
                         if(response.data.saved) {
                             this.getHomeSettings();
                         } else {
-                            console.log(1);
                             this.errors.imagesError = true;
                         }
                     }).catch(error => console.log(error));
