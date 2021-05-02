@@ -39,6 +39,9 @@
                     case "images":
                         document.getElementById("imagesNavTab").click();
                         break;
+                    case "message":
+                        document.getElementById("messageNavTab").click();
+                        break;
                 }
 			},
             toggleSidebar() {

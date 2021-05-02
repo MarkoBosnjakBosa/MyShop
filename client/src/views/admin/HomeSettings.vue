@@ -20,9 +20,9 @@
                             </div>
                                 <input type="file" id="images" name="images[]" class="images" multiple/>
                             </div>
-                            <small v-if="errors.imagesError && submitting" class="form-text errorInput">Please provide less than 10 images!</small>
+                            <small v-if="errors.imagesError" class="form-text errorInput">Please provide less than 11 images!</small>
                         </div>
-                        <div class="form-group">
+                        <div v-if="homeSettings.images.length" class="form-group">
                             <div class="row">
                                 <div v-for="image in homeSettings.images" :key="image._id" class="col-md-3">
                                     <img :src="renderImage(image)" :alt="image.name" class="img-fluid rounded image"/>
@@ -30,8 +30,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-info nextButton" @click="toggleTab('message')">Next <i class="fas fa-angle-double-right"></i></button>
+                        </div>
                     </div>
                     <div id="messageTab" class="tab-pane fade">
+                        <h3>Message</h3>
                         <form autocomplete="off" @submit.prevent="saveMessage()">
                             <div class="form-group">
                                 <tinymce
@@ -43,11 +47,15 @@
                                         toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
                                     }"
                                     v-model="homeSettings.message"
+                                    @focus="clearMessageStatus()"
+                                    @keypress="clearMessageStatus()"
                                 />
                                 <small v-if="errors.messageError" class="form-text errorInput">Please provide a valid message!</small>
+                                <small v-if="homeSettingsSaved" class="form-text homeSettingsSaved">Message has been successfully saved!</small>
                             </div>
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary submitButton">Submit</button>
+                                <button type="button" class="btn btn-info previousButton" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                                <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
                             </div>
                         </form>
                     </div>
@@ -64,6 +72,7 @@
 	import navigation from "../../components/Navigation.vue";
 	import sidebar from "../../components/Sidebar.vue";
     import validation from "../../components/Validation.vue";
+    import helper from "../../components/Helper.vue";
     import tinymce from "@tinymce/tinymce-vue";
 	var axios = require("axios");
 
@@ -82,6 +91,7 @@
                     message: "",
                     images: []
                 },
+                homeSettingsSaved: false,
                 errors: {
                     messageError: false,
                     imagesError: false
@@ -104,13 +114,20 @@
                 }
                 var body = {id: this.homeSettings.id, message: this.homeSettings.message};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/saveHomeSettingsMessage", body).then(response => {
-                    
+                    if(response.data.saved) {
+                        this.errors.messageError = false;
+                        this.homeSettingsSaved = true;
+                    } else {
+                        this.errors.messageError = true;
+                        this.homeSettingsSaved = false;
+                    }
                 }).catch(error => console.log(error));
             },
             uploadImages(event) {
+                this.clearImagesStatus();
 				var files = event.target.files;
-                var images = [];
-                if(files && files.length > 0 && files.length < 11) {
+                if(files && files.length > 0 && ((files.length + this.homeSettings.images.length) < 11)) {
+                    var images = [];
                     for (var i = 0, file; file = files[i]; i++) {
                         if (!file.type.match("image.*")) {
                             continue;
@@ -126,12 +143,21 @@
                         if(response.data.saved) {
                             this.getHomeSettings();
                         } else {
-                            var errorFields = response.data.errorFields;
-                            if(errorFields.includes("images")) this.errors.imagesError = true;
+                            console.log(1);
+                            this.errors.imagesError = true;
                         }
                     }).catch(error => console.log(error));
+                } else {
+                    this.errors.imagesError = true;
                 }
 			},
+            clearMessageStatus() { 
+                this.homeSettingsSaved = false;
+                this.errors.messageError = false;
+            },
+            clearImagesStatus() {
+                this.errors.imagesError = false;
+            },
             renderImage(image) {
                 if(image && !(image instanceof File)) {
                     return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
@@ -157,7 +183,9 @@
             removeDragOver() {
                 document.getElementById("dropzone").classList.remove("onDragOver");
             },
-            clearMessageStatus() { this.errors.messageError = false; }
+            toggleTab(tab) {
+                helper.methods.toggleTab(tab);
+			}
         },
         computed: {
             invalidMessage() { return validation.methods.invalidMessage(this.homeSettings.message); }
@@ -180,7 +208,10 @@
         max-width: 800px;
         margin-top: 20px;
     }
-    .submitButton {
+    .previousButton {
+		float: left;
+	}
+    .nextButton, .submitButton  {
 		float: right;
 	}
     #dropzone {
@@ -188,6 +219,7 @@
         color: #92b0b3;
         position: relative;
         height: 150px;
+        margin-bottom: 20px;
     }
     #dropzoneDescription {
         position: absolute;
@@ -210,6 +242,7 @@
     .image {
         width: 100%;
         height: 150px;
+        margin-bottom: 5px;
     }
     .removeImage {
         position: absolute;
@@ -221,6 +254,9 @@
     }
     #dropzone:hover, #dropzone.onDragOver {
         background: #ecf0f5;
+    }
+    .homeSettingsSaved {
+        color: #008000;
     }
     .errorInput {
         color: #ff0000;

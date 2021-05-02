@@ -34,8 +34,7 @@ module.exports = function(app, models, multer, fs, path, validation) {
     app.post("/saveHomeSettingsMessage", (request, response) => {
         var message = request.body.message;
         if(validation.invalidMessage(message)) {
-            errorFields.push("message");
-            response.status(200).json({saved: false, errorFields: errorFields}).end();
+            response.status(200).json({saved: false}).end();
         } else {
             var id = request.body.id;
             var query = {_id: id};
@@ -49,8 +48,8 @@ module.exports = function(app, models, multer, fs, path, validation) {
     app.post("/saveHomeSettingsImages",  upload.array("images"), (request, response) => {
         var homeSettingsId = request.body.homeSettingsId;
         var images = request.files;
-        var imagesObjects = [];
-        if(images != null && images != "" && images.length > 0) {
+        if(images != null && images != "" && images.length > 0 && !request.extensionValidationError) {
+            var imagesObjects = [];
             for(var image = 0; image < images.length; image++) {
                 var imageRead = fs.readFileSync(images[image].path);
                 var encodedImage = imageRead.toString("base64");
@@ -61,14 +60,20 @@ module.exports = function(app, models, multer, fs, path, validation) {
                 var query = {_id: homeSettingsId};
                 HomeSettings.findOne(query).then(homeSettings => {
                     if(!validation.isEmpty(homeSettings)) {
-                        var update = {$push: {images: imagesObjects}};
-                        HomeSettings.findOneAndUpdate(query, update, {new: true}).then(savedHomeSettings => {
-                            if(!validation.isEmpty(savedHomeSettings)) {
-                                response.status(200).json({saved: true}).end();
-                            } else {
-                                response.status(200).json({saved: false}).end(); 
-                            }
-                        }).catch(error => console.log(error));
+                        if((homeSettings.images.length + imagesObjects.length) < 11) {
+                            var update = {$push: {images: imagesObjects}};
+                            HomeSettings.findOneAndUpdate(query, update, {new: true}).then(savedHomeSettings => {
+                                if(!validation.isEmpty(savedHomeSettings)) {
+                                    response.status(200).json({saved: true}).end();
+                                } else {
+                                    response.status(200).json({saved: false}).end(); 
+                                }
+                            }).catch(error => console.log(error));
+                        } else {
+                            response.status(200).json({saved: false}).end();
+                        }
+                    } else {
+                        response.status(200).json({saved: false}).end();
                     }
                 }).catch(error => console.log(error));
             } else {
@@ -79,7 +84,7 @@ module.exports = function(app, models, multer, fs, path, validation) {
                 }).catch(error => console.log(error));
             }
         } else {
-            response.status(200).json({saved: true}).end();
+            response.status(200).json({saved: false}).end();
         }
     });
     app.put("/deleteHomeSettingsImage", (request, response) => {
