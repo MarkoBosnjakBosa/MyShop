@@ -87,7 +87,7 @@
                                     <button type="button" class="btn btn-primary" @click="selectTechnicalData()">Add</button>
                                 </div>
                             </div>
-                            <table v-if="selectedTechnicalData.length" id="selectedTechnicalData" class="table">
+                            <table v-if="product.technicalData.length" class="table">
                                 <thead class="thead-light">
                                     <tr>
                                         <th scope="col">#</th>
@@ -97,10 +97,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(technicalInformation, index) in selectedTechnicalData" :key="technicalInformation.title" :row="technicalInformation.title">
+                                    <tr v-for="(technicalInformation, index) in product.technicalData" :key="technicalInformation.title" :row="technicalInformation.title">
                                         <td>{{index + 1}}</td>
-                                        <td :id="'title_' + technicalInformation.title">{{technicalInformation.title}}</td>
-                                        <td><textarea :id="'value_' + technicalInformation.title" class="form-control" rows="1"></textarea></td>
+                                        <td>{{technicalInformation.title}}</td>
+                                        <td><textarea class="form-control" rows="1" v-model="product.technicalData[index].value"></textarea></td>
                                         <td><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
                                     </tr>
                                 </tbody>
@@ -176,7 +176,6 @@
 			return {
                 categories: [],
                 technicalData: [],
-                selectedTechnicalData: [],
                 submitting: false,
                 product: {
                     title: "",
@@ -184,6 +183,7 @@
                     price: "",
                     quantity: "",
                     category: "",
+                    technicalData: [],
                     primaryImage: "",
                     images: []
                 },
@@ -256,20 +256,13 @@
                 grecaptcha.ready(function() {
                     grecaptcha.execute(process.env.VUE_APP_RECAPTCHA_v3_SITE_KEY, {action: "submit"}).then(function(reCaptchaToken) {
                         if(reCaptchaToken != "" && reCaptchaToken != undefined && reCaptchaToken != null) {
-                            var technicalDataRows = document.querySelectorAll("#selectedTechnicalData tbody tr");
-                            var selectedTechnicalData = [];
-                            for(var i = 0; i < technicalDataRows.length; i++) {
-                                var row = technicalDataRows[i].getAttribute("row");
-                                var newTechnicalInformation = {title: document.getElementById("title_" + row).innerText, value: document.getElementById("value_" + row).value};
-                                selectedTechnicalData = [...selectedTechnicalData, newTechnicalInformation];
-                            }
                             var formData = new FormData();
                             formData.append("title", temp.product.title);
                             formData.append("description", temp.product.description);
                             formData.append("price", temp.product.price);
                             formData.append("quantity", temp.product.quantity);
                             formData.append("category", temp.product.category);
-                            formData.append("technicalData", JSON.stringify(selectedTechnicalData));
+                            formData.append("technicalData", JSON.stringify(temp.product.technicalData));
                             formData.append("primaryImage", temp.product.primaryImage);
                             for(var image = 0 ; image < temp.product.images.length; image++) {
                                 formData.append("images", temp.product.images[image].file);
@@ -278,8 +271,7 @@
                             axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createProduct", formData).then(response => {
                                 if(response.data.created) {
                                     temp.productCreated = true;
-                                    temp.product = {title: "", description: "", price: "", quantity: "", category: "", primaryImage: "", images: []};
-                                    temp.selectedTechnicalData = [];
+                                    temp.product = {title: "", description: "", price: "", quantity: "", category: "", technicalData: [], primaryImage: "", images: []};
                                     document.getElementById("primaryImage").value = "";
                                     document.getElementById("primaryImageLabel").innerText = "";
                                     document.getElementById("previewPrimaryImage").innerText = "";
@@ -309,9 +301,11 @@
             clearPrimaryImageStatus() { this.errors.primaryImageError = false },
             selectTechnicalData() {
                 var technicalInformationTitle = document.getElementById("technicalData").value;
-                var newTechnicalInformation = {title: technicalInformationTitle};
-                this.selectedTechnicalData = [...this.selectedTechnicalData, newTechnicalInformation];
-                document.getElementById("technicalData").value = "";
+                if(technicalInformationTitle != "") {
+                    var newTechnicalInformation = {title: technicalInformationTitle, value: ""};
+                    this.product.technicalData = [...this.product.technicalData, newTechnicalInformation];
+                    document.getElementById("technicalData").value = "";
+                }
             },
             removeTechnicalInformation(currentIndex) {
                 this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index != currentIndex);

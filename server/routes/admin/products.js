@@ -127,6 +127,27 @@ module.exports = function(app, models, uploadImages, fs, path, validation, valid
 			}
 		}).catch(error => console.log(error));
 	});
+	app.delete("/deleteProduct/:productId", (request, response) => {
+		var productId = request.params.productId;
+		if(productId) {
+			var query = {_id: productId};
+			Product.findOneAndRemove(query).then(product => {
+				if(!validationHelper.isEmpty(product)) {
+					var primaryImage = product.primaryImage;
+					fs.unlink(path.join(__dirname, "../../images/products/", primaryImage.name), function(error) {});
+					var images = product.images;
+					for(var image = 0; image < images.length; image++) {
+						fs.unlink(path.join(__dirname, "../../images/products/", images[image].name), function(error) {});
+					}
+					response.status(200).json({deleted: true}).end();
+				} else {
+					response.status(200).json({deleted: false}).end(); 
+				}
+			}).catch(error => console.log(error));
+		} else {
+			response.status(200).json({deleted: false}).end();
+		}
+	});
 
 	function getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, review) {
 		return new Product({title: title, description: description, price: price, quantity: quantity, category: category, technicalData: technicalData, primaryImage: primaryImageObject, images: imagesObjects, review: review});

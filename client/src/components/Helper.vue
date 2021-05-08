@@ -42,6 +42,9 @@
                     case "message":
                         document.getElementById("messageNavTab").click();
                         break;
+                    case "delete":
+                        document.getElementById("deleteNavTab").click();
+                        break;
                 }
 			},
             toggleSidebar() {

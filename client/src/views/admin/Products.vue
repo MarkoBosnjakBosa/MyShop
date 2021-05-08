@@ -38,7 +38,7 @@
                             <td><img :src="renderPrimaryImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid primaryImage" @click="openModal($event)"></td>
                             <td>
                                 <i class="fas fa-external-link-alt" @click="openEditProduct(product._id)"></i>
-                                <i class="fas fa-trash" @click="deleteProduct(product._id)"></i>
+                                <i class="fas fa-trash" @click="deleteProduct(product._id, product.title)"></i>
                             </td>
                         </tr>
                     </tbody>
@@ -80,6 +80,14 @@
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProducts", body).then(response => {
                     this.products = response.data.products;
                 }).catch(error => console.log(error));
+            },
+            deleteProduct(productId, productTitle) {
+                var confirmed = confirm("Delete product " + productTitle + "?");
+                if(confirmed) {
+                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteProduct/" + productId).then(response => {
+                        this.products = this.products.filter(product => product._id != productId);
+                    }).catch(error => console.log(error));
+                }
             },
             renderPrimaryImage(primaryImage) {
                 if(primaryImage && !(primaryImage instanceof File)) {

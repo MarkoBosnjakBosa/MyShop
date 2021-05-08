@@ -9,6 +9,7 @@
                     <li class="nav-item"><a id="mainNavTab" data-toggle="tab" href="#mainTab" class="nav-link active">Main</a></li>
                     <li class="nav-item"><a id="technicalDataNavTab" data-toggle="tab" href="#technicalDataTab" class="nav-link">Technical Data</a></li>
                     <li class="nav-item"><a id="imagesNavTab" data-toggle="tab" href="#imagesTab" class="nav-link">Images</a></li>
+                    <li class="nav-item"><a id="deleteNavTab" data-toggle="tab" href="#deleteTab" class="nav-link">Delete</a></li>
                 </ul>
                 <div class="tab-content">
                     <div id="mainTab" class="tab-pane fade active show">
@@ -90,7 +91,7 @@
                                     <button type="button" class="btn btn-primary" @click="selectTechnicalInformation()">Add</button>
                                 </div>
                             </div>
-                            <table v-if="product.technicalData.length" id="selectedTechnicalData" class="table">
+                            <table v-if="product.technicalData.length" class="table">
                                 <thead class="thead-light">
                                     <tr>
                                         <th scope="col">#</th>
@@ -150,7 +151,19 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-info previousButton" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                                <button type="button" class="btn btn-info nextButton" @click="toggleTab('delete')">Next <i class="fas fa-angle-double-right"></i></button>
+                            </div>
                         </form>
+                    </div>
+                    <div id="deleteTab" class="tab-pane fade">
+                        <div class="fom-group">
+                            <button type="submit" class="btn btn-danger" @click="deleteProduct()">Delete <i class="fas fa-trash"></i></button>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-info previousButton" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -164,6 +177,7 @@
 	import checkLogin from "../../components/CheckLogin.vue";
 	import navigation from "../../components/Navigation.vue";
 	import sidebar from "../../components/Sidebar.vue";
+    import route from "../../components/Route.vue";
 	import validation from "../../components/Validation.vue";
     import helper from "../../components/Helper.vue"; 
 	var axios = require("axios");
@@ -288,31 +302,13 @@
                     }).catch(error => console.log(error));
                 }
             },
-            clearTitleStatus() { this.errors.titleError = false },
-            clearDescriptionStatus() { this.errors.descriptionError = false },
-            clearPriceStatus() { this.errors.priceError = false },
-            clearQuantityStatus() { this.errors.quantityError = false },
-            clearCategoryStatus() { this.errors.categoryError = false },
-            clearPrimaryImageStatus() { this.errors.primaryImageError = false },
-            renderImage(image, type) {
-                if(image && !(image instanceof File)) {
-                    if(type == "primaryImage") {
-                        var imageName = helper.methods.removeDate(image.name);
-                        document.getElementById("primaryImageLabel").innerText = imageName;
-                    }
-                    return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
-                } else {
-                    return "";
+            deleteProduct() {
+                var confirmed = confirm("Delete this product?");
+                if(confirmed) {
+                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteProduct/" + this.productId).then(response => {
+                        route.methods.openProducts();
+                    }).catch(error => console.log(error));
                 }
-            },
-            selectTechnicalInformation() {
-                var technicalInformationTitle = document.getElementById("technicalData").value;
-                var newTechnicalInformation = {title: technicalInformationTitle, value: ""};
-                this.product.technicalData = [...this.product.technicalData, newTechnicalInformation];
-                document.getElementById("technicalData").value = "";
-            },
-            removeTechnicalInformation(currentIndex) {
-                this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index != currentIndex);
             },
             uploadImages(event, type) {
 				//this.clearImagesStatus();
@@ -375,6 +371,28 @@
                     }
                 }).catch(error => console.log(error));
             },
+            renderImage(image, type) {
+                if(image && !(image instanceof File)) {
+                    if(type == "primaryImage") {
+                        var imageName = helper.methods.removeDate(image.name);
+                        document.getElementById("primaryImageLabel").innerText = imageName;
+                    }
+                    return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
+                } else {
+                    return "";
+                }
+            },
+            selectTechnicalInformation() {
+                var technicalInformationTitle = document.getElementById("technicalData").value;
+                if(technicalInformationTitle != "") {
+                    var newTechnicalInformation = {title: technicalInformationTitle, value: ""};
+                    this.product.technicalData = [...this.product.technicalData, newTechnicalInformation];
+                    document.getElementById("technicalData").value = "";
+                }
+            },
+            removeTechnicalInformation(currentIndex) {
+                this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index != currentIndex);
+            },
             addDragOver() {
                 document.getElementById("dropzone").className = "onDragOver";
             },
@@ -383,7 +401,13 @@
             },
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
-			}
+			},
+            clearTitleStatus() { this.errors.titleError = false },
+            clearDescriptionStatus() { this.errors.descriptionError = false },
+            clearPriceStatus() { this.errors.priceError = false },
+            clearQuantityStatus() { this.errors.quantityError = false },
+            clearCategoryStatus() { this.errors.categoryError = false },
+            clearPrimaryImageStatus() { this.errors.primaryImageError = false }
         },
         computed: {
             invalidTitle() { return validation.methods.invalidTitle(this.product.title); },
@@ -410,10 +434,13 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #mainTab, #technicalDataTab, #imagesTab {
+    #mainTab, #technicalDataTab, #imagesTab, #deleteTab {
         margin: 0 auto;
         max-width: 800px;
         margin-top: 20px;
+    }
+    #deleteTab {
+        text-align: center;
     }
     #previewPrimaryImage {
 		text-align: center;
