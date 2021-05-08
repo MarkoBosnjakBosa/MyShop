@@ -1,4 +1,4 @@
-module.exports = function(app, models, uploadImages, fs, path, validation, validationHelper, reCaptcha_v3_SecretKey, axios) {
+module.exports = function(app, models, uploadImages, fs, path, validation, validationHelper) {
 	const Product = models.Product;
 	app.post("/getProducts", (request, response) => {
 		var search = request.body.search;
@@ -25,7 +25,7 @@ module.exports = function(app, models, uploadImages, fs, path, validation, valid
             response.status(200).json({product: product}).end();
         }).catch(error => console.log(error));
 	});
-    app.post("/createProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), (request, response) => {
+    app.post("/createProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), validation.validateCreateProduct, (request, response) => {
 		var title = request.body.title;
 		var description = request.body.description;
 		var price = request.body.price;
@@ -54,7 +54,7 @@ module.exports = function(app, models, uploadImages, fs, path, validation, valid
 			response.status(200).json({created: true}).end();
 		}).catch(error => console.log(error));
 	});
-	app.put("/editProduct", validation.validateEditProduct, uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), (request, response) => {
+	app.put("/editProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), validation.validateEditProduct, (request, response) => {
 		var productId = request.body.productId;
 		var query = {_id: productId};
 		var type = request.body.type;
@@ -96,7 +96,7 @@ module.exports = function(app, models, uploadImages, fs, path, validation, valid
 				imagesObjects.push(imageObject);
 			}
 			Product.findOne(query).then(product => {
-				if(!validation.isEmpty(product)) {
+				if(!validationHelper.isEmpty(product)) {
 					var foundImagesLength = product.images.length;
 					if((foundImagesLength + images.length) < 10) {
 						var update = {$push: {images: imagesObjects}};
