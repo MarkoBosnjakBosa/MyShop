@@ -13,7 +13,7 @@
                 <div class="tab-content">
                     <div id="mainTab" class="tab-pane fade active show">
                         <form autocomplete="off" @submit.prevent="editProduct('main')">
-                            <div v-if="edits.productEdited" class="alert alert-success alert-dismissible" role="alert">
+                            <div v-if="edits.mainEdited" class="alert alert-success alert-dismissible" role="alert">
                                 <div>Product has been successfully edited!</div>
                                 <button type="button" class="close" @click="closeEditionAlert()">
                                     <span aria-hidden="true">&times;</span>
@@ -130,7 +130,7 @@
                                 <small v-if="errors.primaryImageError && submitting" class="form-text errorInput">Please provide a valid primary image!</small>
                             </div>
                             <div id="previewPrimaryImage">
-                                <img :src="renderImage(product.primaryImage, 'primaryImage')" :alt="product.primaryImage.name" class="img-fluid rounded" width="100" height="100"/>
+                                <img :src="renderImage(product.primaryImage, 'primaryImage')" :alt="product.primaryImage.name" class="img-fluid rounded" style="height: 150px; weight: 150px;"/>
                             </div>
                             <h3>Images</h3>
                             <div class="form-group">
@@ -460,6 +460,7 @@
     .image {
         width: 100%;
         height: 150px;
+        margin-bottom: 10px;
     }
     .removeImage {
         position: absolute;
