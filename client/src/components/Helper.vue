@@ -60,6 +60,13 @@
                 } else {
                     return price;
                 }
+            },
+            removeDate(imageName) {
+                var index = imageName.lastIndexOf("_");
+                if(index != -1) {
+                    imageName = imageName.substr(0, index) + imageName.substr(imageName.lastIndexOf("."));
+                }
+                return imageName;
             }
         }
     }
