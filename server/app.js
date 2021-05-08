@@ -5,6 +5,9 @@ const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 const mongoose = require("mongoose");
 const models = require("./models/models.js")(mongoose);
+const validation = require("./middleware/validation.js");
+const uploadImages = require("./middleware/uploadImages.js");
+const validationHelper = require("./helpers/validation.js");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
@@ -25,7 +28,6 @@ const nexmo = new Nexmo({apiKey: process.env.NEXMO_API_KEY, apiSecret: process.e
 const transporter = getTransporter();
 const emailEvent = require("./events/emailEvent.js")(EventEmitter, transporter, emailUser, baseUrl, clientPort);
 const smsEvent = require("./events/smsEvent.js")(EventEmitter, nexmo);
-const validation = require("./helpers/validation.js");
 app.use(cors({origin: "*"}));
 app.use(express.json());
 
@@ -36,7 +38,7 @@ const profile = require("./routes/profile.js")(app, models, validation);
 const setup = require("./routes/setup.js")(app, models, smsEvent);
 const categories = require("./routes/admin/categories.js")(app, models, validation);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
-const products = require("./routes/admin/products.js")(app, models, multer, fs, path, validation, reCaptcha_v3_SecretKey, axios);
+const products = require("./routes/admin/products.js")(app, models, uploadImages, fs, path, validation, validationHelper, reCaptcha_v3_SecretKey, axios);
 const homeSettings = require("./routes/admin/homeSettings.js")(app, models, multer, fs, path, validation);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
