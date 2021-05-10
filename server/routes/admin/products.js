@@ -25,7 +25,7 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
             response.status(200).json({product: product}).end();
         }).catch(error => console.log(error));
 	});
-    app.post("/createProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), validation.validateCreateProduct, (request, response) => {
+    app.post("/createProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), validation.validateProductCreation, (request, response) => {
 		var title = request.body.title;
 		var description = request.body.description;
 		var price = request.body.price;
@@ -54,7 +54,7 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
 			response.status(200).json({created: true}).end();
 		}).catch(error => console.log(error));
 	});
-	app.put("/editProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), validation.validateEditProduct, (request, response) => {
+	app.put("/editProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), validation.validateProductEdit, (request, response) => {
 		var productId = request.body.productId;
 		var query = {_id: productId};
 		var type = request.body.type;

@@ -66,19 +66,30 @@ function validateRegistration(request, response, next) {
         errorFields.push("reCaptchaToken");
         allowRegistration = false;
     }
-    if(allowRegistration) {
-        next();
-    } else {
-        response.status(200).json({created: false, alreadyExists: false, errorFields: errorFields}).end();
-    }
+    if(allowRegistration) next();
+    else response.status(200).json({created: false, alreadyExists: false, errorFields: errorFields}).end();
 }
 
 function validateLogin(request, response, next) {
     var username = request.body.username;
-    if(validation.validUsername(username)) {
+    if(validation.validUsername(username)) next();
+    else response.status(200).json({authentication: false, valid: false, allowed: false, errorFields: ["username"]}).end();
+}
+
+function validateForgotCredentials(request, response, next) {
+    var email = request.body.email;
+    var option = request.body.option;
+    if(validation.validEmail(email) && option) next();
+    else response.status(200).json({sent: false}).end();
+}
+
+function validatePasswordResetting(request, response, next) {
+    var username = request.body.username;
+    var password = request.body.password;
+    if(validation.validUsername(username) && validation.validPassword(password)) {
         next();
     } else {
-        response.status(200).json({authentication: false, valid: false, allowed: false, errorFields: ["username"]}).end();
+        response.status(200).json({reset: false}).end();
     }
 }
 
@@ -106,11 +117,8 @@ function validateAccountEdit(request, response, next) {
         errorFields.push("mobileNumber");
         allowEdit = false;
     }
-    if(allowEdit) {
-        next();
-    } else {
-        response.status(200).json({edited: false, errorFields: errorFields}).end();
-    }
+    if(allowEdit) next();
+    else response.status(200).json({edited: false, errorFields: errorFields}).end();
 }
 
 function validateAddressEdit(request, response, next) {
@@ -142,11 +150,8 @@ function validateAddressEdit(request, response, next) {
         errorFields.push("country");
         allowEdit = false;
     }
-    if(allowEdit) {
-        next();
-    } else {
-        response.status(200).json({edited: false, errorFields: errorFields}).end();
-    }
+    if(allowEdit) next();
+    else response.status(200).json({edited: false, errorFields: errorFields}).end();
 }
 
 function validateCategoryCreation(request, response, next) {
@@ -162,44 +167,32 @@ function validateCategoryCreation(request, response, next) {
         errorFields.push("icon");
         allowCreation = false;
     }
-    if(allowCreation) {
-        next();
-    } else {
-        response.status(200).json({created: false, errorFields: errorFields}).end();
-    }
+    if(allowCreation) next();
+    else response.status(200).json({created: false, errorFields: errorFields}).end();
 }
 
 function validateCategoryEdit(request, response, next) {
     var categoryId = request.body.categoryId;
     var title = request.body.title;
     var icon = request.body.icon;
-    if(categoryId && !validation.invalidTitle(title) && !validation.invalidIcon(icon)) {
-        next();
-    } else {
-        response.status(200).json({edited: false}).end();
-    }
+    if(categoryId && !validation.invalidTitle(title) && !validation.invalidIcon(icon)) next();
+    else response.status(200).json({edited: false}).end();
 }
 
 function validateTechnicalInformationCreation(request, response, next) {
     var title = request.body.title;
-    if(!validation.invalidTitle(title)) {
-        next();
-    } else {
-        response.status(200).json({created: false, errorFields: ["title"]}).end();
-    }
+    if(!validation.invalidTitle(title)) next();
+    else response.status(200).json({created: false, errorFields: ["title"]}).end();
 }
 
 function validateTechnicalInformationEdit(request, response, next) {
     var technicalInformationId = request.body.technicalInformationId;
     var title = request.body.title;
-    if(technicalInformationId && !validation.invalidTitle(title)) {
-        next();
-    } else {
-        response.status(200).json({edited: false}).end();
-    }
+    if(technicalInformationId && !validation.invalidTitle(title)) next();
+    else response.status(200).json({edited: false}).end();
 }
 
-function validateCreateProduct(request, response, next) {
+function validateProductCreation(request, response, next) {
     var allowCreation = true;
     var errorFields = [];
     var title = request.body.title;
@@ -237,14 +230,11 @@ function validateCreateProduct(request, response, next) {
         errorFields.push("reCaptchaToken");
         allowCreation = false;
     }
-    if(allowCreation) {
-        next();
-    } else {
-        response.status(200).json({created: false, errorFields: errorFields}).end();
-    }
+    if(allowCreation) next();
+    else response.status(200).json({created: false, errorFields: errorFields}).end();
 }
 
-function validateEditProduct(request, response, next) {
+function validateProductEdit(request, response, next) {
     var allowEdit = true;
     var errorFields = [];
     var type = request.body.type;
@@ -274,25 +264,18 @@ function validateEditProduct(request, response, next) {
             errorFields.push("category");
             allowEdit = false;
         }
-        if(allowEdit) {
-            next();
-        } else {
-            response.status(200).json({edited: false, errorFields: errorFields}).end();
-        }
-    } else if(type == "technicalData") {
-        next();
-    } else if(type == "primaryImage") {
+        if(allowEdit) next();
+        else response.status(200).json({edited: false, errorFields: errorFields}).end();
+    } else if(type == "technicalData") next();
+    else if(type == "primaryImage") {
         var primaryImage = request.files["primaryImage"][0];
         if(!validation.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) {
             next();
         } else {
             response.status(200).json({edited: false, errorFields: ["primarymage"]}).end();
         }
-    } else if(type == "images") {
-        next();
-    } else {
-        response.status(200).json({edited: false}).end();
-    }
+    } else if(type == "images")  next();
+    else response.status(200).json({edited: false}).end();
 }
 
 function isEmpty(object) {
@@ -302,13 +285,15 @@ function isEmpty(object) {
 module.exports = {
     validateRegistration: validateRegistration,
     validateLogin: validateLogin,
+    validateForgotCredentials: validateForgotCredentials,
+    validatePasswordResetting: validatePasswordResetting,
     validateAccountEdit: validateAccountEdit,
     validateAddressEdit: validateAddressEdit,
     validateCategoryCreation: validateCategoryCreation,
     validateCategoryEdit: validateCategoryEdit,
     validateTechnicalInformationCreation: validateTechnicalInformationCreation,
     validateTechnicalInformationEdit: validateTechnicalInformationEdit,
-    validateCreateProduct: validateCreateProduct,
-    validateEditProduct: validateEditProduct,
+    validateProductCreation: validateProductCreation,
+    validateProductEdit: validateProductEdit,
     isEmpty: isEmpty
 };

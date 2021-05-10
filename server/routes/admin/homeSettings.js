@@ -91,7 +91,7 @@ module.exports = function(app, models, multer, fs, path, validation) {
         var homeSettingsId = request.body.homeSettingsId;
         var imageId = request.body.imageId;
         var imageName = request.body.imageName;
-        if(homeSettingsId && imageId) {
+        if(homeSettingsId && imageId && imageName) {
             var query = {_id: homeSettingsId};
             var update = {$pull: {images: {_id: imageId}}};
             HomeSettings.findOneAndUpdate(query, update, {new: true}).then(homeSettings => {
