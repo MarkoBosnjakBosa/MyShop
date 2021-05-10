@@ -6,39 +6,23 @@ module.exports = function(app, models, validation) {
             response.status(200).json({technicalData: technicalData}).end();
         }).catch(error => console.log(error));
     });
-    app.post("/createTechnicalInformation", (request, response) => {
-        var allowCreation = true;
-        var errorFields = [];
+    app.post("/createTechnicalInformation", validation.validateTechnicalInformationCreation, (request, response) => {
         var title = request.body.title;
-        if(validation.invalidTitle(title)) {
-            errorFields.push("title");
-            allowCreation = false;
-        }
-        if(allowCreation) {
-            var newTechnicalInformation = getTechnicalInformationScheme(TechnicalInformation, title);
-            newTechnicalInformation.save().then(technicalInformation => {
-                response.status(200).json({created: true, technicalInformation: technicalInformation}).end();
-            }).catch(error => console.log(error));
-        } else {
-            response.status(200).json({created: false, errorFields: errorFields}).end();
-        }
+        var newTechnicalInformation = getTechnicalInformationScheme(TechnicalInformation, title);
+        newTechnicalInformation.save().then(technicalInformation => {
+            response.status(200).json({created: true, technicalInformation: technicalInformation}).end();
+        }).catch(error => console.log(error));
     });
-    app.put("/editTechnicalInformation", (request, response) => {
-        var technicalInformationId = request.body.technicalInformationId;
-        var title = request.body.title;
-        if(technicalInformationId && !validation.invalidTitle(title)) {
-            var query = {_id: technicalInformationId};
-            var update = {title: title};
-            TechnicalInformation.findOneAndUpdate(query, update, {new: true}).then(technicalInformation => {
-                if(!validation.isEmpty(technicalInformation)) {
-                    response.status(200).json({edited: true}).end();
-                } else {
-                    response.status(200).json({edited: false}).end();
-                }
-            }).catch(error => console.log(error));
-        } else {
-            response.status(200).json({edited: false}).end();
-        }
+    app.put("/editTechnicalInformation", validation.validateTechnicalInformationEdit, (request, response) => {
+        var query = {_id: technicalInformationId};
+        var update = {title: title};
+        TechnicalInformation.findOneAndUpdate(query, update, {new: true}).then(technicalInformation => {
+            if(!validation.isEmpty(technicalInformation)) {
+                response.status(200).json({edited: true}).end();
+            } else {
+                response.status(200).json({edited: false}).end();
+            }
+        }).catch(error => console.log(error));
     });
     app.delete("/deleteTechnicalInformation/:technicalInformationId", (request, response) => {
         var technicalInformationId = request.params.technicalInformationId;

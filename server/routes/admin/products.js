@@ -1,4 +1,4 @@
-module.exports = function(app, models, uploadImages, fs, path, validation, validationHelper) {
+module.exports = function(app, models, uploadImages, fs, path, validation) {
 	const Product = models.Product;
 	app.post("/getProducts", (request, response) => {
 		var search = request.body.search;
@@ -81,9 +81,7 @@ module.exports = function(app, models, uploadImages, fs, path, validation, valid
 			var primaryImageObject = {name: primaryImage.filename, contentType: primaryImage.mimetype, image: Buffer.from(encodedPrimaryImage, "base64")};
 			var update = {primaryImage: primaryImageObject};
 			Product.findOneAndUpdate(query, update).then(product => {
-				if(!validationHelper.isEmpty(product.primaryImage.name) && !validationHelper.isEmpty(product.primaryImage.contentType) && !validationHelper.isEmpty(product.primaryImage.image)) {
-					fs.unlink(path.join(__dirname, "../../images/products/", product.primaryImage.name), function(error) {});
-				}
+				fs.unlink(path.join(__dirname, "../../images/products/", product.primaryImage.name), function(error) {});
                 response.status(200).json({edited: true, primaryImage: primaryImageObject}).end();
             }).catch(error => console.log(error));
 		} else if(type == "images"){
@@ -96,12 +94,12 @@ module.exports = function(app, models, uploadImages, fs, path, validation, valid
 				imagesObjects.push(imageObject);
 			}
 			Product.findOne(query).then(product => {
-				if(!validationHelper.isEmpty(product)) {
+				if(!validation.isEmpty(product)) {
 					var foundImagesLength = product.images.length;
 					if((foundImagesLength + images.length) < 10) {
 						var update = {$push: {images: imagesObjects}};
 						Product.findOneAndUpdate(query, update, {new: true}).then(savedProduct => {
-							if(!validationHelper.isEmpty(savedProduct)) {
+							if(!validation.isEmpty(savedProduct)) {
 								response.status(200).json({edited: true, images: imagesObjects}).end();
 							} else {
 								response.status(200).json({edited: false}).end(); 
@@ -112,27 +110,31 @@ module.exports = function(app, models, uploadImages, fs, path, validation, valid
 			});
 		}
 	});
-	app.put("/deleteProductImage", validation.validateDeleteProductImage, (request, response) => {
+	app.put("/deleteProductImage", (request, response) => {
 		var productId = request.body.productId;
 		var imageId = request.body.imageId;
         var imageName = request.body.imageName;
-		var query = {_id: productId};
-		var update = {$pull: {images: {_id: imageId}}};
-		Product.findOneAndUpdate(query, update, {new: true}).then(product => {
-			if(!validationHelper.isEmpty(product)) {
-				fs.unlink(path.join(__dirname, "../../images/products/", imageName), function(error) {});
-				response.status(200).json({deleted: true}).end();
-			} else {
-				response.status(200).json({deleted: false}).end(); 
-			}
-		}).catch(error => console.log(error));
+		if(productId && imageId && imageName) {
+			var query = {_id: productId};
+			var update = {$pull: {images: {_id: imageId}}};
+			Product.findOneAndUpdate(query, update, {new: true}).then(product => {
+				if(!validation.isEmpty(product)) {
+					fs.unlink(path.join(__dirname, "../../images/products/", imageName), function(error) {});
+					response.status(200).json({deleted: true}).end();
+				} else {
+					response.status(200).json({deleted: false}).end(); 
+				}
+			}).catch(error => console.log(error));
+		} else {
+			response.status(200).json({deleted: false}).end();
+		}
 	});
 	app.delete("/deleteProduct/:productId", (request, response) => {
 		var productId = request.params.productId;
 		if(productId) {
 			var query = {_id: productId};
 			Product.findOneAndRemove(query).then(product => {
-				if(!validationHelper.isEmpty(product)) {
+				if(!validation.isEmpty(product)) {
 					var primaryImage = product.primaryImage;
 					fs.unlink(path.join(__dirname, "../../images/products/", primaryImage.name), function(error) {});
 					var images = product.images;

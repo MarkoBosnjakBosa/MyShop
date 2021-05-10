@@ -6,45 +6,27 @@ module.exports = function(app, models, validation) {
             response.status(200).json({categories: categories}).end();
         }).catch(error => console.log(error));
     });
-    app.post("/createCategory", (request, response) => {
-        var allowCreation = true;
-        var errorFields = [];
+    app.post("/createCategory", validation.validateCategoryCreation, (request, response) => {
         var title = request.body.title;
-        if(validation.invalidTitle(title)) {
-            errorFields.push("title");
-            allowCreation = false;
-        }
         var icon = request.body.icon;
-        if(validation.invalidIcon(icon)) {
-            errorFields.push("icon");
-            allowCreation = false;
-        }
-        if(allowCreation) {
-            var newCategory = getCategoryScheme(Category, title, icon);
-            newCategory.save().then(category => {
-                response.status(200).json({created: true, category: category}).end();
-            }).catch(error => console.log(error));
-        } else {
-            response.status(200).json({created: false, errorFields: errorFields}).end();
-        }
+        var newCategory = getCategoryScheme(Category, title, icon);
+        newCategory.save().then(category => {
+            response.status(200).json({created: true, category: category}).end();
+        }).catch(error => console.log(error));
     });
-    app.put("/editCategory", (request, response) => {
+    app.put("/editCategory", validation.validateCategoryEdit, (request, response) => {
         var categoryId = request.body.categoryId;
         var title = request.body.title;
         var icon = request.body.icon;
-        if(categoryId && !validation.invalidTitle(title) && !validation.invalidIcon(icon)) {
-            var query = {_id: categoryId};
-            var update = {title: title, icon: icon};
-            Category.findOneAndUpdate(query, update, {new: true}).then(category => {
-                if(!validation.isEmpty(category)) {
-                    response.status(200).json({edited: true}).end();
-                } else {
-                    response.status(200).json({edited: false}).end();
-                }
-            }).catch(error => console.log(error));
-        } else {
-            response.status(200).json({edited: false}).end();
-        }
+        var query = {_id: categoryId};
+        var update = {title: title, icon: icon};
+        Category.findOneAndUpdate(query, update, {new: true}).then(category => {
+            if(!validation.isEmpty(category)) {
+                response.status(200).json({edited: true}).end();
+            } else {
+                response.status(200).json({edited: false}).end();
+            }
+        }).catch(error => console.log(error));
     });
     app.delete("/deleteCategory/:categoryId", (request, response) => {
         var categoryId = request.params.categoryId;

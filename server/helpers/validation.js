@@ -118,9 +118,6 @@ function validPassword(password) {
         return false;
     }
 }
-function isEmpty(object) {
-    return !object || Object.keys(object).length === 0;
-}
 
 module.exports = {
     invalidUsername: invalidUsername, 
@@ -140,6 +137,5 @@ module.exports = {
     invalidMessage: invalidMessage,
     validUsername: validUsername,
     validEmail: validEmail,
-    validPassword: validPassword,
-    isEmpty: isEmpty
+    validPassword: validPassword
 };
