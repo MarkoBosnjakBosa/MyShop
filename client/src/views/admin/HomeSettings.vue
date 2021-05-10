@@ -136,6 +136,7 @@
                     }
                     var formData = new FormData();
                     formData.append("homeSettingsId", this.homeSettings.id);
+                    formData.append("type", "homeSettings");
                     for(var image = 0 ; image < images.length; image++) {
                         formData.append("images", images[image]);
                     }

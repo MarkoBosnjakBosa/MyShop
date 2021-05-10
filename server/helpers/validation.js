@@ -1,62 +1,55 @@
 function invalidUsername(username) {
     var usernameFormat = /^[a-z0-9_.-]*$/;
-    if(username != "" && usernameFormat.test(username)) {
-        return false;
-    } else {
-        return true;
-    }
+    if(username != "" && usernameFormat.test(username)) return false;
+    else return true;
 }
 function invalidEmail(email) {
     var emailFormat = /\S+@\S+\.\S+/;
-    if(email != "" && emailFormat.test(email)) {
-        return false;
-    } else {
-        return true;
-    }
+    if(email != "" && emailFormat.test(email)) return false;
+    else return true;
 }
 function invalidPassword(password) {
     var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    if(password != "" && passwordFormat.test(password)) {
-        return false;
-    } else {
-        return true;
-    }
+    if(password != "" && passwordFormat.test(password)) return false;
+    else return true;
+}
+function invalidFirstName(firstName) {
+    return firstName == "";
+}
+function invalidLastName(lastName) {
+    return lastName == "";
 }
 function invalidMobileNumber(mobileNumber) {
     var mobileNumberFormat = /^[0-9]\d*$/;
-    if(mobileNumber != "" && mobileNumberFormat.test(mobileNumber)) {
-        return false;
-    } else {
-        return true;
-    }
+    if(mobileNumber != "" && mobileNumberFormat.test(mobileNumber)) return false;
+    else return true;
+}
+function invalidStreet(street) {
+    return street == "";
 }
 function invalidHouseNumber(houseNumber) {
     var houseNumberFormat = /^[0-9]\d*$/;
-    if(houseNumber != "" && houseNumberFormat.test(houseNumber)) {
-        return false;
-    } else {
-        return true;
-    }
+    if(houseNumber != "" && houseNumberFormat.test(houseNumber)) return false;
+    else return true;
+}
+function invalidCity(city) {
+    return city == "";
 }
 function invalidZipCode(zipCode) {
     var zipCodeFormat = /^[0-9]\d*$/;
-    if(zipCode != "" && zipCodeFormat.test(zipCode)) {
-        return false;
-    } else {
-        return true;
-    }
+    if(zipCode != "" && zipCodeFormat.test(zipCode)) return false;
+    else return true;
+}
+function invalidCountry(country) {
+    return country == "";
 }
 function invalidReCaptchaToken(reCaptchaSecretKey, axios, reCaptchaToken, remoteIp) {
-    if(reCaptchaToken == "" || reCaptchaToken == undefined || reCaptchaToken == null) {
-        return true;
-    } else {
+    if(reCaptchaToken == "" || reCaptchaToken == undefined || reCaptchaToken == null) return true;
+    else {
         var reCaptchaVerificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + reCaptchaSecretKey + "&response=" + reCaptchaToken + "&remoteip=" + remoteIp;
         axios.get(reCaptchaVerificationUrl).then(reCaptchaResponse => {
-            if(reCaptchaResponse.data.success) {
-                return false;
-            } else {
-                return true;
-            }
+            if(reCaptchaResponse.data.success) return false;
+            else return true;
         });
     }
 }
@@ -71,19 +64,13 @@ function invalidDescription(description) {
 }
 function invalidPrice(price) {
     var priceFormat = /^[0-9]*\.[0-9]{2}$/;
-    if(price != "" && priceFormat.test(price)) {
-        return false;
-    } else {
-        return true;
-    }
+    if(price != "" && priceFormat.test(price))  return false;
+    else return true;
 }
 function invalidQuantity(quantity) {
     var quantityFormat = /^[0-9]\d*$/;
-    if(quantity != "" && quantityFormat.test(quantity)) {
-        return false;
-    } else {
-        return true;
-    }
+    if(quantity != "" && quantityFormat.test(quantity)) return false;
+    else return true;
 }
 function invalidCategory(category) { 
     return category == ""; 
@@ -96,36 +83,36 @@ function invalidMessage(message) {
 }
 function validUsername(username) {
     var usernameFormat = /^[a-z0-9_.-]*$/;
-    if(username != "" && usernameFormat.test(username)) {
-        return true;
-    } else {
-        return false;
-    }
+    if(username != "" && usernameFormat.test(username)) return true;
+    else return false;
 }
 function validEmail(email) {
     var emailFormat = /\S+@\S+\.\S+/;
-    if(email != "" && emailFormat.test(email)) {
-        return true;
-    } else {
-        return false;
-    }
+    if(email != "" && emailFormat.test(email)) return true;
+    else return false;
 }
 function validPassword(password) {
     var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    if(password != "" && passwordFormat.test(password)) {
-        return true;
-    } else {
-        return false;
-    }
+    if(password != "" && passwordFormat.test(password)) return true;
+    else return false;
+}
+function validOption(option) {
+    if(option == "password" || option == "username" || option == "confirmation") return true;
+    else return false;
 }
 
 module.exports = {
     invalidUsername: invalidUsername, 
     invalidEmail: invalidEmail,
     invalidPassword: invalidPassword,
+    invalidFirstName: invalidFirstName,
+    invalidLastName: invalidLastName,
     invalidMobileNumber: invalidMobileNumber,
+    invalidStreet: invalidStreet,
     invalidHouseNumber: invalidHouseNumber,
+    invalidCity: invalidCity,
     invalidZipCode: invalidZipCode,
+    invalidCountry: invalidCountry,
     invalidReCaptchaToken: invalidReCaptchaToken,
     invalidTitle: invalidTitle,
     invalidIcon: invalidIcon,
@@ -137,5 +124,6 @@ module.exports = {
     invalidMessage: invalidMessage,
     validUsername: validUsername,
     validEmail: validEmail,
-    validPassword: validPassword
+    validPassword: validPassword,
+    validOption: validOption
 };

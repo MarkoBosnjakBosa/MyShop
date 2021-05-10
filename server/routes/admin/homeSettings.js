@@ -1,26 +1,5 @@
-module.exports = function(app, models, multer, fs, path, validation) {
+module.exports = function(app, models, uploadImages, fs, path, validation) {
     const HomeSettings = models.HomeSettings;
-    var storage = multer.diskStorage({
-		destination: function (request, file, callback) {
-			callback(null, "images/home");
-		},
-		filename: function (request, file, callback) {
-			var fileArray = file.originalname.split(".");
-			var fileName = fileArray[0] + "_" + Date.now() + "." + fileArray[1];
-			callback(null, fileName);
-		},
-	});
-	var upload = multer({
-		storage: storage,
-		fileFilter: function (request, file, callback) {
-			if(file.mimetype.match("image.*")) {
-				callback(null, true);
-			} else {
-				request.extensionValidationError = true;
-				return callback(null, false, request.extensionValidationError);
-			}
-		}
-	});
     app.get("/getHomeSettings", (request, response) => {
         var query = {};
         HomeSettings.find(query).then(homeSettings => {
@@ -45,7 +24,7 @@ module.exports = function(app, models, multer, fs, path, validation) {
             }).catch(error => console.log(error));
         }
     });
-    app.post("/saveHomeSettingsImages",  upload.array("images"), (request, response) => {
+    app.post("/saveHomeSettingsImages",  uploadImages.array("images"), (request, response) => {
         var homeSettingsId = request.body.homeSettingsId;
         var images = request.files;
         if(images != null && images != "" && images.length > 0 && !request.extensionValidationError) {

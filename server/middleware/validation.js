@@ -22,12 +22,12 @@ function validateRegistration(request, response, next) {
         allowRegistration = false;
     }
     var firstName = request.body.firstName;
-    if(!firstName) {
+    if(validation.invalidFirstName(firstName)) {
         errorFields.push("firstName");
         allowRegistration = false;
     }
     var lastName = request.body.lastName;
-    if(!lastName) {
+    if(validation.invalidLastName(lastName)) {
         errorFields.push("lastName");
         allowRegistration = false;
     }
@@ -37,7 +37,7 @@ function validateRegistration(request, response, next) {
         allowRegistration = false;
     }
     var street = request.body.street;
-    if(!street) {
+    if(validation.invalidStreet(street)) {
         errorFields.push("street");
         allowRegistration = false;
     }
@@ -47,7 +47,7 @@ function validateRegistration(request, response, next) {
         allowRegistration = false;
     }
     var city = request.body.city;
-    if(!city) {
+    if(validation.invalidCity(city)) {
         errorFields.push("city");
         allowRegistration = false;
     }
@@ -57,7 +57,7 @@ function validateRegistration(request, response, next) {
         allowRegistration = false;
     }
     var country = request.body.country;
-    if(!country) {
+    if(validation.invalidCountry(country)) {
         errorFields.push("country");
         allowRegistration = false;
     }
@@ -79,18 +79,15 @@ function validateLogin(request, response, next) {
 function validateForgotCredentials(request, response, next) {
     var email = request.body.email;
     var option = request.body.option;
-    if(validation.validEmail(email) && option) next();
+    if(validation.validEmail(email) && validation.validOption(option)) next();
     else response.status(200).json({sent: false}).end();
 }
 
 function validatePasswordResetting(request, response, next) {
     var username = request.body.username;
     var password = request.body.password;
-    if(validation.validUsername(username) && validation.validPassword(password)) {
-        next();
-    } else {
-        response.status(200).json({reset: false}).end();
-    }
+    if(validation.validUsername(username) && validation.validPassword(password)) next();
+    else response.status(200).json({reset: false}).end();
 }
 
 function validateAccountEdit(request, response, next) {
@@ -103,12 +100,12 @@ function validateAccountEdit(request, response, next) {
         allowEdit = false;
     }
     var firstName = request.body.firstName;
-    if(!firstName) {
+    if(validation.invalidFirstName(firstName)) {
         errorFields.push("firstName");
         allowEdit = false;
     }
     var lastName = request.body.lastName;
-    if(!lastName) {
+    if(validation.invalidLastName(lastName)) {
         errorFields.push("lastName");
         allowEdit = false;
     }
@@ -126,7 +123,7 @@ function validateAddressEdit(request, response, next) {
     var errorFields = [];
     var username = request.body.username;
     var street = request.body.street;
-    if(validation.invalidUsername(username) || !street) {
+    if(validation.invalidUsername(username) || validation.invalidStreet(street)) {
         errorFields.push("street");
         allowEdit = false;
     }
@@ -136,7 +133,7 @@ function validateAddressEdit(request, response, next) {
         allowEdit = false;
     }
     var city = request.body.city;
-    if(!city) {
+    if(validation.invalidCity(city)) {
         errorFields.push("city");
         allowEdit = false;
     }
@@ -146,7 +143,7 @@ function validateAddressEdit(request, response, next) {
         allowEdit = false;
     }
     var country = request.body.country;
-    if(!country) {
+    if(validation.invalidCountry(country)) {
         errorFields.push("country");
         allowEdit = false;
     }
@@ -266,16 +263,17 @@ function validateProductEdit(request, response, next) {
         }
         if(allowEdit) next();
         else response.status(200).json({edited: false, errorFields: errorFields}).end();
-    } else if(type == "technicalData") next();
-    else if(type == "primaryImage") {
+    } else if(type == "technicalData") {
+        next();
+    } else if(type == "primaryImage") {
         var primaryImage = request.files["primaryImage"][0];
-        if(!validation.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) {
-            next();
-        } else {
-            response.status(200).json({edited: false, errorFields: ["primarymage"]}).end();
-        }
-    } else if(type == "images")  next();
-    else response.status(200).json({edited: false}).end();
+        if(!validation.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) next();
+        else response.status(200).json({edited: false, errorFields: ["primarymage"]}).end();
+    } else if(type == "images") {
+        next();
+    } else {
+        response.status(200).json({edited: false}).end();
+    }
 }
 
 function isEmpty(object) {

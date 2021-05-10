@@ -263,6 +263,7 @@
                             formData.append("quantity", temp.product.quantity);
                             formData.append("category", temp.product.category);
                             formData.append("technicalData", JSON.stringify(temp.product.technicalData));
+                            formData.append("type", "images");
                             formData.append("primaryImage", temp.product.primaryImage);
                             for(var image = 0 ; image < temp.product.images.length; image++) {
                                 formData.append("images", temp.product.images[image].file);

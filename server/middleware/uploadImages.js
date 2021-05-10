@@ -1,7 +1,9 @@
 const multer = require("multer");
 var storage = multer.diskStorage({
     destination: function (request, file, callback) {
-        callback(null, "images/products");
+        var type = request.body.type;
+        if(type == "homeSettings") callback(null, "images/home");
+        else callback(null, "images/products");
     },
     filename: function (request, file, callback) {
         var fileArray = file.originalname.split(".");
