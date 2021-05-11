@@ -1,7 +1,7 @@
 <template>
     <div id="navigation" class="container-fluid">
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-            <button type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
+            <button v-if="checkRoutePath()" type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
             <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarOptions" aria-controls="navbarOptions" aria-expanded="false">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -47,12 +47,17 @@
                     userLoggedIn: false,
                     username: "",
                     isAdmin: false
-                }
+                },
+                routePath: ""
 			}
 		},
         methods: {
             getUserData() {
                 this.userData = checkLogin.methods.getUserData();
+            },
+            checkRoutePath() {
+                if(this.routePath != "/login" && this.routePath != "/registration") return true;
+                else return false;
             },
             openHome() {
                 route.methods.openHome();
@@ -84,6 +89,7 @@
         },
         mounted() {
             this.getUserData();
+            this.routePath = this.$route.path;
         }
     }
 </script>

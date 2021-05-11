@@ -276,6 +276,12 @@ function validateProductEdit(request, response, next) {
     }
 }
 
+function validPassword(password) {
+    var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    if(password != "" && passwordFormat.test(password)) return true;
+    else return false;
+}
+
 function isEmpty(object) {
     return !object || Object.keys(object).length === 0;
 }
@@ -293,5 +299,6 @@ module.exports = {
     validateTechnicalInformationEdit: validateTechnicalInformationEdit,
     validateProductCreation: validateProductCreation,
     validateProductEdit: validateProductEdit,
+    validPassword: validPassword,
     isEmpty: isEmpty
 };

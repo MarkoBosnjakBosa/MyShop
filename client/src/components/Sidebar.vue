@@ -4,12 +4,16 @@
             <span v-if="userData.isAdmin">MyShop Admin</span>
             <span v-else>MyShop</span>    
         </div>
-        <ul class="list list-group-flush">
+        <ul v-if="userData.isAdmin" class="list list-group-flush">
             <li class="list-group-item list-group-item-action bg-light" @click="openHomeSettings()">Home Settings</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openProducts()">Products</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openCreateProduct()">Create Product</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openCategories()">Categories</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openTechnicalData()">Technical Data</li>
+        </ul>
+        <ul v-else class="list list-group-flush">
+            <li class="list-group-item list-group-item-action bg-light" @click="openSearch()"><div class="categoryIcon"><i class="fas fa-search"></i></div>Search</li>
+            <li v-for="category in categories" :key="category._id" class="list-group-item list-group-item-action bg-light" @click="openCategory(category._id)"><div class="categoryIcon"><i :class="category.icon"></i></div>{{category.title}}</li>
         </ul>
     </div>
 </template>
@@ -17,6 +21,7 @@
 <script>
     import checkLogin from "../components/CheckLogin.vue";
     import route from "../components/Route.vue";
+    const axios = require("axios");
 
     export default {
         name: "sidebar",
@@ -26,12 +31,18 @@
                     userLoggedIn: false,
                     username: "",
                     isAdmin: false
-                }
+                },
+                categories:[]
 			}
 		},
         methods: {
             getUserData() {
                 this.userData = checkLogin.methods.getUserData();
+            },
+            getCategories() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategories").then(response => {
+                    this.categories = response.data.categories;
+                }).catch(error => console.log(error));
             },
             openHomeSettings() {
                 route.methods.openHomeSettings();
@@ -51,6 +62,9 @@
         },
         mounted() {
             this.getUserData();
+            if(!this.userData.isAdmin) {
+                this.getCategories();
+            }
         }
     }
 </script>
@@ -86,6 +100,10 @@
 }
 li {
     cursor: pointer;
+}
+.categoryIcon {
+    float: left;
+    width: 10%;
 }
 @media (min-width: 768px) {
     #sidebarDiv {
