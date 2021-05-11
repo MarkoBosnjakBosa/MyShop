@@ -23,17 +23,16 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
 			default:
 			  	sort = {};
 		}
-		var query;
-		if(search != "") {
-			query = {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]};
-		} else {
-			query = {};
-		}
+		var query = {};
+		if(search != "") query = {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]};
 		var productsQuery = Product.find(query).sort(sort).skip(skip).limit(limit);
-		var totalQuery = Product.find(productsQuery).countDocuments();
+		var totalQuery = Product.find(query).countDocuments();
 		var queries = [productsQuery, totalQuery];
 		Promise.all(queries).then(results => {
-			response.status(200).json({products: results[0], total: results[1]}).end();
+			var total = results[1];
+			var pagesNumber = 1;
+			if(total >= limit) pagesNumber = Math.ceil(total / limit);
+			response.status(200).json({products: results[0], total: total, pagesNumber: pagesNumber}).end();
 		});
     });
 	app.get("/getProduct/:productId", (request, response) => {
