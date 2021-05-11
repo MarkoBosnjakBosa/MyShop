@@ -88,7 +88,7 @@
                 products: [],
                 search: "",
                 page: 1,
-                limit: 20,
+                limit: 12,
                 orderBy: "",
                 total: 0,
                 pagesNumber: 1
