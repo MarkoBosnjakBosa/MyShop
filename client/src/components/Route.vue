@@ -50,6 +50,9 @@
             openEditProduct(productId) {
                 router.push("/admin/edit/product/" + productId);
             },
+            openShop() {
+                router.push("/shop");
+            },
             logout() {
                 store.dispatch("logout");
                 router.push("/login");

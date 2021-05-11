@@ -58,6 +58,9 @@
             },
             openTechnicalData() {
                 route.methods.openTechnicalData();
+            },
+            openShop() {
+                route.methods.openShop();
             }
         },
         mounted() {

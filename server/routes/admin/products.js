@@ -5,13 +5,31 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
 		var page = Number(request.body.page) - 1; 
 		var limit = Number(request.body.limit);
 		var skip = page * limit;
+		var orderBy = request.body.orderBy;
+		var sort = {};
+		switch(orderBy) {
+			case "titleAsc":
+				sort = {"title": 1};
+				break;
+			case "titleDesc":
+				sort = {"title": -1};
+				break;
+			case "priceAsc":
+				sort = {"price": 1};
+				break;
+			case "priceDesc":
+				sort = {"price": -1};
+				break;
+			default:
+			  	sort = {};
+		}
 		var query;
 		if(search != "") {
 			query = {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]};
 		} else {
 			query = {};
 		}
-		var productsQuery = Product.find(query).skip(skip).limit(limit);
+		var productsQuery = Product.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = Product.find(productsQuery).countDocuments();
 		var queries = [productsQuery, totalQuery];
 		Promise.all(queries).then(results => {

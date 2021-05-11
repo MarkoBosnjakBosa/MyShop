@@ -7,11 +7,20 @@
                 <h1>Products</h1>
                 <form autocomplete="off" class="productsForm" @submit.prevent="getProducts()">
                     <div class="form-row">
-                        <div class="form-group col-md-8">
+                        <div class="form-group col-md-7">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
                         </div>
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-2">
                             <input type="number" id="limit" min="1" class="form-control" placeholder="Limit" v-model="limit"/>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <select id="orderBy" class="form-control" v-model="orderBy">
+                                <option value="">Order by</option>
+                                <option value="titleAsc">Title &#129045;</option>
+                                <option value="titleDesc">Title &#129047;</option>
+                                <option value="priceAsc">Price &#129045;</option>
+                                <option value="priceDesc">Price &#129047;</option>
+                            </select>
                         </div>
                         <div class="form-group col-md-1">
                             <button type="submit" class="btn btn-primary md-1">Search</button>
@@ -71,12 +80,13 @@
                 products: [],
                 search: "",
                 page: 1,
-                limit: 20
+                limit: 20,
+                orderBy: ""
 			}
 		},
         methods: {
             getProducts() {
-                var body = {search: this.search, page: this.page, limit: this.limit};
+                var body = {search: this.search, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProducts", body).then(response => {
                     this.products = response.data.products;
                 }).catch(error => console.log(error));
