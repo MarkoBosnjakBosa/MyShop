@@ -41,17 +41,20 @@
             openCreateProduct() {
                 router.push("/admin/create/product");
             },
+            openEditProduct(productId) {
+                router.push("/admin/edit/product/" + productId);
+            },
             openCategories() {
                 router.push("/admin/categories");
             },
             openTechnicalData() {
                 router.push("/admin/technical/data");
             },
-            openEditProduct(productId) {
-                router.push("/admin/edit/product/" + productId);
-            },
             openShop() {
                 router.push("/shop");
+            },
+            openViewProduct(productId) {
+                router.push("/view/product/" + productId);
             },
             logout() {
                 store.dispatch("logout");
