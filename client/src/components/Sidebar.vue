@@ -12,7 +12,7 @@
             <li class="list-group-item list-group-item-action bg-light" @click="openTechnicalData()">Technical Data</li>
         </ul>
         <ul v-else class="list list-group-flush">
-            <li class="list-group-item list-group-item-action bg-light" @click="openSearch()"><div class="categoryIcon"><i class="fas fa-search"></i></div>Search</li>
+            <li class="list-group-item list-group-item-action bg-light" @click="openShop()"><div class="categoryIcon"><i class="fas fa-search"></i></div>Shop</li>
             <li v-for="category in categories" :key="category._id" class="list-group-item list-group-item-action bg-light" @click="openCategory(category._id)"><div class="categoryIcon"><i :class="category.icon"></i></div>{{category.title}}</li>
         </ul>
     </div>

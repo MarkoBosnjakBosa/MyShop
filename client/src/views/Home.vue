@@ -20,6 +20,18 @@
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     </a>
                 </div>
+                <div class="container-fluid introductionText">
+                    <h1>MyShop</h1>
+                    <h3 v-html="homeSettings.message"></h3>
+                </div>
+                <!--<div>
+                    <a href="https://www.facebook.com/" target="_blank" class="fab fa-facebook"></a>
+                    <a href="https://twitter.com/" target="_blank" class="fab fa-twitter"></a>
+                    <a href="https://www.instagram.com/" target="_blank" class="fab fa-instagram"></a>
+                </div>-->
+                <div>
+                    <p class="footer">Copyright © 2021 | Marko Bošnjak | All rights reserved</p>
+                </div>
             </div>
         </div>
     </div>
@@ -68,7 +80,25 @@
 </script>
 
 <style scoped>
+    #imagesCarousel {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
     .d-block {
         height: 500px;
+    }
+    .introductionText {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    h1 {
+        margin-bottom: 10px;
+    }
+    .footer {
+        text-align: center;
+        background: #000;
+        color: #fff;
+        padding: 10px;
+        font-size: 12px;
     }
 </style>
