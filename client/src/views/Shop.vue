@@ -1,5 +1,5 @@
 <template>
-    <div id="categories" class="container-fluid">
+    <div id="shop" class="container-fluid">
 		<div class="d-flex" id="barsDiv">
 			<sidebar></sidebar>
 			<div id="pageDiv">

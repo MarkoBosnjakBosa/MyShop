@@ -57,6 +57,13 @@
                     toggleSidebar.innerHTML = "<i class='fas fa-angle-double-left'></i>";
                 }
             },
+            renderImage(image) {
+                if(image && !(image instanceof File)) {
+                    return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
+                } else {
+                    return "";
+                }
+            },
             createDecimalNumber(price) {
                 if(!price.includes(".")) {
                     return price + ".00";

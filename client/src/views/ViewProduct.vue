@@ -1,11 +1,64 @@
 <template>
-    <div id="categories" class="container-fluid">
+    <div id="viewProduct" class="container-fluid">
 		<div class="d-flex" id="barsDiv">
 			<sidebar></sidebar>
 			<div id="pageDiv">
 				<navigation></navigation>
                 <h1>{{product.title}}</h1>
+                <div id="imagesCarousel" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-target="#imagesCarousel" data-slide-to="0" class="active" data-interval="2000"></li>
+                        <li v-for="(image, index) in product.images" :key="image._id" data-target="#imagesCarousel" :data-slide-to="index++" data-interval="2000"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="d-block w-100">
+                        </div>
+                        <div v-for="image in product.images" :key="image._id" class="carousel-item">
+                            <img :src="renderImage(image)" :alt="image.name" class="d-block w-100">
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#imagesCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    </a>
+                    <a class="carousel-control-next" href="#imagesCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    </a>
+                </div>
+                <div id="productData">
+                    <ul class="nav nav-tabs justify-content-center">
+                        <li class="nav-item"><a id="mainNavTab" data-toggle="tab" href="#mainTab" class="nav-link active">Main</a></li>
+                        <li class="nav-item"><a id="technicalDataNavTab" data-toggle="tab" href="#technicalDataTab" class="nav-link">Technical Data</a></li>
+                        <li class="nav-item"><a id="reviewsNavTab" data-toggle="tab" href="#reviewsTab" class="nav-link">Reviews</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="mainTab" class="tab-pane fade active show">
+                            <div class="row">
+                                <div class="col-md-3">Description</div>
+                                <div class="col-md-9">{{product.description}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">Price</div>
+                                <div class="col-md-9">{{product.price}} €</div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="number" id="selectedQuantity" min="1" class="form-control" v-model="selectedQuantity"/>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-primary">Add to cart</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="technicalDataTab" class="tab-pane fade">
+                            <div v-for="technicalInformation in product.technicalData" :key="technicalInformation._id" class="row">
+                                <div class="col-md-3">{{technicalInformation.title}}</div>
+                                <div class="col-md-9">{{technicalInformation.value}}</div>
+                            </div>
+                        </div>
+                        <div id="reviewsTab" class="tab-pane fade">
 
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -38,7 +91,8 @@
                     technicalData: [],
                     primaryImage: "",
                     images: []
-                }
+                },
+                selectedQuantity: 1
 			}
 		},
         methods: {
@@ -55,11 +109,7 @@
                 }).catch(error => console.log(error));
             },
             renderImage(image) {
-                if(image && !(image instanceof File)) {
-                    return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
-                } else {
-                    return "";
-                }
+                return helper.methods.renderImage(image);
             }
         },
         mounted() {
@@ -75,5 +125,15 @@
         text-align: center;
         margin-top: 20px;
         margin-bottom: 20px;
+    }
+    #imagesCarousel, #productData {
+        margin: 0 auto;
+        max-width: 800px;
+    }
+    .d-block {
+        height: 400px;
+    }
+    #technicalDataTab {
+        word-wrap: break-word;
     }
 </style>
