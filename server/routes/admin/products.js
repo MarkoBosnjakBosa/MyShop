@@ -2,6 +2,7 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
 	const Product = models.Product;
 	app.post("/getProducts", (request, response) => {
 		var search = request.body.search;
+		var category = request.body.category;
 		var page = Number(request.body.page) - 1; 
 		var limit = Number(request.body.limit);
 		var skip = page * limit;
@@ -23,8 +24,8 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
 			default:
 			  	sort = {};
 		}
-		var query = {};
-		if(search != "") query = {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]};
+		var categoryQuery = category != "" ? {category: category} : {};
+		var query = search != "" ? {$and: [categoryQuery, {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]}]} : categoryQuery;
 		var productsQuery = Product.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = Product.find(query).countDocuments();
 		var queries = [productsQuery, totalQuery];

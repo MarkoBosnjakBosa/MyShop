@@ -1,23 +1,17 @@
 <template>
-    <div id="shop" class="container-fluid">
+    <div id="shopCategory" class="container-fluid">
 		<div class="d-flex" id="barsDiv">
 			<sidebar></sidebar>
 			<div id="pageDiv">
 				<navigation></navigation>
-                <h1>Shop</h1>
+                <h1>Shop By Category: {{category.title}}</h1>
                 <form autocomplete="off" class="productsForm" @submit.prevent="getProducts()">
                     <div class="form-row">
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-6">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
                         </div>
                         <div class="form-group col-md-2">
-                            <select id="category" class="form-control" v-model="category">
-                                <option value="" selected>Category</option>
-                                <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <input type="number" id="limit" min="1" class="form-control" v-model="limit"/>
+                            <input type="number" id="limit" min="1" class="form-control" placeholder="Limit" v-model="limit"/>
                         </div>
                         <div class="form-group col-md-2">
                             <select id="orderBy" class="form-control" v-model="orderBy">
@@ -79,9 +73,13 @@
         },
         data() {
 			return {
+                category: {
+                    _id: "",
+                    title: "",
+                    icon: ""
+                },
                 products: [],
                 search: "",
-                category: "",
                 page: 1,
                 limit: 12,
                 orderBy: "",
@@ -90,17 +88,17 @@
 			}
 		},
         methods: {
+            getCategory() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategory/" + this.category._id).then(response => {
+                    this.category = response.data.category;
+                }).catch(error => console.log(error));
+            },
             getProducts() {
-                var body = {search: this.search, page: this.page, limit: this.limit, orderBy: this.orderBy, category: this.category};
+                var body = {search: this.search, category: this.category._id, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProducts", body).then(response => {
                     this.products = response.data.products;
                     this.total = response.data.total;
                     this.pagesNumber = response.data.pagesNumber;
-                }).catch(error => console.log(error));
-            },
-            getCategories() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategories").then(response => {
-                    this.categories = response.data.categories;
                 }).catch(error => console.log(error));
             },
             renderImage(image) {
@@ -124,8 +122,9 @@
             }
         },
         mounted() {
+            this.category._id = this.$route.params.categoryId;
+            this.getCategory();
             this.getProducts();
-            this.getCategories();
         }
     }
 </script>

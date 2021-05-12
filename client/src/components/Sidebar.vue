@@ -13,7 +13,7 @@
         </ul>
         <ul v-else class="list list-group-flush">
             <li class="list-group-item list-group-item-action bg-light" @click="openShop()"><div class="categoryIcon"><i class="fas fa-search"></i></div>Shop</li>
-            <li v-for="category in categories" :key="category._id" class="list-group-item list-group-item-action bg-light" @click="openCategory(category._id)"><div class="categoryIcon"><i :class="category.icon"></i></div>{{category.title}}</li>
+            <li v-for="category in categories" :key="category._id" class="list-group-item list-group-item-action bg-light" @click="openShopCategory(category._id)"><div class="categoryIcon"><i :class="category.icon"></i></div>{{category.title}}</li>
         </ul>
     </div>
 </template>
@@ -61,6 +61,9 @@
             },
             openShop() {
                 route.methods.openShop();
+            },
+            openShopCategory(categoryId) {
+                route.methods.openShopCategory(categoryId);
             }
         },
         mounted() {

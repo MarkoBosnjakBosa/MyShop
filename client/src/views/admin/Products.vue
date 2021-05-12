@@ -7,11 +7,17 @@
                 <h1>Products</h1>
                 <form autocomplete="off" class="productsForm" @submit.prevent="getProducts()">
                     <div class="form-row">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
                         </div>
                         <div class="form-group col-md-2">
-                            <input type="number" id="limit" min="1" class="form-control" placeholder="Limit" v-model="limit"/>
+                            <select id="category" class="form-control" v-model="category">
+                                <option value="" selected>Category</option>
+                                <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <input type="number" id="limit" min="1" class="form-control" v-model="limit"/>
                         </div>
                         <div class="form-group col-md-2">
                             <select id="orderBy" class="form-control" v-model="orderBy">
@@ -86,7 +92,9 @@
         data() {
 			return {
                 products: [],
+                categories: [],
                 search: "",
+                category: "",
                 page: 1,
                 limit: 12,
                 orderBy: "",
@@ -96,11 +104,16 @@
 		},
         methods: {
             getProducts() {
-                var body = {search: this.search, page: this.page, limit: this.limit, orderBy: this.orderBy};
+                var body = {search: this.search, category: this.category, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProducts", body).then(response => {
                     this.products = response.data.products;
                     this.total = response.data.total;
                     this.pagesNumber = response.data.pagesNumber;
+                }).catch(error => console.log(error));
+            },
+            getCategories() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategories").then(response => {
+                    this.categories = response.data.categories;
                 }).catch(error => console.log(error));
             },
             deleteProduct(productId, productTitle) {
@@ -134,6 +147,7 @@
         created() {
 			checkLogin.methods.isLoggedIn();
             this.getProducts();
+            this.getCategories();
         }
     }
 </script>

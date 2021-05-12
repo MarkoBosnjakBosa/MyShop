@@ -6,6 +6,13 @@ module.exports = function(app, models, validation) {
             response.status(200).json({categories: categories}).end();
         }).catch(error => console.log(error));
     });
+    app.get("/getCategory/:categoryId", (request, response) => {
+        var categoryId = request.params.categoryId;
+        var query = {_id: categoryId};
+        Category.findOne(query).then(category => {
+            response.status(200).json({category: category}).end();
+        }).catch(error => console.log(error));
+    });
     app.post("/createCategory", validation.validateCategoryCreation, (request, response) => {
         var title = request.body.title;
         var icon = request.body.icon;

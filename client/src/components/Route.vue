@@ -53,6 +53,9 @@
             openShop() {
                 router.push("/shop");
             },
+            openShopCategory(categoryId) {
+                router.push("/shop/category/" + categoryId);
+            },
             openViewProduct(productId) {
                 router.push("/view/product/" + productId);
             },
