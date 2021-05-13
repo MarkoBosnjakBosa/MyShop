@@ -42,9 +42,9 @@
                                 <div class="col-md-9">{{product.price}} €</div>
                             </div>
                             <div class="input-group mb-3">
-                                <input type="number" id="selectedQuantity" min="1" class="form-control" v-model="selectedQuantity"/>
+                                <input type="number" id="selectedQuantity" min="1" class="form-control" v-model="product.selectedQuantity"/>
                                 <div class="input-group-append">
-                                    <button type="button" class="btn btn-primary">Add to cart</button>
+                                    <button type="button" class="btn btn-primary" @click="addToShoppingCart()">Add to cart</button>
                                 </div>
                             </div>
                         </div>
@@ -83,6 +83,7 @@
 			return {
                 productId: "",
                 product: {
+                    _id: "",
                     title: "",
                     description: "",
                     price: "",
@@ -90,26 +91,32 @@
                     category: "",
                     technicalData: [],
                     primaryImage: "",
-                    images: []
-                },
-                selectedQuantity: 1
+                    images: [],
+                    selectedQuantity: 1
+                }
 			}
 		},
         methods: {
             getProduct() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProduct/" + this.productId).then(response => {
+                    this.product._id = response.data.product._id;
                     this.product.title = response.data.product.title;
                     this.product.description = response.data.product.description;
-                    this.product.price = helper.methods.createDecimalNumber(response.data.product.price.toString());
+                    this.product.price = helper.methods.formatNumber(response.data.product.price.toString());
                     this.product.quantity = response.data.product.quantity;
                     this.product.category = response.data.product.category;
                     this.product.technicalData = response.data.product.technicalData;
                     this.product.primaryImage = response.data.product.primaryImage;
                     this.product.images = response.data.product.images;
+                    this.product.selectedQuantity = 1;
                 }).catch(error => console.log(error));
             },
             renderImage(image) {
                 return helper.methods.renderImage(image);
+            },
+            addToShoppingCart() {
+                var product = this.product;
+                this.$store.dispatch("addToShoppingCart", product);
             }
         },
         mounted() {

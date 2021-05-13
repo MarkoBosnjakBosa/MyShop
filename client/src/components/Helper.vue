@@ -58,24 +58,23 @@
                 }
             },
             renderImage(image) {
-                if(image && !(image instanceof File)) {
-                    return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
-                } else {
-                    return "";
-                }
+                if(image && !(image instanceof File)) return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
+                else return "";
             },
-            createDecimalNumber(price) {
-                if(!price.includes(".")) {
-                    return price + ".00";
+            formatNumber(number) {
+                if(number.includes(".")) {
+                    var decimalPart = number.substr(number.lastIndexOf(".") + 1);
+                    if(decimalPart.length == 1){
+                        number = number + "0";
+                    }
                 } else {
-                    return price;
+                    number = number + ".00";
                 }
+                return Number(number).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
             },
             removeDate(imageName) {
                 var index = imageName.lastIndexOf("_");
-                if(index != -1) {
-                    imageName = imageName.substr(0, index) + imageName.substr(imageName.lastIndexOf("."));
-                }
+                if(index != -1) imageName = imageName.substr(0, index) + imageName.substr(imageName.lastIndexOf("."));
                 return imageName;
             }
         }

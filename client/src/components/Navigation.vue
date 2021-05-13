@@ -28,6 +28,9 @@
                     <li v-else class="nav-item">
                         <a class="nav-link" href="#" @click="openLogin()">Login</a>
                     </li>
+                    <li v-if="userData.userLoggedIn && !userData.isAdmin" class="nav-item">
+                        <cart></cart>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -35,12 +38,16 @@
 </template>
 
 <script>
-    import checkLogin from "../components/CheckLogin.vue";
-    import route from "../components/Route.vue";
-    import helper from "../components/Helper.vue";
+    import checkLogin from "./CheckLogin.vue";
+    import route from "./Route.vue";
+    import helper from "./Helper.vue";
+    import cart from "./Cart.vue";
 
     export default {
         name: "navigation",
+        components: {
+            cart
+        },
         data() {
 			return {
                 userData: {

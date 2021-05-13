@@ -11,7 +11,8 @@ const getDefaultState = () => {
 		},
 		authenticationData: {
 			username: ""
-		}
+		},
+		products: []
 	};
 };
 
@@ -23,14 +24,25 @@ export default new Vuex.Store({
 		isLoggedIn: state => { return state.jwtData.token; },
 		getUser: state => { return state.jwtData.user; },
 		isAdmin: state => { return state.jwtData.isAdmin; },
-		isAuthenticated: state => { return state.authenticationData.username; }
+		isAuthenticated: state => { return state.authenticationData.username; },
+		getShoppingCart: state => { return state.products; }
 	},
 	mutations: {
 		SET_TOKEN: (state, token) => { state.jwtData.token = token; },
 		SET_USER: (state, user) => { state.jwtData.user = user; },
-		SET_ADMIN: (state, isAdmin) => { state.jwtData.isAdmin = isAdmin },
-		SET_USERNAME: (state, username) => { state.authenticationData.username = username },
-		CLEAR_USERNAME: state => { state.authenticationData.username = "" },
+		SET_ADMIN: (state, isAdmin) => { state.jwtData.isAdmin = isAdmin; },
+		SET_USERNAME: (state, username) => { state.authenticationData.username = username; },
+		CLEAR_USERNAME: state => { state.authenticationData.username = ""; },
+		ADD_TO_SHOPPING_CART: (state, product) => { 
+			var foundIndex = state.products.findIndex(foundProduct => foundProduct._id == product._id);
+			if(foundIndex > -1) {
+				state.products[foundIndex].selectedQuantity = Number(state.products[foundIndex].selectedQuantity) + Number(product.selectedQuantity);
+			} else{
+				state.products = [...state.products, product]; 
+			}
+		},
+		REMOVE_FROM_SHOPPING_CART: (state, productId) => { state.products = state.products.filter(product => product._id != productId); },
+		CLEAR_SHOPPING_CART: state => { state.products= []; },
 		RESET: state => { Object.assign(state, getDefaultState()); }
 	},
 	actions: {
@@ -40,11 +52,20 @@ export default new Vuex.Store({
 			commit("SET_ADMIN", isAdmin);
 			Axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 		},
-		authenticate: ({commit}, {username}) => {
+		authenticate: ({commit}, username) => {
 			commit("SET_USERNAME", username);
 		},
 		clearAuthentication: ({commit}) => {
 			commit("CLEAR_USERNAME");
+		},
+		addToShoppingCart: ({commit}, product) => {
+			commit("ADD_TO_SHOPPING_CART", product);
+		},
+		removeFromShoppingCart: ({commit}, productId) => {
+			commit("REMOVE_FROM_SHOPPING_CART", productId);
+		},
+		clearShoppingCart: ({commit}) => {
+			commit("CLEAR_SHOPPING_CART");
 		},
 		logout: ({commit}) => {
 			commit("RESET", "");
