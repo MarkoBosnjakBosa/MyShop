@@ -68,7 +68,7 @@ export default new Vuex.Store({
 			commit("CLEAR_SHOPPING_CART");
 		},
 		logout: ({commit}) => {
-			commit("RESET", "");
+			commit("RESET");
 		}
 	}
 });

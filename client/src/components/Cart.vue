@@ -89,6 +89,7 @@
     }
     .lowerProduct {
         padding-top: 10px;
+        cursor: default;
     }
     .dropdownDivider { 
         padding-bottom: 10px;
@@ -101,6 +102,7 @@
         position: absolute;
         right: 15px;
         color: red;
+        cursor: pointer;
     }
     .firstRemoval {
         top: 0px;

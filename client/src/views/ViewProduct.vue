@@ -28,17 +28,16 @@
                 <div id="productData">
                     <ul class="nav nav-tabs justify-content-center">
                         <li class="nav-item"><a id="mainNavTab" data-toggle="tab" href="#mainTab" class="nav-link active">Main</a></li>
-                        <li class="nav-item"><a id="technicalDataNavTab" data-toggle="tab" href="#technicalDataTab" class="nav-link">Technical Data</a></li>
                         <li class="nav-item"><a id="reviewsNavTab" data-toggle="tab" href="#reviewsTab" class="nav-link">Reviews</a></li>
                     </ul>
                     <div class="tab-content">
                         <div id="mainTab" class="tab-pane fade active show">
                             <div class="row">
-                                <div class="col-md-3">Description</div>
+                                <div class="col-md-3"><b>Description</b></div>
                                 <div class="col-md-9">{{product.description}}</div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3">Price</div>
+                                <div class="col-md-3"><b>Price</b></div>
                                 <div class="col-md-9">{{product.price}} €</div>
                             </div>
                             <div class="input-group mb-3">
@@ -47,10 +46,9 @@
                                     <button type="button" class="btn btn-primary" @click="addToShoppingCart()">Add to cart</button>
                                 </div>
                             </div>
-                        </div>
-                        <div id="technicalDataTab" class="tab-pane fade">
+                            <h3>Technical data</h3>
                             <div v-for="technicalInformation in product.technicalData" :key="technicalInformation._id" class="row">
-                                <div class="col-md-3">{{technicalInformation.title}}</div>
+                                <div class="col-md-3"><b>{{technicalInformation.title}}</b></div>
                                 <div class="col-md-9">{{technicalInformation.value}}</div>
                             </div>
                         </div>
