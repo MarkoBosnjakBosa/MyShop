@@ -1,14 +1,14 @@
 <template>
     <div id="confirmRegistration" class="container-fluid">
         <navigation></navigation>
-        <div v-if="registrationConfirmed" class="container confirmationDiv">
+        <div v-if="registrationConfirmed" class="container confirmation">
             <div class="alert alert-success" role="alert">Your registration has been confirmed!</div>
             <button type="button" class="btn btn-info"  @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
         </div>
-        <div v-if="emailSent" class="container confirmationDiv">
+        <div v-if="emailSent" class="container confirmation">
             <div class="alert alert-success" role="alert">Confirmation email sent!</div>
         </div>
-        <div v-if="!registrationConfirmed && !emailSent" class="container confirmationDiv">
+        <div v-if="!registrationConfirmed && !emailSent" class="container confirmation">
             <div class="alert alert-danger" role="alert">Your registration could not be confirmed!</div>
             <button type="button" class="btn btn-info"  @click="sendConfirmationEmail()">Send confirmation email <i class="fas fa-envelope"></i></button>
         </div>
@@ -16,8 +16,6 @@
 </template>
 
 <script>
-    import "bootstrap";
-    import "bootstrap/dist/css/bootstrap.min.css";
     import navigation from "../components/Navigation.vue";
     import route from "../components/Route.vue"; 
     var axios = require("axios");
@@ -59,7 +57,7 @@
 </script>
 
 <style scoped>
-    .confirmationDiv {
+    .confirmation {
         margin: 0 auto;
         max-width: 600px;
         text-align: center;

@@ -5,11 +5,11 @@
 			<div id="pageDiv">
 				<navigation></navigation>
                 <h1>{{product.title}}</h1>
-                <div id="imagesCarousel" class="carousel slide" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        <li data-target="#imagesCarousel" data-slide-to="0" class="active" data-interval="2000"></li>
-                        <li v-for="(image, index) in product.images" :key="image._id" data-target="#imagesCarousel" :data-slide-to="index++" data-interval="2000"></li>
-                    </ol>
+                <div id="imagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#imagesCarousel" data-bs-slide-to="0" class="active" data-bs-interval="2000"></button>
+                        <button v-for="(image, index) in product.images" :key="image._id" type="button" data-bs-target="#imagesCarousel" :data-bs-slide-to="++index" data-bs-interval="2000"></button>
+                    </div>
                     <div class="carousel-inner">
                         <div class="carousel-item active">
                             <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="d-block w-100">
@@ -18,12 +18,12 @@
                             <img :src="renderImage(image)" :alt="image.name" class="d-block w-100">
                         </div>
                     </div>
-                    <a class="carousel-control-prev" href="#imagesCarousel" role="button" data-slide="prev">
+                    <button type="button" class="carousel-control-prev" data-bs-target="#imagesCarousel" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    </a>
-                    <a class="carousel-control-next" href="#imagesCarousel" role="button" data-slide="next">
+                    </button>
+                    <button type="button" class="carousel-control-next" data-bs-target="#imagesCarousel" data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    </a>
+                    </button>
                 </div>
                 <div id="productData">
                     <ul class="nav nav-tabs justify-content-center">

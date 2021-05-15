@@ -4,33 +4,25 @@
             <sidebar></sidebar>
 			<div id="pageDiv">
 				<navigation></navigation>
-                <div id="imagesCarousel" class="carousel slide" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        <li v-for="(image, index) in homeSettings.images" :key="image._id" data-target="#imagesCarousel" :data-slide-to="index" :class="{'active' : index == 0}" data-interval="2000"></li>
-                    </ol>
+                <div id="imagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button v-for="(image, index) in homeSettings.images" :key="image._id" type="button" data-bs-target="#imagesCarousel" :data-bs-slide-to="index" :class="{'active' : index == 0}" data-bs-interval="2000"></button>
+                    </div>
                     <div class="carousel-inner">
                         <div v-for="(image, index) in homeSettings.images" :key="image._id" class="carousel-item" :class="{'active' : index == 0}">
                             <img :src="renderImage(image)" :alt="image.name" class="d-block w-100">
                         </div>
                     </div>
-                    <a class="carousel-control-prev" href="#imagesCarousel" role="button" data-slide="prev">
+                    <button type="button" class="carousel-control-prev" data-bs-target="#imagesCarousel" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    </a>
-                    <a class="carousel-control-next" href="#imagesCarousel" role="button" data-slide="next">
+                    </button>
+                    <button type="button" class="carousel-control-next" data-bs-target="#imagesCarousel" data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    </a>
+                    </button>
                 </div>
                 <div class="container-fluid introductionText">
                     <h1>MyShop</h1>
                     <h3 v-html="homeSettings.message"></h3>
-                </div>
-                <!--<div>
-                    <a href="https://www.facebook.com/" target="_blank" class="fab fa-facebook"></a>
-                    <a href="https://twitter.com/" target="_blank" class="fab fa-twitter"></a>
-                    <a href="https://www.instagram.com/" target="_blank" class="fab fa-instagram"></a>
-                </div>-->
-                <div>
-                    <p class="footer">Copyright © 2021 | Marko Bošnjak | All rights reserved</p>
                 </div>
             </div>
         </div>
@@ -93,12 +85,5 @@
     }
     h1 {
         margin-bottom: 10px;
-    }
-    .footer {
-        text-align: center;
-        background: #000;
-        color: #fff;
-        padding: 10px;
-        font-size: 12px;
     }
 </style>

@@ -1,12 +1,12 @@
 <template>
     <div id="navigation" class="container-fluid">
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-            <button v-if="checkRoutePath()" type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
             <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarOptions" aria-controls="navbarOptions" aria-expanded="false">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <button v-if="checkRoutePath()" id="toggleSidebar" type="button" class="btn btn-dark toggleSidebar" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
             <div id="navbarOptions" class="collapse navbar-collapse">
-                <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="#" @click="openHome()">Home</a>
                     </li>
@@ -104,5 +104,8 @@
 <style scoped>
     #navigation {
         padding: 0px;
+    }
+    #toggleSidebar {
+        margin-left: 5px;
     }
 </style>

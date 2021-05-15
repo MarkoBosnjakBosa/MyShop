@@ -8,14 +8,14 @@
 					<p>Please insert the authentication token to log in.</p>
 					<hr>
 				</div>
-                <div class="form-group">
+                <div class="mb-3">
                     <input type="text" id="authenticationToken" class="form-control" :class="{'errorField' : authenticationTokenError}" placeholder="Authentication token" v-model="authenticationToken" @focus="clearAuthenticationTokenStatus()" @keypress="clearAuthenticationTokenStatus()"/>
-                    <small v-if="authenticationTokenError" class="form-text errorInput">Please provide a valid authentication token!</small>
+                    <small v-if="authenticationTokenError" class="errorInput">Please provide a valid authentication token!</small>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <a :href="'mailto:' + adminEmail" class="btn btn-info" role="button">Contact the Admin team <i class="fas fa-envelope"></i></a>
                 </div>
             </form>
@@ -24,8 +24,6 @@
 </template>
 
 <script>
-    import "bootstrap";
-    import "bootstrap/dist/css/bootstrap.min.css";
     import navigation from "../components/Navigation.vue";
     import validation from "../components/Validation.vue";
     import route from "../components/Route.vue";

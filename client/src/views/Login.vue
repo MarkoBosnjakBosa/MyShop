@@ -8,35 +8,33 @@
 					<p>Please fill in this form to log in.</p>
 					<hr>
 				</div>
-				<div class="form-group">
+				<div class="mb-3">
 					<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
-					<small v-if="usernameError" class="form-text errorInput">Please provide a valid username!</small>
+					<small v-if="usernameError" class="errorInput">Please provide a valid username!</small>
 				</div>
-				<div class="form-group">
+				<div class="mb-3">
 					<div class="input-group">
 						<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
 						<div class="input-group-append">
 							<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
 						</div>
 					</div>
-					<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
+					<small v-if="passwordError && submitting" class="errorInput">Please provide a valid password!</small>
 				</div>
-				<div v-if="noPasswordMatch" class="form-group loginFailed">Password does not match!</div>
-				<div class="form-group forgotCredentialsDiv">
+				<div v-if="noPasswordMatch" class="mb-3 loginFailed">Password does not match!</div>
+				<div class="mb-3 forgotCredentials">
 					<a href="#" @click="openForgotCredentials()">Forgot credentials?</a>
 				</div>
-				<div class="form-group submitDiv">
+				<div class="mb-3 submit">
 					<button type="submit" class="btn btn-primary submitButton">Log in</button>
 				</div>
-				<div class="form-group registerDiv">Not a member? <a href="#" @click="openRegistration()">Register</a></div>
+				<div class="mb-3 register">Not a member? <a href="#" @click="openRegistration()">Register</a></div>
 			</form>
 		</div>
 	</div>
 </template>
 
 <script>
-	import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
 	import navigation from "../components/Navigation.vue"; 
 	import validation from "../components/Validation.vue";
 	import helper from "../components/Helper.vue"; 
@@ -153,13 +151,13 @@
 	.loginTitle {
 		margin-top: 20px;
 	}
-    .forgotCredentialsDiv {
+    .forgotCredentials {
 		text-align: right;
 	}
 	.submitButton {
 		width: 100%;
 	}
-	.submitDiv, .registerDiv {
+	.submit, .register {
 		text-align: center;
 	}
     .loginFailed {

@@ -5,52 +5,48 @@
 			<div id="pageDiv">
 				<navigation></navigation>
                 <h1>Shop</h1>
-                <form autocomplete="off" class="productsForm" @submit.prevent="getProducts()">
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <select id="category" class="form-control" v-model="category">
-                                <option value="" selected>Category</option>
-                                <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <input type="number" id="limit" min="1" class="form-control" v-model="limit"/>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <select id="orderBy" class="form-control" v-model="orderBy">
-                                <option value="" selected>Order by</option>
-                                <option value="titleAsc">Title &#129045;</option>
-                                <option value="titleDesc">Title &#129047;</option>
-                                <option value="priceAsc">Price &#129045;</option>
-                                <option value="priceDesc">Price &#129047;</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-1">
-                            <button type="submit" class="btn btn-primary md-1">Search</button>
-                        </div>
-                        <div class="form-group col-md-1">
-                            <button type="button" class="btn btn-info">{{total}}</button>
-                        </div>
+                <form autocomplete="off" class="row productsForm" @submit.prevent="getProducts()">
+                    <div class="mb-3 col-md-4">
+                        <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
+                    </div>
+                    <div class="mb-3 col-md-2">
+                        <select id="category" class="form-control" v-model="category">
+                            <option value="" selected>Category</option>
+                            <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 col-md-2">
+                        <input type="number" id="limit" min="1" class="form-control" v-model="limit"/>
+                    </div>
+                    <div class="mb-3 col-md-2">
+                        <select id="orderBy" class="form-control" v-model="orderBy">
+                            <option value="" selected>Order by</option>
+                            <option value="titleAsc">Title &#129045;</option>
+                            <option value="titleDesc">Title &#129047;</option>
+                            <option value="priceAsc">Price &#129045;</option>
+                            <option value="priceDesc">Price &#129047;</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 col-md-1">
+                        <button type="submit" class="btn btn-primary md-1">Search</button>
+                    </div>
+                    <div class="mb-3 col-md-1">
+                        <button type="button" class="btn btn-info">{{total}}</button>
                     </div>
                 </form>
-                <div class="form-group products">
-                    <div class="row">
-                        <div v-for="product in products" :key="product._id" class="col-sm-3">
-                            <div class="card">
-                                <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{product.title}}</h5>
-                                    <p class="card-text">Price: {{product.price}} €</p>
-                                    <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
-                                </div>
+                <div class="mb-3 row products">
+                    <div v-for="product in products" :key="product._id" class="col-md-3">
+                        <div class="card">
+                            <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)">
+                            <div class="card-body">
+                                <h5 class="card-title">{{product.title}}</h5>
+                                <p class="card-text">Price: {{product.price}} €</p>
+                                <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="form-group pages">
+                <div class="mb-3 pages">
                     <button v-if="page - 1 > 0" type="button" class="btn btn-info page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="btn btn-info page">{{page}}</button>
                     <button v-if="page < pagesNumber" type="button" class="btn btn-info page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
