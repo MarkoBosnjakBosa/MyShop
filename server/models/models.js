@@ -29,10 +29,10 @@ module.exports = function(mongoose) {
 		images: [{name: String, contentType: String, image: Buffer}],
         review: {type: Object, required: true}
 	});
-	const productCommentScheme = new mongoose.Schema({
-		productId: {type: Number, required: true},
+	const reviewScheme = new mongoose.Schema({
+		product: {type: String, required: true},
 		username: {type: String, required: true},
-		description: {type: String, required: true},
+		review: {type: String, required: true},
 		date: {type: String, required: true}
 	});
 	const technicalInformationScheme = new mongoose.Schema({
@@ -49,7 +49,7 @@ module.exports = function(mongoose) {
     const models = {
 		User: mongoose.model("User", userScheme),
 		Product: mongoose.model("Product", productScheme),
-		ProductComment: mongoose.model("ProductComment", productCommentScheme),
+		Review: mongoose.model("Review", reviewScheme),
 		TechnicalInformation: mongoose.model("TechnicalInformation", technicalInformationScheme),
 		Category: mongoose.model("Category", categoryScheme),
 		HomeSettings: mongoose.model("HomeSettings", homeSettingsScheme)

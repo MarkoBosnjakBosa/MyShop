@@ -1,5 +1,6 @@
-module.exports = function(app, models, uploadImages, fs, path, validation) {
+module.exports = function(app, models, uploadImages, fs, path, moment, validation) {
 	const Product = models.Product;
+	const Review = models.Review;
 	app.post("/getProducts", (request, response) => {
 		var search = request.body.search;
 		var category = request.body.category;
@@ -168,8 +169,51 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
 			response.status(200).json({deleted: false}).end();
 		}
 	});
+	app.get("/getReviews/:productId", (request, response) => {
+		var productId = request.params.productId;
+		var query = {product: productId};
+        Review.find(query).then(reviews => {
+            response.status(200).json({reviews: reviews}).end();
+        }).catch(error => console.log(error));
+	});
+	app.post("/writeReview", (request, response) => {
+		var productId = request.body.productId;
+		var username = request.body.username;
+		var review = request.body.review;
+		var date = moment(new Date()).format("DD.MM.YYYY");
+		var newReview = getReviewScheme(Review, productId, username, review, date);
+		newReview.save().then(review => {
+			response.status(200).json({written: true, review: review}).end();
+		}).catch(error => console.log(error));
+	});
+	app.post("/editReview", (request, response) => {
+		var reviewId = request.body.productId;
+		var username = request.body.username;
+		var review = request.body.review;
+		var date = moment(new Date()).format("DD.MM.YYYY");
+		if(reviewId && username) {
+			var query = {_id: reviewId, username: username};
+			var update = {review: review, date: date};
+			Review.findOneAndUpdate(query, update).then(review => {
+				response.status(200).json({edited: true}).end();
+			}).catch(error => console.log(error));
+		}
+	});
+	app.delete("/deleteReview/:reviewId/:usernameId", (request, response) => {
+		var reviewId = request.params.reviewId;
+		var username = request.params.username;
+		if(reviewId && username) {
+			var query = {_id: reviewId, username: username};
+			Review.findOneAndRemove(query).then(review => {
+				response.status(200).json({deleted: true}).end();
+			}).catch(error => console.log(error));
+		}
+	});
 
 	function getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, review) {
 		return new Product({title: title, description: description, price: price, quantity: quantity, category: category, technicalData: technicalData, primaryImage: primaryImageObject, images: imagesObjects, review: review});
+	}
+	function getReviewScheme(Review, product, username, review, date) {
+		return new Review({product: product, username: username, review: review, date: date});
 	}
 }

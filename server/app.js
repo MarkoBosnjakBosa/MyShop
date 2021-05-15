@@ -12,6 +12,7 @@ const path = require("path");
 const EventEmitter = require("events").EventEmitter;
 const mailer = require("nodemailer");
 const Nexmo = require("nexmo");
+const moment = require("moment");
 const dotenv = require("dotenv").config();
 const baseUrl = process.env.BASE_URL;
 const serverPort = process.env.SERVER_PORT;
@@ -33,7 +34,7 @@ const profile = require("./routes/profile.js")(app, models, validation);
 const setup = require("./routes/setup.js")(app, models, smsEvent);
 const categories = require("./routes/admin/categories.js")(app, models, validation);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
-const products = require("./routes/admin/products.js")(app, models, uploadImages, fs, path, validation);
+const products = require("./routes/admin/products.js")(app, models, uploadImages, fs, path, moment, validation);
 const homeSettings = require("./routes/admin/homeSettings.js")(app, models, uploadImages, fs, path, validation);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});

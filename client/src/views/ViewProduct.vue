@@ -53,10 +53,44 @@
                             </div>
                         </div>
                         <div id="reviewsTab" class="tab-pane fade" role="tabpanel">
-                            <div class="addReview" @click="toggleReview()">Add review <i id="reviewIcon" class="fas fa-plus"></i></div>
+                            <div class="writeReview" @click="toggleReview()">Add review <i id="reviewIcon" class="fas fa-plus"></i></div>
                             <div id="review" class="hide">
-                                <textarea class="form-control" rows="5" v-model="comment"></textarea>
-                                <button type="button" class="btn btn-primary reviewButton">Add review</button>
+                                <textarea class="form-control" rows="5" v-model="review"></textarea>
+                                <div class="ratings">
+                                    <i id="rating_1" class="fas fa-star" @click="rateProduct(1)"></i>
+                                    <i id="rating_2" class="fas fa-star" @click="rateProduct(2)"></i>
+                                    <i id="rating_3" class="fas fa-star" @click="rateProduct(3)"></i>
+                                    <i id="rating_4" class="fas fa-star" @click="rateProduct(4)"></i>
+                                    <i id="rating_5" class="fas fa-star" @click="rateProduct(5)"></i>
+                                </div>
+                                <button type="button" class="btn btn-primary reviewButton" @click="writeReview()">Write a review</button>
+                            </div>
+                            <div id="reviews" class="accordion">
+                                <div v-for="review in reviews" :key="review._id" class="accordion-item">
+                                    <h2 class="accordion-header" :id="'heading_' + review._id">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + review._id" aria-expanded="false">
+                                            {{review.username}} {{review.date}}
+                                        </button>
+                                    </h2>
+                                    <div :id="'collapse_' + review._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + review._id" data-bs-parent="#reviews">
+                                        <div v-if="editing == review._id" class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-10 editMessage">
+                                                    <input type="text" class="form-control"/>
+                                                </div>
+                                                <div class="col-md-2 editButtons">
+                                                    <i class="far fa-check-circle editReview" @click="editReview(review._id, review.review)"></i>
+                                                    <i class="far fa-times-circle disableEditing" @click="disableEditing(message)"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-else class="accordion-body">{{review.review}}</div>
+                                        <div v-if="review.username == username">
+                                            <button type="button" class="btn btn-primary" @click="enableEditing(review)">Edit</button>
+                                            <button type="button" class="btn btn-danger" @click="deleteReview">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -70,7 +104,8 @@
 	import checkLogin from "../components/CheckLogin.vue";
 	import navigation from "../components/Navigation.vue";
 	import sidebar from "../components/Sidebar.vue";
-    import helper from "../components/Helper.vue"; 
+    import helper from "../components/Helper.vue";
+    import validation from "../components/Validation.vue"; 
 	const axios = require("axios");
 	
 	export default {
@@ -82,6 +117,7 @@
         data() {
 			return {
                 productId: "",
+                username: this.$store.getters.getUser,
                 product: {
                     _id: "",
                     title: "",
@@ -93,7 +129,10 @@
                     primaryImage: "",
                     images: [],
                     selectedQuantity: 1
-                }
+                },
+                reviews: [],
+                review: "",
+                editing: null
 			}
 		},
         methods: {
@@ -109,6 +148,11 @@
                     this.product.primaryImage = response.data.product.primaryImage;
                     this.product.images = response.data.product.images;
                     this.product.selectedQuantity = 1;
+                }).catch(error => console.log(error));
+            },
+            getReviews() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getReviews/" + this.productId).then(response => {
+                    this.reviews = response.data.reviews;    
                 }).catch(error => console.log(error));
             },
             renderImage(image) {
@@ -135,12 +179,42 @@
                     reviewIcon.classList.remove("fa-minus");
                     reviewIcon.classList.add("fa-plus");
                 }
-            }
+            },
+            rateProduct(rating) {
+                for(var index = 1; index < 6; index ++) {
+                    if(index <= rating) {
+                        document.getElementById("rating_" + index).classList.add("checked");
+                    } else {
+                        document.getElementById("rating_" + index).classList.remove("checked");
+                    }
+                }
+
+            },
+            writeReview() {
+                if(!validation.methods.invalidReview(this.review)) {
+                    var body = {productId: this.productId, username: this.username, review: this.review};
+                    axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/writeReview", body).then(response => {
+                        if(response.data.written) {
+                            this.review = "";
+                            this.reviews = [...this.reviews, response.data.review];
+                        }
+                    }).catch(error => console.log(error));
+                }
+            },
+            enableEditing(review) {
+                this.cachedReview = Object.assign({}, review);
+                this.editing = review._id;
+            },
+            disableEditing(review) { 
+                Object.assign(review, this.cachedReview);
+                this.editing = null;
+            },
         },
         mounted() {
             checkLogin.methods.isLoggedIn();
             this.productId = this.$route.params.productId;
             this.getProduct();
+            this.getReviews();
         }
     }
 </script>
@@ -182,7 +256,7 @@
         padding-top: 10px;
         padding-bottom: 10px;
     }
-    .addReview {
+    .writeReview {
         border: 1px #808080 solid;
         border-radius: 5px;
         padding: 10px;
@@ -195,6 +269,16 @@
     #review {
         margin-top: 10px;
     }
+    .ratings {
+        float: left;
+        padding-top: 10px;
+    }
+    .checked {
+        color: #ffa500;
+    }
+    .fas.fa-star {
+        cursor: pointer;
+    }
     .reviewButton {
         float: right;
         margin-top: 10px;
@@ -204,5 +288,15 @@
     }
     .show {
         display: block;
+    }
+    .editReview {
+        color: #008000;
+    }
+    .disableEditing {
+        color: #ff0000;
+    }
+    #reviews {
+        clear: both;
+        margin-top: 20px;
     }
 </style>

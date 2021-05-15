@@ -92,6 +92,7 @@
 				}
 			},
 			invalidMessage(message) { return message == ""; },
+			invalidReview(review) { return review == ""}
         }
     }
 </script>
