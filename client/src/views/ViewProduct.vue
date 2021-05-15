@@ -26,34 +26,38 @@
                     </button>
                 </div>
                 <div id="productData">
-                    <ul class="nav nav-tabs justify-content-center">
-                        <li class="nav-item"><a id="mainNavTab" data-toggle="tab" href="#mainTab" class="nav-link active">Main</a></li>
-                        <li class="nav-item"><a id="reviewsNavTab" data-toggle="tab" href="#reviewsTab" class="nav-link">Reviews</a></li>
-                    </ul>
+                    <div class="nav nav-tabs justify-content-center" role="tablist">
+                        <button type="button" id="mainNavTab" data-bs-toggle="tab" data-bs-target="#mainTab" class="nav-link active" role="tab">Main</button>
+                        <button type="button" id="reviewsNavTab" data-bs-toggle="tab" data-bs-target="#reviewsTab" class="nav-link" role="tab">Reviews</button>
+                    </div>
                     <div class="tab-content">
-                        <div id="mainTab" class="tab-pane fade active show">
+                        <div id="mainTab" class="tab-pane fade active show" role="tabpanel">
                             <div class="row">
-                                <div class="col-md-3"><b>Description</b></div>
-                                <div class="col-md-9">{{product.description}}</div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3"><b>Price</b></div>
-                                <div class="col-md-9">{{product.price}} €</div>
-                            </div>
-                            <div class="input-group mb-3">
-                                <input type="number" id="selectedQuantity" min="1" class="form-control" v-model="product.selectedQuantity"/>
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-primary" @click="addToShoppingCart()">Add to cart</button>
+                                <div class="col-md-6 price"><b>Price: {{product.price}} €</b></div>
+                                <div class="col-md-6">
+                                    <div class="mb-3 input-group">
+                                        <input type="number" id="selectedQuantity" min="1" class="form-control" v-model="product.selectedQuantity"/>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-primary" @click="addToShoppingCart()">Add to cart</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <h3>Technical data</h3>
+                            <div class="row">
+                                <div class="col-md-6 titleColumn"><b>Description</b></div>
+                                <div class="col-md-6 valueColumn">{{product.description}}</div>
+                            </div>
                             <div v-for="technicalInformation in product.technicalData" :key="technicalInformation._id" class="row">
-                                <div class="col-md-3"><b>{{technicalInformation.title}}</b></div>
-                                <div class="col-md-9">{{technicalInformation.value}}</div>
+                                <div class="col-md-6 titleColumn"><b>{{technicalInformation.title}}</b></div>
+                                <div class="col-md-6 valueColumn">{{technicalInformation.value}}</div>
                             </div>
                         </div>
-                        <div id="reviewsTab" class="tab-pane fade">
-
+                        <div id="reviewsTab" class="tab-pane fade" role="tabpanel">
+                            <div class="addReview" @click="toggleReview()">Add review <i id="reviewIcon" class="fas fa-plus"></i></div>
+                            <div id="review" class="hide">
+                                <textarea class="form-control" rows="5" v-model="comment"></textarea>
+                                <button type="button" class="btn btn-primary reviewButton">Add review</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -63,8 +67,6 @@
 </template>
 
 <script>
-    import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
 	import checkLogin from "../components/CheckLogin.vue";
 	import navigation from "../components/Navigation.vue";
 	import sidebar from "../components/Sidebar.vue";
@@ -114,7 +116,25 @@
             },
             addToShoppingCart() {
                 var product = this.product;
-                this.$store.dispatch("addToShoppingCart", product);
+                if(product.selectedQuantity > 0) {
+                    this.$store.dispatch("addToShoppingCart", product);
+                    this.product.selectedQuantity = 1;
+                }
+            },
+            toggleReview() {
+                var review = document.getElementById("review");
+                var reviewIcon = document.getElementById("reviewIcon"); 
+                if(review.classList.contains("hide")) {
+                    review.classList.remove("hide");
+                    review.classList.add("show");
+                    reviewIcon.classList.remove("fa-plus");
+                    reviewIcon.classList.add("fa-minus");
+                } else {
+                    review.classList.remove("show");
+                    review.classList.add("hide");
+                    reviewIcon.classList.remove("fa-minus");
+                    reviewIcon.classList.add("fa-plus");
+                }
             }
         },
         mounted() {
@@ -131,14 +151,58 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #imagesCarousel, #productData {
+    #imagesCarousel {
         margin: 0 auto;
         max-width: 800px;
     }
     .d-block {
         height: 400px;
     }
-    #technicalDataTab {
+    #productData {
+        margin: 0 auto;
+        max-width: 600px;
+        margin-top: 20px;
+    }
+    .tab-content {
+        margin-top: 20px;
+    }
+    .price {
+        padding-top: 7px;
+        text-align: right;
+    }
+    .titleColumn {
+        border: 1px #808080 solid;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: right;
         word-wrap: break-word;
+    }
+    .valueColumn {
+        border: 1px #808080 solid;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .addReview {
+        border: 1px #808080 solid;
+        border-radius: 5px;
+        padding: 10px;
+        cursor: pointer;
+    }
+    .fas.fa-plus, .fas.fa-minus {
+        float: right;
+        padding-top: 5px;
+    }
+    #review {
+        margin-top: 10px;
+    }
+    .reviewButton {
+        float: right;
+        margin-top: 10px;
+    }
+    .hide {
+        display: none;
+    }
+    .show {
+        display: block;
     }
 </style>

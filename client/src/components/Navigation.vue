@@ -4,7 +4,7 @@
             <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarOptions" aria-controls="navbarOptions" aria-expanded="false">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <button v-if="checkRoutePath()" id="toggleSidebar" type="button" class="btn btn-dark toggleSidebar" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
+            <button v-if="checkRoutePath()" id="toggleSidebar" type="button" class="btn btn-dark" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
             <div id="navbarOptions" class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -28,7 +28,7 @@
                     <li v-else class="nav-item">
                         <a class="nav-link" href="#" @click="openLogin()">Login</a>
                     </li>
-                    <li v-if="userData.userLoggedIn && !userData.isAdmin" class="nav-item">
+                    <li v-if="userData.userLoggedIn && !userData.isAdmin" class="nav-item dropdown">
                         <cart></cart>
                     </li>
                 </ul>
