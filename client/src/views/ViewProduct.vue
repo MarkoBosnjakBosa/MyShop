@@ -57,16 +57,16 @@
                             <div id="review" class="hide">
                                 <textarea class="form-control" rows="5" v-model="review"></textarea>
                                 <div class="ratings">
-                                    <i id="rating_1" class="fas fa-star" @click="rateProduct(1)"></i>
-                                    <i id="rating_2" class="fas fa-star" @click="rateProduct(2)"></i>
-                                    <i id="rating_3" class="fas fa-star" @click="rateProduct(3)"></i>
-                                    <i id="rating_4" class="fas fa-star" @click="rateProduct(4)"></i>
-                                    <i id="rating_5" class="fas fa-star" @click="rateProduct(5)"></i>
+                                    <i id="rating_1" class="fas fa-star" @click="rateProduct(1, 'rate')"></i>
+                                    <i id="rating_2" class="fas fa-star" @click="rateProduct(2, 'rate')"></i>
+                                    <i id="rating_3" class="fas fa-star" @click="rateProduct(3, 'rate')"></i>
+                                    <i id="rating_4" class="fas fa-star" @click="rateProduct(4, 'rate')"></i>
+                                    <i id="rating_5" class="fas fa-star" @click="rateProduct(5, 'rate')"></i>
                                 </div>
                                 <button type="button" class="btn btn-primary reviewButton" @click="writeReview()">Write a review</button>
                             </div>
                             <div id="reviews" class="accordion">
-                                <div v-for="review in reviews" :key="review._id" class="accordion-item">
+                                <div v-for="(review, index) in reviews" :key="review._id" class="accordion-item" style="clear: both">
                                     <h2 class="accordion-header" :id="'heading_' + review._id">
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + review._id" aria-expanded="false">
                                             {{review.username}} {{review.date}}
@@ -75,22 +75,28 @@
                                     <div :id="'collapse_' + review._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + review._id" data-bs-parent="#reviews">
                                         <div v-if="editing == review._id" class="accordion-body">
                                             <div class="row">
-                                                <div class="col-md-10 editMessage">
-                                                    <input type="text" class="form-control"/>
-                                                </div>
-                                                <div class="col-md-2 editButtons">
-                                                    <i class="far fa-check-circle editReview" @click="editReview(review._id, review.review)"></i>
-                                                    <i class="far fa-times-circle disableEditing" @click="disableEditing(message)"></i>
+                                                <div class="col-md editMessage">
+                                                    <textarea class="form-control" rows="5" v-model="reviews[index].review"></textarea>
                                                 </div>
                                             </div>
+                                            <div class="action">
+                                                <i class="fas fa-check fa-2x actionButton editReview" @click="editReview(review)"></i>
+                                                <i class="fas fa-times fa-2x actionButton disableEditing" @click="disableEditing(review)"></i>
+                                            </div>
                                         </div>
-                                        <div v-else class="accordion-body">{{review.review}}</div>
-                                        <div v-if="review.username == username">
-                                            <button type="button" class="btn btn-primary" @click="enableEditing(review)">Edit</button>
-                                            <button type="button" class="btn btn-danger" @click="deleteReview">Delete</button>
+                                        <div v-else class="accordion-body">{{review.review}}
+                                            <div v-if="review.username == username && editing != review._id" class="action">
+                                                <i class="fas fa-edit fa-2x actionButton" @click="enableEditing(review)"></i>
+                                                <i class="fas fa-trash fa-2x actionButton" @click="deleteReview(review._id)"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="pages">
+                                <button v-if="page - 1 > 0" type="button" class="btn btn-info page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
+                                <button type="button" class="btn btn-info page">{{page}}</button>
+                                <button v-if="page < pagesNumber" type="button" class="btn btn-info page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -128,9 +134,12 @@
                     technicalData: [],
                     primaryImage: "",
                     images: [],
+                    rating: {},
                     selectedQuantity: 1
                 },
                 reviews: [],
+                page: 1,
+                pagesNumber: 1,
                 review: "",
                 editing: null
 			}
@@ -147,12 +156,16 @@
                     this.product.technicalData = response.data.product.technicalData;
                     this.product.primaryImage = response.data.product.primaryImage;
                     this.product.images = response.data.product.images;
+                    this.product.rating = response.data.product.rating;
                     this.product.selectedQuantity = 1;
+                    this.getUserRating(this.product.rating.usersRatings);
                 }).catch(error => console.log(error));
             },
             getReviews() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getReviews/" + this.productId).then(response => {
-                    this.reviews = response.data.reviews;    
+                var body = {productId: this.productId, page: this.page};
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getReviews", body).then(response => {
+                    this.reviews = response.data.reviews;  
+                    this.pagesNumber = response.data.pagesNumber;  
                 }).catch(error => console.log(error));
             },
             renderImage(image) {
@@ -180,15 +193,35 @@
                     reviewIcon.classList.add("fa-plus");
                 }
             },
-            rateProduct(rating) {
-                for(var index = 1; index < 6; index ++) {
-                    if(index <= rating) {
-                        document.getElementById("rating_" + index).classList.add("checked");
-                    } else {
-                        document.getElementById("rating_" + index).classList.remove("checked");
-                    }
+            getUserRating(usersRatings) {
+                var foundIndex = usersRatings.findIndex(userRating => userRating.username == this.username);
+                if(foundIndex > -1) {
+                    this.rateProduct(usersRatings[foundIndex].rating, "load");
                 }
-
+            },
+            rateProduct(rating, type) {
+                if(type == "load") {
+                    for(var index = 1; index < 6; index ++) {
+                        if(index <= rating) {
+                            document.getElementById("rating_" + index).classList.add("checked");
+                        } else {
+                            document.getElementById("rating_" + index).classList.remove("checked");
+                        }
+                    }
+                } else {
+                    var body = {productId: this.productId, username: this.username, rating: rating};
+                    axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/rateProduct", body).then(response => {
+                        if(response.data.rated) {
+                            for(var index = 1; index < 6; index ++) {
+                                if(index <= rating) {
+                                    document.getElementById("rating_" + index).classList.add("checked");
+                                } else {
+                                    document.getElementById("rating_" + index).classList.remove("checked");
+                                }
+                            }
+                        }
+                    }).catch(error => console.log(error));
+                }
             },
             writeReview() {
                 if(!validation.methods.invalidReview(this.review)) {
@@ -197,6 +230,27 @@
                         if(response.data.written) {
                             this.review = "";
                             this.reviews = [...this.reviews, response.data.review];
+                        }
+                    }).catch(error => console.log(error));
+                }
+            },
+            editReview(updatedReview) {
+                if(!validation.methods.invalidReview(updatedReview.review)) {
+                    var body = {reviewId: updatedReview._id, username: this.username, review: updatedReview.review};
+                    axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editReview", body).then(response => {
+                        if(response.data.edited) {
+                            this.reviews = this.reviews.map(review => review._id == updatedReview._id ? updatedReview : review);
+                            this.editing = null;
+                        }
+                    }).catch(error => console.log(error));
+                }
+            },
+            deleteReview(reviewId) {
+                var confirmed = confirm("Delete review?");
+                if(confirmed) {
+                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteReview/" + reviewId + "/" + this.username).then(response => {
+                        if(response.data.deleted) {
+                            this.reviews = this.reviews.filter(review => review._id != reviewId);
                         }
                     }).catch(error => console.log(error));
                 }
@@ -271,7 +325,7 @@
     }
     .ratings {
         float: left;
-        padding-top: 10px;
+        padding-top: 15px;
     }
     .checked {
         color: #ffa500;
@@ -282,6 +336,7 @@
     .reviewButton {
         float: right;
         margin-top: 10px;
+        margin-bottom: 10px;
     }
     .hide {
         display: none;
@@ -289,14 +344,26 @@
     .show {
         display: block;
     }
+    #reviews {
+        clear: both;
+        margin-top: 10px;
+    }
+    .action {
+        text-align: right;
+        margin-top: 5px;
+    }
+    .actionButton {
+        margin-left: 5px;
+        cursor: pointer;
+    }
     .editReview {
         color: #008000;
     }
     .disableEditing {
         color: #ff0000;
     }
-    #reviews {
-        clear: both;
-        margin-top: 20px;
+    .pages {
+        margin: 10px auto;
+        text-align: center;
     }
 </style>

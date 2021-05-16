@@ -27,7 +27,7 @@ module.exports = function(mongoose) {
 		technicalData: {type: Array},
 		primaryImage: {name: String, contentType: String, image: Buffer},
 		images: [{name: String, contentType: String, image: Buffer}],
-        review: {type: Object, required: true}
+        rating: {type: Object, required: true}
 	});
 	const reviewScheme = new mongoose.Schema({
 		product: {type: String, required: true},

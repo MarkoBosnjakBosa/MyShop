@@ -67,8 +67,8 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 		} else {
 			response.status(200).json({created: false, errorFields: ["images"]}).end();
 		}
-		var review = {votes: 0, rating: 0, averageRating: 0};
-		var newProduct = getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, review);
+		var rating = {votes: 0, totalRating: 0, averageRating: 0, usersRatings: []};
+		var newProduct = getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, rating);
 		newProduct.save().then(product => {
 			response.status(200).json({created: true}).end();
 		}).catch(error => console.log(error));
@@ -169,12 +169,54 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 			response.status(200).json({deleted: false}).end();
 		}
 	});
-	app.get("/getReviews/:productId", (request, response) => {
-		var productId = request.params.productId;
+	app.post("/rateProduct", (request, response) => {
+		var productId = request.body.productId;
+		var username = request.body.username;
+		var rating = Number(request.body.rating);
+		if(productId && username && rating) {
+			var query = {_id: productId};
+			Product.findOne(query).then(product => {
+				if(!validation.isEmpty(product)) {
+					var votes = Number(product.rating.votes);
+					var totalRating = Number(product.rating.totalRating);
+					var usersRatings = product.rating.usersRatings;
+					var foundIndex = usersRatings.findIndex(userRating => userRating.username == username);
+					if(foundIndex > -1) {
+						totalRating = totalRating - usersRatings[foundIndex].rating + rating;
+						usersRatings[foundIndex].rating = rating;
+					} else{
+						votes = votes + 1;
+						totalRating = totalRating + rating;
+						usersRatings = [...usersRatings, {username: username, rating: rating}]; 
+					}
+					var averageRating = Math.round(totalRating / votes);
+					var update = {rating: {votes: votes, totalRating: totalRating, averageRating: averageRating, usersRatings: usersRatings}};
+					Product.findOneAndUpdate(query, update, {new: true}).then(updatedProduct => {
+						response.status(200).json({rated: true}).end();
+					});
+				} else{
+					response.status(200).json({rated: false}).end();
+				}
+			});
+		} else {
+			response.status(200).json({rated: false}).end();
+		}
+	});
+	app.post("/getReviews", (request, response) => {
+		var productId = request.body.productId;
+		var page = Number(request.body.page) - 1;
+		var limit = 5;
+		var skip = page * limit;
 		var query = {product: productId};
-        Review.find(query).then(reviews => {
-            response.status(200).json({reviews: reviews}).end();
-        }).catch(error => console.log(error));
+		var reviewsQuery = Review.find(query).skip(skip).limit(limit);
+		var totalQuery = Review.find(query).countDocuments();
+		var queries = [reviewsQuery, totalQuery];
+		Promise.all(queries).then(results => {
+			var total = results[1];
+			var pagesNumber = 1;
+			if(total >= limit) pagesNumber = Math.ceil(total / limit);
+			response.status(200).json({reviews: results[0], total: total, pagesNumber: pagesNumber}).end();
+		});
 	});
 	app.post("/writeReview", (request, response) => {
 		var productId = request.body.productId;
@@ -186,8 +228,8 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 			response.status(200).json({written: true, review: review}).end();
 		}).catch(error => console.log(error));
 	});
-	app.post("/editReview", (request, response) => {
-		var reviewId = request.body.productId;
+	app.put("/editReview", (request, response) => {
+		var reviewId = request.body.reviewId;
 		var username = request.body.username;
 		var review = request.body.review;
 		var date = moment(new Date()).format("DD.MM.YYYY");
@@ -195,23 +237,35 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 			var query = {_id: reviewId, username: username};
 			var update = {review: review, date: date};
 			Review.findOneAndUpdate(query, update).then(review => {
-				response.status(200).json({edited: true}).end();
+				if(!validation.isEmpty(review)) {
+					response.status(200).json({edited: true}).end();
+				} else {
+					response.status(200).json({edited: false}).end();
+				}
 			}).catch(error => console.log(error));
+		} else {
+			response.status(200).json({edited: false}).end();
 		}
 	});
-	app.delete("/deleteReview/:reviewId/:usernameId", (request, response) => {
+	app.delete("/deleteReview/:reviewId/:username", (request, response) => {
 		var reviewId = request.params.reviewId;
 		var username = request.params.username;
 		if(reviewId && username) {
 			var query = {_id: reviewId, username: username};
 			Review.findOneAndRemove(query).then(review => {
-				response.status(200).json({deleted: true}).end();
+				if(!validation.isEmpty(review)) {
+					response.status(200).json({deleted: true}).end();
+				} else {
+					response.status(200).json({deleted: false}).end();
+				}
 			}).catch(error => console.log(error));
+		} else {
+			response.status(200).json({deleted: false}).end();
 		}
 	});
 
-	function getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, review) {
-		return new Product({title: title, description: description, price: price, quantity: quantity, category: category, technicalData: technicalData, primaryImage: primaryImageObject, images: imagesObjects, review: review});
+	function getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, rating) {
+		return new Product({title: title, description: description, price: price, quantity: quantity, category: category, technicalData: technicalData, primaryImage: primaryImageObject, images: imagesObjects, rating: rating});
 	}
 	function getReviewScheme(Review, product, username, review, date) {
 		return new Review({product: product, username: username, review: review, date: date});

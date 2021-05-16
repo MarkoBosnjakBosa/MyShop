@@ -34,7 +34,7 @@
                         <button type="button" class="btn btn-info">{{total}}</button>
                     </div>
                 </form>
-                <div class="mb-3 row products">
+                <div class="row products">
                     <div v-for="product in products" :key="product._id" class="col-md-3">
                         <div class="card">
                             <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)">
@@ -46,7 +46,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mb-3 pages">
+                <div class="pages">
                     <button v-if="page - 1 > 0" type="button" class="btn btn-info page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="btn btn-info page">{{page}}</button>
                     <button v-if="page < pagesNumber" type="button" class="btn btn-info page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
@@ -144,8 +144,8 @@
         cursor: pointer;
     }
     .pages {
-        text-align: center;
         margin: 0 auto;
+        text-align: center;
     }
     .page {
         margin-left: 10px;

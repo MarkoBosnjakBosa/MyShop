@@ -6,13 +6,13 @@
 				<navigation></navigation>
                 <h1>Create Product</h1>
                 <form autocomplete="off" enctype="multipart/form-data" @submit.prevent="createProduct()">
-                    <ul class="nav nav-tabs justify-content-center">
-                        <li class="nav-item"><a id="mainNavTab" data-toggle="tab" href="#mainTab" class="nav-link active">Main</a></li>
-                        <li class="nav-item"><a id="technicalDataNavTab" data-toggle="tab" href="#technicalDataTab" class="nav-link">Technical Data</a></li>
-                        <li class="nav-item"><a id="imagesNavTab" data-toggle="tab" href="#imagesTab" class="nav-link">Images</a></li>
-                    </ul>
+                    <div class="nav nav-tabs justify-content-center" role="tablist">
+                        <button type="button" id="mainNavTab" data-bs-toggle="tab" data-bs-target="#mainTab" class="nav-link active" role="tab">Main</button>
+                        <button type="button" id="technicalDataNavTab" data-bs-toggle="tab" data-bs-target="#technicalDataTab" class="nav-link" role="tab">Technical Data</button>
+                        <button type="button" id="imagesNavTab" data-bs-toggle="tab" data-bs-target="#imagesTab" class="nav-link" role="tab">Images</button>
+                    </div>
                     <div class="tab-content">
-                        <div id="mainTab" class="tab-pane fade active show">
+                        <div id="mainTab" class="tab-pane fade active show" role="tabpanel">
                             <div v-if="productCreated" class="alert alert-success alert-dismissible" role="alert">
                                 <div>Product has been successfully created!</div>
                                 <button type="button" class="close" @click="closeCreationAlert()">
@@ -74,7 +74,7 @@
                                 <button type="button" class="btn btn-info nextButton" @click="toggleTab('technicalData')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </div>
-                        <div id="technicalDataTab" class="tab-pane fade">
+                        <div id="technicalDataTab" class="tab-pane fade" role="tabpanel">
                             <div class="form-group input-group">
                                 <div class="input-group-prepend">
                                     <label for="technicalData" class="input-group-text">Technical Data</label>
@@ -110,7 +110,7 @@
                                 <button type="button" class="btn btn-info nextButton" @click="toggleTab('images')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </div>
-                        <div id="imagesTab" class="tab-pane fade">
+                        <div id="imagesTab" class="tab-pane fade" role="tabpanel">
                             <div v-if="errors.titleError || errors.descriptionError || errors.priceError || errors.quantityError || errors.categoryError || errors.primaryImageError" class="alert alert-danger" role="alert">Please insert missing data!</div>
                             <div class="form-group">
                                 <div class="input-group">
