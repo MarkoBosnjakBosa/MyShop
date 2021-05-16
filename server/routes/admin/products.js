@@ -169,38 +169,34 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 			response.status(200).json({deleted: false}).end();
 		}
 	});
-	app.post("/rateProduct", (request, response) => {
+	app.post("/rateProduct", validation.validateRating, (request, response) => {
 		var productId = request.body.productId;
 		var username = request.body.username;
 		var rating = Number(request.body.rating);
-		if(productId && username && rating) {
-			var query = {_id: productId};
-			Product.findOne(query).then(product => {
-				if(!validation.isEmpty(product)) {
-					var votes = Number(product.rating.votes);
-					var totalRating = Number(product.rating.totalRating);
-					var usersRatings = product.rating.usersRatings;
-					var foundIndex = usersRatings.findIndex(userRating => userRating.username == username);
-					if(foundIndex > -1) {
-						totalRating = totalRating - usersRatings[foundIndex].rating + rating;
-						usersRatings[foundIndex].rating = rating;
-					} else{
-						votes = votes + 1;
-						totalRating = totalRating + rating;
-						usersRatings = [...usersRatings, {username: username, rating: rating}]; 
-					}
-					var averageRating = Math.round(totalRating / votes);
-					var update = {rating: {votes: votes, totalRating: totalRating, averageRating: averageRating, usersRatings: usersRatings}};
-					Product.findOneAndUpdate(query, update, {new: true}).then(updatedProduct => {
-						response.status(200).json({rated: true}).end();
-					});
+		var query = {_id: productId};
+		Product.findOne(query).then(product => {
+			if(!validation.isEmpty(product)) {
+				var votes = Number(product.rating.votes);
+				var totalRating = Number(product.rating.totalRating);
+				var usersRatings = product.rating.usersRatings;
+				var foundIndex = usersRatings.findIndex(userRating => userRating.username == username);
+				if(foundIndex > -1) {
+					totalRating = totalRating - usersRatings[foundIndex].rating + rating;
+					usersRatings[foundIndex].rating = rating;
 				} else{
-					response.status(200).json({rated: false}).end();
+					votes = votes + 1;
+					totalRating = totalRating + rating;
+					usersRatings = [...usersRatings, {username: username, rating: rating}]; 
 				}
-			});
-		} else {
-			response.status(200).json({rated: false}).end();
-		}
+				var averageRating = Math.round(totalRating / votes);
+				var update = {rating: {votes: votes, totalRating: totalRating, averageRating: averageRating, usersRatings: usersRatings}};
+				Product.findOneAndUpdate(query, update, {new: true}).then(updatedProduct => {
+					response.status(200).json({rated: true}).end();
+				});
+			} else{
+				response.status(200).json({rated: false}).end();
+			}
+		});
 	});
 	app.post("/getReviews", (request, response) => {
 		var productId = request.body.productId;
@@ -218,7 +214,7 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 			response.status(200).json({reviews: results[0], total: total, pagesNumber: pagesNumber}).end();
 		});
 	});
-	app.post("/writeReview", (request, response) => {
+	app.post("/writeReview", validation.validateReviewWriting, (request, response) => {
 		var productId = request.body.productId;
 		var username = request.body.username;
 		var review = request.body.review;
@@ -228,24 +224,20 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 			response.status(200).json({written: true, review: review}).end();
 		}).catch(error => console.log(error));
 	});
-	app.put("/editReview", (request, response) => {
+	app.put("/editReview", validation.validateReviewEdit, (request, response) => {
 		var reviewId = request.body.reviewId;
 		var username = request.body.username;
 		var review = request.body.review;
 		var date = moment(new Date()).format("DD.MM.YYYY");
-		if(reviewId && username) {
-			var query = {_id: reviewId, username: username};
-			var update = {review: review, date: date};
-			Review.findOneAndUpdate(query, update).then(review => {
-				if(!validation.isEmpty(review)) {
-					response.status(200).json({edited: true}).end();
-				} else {
-					response.status(200).json({edited: false}).end();
-				}
-			}).catch(error => console.log(error));
-		} else {
-			response.status(200).json({edited: false}).end();
-		}
+		var query = {_id: reviewId, username: username};
+		var update = {review: review, date: date};
+		Review.findOneAndUpdate(query, update).then(review => {
+			if(!validation.isEmpty(review)) {
+				response.status(200).json({edited: true}).end();
+			} else {
+				response.status(200).json({edited: false}).end();
+			}
+		}).catch(error => console.log(error));
 	});
 	app.delete("/deleteReview/:reviewId/:username", (request, response) => {
 		var reviewId = request.params.reviewId;

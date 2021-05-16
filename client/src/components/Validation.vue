@@ -92,6 +92,7 @@
 				}
 			},
 			invalidMessage(message) { return message == ""; },
+			invalidRating(rating) { return rating < 1 || rating > 5; },
 			invalidReview(review) { return review == ""}
         }
     }

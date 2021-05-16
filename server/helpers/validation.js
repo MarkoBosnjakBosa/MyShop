@@ -81,6 +81,12 @@ function invalidPrimaryImage(primaryImage) {
 function invalidMessage(message) { 
     return message == ""; 
 }
+function invalidRating(rating) {
+    return rating < 1 || rating > 5;
+}
+function invalidReview(review) {
+    return review == "";
+}
 function validUsername(username) {
     var usernameFormat = /^[a-z0-9_.-]*$/;
     if(username != "" && usernameFormat.test(username)) return true;
@@ -122,6 +128,8 @@ module.exports = {
     invalidCategory: invalidCategory,
     invalidPrimaryImage: invalidPrimaryImage,
     invalidMessage: invalidMessage,
+    invalidRating: invalidRating,
+    invalidReview: invalidReview,
     validUsername: validUsername,
     validEmail: validEmail,
     validPassword: validPassword,

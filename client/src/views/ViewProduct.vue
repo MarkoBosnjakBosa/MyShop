@@ -94,11 +94,12 @@
                                 </div>
                             </div>
                             <div class="pages">
-                                <button v-if="page - 1 > 0" type="button" class="btn btn-info page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
-                                <button type="button" class="btn btn-info page">{{page}}</button>
-                                <button v-if="page < pagesNumber" type="button" class="btn btn-info page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
+                                <button v-if="page - 1 > 0" type="button" class="btn btn-dark page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
+                                <button type="button" class="btn btn-dark page">{{page}}</button>
+                                <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </div>
+                        <notification :product="product" :notificationMessage="notificationMessage" :isNotificationDisplayed="isNotificationDisplayed" @hide="hideNotification()"></notification>
                     </div>
                 </div>
             </div>
@@ -111,6 +112,7 @@
 	import navigation from "../components/Navigation.vue";
 	import sidebar from "../components/Sidebar.vue";
     import helper from "../components/Helper.vue";
+    import notification from "../components/Notification.vue";
     import validation from "../components/Validation.vue"; 
 	const axios = require("axios");
 	
@@ -118,7 +120,8 @@
 		name: "viewProduct",
 		components: {
             navigation,
-			sidebar
+			sidebar,
+            notification
         },
         data() {
 			return {
@@ -141,7 +144,9 @@
                 page: 1,
                 pagesNumber: 1,
                 review: "",
-                editing: null
+                editing: null,
+                notificationMessage: "",
+                isNotificationDisplayed: false
 			}
 		},
         methods: {
@@ -176,6 +181,8 @@
                 if(product.selectedQuantity > 0) {
                     this.$store.dispatch("addToShoppingCart", product);
                     this.product.selectedQuantity = 1;
+                    this.notificationMessage = "This product has been successfully added to your cart!";
+                    this.isNotificationDisplayed = true;
                 }
             },
             toggleReview() {
@@ -200,27 +207,31 @@
                 }
             },
             rateProduct(rating, type) {
-                if(type == "load") {
-                    for(var index = 1; index < 6; index ++) {
-                        if(index <= rating) {
-                            document.getElementById("rating_" + index).classList.add("checked");
-                        } else {
-                            document.getElementById("rating_" + index).classList.remove("checked");
-                        }
-                    }
-                } else {
-                    var body = {productId: this.productId, username: this.username, rating: rating};
-                    axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/rateProduct", body).then(response => {
-                        if(response.data.rated) {
-                            for(var index = 1; index < 6; index ++) {
-                                if(index <= rating) {
-                                    document.getElementById("rating_" + index).classList.add("checked");
-                                } else {
-                                    document.getElementById("rating_" + index).classList.remove("checked");
-                                }
+                if(!validation.methods.invalidRating(this.rating)) {
+                    if(type == "load") {
+                        for(var index = 1; index < 6; index ++) {
+                            if(index <= rating) {
+                                document.getElementById("rating_" + index).classList.add("checked");
+                            } else {
+                                document.getElementById("rating_" + index).classList.remove("checked");
                             }
                         }
-                    }).catch(error => console.log(error));
+                    } else {
+                        var body = {productId: this.productId, username: this.username, rating: rating};
+                        axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/rateProduct", body).then(response => {
+                            if(response.data.rated) {
+                                for(var index = 1; index < 6; index ++) {
+                                    if(index <= rating) {
+                                        document.getElementById("rating_" + index).classList.add("checked");
+                                    } else {
+                                        document.getElementById("rating_" + index).classList.remove("checked");
+                                    }
+                                }
+                                this.notificationMessage = "You have successfully rated this product!";
+                                this.isNotificationDisplayed = true;
+                            }
+                        }).catch(error => console.log(error));
+                    }
                 }
             },
             writeReview() {
@@ -230,6 +241,9 @@
                         if(response.data.written) {
                             this.review = "";
                             this.reviews = [...this.reviews, response.data.review];
+                            this.toggleReview();
+                            this.notificationMessage = "You have successfully written a review for this product!";
+                            this.isNotificationDisplayed = true;
                         }
                     }).catch(error => console.log(error));
                 }
@@ -241,6 +255,8 @@
                         if(response.data.edited) {
                             this.reviews = this.reviews.map(review => review._id == updatedReview._id ? updatedReview : review);
                             this.editing = null;
+                            this.notificationMessage = "You have successfully edited a review for this product!";
+                            this.isNotificationDisplayed = true;
                         }
                     }).catch(error => console.log(error));
                 }
@@ -251,6 +267,8 @@
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteReview/" + reviewId + "/" + this.username).then(response => {
                         if(response.data.deleted) {
                             this.reviews = this.reviews.filter(review => review._id != reviewId);
+                            this.notificationMessage = "You have successfully deleted a review for this product!";
+                            this.isNotificationDisplayed = true;
                         }
                     }).catch(error => console.log(error));
                 }
@@ -263,6 +281,10 @@
                 Object.assign(review, this.cachedReview);
                 this.editing = null;
             },
+            hideNotification() {
+                this.notificationMessage = "";
+                this.isNotificationDisplayed = false;
+            }
         },
         mounted() {
             checkLogin.methods.isLoggedIn();

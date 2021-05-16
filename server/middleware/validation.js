@@ -276,6 +276,30 @@ function validateProductEdit(request, response, next) {
     }
 }
 
+function validateRating(request, response, next) {
+    var productId = request.body.productId;
+    var username = request.body.username;
+    var rating = Number(request.body.rating);
+    if(productId && username && !validation.invalidRating(rating)) next();
+    else response.status(200).json({rated: false}).end();
+}
+
+function validateReviewWriting(request, response, next) {
+    var productId = request.body.productId;
+    var username = request.body.username;
+    var review = request.body.review;
+    if(productId && username && !validation.invalidReview(review)) next();
+    else response.status(200).json({written: false}).end();
+}
+
+function validateReviewEdit(request, response, next) {
+    var reviewId = request.body.reviewId;
+    var username = request.body.username;
+    var review = request.body.review;
+    if(reviewId && username && !validation.invalidReview(review)) next();
+    else response.status(200).json({edited: false}).end();
+}
+
 function validPassword(password) {
     var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     if(password != "" && passwordFormat.test(password)) return true;
@@ -299,6 +323,9 @@ module.exports = {
     validateTechnicalInformationEdit: validateTechnicalInformationEdit,
     validateProductCreation: validateProductCreation,
     validateProductEdit: validateProductEdit,
+    validateRating: validateRating,
+    validateReviewWriting: validateReviewWriting,
+    validateReviewEdit: validateReviewEdit,
     validPassword: validPassword,
     isEmpty: isEmpty
 };
