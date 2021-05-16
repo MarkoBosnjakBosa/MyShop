@@ -99,7 +99,7 @@
                                 <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </div>
-                        <notification :product="product" :notificationMessage="notificationMessage" :isNotificationDisplayed="isNotificationDisplayed" @hide="hideNotification()"></notification>
+                        <notification :product="product" :message="message" @hide="hideNotification()"></notification>
                     </div>
                 </div>
             </div>
@@ -145,8 +145,7 @@
                 pagesNumber: 1,
                 review: "",
                 editing: null,
-                notificationMessage: "",
-                isNotificationDisplayed: false
+                message: ""
 			}
 		},
         methods: {
@@ -181,8 +180,7 @@
                 if(product.selectedQuantity > 0) {
                     this.$store.dispatch("addToShoppingCart", product);
                     this.product.selectedQuantity = 1;
-                    this.notificationMessage = "This product has been successfully added to your cart!";
-                    this.isNotificationDisplayed = true;
+                    this.message = "This product has been successfully added to your cart!";
                 }
             },
             toggleReview() {
@@ -227,8 +225,7 @@
                                         document.getElementById("rating_" + index).classList.remove("checked");
                                     }
                                 }
-                                this.notificationMessage = "You have successfully rated this product!";
-                                this.isNotificationDisplayed = true;
+                                this.message = "You have successfully rated this product!";
                             }
                         }).catch(error => console.log(error));
                     }
@@ -242,8 +239,7 @@
                             this.review = "";
                             this.reviews = [...this.reviews, response.data.review];
                             this.toggleReview();
-                            this.notificationMessage = "You have successfully written a review for this product!";
-                            this.isNotificationDisplayed = true;
+                            this.message = "You have successfully written a review for this product!";
                         }
                     }).catch(error => console.log(error));
                 }
@@ -255,8 +251,7 @@
                         if(response.data.edited) {
                             this.reviews = this.reviews.map(review => review._id == updatedReview._id ? updatedReview : review);
                             this.editing = null;
-                            this.notificationMessage = "You have successfully edited a review for this product!";
-                            this.isNotificationDisplayed = true;
+                            this.message = "You have successfully edited a review for this product!";
                         }
                     }).catch(error => console.log(error));
                 }
@@ -267,8 +262,7 @@
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteReview/" + reviewId + "/" + this.username).then(response => {
                         if(response.data.deleted) {
                             this.reviews = this.reviews.filter(review => review._id != reviewId);
-                            this.notificationMessage = "You have successfully deleted a review for this product!";
-                            this.isNotificationDisplayed = true;
+                            this.message = "You have successfully deleted a review for this product!";
                         }
                     }).catch(error => console.log(error));
                 }
@@ -282,8 +276,7 @@
                 this.editing = null;
             },
             hideNotification() {
-                this.notificationMessage = "";
-                this.isNotificationDisplayed = false;
+                this.message = "";
             }
         },
         mounted() {

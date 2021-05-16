@@ -1,12 +1,12 @@
 <template>
     <div id="notification">
         <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
-            <div id="notificationPanel" class="toast" :class="isNotificationDisplayed ? 'show' : 'hide'" role="alert">
+            <div class="toast" :class="message != '' ? 'show' : 'hide'" role="alert">
                 <div class="toast-header">
                     <strong class="me-auto">{{product.title}}</strong>
                     <button type="button" class="btn-close" @click="hideNotification()"></button>
                 </div>
-                <div class="toast-body">{{notificationMessage}}</div>
+                <div class="toast-body">{{message}}</div>
             </div>
         </div>
     </div>
@@ -29,11 +29,10 @@
                 rating: {},
                 selectedQuantity: 1
             },
-            notificationMessage: "",
-            isNotificationDisplayed: false
+            message: ""
 		},
         methods: {
-            hideNotification()  { this.$emit("hide"); }
+            hideNotification() { this.$emit("hide"); }
         }
     }
 </script>
