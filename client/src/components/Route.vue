@@ -59,6 +59,9 @@
             openViewProduct(productId) {
                 router.push("/view/product/" + productId);
             },
+            openShoppingCart() {
+                router.push("/shopping/cart");
+            },
             logout() {
                 store.dispatch("logout");
                 router.push("/login");

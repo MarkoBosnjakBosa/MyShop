@@ -19,7 +19,7 @@
                     <b>Total: {{formatNumber(totalCost)}} €</b>
                     <i class="fas fa-times totalRemoval" @click="clearShoppingCart()"></i>
                 </div>
-                <button type="button" class="btn btn-primary checkoutButton">Checkout</button>
+                <button type="button" class="btn btn-primary checkoutButton" @click="openShoppingCart()">Go to shopping cart</button>
             </li>
             <li v-else class="container">
                 Your shopping cart is empty!
@@ -46,6 +46,9 @@
             },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
+            },
+            openShoppingCart() {
+                route.methods.openShoppingCart();
             },
             renderImage(image) {
                 return helper.methods.renderImage(image);

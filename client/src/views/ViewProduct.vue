@@ -36,7 +36,7 @@
                                 <div class="col-md-6 price"><b>Price: {{product.price}} €</b></div>
                                 <div class="col-md-6">
                                     <div class="mb-3 input-group">
-                                        <input type="number" id="selectedQuantity" min="1" class="form-control" v-model="product.selectedQuantity"/>
+                                        <input type="number" id="selectedQuantity" min="1" :max="product.quantity" class="form-control" value="1"/>
                                         <div class="input-group-append">
                                             <button type="button" class="btn btn-primary" @click="addToShoppingCart()">Add to cart</button>
                                         </div>
@@ -177,9 +177,11 @@
             },
             addToShoppingCart() {
                 var product = this.product;
-                if(product.selectedQuantity > 0) {
+                var selectedQuantity = document.getElementById("selectedQuantity").value;
+                if(selectedQuantity > 0 && selectedQuantity <= product.quantity) {
+                    product.selectedQuantity = selectedQuantity;
                     this.$store.dispatch("addToShoppingCart", product);
-                    this.product.selectedQuantity = 1;
+                    document.getElementById("selectedQuantity").value = "1";
                     this.message = "This product has been successfully added to your cart!";
                 }
             },

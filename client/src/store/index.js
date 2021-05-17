@@ -17,7 +17,7 @@ const getDefaultState = () => {
 };
 
 export default new Vuex.Store({
-	strict: true,
+	strict: false,
 	plugins: [createPersistedState()],
 	state: getDefaultState(),
 	getters: {
@@ -33,16 +33,22 @@ export default new Vuex.Store({
 		SET_ADMIN: (state, isAdmin) => { state.jwtData.isAdmin = isAdmin; },
 		SET_USERNAME: (state, username) => { state.authenticationData.username = username; },
 		CLEAR_USERNAME: state => { state.authenticationData.username = ""; },
-		ADD_TO_SHOPPING_CART: (state, product) => { 
+		ADD_TO_SHOPPING_CART: (state, product) => {
 			var foundIndex = state.products.findIndex(foundProduct => foundProduct._id == product._id);
 			if(foundIndex > -1) {
 				state.products[foundIndex].selectedQuantity = Number(state.products[foundIndex].selectedQuantity) + Number(product.selectedQuantity);
-			} else{
+			} else {
 				state.products = [...state.products, product]; 
 			}
 		},
+		UPDATE_SELECTED_QUANTITY: (state, {productId, selectedQuantity}) => {
+			var foundIndex = state.products.findIndex(foundProduct => foundProduct._id == productId);
+			if(foundIndex > -1) {
+				state.products[foundIndex].selectedQuantity = selectedQuantity;
+			}
+		},
 		REMOVE_FROM_SHOPPING_CART: (state, productId) => { state.products = state.products.filter(product => product._id != productId); },
-		CLEAR_SHOPPING_CART: state => { state.products= []; },
+		CLEAR_SHOPPING_CART: state => { state.products = []; },
 		RESET: state => { Object.assign(state, getDefaultState()); }
 	},
 	actions: {
@@ -60,6 +66,9 @@ export default new Vuex.Store({
 		},
 		addToShoppingCart: ({commit}, product) => {
 			commit("ADD_TO_SHOPPING_CART", product);
+		},
+		updateSelectedQuantity: ({commit}, {productId, selectedQuantity}) => {
+			commit("UPDATE_SELECTED_QUANTITY", {productId, selectedQuantity});
 		},
 		removeFromShoppingCart: ({commit}, productId) => {
 			commit("REMOVE_FROM_SHOPPING_CART", productId);
