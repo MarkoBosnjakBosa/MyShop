@@ -1,28 +1,18 @@
 <template>
-    <div id="viewProduct" class="container-fluid">
+    <div id="shoppingCart" class="container-fluid">
 		<div class="d-flex" id="barsDiv">
 			<sidebar></sidebar>
 			<div id="pageDiv">
 				<navigation></navigation>
                 <h1>Shopping Cart</h1>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Image</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Rating</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(product, index) in products" :key="product._id">
-                            <th class="textPadding">{{index + 1}}</th>
-                            <td><img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image"></td>
-                            <td class="textPadding">{{product.title}}</td>
-                            <td class="textPadding">
+                <div class="row shoppingCart">
+                    <div class="col-md-8">
+                        <div v-for="product in products" :key="product._id" class="row product">
+                            <div class="col-md-3">
+                                <img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image"/>
+                            </div>
+                            <div class="col-md-7">
+                                <h3>{{product.title}}</h3>
                                 <div class="ratings">
                                     <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 0}"></i>
                                     <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 1}"></i>
@@ -30,16 +20,34 @@
                                     <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 3}"></i>
                                     <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 4}"></i>
                                 </div>
-                            </td>
-                            <td class="inputPadding"><input type="number" min="1" class="form-control" :value="product.selectedQuantity" @change="updateSelectedQuantity($event, product._id)"/></td>
-                            <td class="textPadding">{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}} €</td>
-                            <td class="textPadding">
-                                <i class="fas fa-external-link-alt" @click="openViewProduct(product._id)"></i>
-                                <i class="fas fa-trash" @click="removeFromShoppingCart(product)"></i>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                <div class="row margin">
+                                    <label class="col-md-3 col-form-label">Quantity:</label>
+                                    <div class="col-md-9">
+                                        <input type="number" min="1" class="form-control quantity" :value="product.selectedQuantity" @change="updateSelectedQuantity($event, product._id)"/>
+                                    </div>
+                                </div>
+                                <div class="row margin">
+                                    <div class="col-md-3">Price:</div>
+                                    <div class="col-md-3"><b>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}} €</b></div>
+                                </div>
+                                <div class="margin">
+                                    <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <i class="fas fa-times fa-2x" @click="removeFromShoppingCart(product)"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="checkout">
+                            <div class="checkoutInfo">
+                                <h3>Total: {{totalCost}}</h3>
+                                <button type="button" class="btn btn-primary btn-lg checkoutButton" @click="openCheckout()">Checkout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -58,11 +66,6 @@
 		components: {
             navigation,
 			sidebar
-        },
-        data() {
-			return {
-                
-            }
         },
         methods: {
             renderImage(image) {
@@ -94,8 +97,11 @@
                 this.products.forEach(function(product) {
                     totalCost += Number(product.price) * Number(product.selectedQuantity);
                 });
-                return totalCost;
+                return this.formatNumber(totalCost) + " €";
             }
+        },
+        mounted() {
+            checkLogin.methods.isLoggedIn();
         }
     }
 </script>
@@ -106,22 +112,46 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
+    .shoppingCart {
+        margin: 0 auto;
+        max-width: 1200px;
+    }
+    .checkout {
+        height: 200px;
+        line-height: 200px;
+        text-align: center;
+        background-color: #e6e6ff;
+        border-radius: 10px;
+    }
+    .checkoutInfo {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: normal;
+    }
+    .checkoutButton {
+        width: 100%;
+    }
+    .product {
+        background-color: #f4f4f2;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 10px;
+    }
     .image {
-        height: 50px;
-        width: 50px;
-        cursor: pointer;
+        height: 200px;
     }
     .checked {
         color: #ffa500;
     }
-    .fas.fa-external-link-alt, .fas.fa-trash {
+    .quantity {
+        max-width: 100px;
+    }
+    .fas.fa-times {
+        float: right;
+        color: #ff0000;
         cursor: pointer;
-        margin-right: 5px;
     }
-    .textPadding {
-        padding-top: 20px;
-    }
-    .inputPadding {
-        padding-top: 12px;
+    .margin {
+        margin-top: 10px;
     }
 </style>

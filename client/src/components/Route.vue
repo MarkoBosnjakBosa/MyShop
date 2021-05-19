@@ -62,6 +62,9 @@
             openShoppingCart() {
                 router.push("/shopping/cart");
             },
+            openCheckout() {
+                router.push("/checkout");
+            },
             logout() {
                 store.dispatch("logout");
                 router.push("/login");
