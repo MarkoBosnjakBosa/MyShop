@@ -86,6 +86,9 @@
                 if(confirmed) {
                     this.$store.dispatch("removeFromShoppingCart", product._id);
                 }
+            },
+            openCheckout(){
+                route.methods.openCheckout();
             }
         },
         computed: {
