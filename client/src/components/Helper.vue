@@ -45,6 +45,9 @@
                     case "delete":
                         document.getElementById("deleteNavTab").click();
                         break;
+                    case "payment":
+                        document.getElementById("paymentNavTab").click();
+                        break;
                 }
 			},
             toggleSidebar() {

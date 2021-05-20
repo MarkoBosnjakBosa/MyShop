@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="row margin">
                                     <div class="col-md-3">Price:</div>
-                                    <div class="col-md-3"><b>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}} €</b></div>
+                                    <div class="col-md-9"><b>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}} €</b></div>
                                 </div>
                                 <div class="margin">
                                     <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
