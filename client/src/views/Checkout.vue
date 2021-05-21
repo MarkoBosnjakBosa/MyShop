@@ -60,6 +60,9 @@
                                 </h2>
                                 <div id="collapseStripe" class="accordion-collapse collapse" aria-labelledby="stripe" data-bs-parent="#payment">
                                     <div class="accordion-body">
+                                        <button class="checkout_button" id="proceed-to-checkout" @click="openStripeCheckout()">
+                                            Make payment
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -108,7 +111,9 @@
 					city: "",
 					zipCode: "",
 					country: ""
-                }
+                },
+                stripe: "",
+                stripePublishableKey: process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY
 			}
 		},
         methods: {
@@ -122,7 +127,24 @@
             },
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
-			}
+			},
+            openStripeCheckout() {
+                var body = {};
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/stripe/checkout", body).then(response => {
+                    return this.stripe.redirectToCheckout({sessionId: response.data.sessionId});
+                }).catch(error => console.log(error));
+            },
+            includeStripe(stripeUrl, callback) {
+                var script = "script";
+                var element = document.createElement(script);
+                var scriptTag = document.getElementsByTagName(script)[0];
+                element.src = stripeUrl;
+                if(callback) element.addEventListener("load", function(event) {callback(null, event);}, false);
+                scriptTag.parentNode.insertBefore(element, scriptTag);
+            },
+            configureStripe(){
+                this.stripe = Stripe(this.stripePublishableKey);            
+            },
         },
         computed: {
             products() {
@@ -139,6 +161,7 @@
         mounted() {
             checkLogin.methods.isLoggedIn();
             this.getUser();
+            this.includeStripe("https://js.stripe.com/v3/", function() {this.configureStripe();}.bind(this));
         }
     }
 </script>
