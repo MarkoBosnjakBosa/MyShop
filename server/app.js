@@ -15,6 +15,8 @@ const Nexmo = require("nexmo");
 const moment = require("moment");
 const dotenv = require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const ejs = require("ejs");
+const pdf = require("html-pdf");
 const baseUrl = process.env.BASE_URL;
 const serverPort = process.env.SERVER_PORT;
 const clientPort = process.env.CLIENT_PORT;
@@ -38,7 +40,7 @@ const categories = require("./routes/admin/categories.js")(app, models, validati
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
 const products = require("./routes/admin/products.js")(app, models, uploadImages, fs, path, moment, validation);
 const homeSettings = require("./routes/admin/homeSettings.js")(app, models, uploadImages, fs, path, validation);
-const checkout = require("./routes/checkout.js")(app, stripe);
+const checkout = require("./routes/checkout.js")(app, stripe, fs, path, ejs, pdf);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);
