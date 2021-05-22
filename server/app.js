@@ -27,6 +27,7 @@ const emailEvent = require("./events/emailEvent.js")(EventEmitter, transporter, 
 const smsEvent = require("./events/smsEvent.js")(EventEmitter, nexmo);
 app.use(cors({origin: "*"}));
 app.use(express.json());
+app.use(express.static(__dirname + "/images/products"));
 
 const registration = require("./routes/registration.js")(app, bcryptjs, models, emailEvent, validation);
 const login = require("./routes/login.js")(app, jwt, bcryptjs, models, smsEvent, validation);

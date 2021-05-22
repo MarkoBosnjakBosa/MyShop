@@ -51,31 +51,14 @@
                         </div>
                     </div>
                     <div id="paymentTab" class="tab-pane fade" role="tabpanel">
-                        <div id="payment" class="mb-3 accordion">
-                            <div class="accordion-item">
-                                <h2 id="stripe" class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStripe" aria-expanded="false">
-                                       Credit card
-                                    </button>
-                                </h2>
-                                <div id="collapseStripe" class="accordion-collapse collapse" aria-labelledby="stripe" data-bs-parent="#payment">
-                                    <div class="accordion-body">
-                                        <button class="checkout_button" id="proceed-to-checkout" @click="openStripeCheckout()">
-                                            Make payment
-                                        </button>
-                                    </div>
-                                </div>
+                        <div class="mb-3 row">
+                            <div class="col stripe">
+                                <h3>Credit card <i class="fab fa-cc-stripe"></i></h3>
+                                <button class="btn btn-primary" @click="openStripeCheckout()">Pay {{totalCost}}</button>
                             </div>
-                            <div class="accordion-item">
-                                <h2 id="payPal" class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePayPal" aria-expanded="false">
-                                       PayPal
-                                    </button>
-                                </h2>
-                                <div id="collapsePayPal" class="accordion-collapse collapse" aria-labelledby="payPal" data-bs-parent="#payment">
-                                    <div class="accordion-body">
-                                    </div>
-                                </div>
+                            <div class="col payPal">
+                                <h3>PayPal <i class="fab fa-cc-paypal"></i></h3>
+                                <button class="btn btn-primary" @click="openPayPalCheckout()">Pay {{totalCost}}</button>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -89,11 +72,11 @@
 </template>
 
 <script>
-	import checkLogin from "../components/CheckLogin.vue";
-	import navigation from "../components/Navigation.vue";
-	import sidebar from "../components/Sidebar.vue";
-    import helper from "../components/Helper.vue";
-    import route from "../components/Route.vue";
+	import checkLogin from "../../components/CheckLogin.vue";
+	import navigation from "../../components/Navigation.vue";
+	import sidebar from "../../components/Sidebar.vue";
+    import helper from "../../components/Helper.vue";
+    import route from "../../components/Route.vue";
 	const axios = require("axios");
 	
 	export default {
@@ -112,6 +95,7 @@
 					zipCode: "",
 					country: ""
                 },
+                totalCost: "0.00 €",
                 stripe: "",
                 stripePublishableKey: process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY
 			}
@@ -122,14 +106,38 @@
 					this.address = response.data.address;
 				}).catch(error => console.log(error));
             },
+            getTotalCost() {
+                var products = this.$store.getters.getShoppingCart;
+                var totalCost = 0;
+                products.forEach(function(product) {
+                    totalCost += Number(product.price) * Number(product.selectedQuantity);
+                });
+                this.totalCost = this.formatNumber(totalCost) + " €";
+            },
             openProfile() {
                 route.methods.openProfile();
             },
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
 			},
+            formatNumber(number) {
+                return helper.methods.formatNumber(number.toString());
+            },
             openStripeCheckout() {
-                var body = {};
+                var products = this.$store.getters.getShoppingCart;
+                var line_items = products.map(product => {
+                    var line_item = {};
+                    line_item.quantity = Number(product.selectedQuantity);
+                    var price_data = {};
+                    price_data.currency = "eur";
+                    price_data.unit_amount = Number(product.price.split(".").join(""));
+                    var product_data = {};
+                    product_data.name = product.title;
+                    price_data.product_data = product_data;
+                    line_item.price_data = price_data;
+                    return line_item;
+                });
+                var body = {line_items: JSON.stringify(line_items)};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/stripe/checkout", body).then(response => {
                     return this.stripe.redirectToCheckout({sessionId: response.data.sessionId});
                 }).catch(error => console.log(error));
@@ -144,23 +152,12 @@
             },
             configureStripe(){
                 this.stripe = Stripe(this.stripePublishableKey);            
-            },
-        },
-        computed: {
-            products() {
-                return this.$store.getters.getShoppingCart;
-            },
-            totalCost() {
-                var totalCost = 0;
-                this.products.forEach(function(product) {
-                    totalCost += Number(product.price) * Number(product.selectedQuantity);
-                });
-                return this.formatNumber(totalCost) + " €";
             }
         },
         mounted() {
             checkLogin.methods.isLoggedIn();
             this.getUser();
+            this.getTotalCost();
             this.includeStripe("https://js.stripe.com/v3/", function() {this.configureStripe();}.bind(this));
         }
     }
@@ -176,6 +173,13 @@
         margin: 0 auto;
         margin-top: 20px;
         max-width: 600px;
+    }
+    .stripe, .payPal {
+        background-color: #f4f4f2;
+        border-radius: 10px;
+        padding: 20px;
+        margin-right: 10px;
+        text-align: center;
     }
     .paymentButton {
         float: right;

@@ -18,7 +18,9 @@ import Shop from "../views/Shop.vue";
 import ShopCategory from "../views/ShopCategory.vue";
 import ViewProduct from "../views/ViewProduct.vue";
 import ShoppingCart from "../views/ShoppingCart.vue";
-import Checkout from "../views/Checkout.vue";
+import Checkout from "../views/checkout/Checkout.vue";
+import CheckoutSuccess from "../views/checkout/CheckoutSuccess.vue";
+import CheckoutFail from "../views/checkout/CheckoutFail.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 
 const routes = [
@@ -42,6 +44,8 @@ const routes = [
 	{path: "/view/product/:productId", name: "ViewProduct", component: ViewProduct},
 	{path: "/shopping/cart", name: "ShoppingCart", component: ShoppingCart},
 	{path: "/checkout", name: "Checkout", component: Checkout},
+	{path: "/checkout/success", name: "CheckoutSuccess", component: CheckoutSuccess},
+	{path: "/checkout/fail", name: "CheckoutFail", component: CheckoutFail},
 	{path: "/:catchAll(.*)", name: "PageNotFound", component: PageNotFound}
 ]
 
