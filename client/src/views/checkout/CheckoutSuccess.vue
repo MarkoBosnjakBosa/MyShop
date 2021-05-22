@@ -56,16 +56,22 @@
         },
         data() {
 			return {
+                invoiceId: "",
                 username: this.$store.getters.getUser,
                 products: this.$store.getters.getShoppingCart
 			}
 		},
         methods: {
             finalizePayment() {
-                var productIds = this.products.map(product => {
-                    return product._id;
+                var products = this.products.map(product => {
+                    var productObject = {};
+                    productObject._id = product._id;
+                    productObject.title = product.title;
+                    productObject.price = product.price;
+                    productObject.selectedQuantity = product.selectedQuantity;
+                    return productObject;
                 });
-                var body = {username: this.username, products: productIds};
+                var body = {username: this.username, products: products, totalPrice: this.getTotalCost()};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/finalizePayment", body).then(response => {
                     if(response.data.finalized) {
 

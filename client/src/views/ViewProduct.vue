@@ -176,10 +176,15 @@
                 return helper.methods.renderImage(image);
             },
             addToShoppingCart() {
-                var product = this.product;
                 var selectedQuantity = document.getElementById("selectedQuantity").value;
-                if(selectedQuantity > 0 && selectedQuantity <= product.quantity) {
+                if(selectedQuantity > 0 && selectedQuantity <= this.product.quantity) {
+                    var product = {};
+                    product._id = this.product._id;
+                    product.title = this.product.title;
+                    product.price = this.product.price;
                     product.selectedQuantity = selectedQuantity;
+                    product.primaryImage = this.product.primaryImage;
+                    product.rating = this.product.rating;
                     this.$store.dispatch("addToShoppingCart", product);
                     document.getElementById("selectedQuantity").value = "1";
                     this.message = "This product has been successfully added to your cart!";

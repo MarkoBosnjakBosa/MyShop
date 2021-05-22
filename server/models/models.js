@@ -42,6 +42,12 @@ module.exports = function(mongoose) {
 		title: {type: String, required: true},
 		icon: {type: String, required: true}
 	});
+	const invoiceScheme = new mongoose.Schema({
+		invoiceNumber: {type: Number, required: true, index: {unique: true}},
+		username: {type: String, required: true},
+		products: {type: Array},
+		date: {type: String, required: true}
+	});
 	const homeSettingsScheme = new mongoose.Schema({
 		message: {type: String},
 		images: [{name: String, contentType: String, image: Buffer}]
@@ -52,6 +58,7 @@ module.exports = function(mongoose) {
 		Review: mongoose.model("Review", reviewScheme),
 		TechnicalInformation: mongoose.model("TechnicalInformation", technicalInformationScheme),
 		Category: mongoose.model("Category", categoryScheme),
+		Invoice: mongoose.model("Invoice", invoiceScheme),
 		HomeSettings: mongoose.model("HomeSettings", homeSettingsScheme)
 	}
 	return models;
