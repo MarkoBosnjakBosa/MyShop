@@ -20,7 +20,7 @@ import ViewProduct from "../views/ViewProduct.vue";
 import ShoppingCart from "../views/ShoppingCart.vue";
 import Checkout from "../views/checkout/Checkout.vue";
 import CheckoutSuccess from "../views/checkout/CheckoutSuccess.vue";
-import CheckoutFail from "../views/checkout/CheckoutFail.vue";
+import CheckoutCancel from "../views/checkout/CheckoutCancel.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 
 const routes = [
@@ -45,7 +45,7 @@ const routes = [
 	{path: "/shopping/cart", name: "ShoppingCart", component: ShoppingCart},
 	{path: "/checkout", name: "Checkout", component: Checkout},
 	{path: "/checkout/success", name: "CheckoutSuccess", component: CheckoutSuccess},
-	{path: "/checkout/fail", name: "CheckoutFail", component: CheckoutFail},
+	{path: "/checkout/cancel", name: "CheckoutCancel", component: CheckoutCancel},
 	{path: "/:catchAll(.*)", name: "PageNotFound", component: PageNotFound}
 ]
 

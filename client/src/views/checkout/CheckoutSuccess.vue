@@ -25,7 +25,7 @@
         data() {
 			return {
                 username: this.$store.getters.getUser,
-                products: this.$store.getters.getShoppingCart,
+                products: this.$store.getters.getShoppingCart
 			}
 		},
         methods: {
