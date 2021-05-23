@@ -1,67 +1,42 @@
-<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8"/>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 		<style>
 			.invoice {
 				margin: auto;
 				max-width: 800px;
+				line-height: 24px;
 				padding: 30px;
 				border: 1px solid #eee;
 				box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 				font-size: 16px;
-				line-height: 24px;
-				font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+				font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
 				color: #555;
 			}
-			.invoice table {
+			table {
 				width: 100%;
 				line-height: inherit;
 				text-align: left;
 			}
-			.invoice table td {
-				padding: 5px;
+			td {
 				vertical-align: top;
+				padding: 5px;
 			}
-			.invoice table tr td:nth-child(2) {
-				text-align: right;
+			.highlight {
+				background-color: #eee;
 			}
-			.invoice table tr.top table td {
-				padding-bottom: 20px;
-			}
-			.invoice table tr.top table td.title {
-				font-size: 45px;
+			.title {
 				line-height: 45px;
+				font-size: 45px;
 				color: #333;
 			}
-			.invoice table tr.information table td {
-				padding-bottom: 40px;
-			}
-			.invoice table tr.heading td {
-				background-color: #eee;
-				border-bottom: 1px solid #ddd;
-				font-weight: bold;
-			}
-			.invoice table tr.details td {
-				padding-bottom: 20px;
-			}
-			.invoice table tr.item td {
-				border-bottom: 1px solid #eee;
-			}
-			.invoice table tr.item.last td {
-				border-bottom: none;
-			}
-			.invoice table tr.total td:nth-child(2) {
-				border-top: 2px solid #eee;
-				font-weight: bold;
+			.information {
+				text-align: right;
 			}
 			@media only screen and (max-width: 600px) {
-				.invoice table tr.top table td {
-					width: 100%;
-					display: block;
-					text-align: center;
-				}
-				.invoice table tr.information table td {
+				.title, .information, .address {
 					width: 100%;
 					display: block;
 					text-align: center;
@@ -71,63 +46,55 @@
 	</head>
 	<body>
 		<div class="invoice">
-			<table cellpadding="0" cellspacing="0">
-				<tr class="top">
-					<td colspan="2">
-						<table>
-							<tr>
-								<td class="title">MyShop</td>
-								<td>
-									Invoice #: <%= invoiceNumber %><br>
-									Created: <%= date %>
-								</td>
-							</tr>
-						</table>
+			<table>
+				<tr>
+					<td class="title">MyShop</td>
+					<td class="information">
+						Invoice #: <%= invoiceNumber %><br>
+						Created: <%= date %><br>
+						Payment method: <%= paymentMethod %>
 					</td>
-				</tr>
-				<tr class="information">
-					<td colspan="2">
-						<table>
-							<tr>
-								<td>
-									Sparksuite, Inc.<br>
-									12345 Sunny Road<br>
-									Sunnyville, CA 12345
-								</td>
-								<td>
-									Acme Corp.<br>
-									John Doe<br>
-									john@example.com
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-            </table>
-            <table>
-				<tr class="heading">
-					<td colspan="4">Payment method: <%= paymentMethod %></td>
 				</tr>
 			</table>
-            <table>
-				<tr class="heading">
-					<td>Title</td>
-					<td>Product price</td>
-                    <td>Quantity</td>
-                    <td>Price</td>
+			<table>
+				<tr>
+					<td class="address">
+						<%= user.street %> <%= user.houseNumber %><br>
+						<%= user.city %> <%= user.zipCode %><br>
+						<%= user.country %>
+					</td>
+					<td class="information">
+						<%= user.firstName %> <%= user.lastName %><br>
+						<%= user.mobileNumber %><br>
+						<%= user.email %>
+					</td>
 				</tr>
-                <% products.forEach(function(product) { %>
-                    <tr class="item">
-                        <td><%= product.title %></td>
-                        <td><%= product.price %></td>
-                        <td><%= product.selectedQuantity %></td>
-                        <td><%= product.price * product.selectedQuantity %></td>
-                    </tr>
-                <% }); %>
-				<tr class="total">
-					<td colspan="2">Total</td>
-					<td><td><%= totalPrice %></td></td>
-				</tr>
+			</table>
+			<table class="table">
+				<thead>
+					<tr class="highlight">
+						<th>#</th>
+						<th>Title</th>
+						<th>Price</th>
+						<th>Quantity</th>
+						<th>Total price</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% products.forEach(function(product, index) { %>
+						<tr>
+							<td><%= ++index %></td>
+							<td><%= product.title %></td>
+							<td><%= product.price %></td>
+							<td><%= product.selectedQuantity %></td>
+							<td><%= product.totalPrice %></td>
+						</tr>
+					<% }); %>
+					<tr class="highlight">
+						<td colspan="4">Total</td>
+						<td><b><%= totalPrice %></b></td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 	</body>
