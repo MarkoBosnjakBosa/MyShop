@@ -139,6 +139,7 @@
                 });
                 var body = {line_items: JSON.stringify(line_items)};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/stripe/checkout", body).then(response => {
+                    this.$store.dispatch("setCheckout", true);
                     return this.stripe.redirectToCheckout({sessionId: response.data.sessionId});
                 }).catch(error => console.log(error));
             },

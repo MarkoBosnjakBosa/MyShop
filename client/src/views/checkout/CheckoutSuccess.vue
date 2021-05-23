@@ -4,11 +4,11 @@
 			<sidebar></sidebar>
 			<div id="pageDiv">
 				<navigation></navigation>
-                <div class="alert alert-success" role="alert">
+                <div v-if="isPayed" class="alert alert-success" role="alert">
                     Your payment has been successfully processed.<br>
                     Thank you for buying at MyShop.
                 </div>
-                <table class="table table-success table-striped">
+                <table v-if="isPayed" class="table table-success table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -35,6 +35,9 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="home">
+                    <button type="button" class="btn btn-dark" @click="openHome()">Home <i class="fas fa-home"></i></button>
+                </div>
             </div>
         </div>
     </div>
@@ -56,27 +59,33 @@
         },
         data() {
 			return {
-                invoiceId: "",
+                invoiceNumber: "",
                 username: this.$store.getters.getUser,
-                products: this.$store.getters.getShoppingCart
+                products: [],
+                isPayed: false
 			}
 		},
         methods: {
             finalizePayment() {
-                var products = this.products.map(product => {
-                    var productObject = {};
-                    productObject._id = product._id;
-                    productObject.title = product.title;
-                    productObject.price = product.price;
-                    productObject.selectedQuantity = product.selectedQuantity;
-                    return productObject;
-                });
-                var body = {username: this.username, products: products, totalPrice: this.getTotalCost()};
-                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/finalizePayment", body).then(response => {
-                    if(response.data.finalized) {
-
-                    }
-				}).catch(error => console.log(error));
+                this.isPayed = this.$store.getters.getCheckout;
+                if(this.isPayed) {
+                    this.products = this.$store.getters.getShoppingCart;
+                    var products = this.products.map(product => {
+                        var productObject = {};
+                        productObject._id = product._id;
+                        productObject.title = product.title;
+                        productObject.price = product.price;
+                        productObject.selectedQuantity = product.selectedQuantity;
+                        return productObject;
+                    });
+                    var body = {username: this.username, products: products, totalPrice: this.getTotalCost()};
+                    axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/finalizePayment", body).then(response => {
+                        if(response.data.finalized) {
+                            this.invoiceNumber = response.data.invoiceNumber;
+                            this.$store.dispatch("setCheckout", false);
+                        }
+                    }).catch(error => console.log(error));
+                }
             },
             getTotalCost() {
                 var totalCost = 0;
@@ -86,13 +95,16 @@
                 return this.formatNumber(totalCost);
             },
             downloadInvoice() {
-
+                route.methods.downloadInvoice(this.invoiceNumber);
             },
             formatNumber(number) {
                 return helper.methods.formatNumber(number.toString()) + " €";
             },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
+            },
+            openHome() {
+                route.methods.openHome();
             }
         },
         mounted() {
@@ -116,5 +128,9 @@
     }
     .fas {
         cursor: pointer;
+    }
+    .home {
+        margin-top: 20px;
+        text-align: center;
     }
 </style>

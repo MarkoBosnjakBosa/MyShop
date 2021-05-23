@@ -12,7 +12,8 @@ const getDefaultState = () => {
 		authenticationData: {
 			username: ""
 		},
-		products: []
+		products: [],
+		checkout: false
 	};
 };
 
@@ -25,7 +26,8 @@ export default new Vuex.Store({
 		getUser: state => { return state.jwtData.user; },
 		isAdmin: state => { return state.jwtData.isAdmin; },
 		isAuthenticated: state => { return state.authenticationData.username; },
-		getShoppingCart: state => { return state.products; }
+		getShoppingCart: state => { return state.products; },
+		getCheckout: state => { return state.checkout; }
 	},
 	mutations: {
 		SET_TOKEN: (state, token) => { state.jwtData.token = token; },
@@ -49,6 +51,7 @@ export default new Vuex.Store({
 		},
 		REMOVE_FROM_SHOPPING_CART: (state, productId) => { state.products = state.products.filter(product => product._id != productId); },
 		CLEAR_SHOPPING_CART: state => { state.products = []; },
+		SET_CHECKOUT: (state, checkout) => {state.checkout = checkout; },
 		RESET: state => { Object.assign(state, getDefaultState()); }
 	},
 	actions: {
@@ -75,6 +78,9 @@ export default new Vuex.Store({
 		},
 		clearShoppingCart: ({commit}) => {
 			commit("CLEAR_SHOPPING_CART");
+		},
+		setCheckout: ({commit}, checkout) => {
+			commit("SET_CHECKOUT", checkout);
 		},
 		logout: ({commit}) => {
 			commit("RESET");

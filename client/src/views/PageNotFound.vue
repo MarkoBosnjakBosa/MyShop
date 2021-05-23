@@ -1,8 +1,8 @@
 <template>
     <div id="overview" class="container-fluid">
-        <div class="container pageNotFoundDiv">
+        <div class="pageNotFound">
             <div class="alert alert-danger" role="alert">Page not found!</div>
-            <button type="button" class="btn btn-info" @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
+            <button type="button" class="btn btn-dark" @click="openHome()">Home <i class="fas fa-home"></i></button>
         </div>
     </div>
 </template>
@@ -15,15 +15,15 @@
     export default {
         name: "pageNotFound",
         methods: {
-            openLogin() {
-                route.methods.openLogin();
+            openHome() {
+                route.methods.openHome();
             }
         }
     }
 </script>
 
 <style scoped>
-    .pageNotFoundDiv {
+    .pageNotFound {
         margin: 0 auto;
         max-width: 400px;
         text-align: center;
