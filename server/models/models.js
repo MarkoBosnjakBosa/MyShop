@@ -22,7 +22,7 @@ module.exports = function(mongoose) {
 		title: {type: String, required: true},
 		description: {type: String, required: true},
 		price: {type: Number, required: true},
-		quantity: {type: Number, required: true},
+		quantity: {type: Number, required: true, min: 0},
 		category: {type: String, required: true},
 		technicalData: {type: Array},
 		primaryImage: {name: String, contentType: String, image: Buffer},
