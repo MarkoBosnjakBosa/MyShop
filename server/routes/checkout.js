@@ -1,4 +1,4 @@
-module.exports = function(app, models, stripe, moment, fs, path, ejs, pdf) {
+module.exports = function(app, models, stripe, moment, fs, path, ejs, pdf, emailEvent) {
 	const Invoice = models.Invoice;
 	const User = models.User;
 	const Product = models.Product;
@@ -42,7 +42,9 @@ module.exports = function(app, models, stripe, moment, fs, path, ejs, pdf) {
 		});
 		var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../invoices/template/invoice.html"), "utf-8"));
 		var html = htmlCompiled({invoiceNumber: invoiceNumber, date: date, paymentMethod: paymentMethod, user: user, products: products, totalPrice: totalPrice});
-		pdf.create(html).toFile(path.join(__dirname, "../invoices/invoice_" + invoiceNumber + ".pdf"), function(error, response) {});
+		pdf.create(html).toFile(path.join(__dirname, "../invoices/invoice_" + invoiceNumber + ".pdf"), function(error, response) {
+			emailEvent.emit("sendInvoiceEmail", user.email, user.firstName, invoiceNumber);
+		});
 	}
 	function updateQuantities(products) {
 		products.forEach(product => {

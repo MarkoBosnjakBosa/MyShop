@@ -25,7 +25,7 @@ const emailUser = process.env.EMAIL_USER;
 const emailPassword = process.env.EMAIL_PASSWORD;
 const nexmo = new Nexmo({apiKey: process.env.NEXMO_API_KEY, apiSecret: process.env.NEXMO_API_SECRET});
 const transporter = getTransporter();
-const emailEvent = require("./events/emailEvent.js")(EventEmitter, transporter, emailUser, baseUrl, clientPort);
+const emailEvent = require("./events/emailEvent.js")(EventEmitter, path, transporter, emailUser, baseUrl, clientPort);
 const smsEvent = require("./events/smsEvent.js")(EventEmitter, nexmo);
 app.use(cors({origin: "*"}));
 app.use(express.json());
@@ -40,7 +40,7 @@ const categories = require("./routes/admin/categories.js")(app, models, validati
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
 const products = require("./routes/admin/products.js")(app, models, uploadImages, fs, path, moment, validation);
 const homeSettings = require("./routes/admin/homeSettings.js")(app, models, uploadImages, fs, path, validation);
-const checkout = require("./routes/checkout.js")(app, models, stripe, moment, fs, path, ejs, pdf);
+const checkout = require("./routes/checkout.js")(app, models, stripe, moment, fs, path, ejs, pdf, emailEvent);
 const invoices = require("./routes/invoices.js")(app, models, path);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});

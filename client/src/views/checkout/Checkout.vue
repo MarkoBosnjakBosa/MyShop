@@ -54,7 +54,7 @@
                         <div class="mb-3 row">
                             <div class="col stripe">
                                 <h3>Credit card <i class="fab fa-cc-stripe"></i></h3>
-                                <button class="btn btn-primary" @click="openStripeCheckout()">Pay {{totalCost}}</button>
+                                <button id="stripeCheckout" class="btn btn-primary" @click="openStripeCheckout()">Pay {{totalCost}}</button>
                             </div>
                             <div class="col payPal">
                                 <h3>PayPal <i class="fab fa-cc-paypal"></i></h3>
@@ -124,6 +124,7 @@
                 return helper.methods.formatNumber(number.toString());
             },
             openStripeCheckout() {
+                document.getElementById("stripeCheckout").innerHTML = "<i class='fas fa-spinner fa-spin'></i>";
                 var products = this.$store.getters.getShoppingCart;
                 var line_items = products.map(product => {
                     var line_item = {};
