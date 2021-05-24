@@ -65,6 +65,12 @@
             openCheckout() {
                 router.push("/checkout");
             },
+            openCheckoutSuccess() {
+                router.push("/checkout/success");
+            },
+            openCheckoutCancel() {
+                router.push("/checkout/cancel");
+            },
             downloadInvoice(invoiceNumber) {
                 window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + invoiceNumber, "_blank");
             },

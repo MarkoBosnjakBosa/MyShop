@@ -13,7 +13,7 @@ const getDefaultState = () => {
 			username: ""
 		},
 		products: [],
-		checkout: false
+		checkout: ""
 	};
 };
 

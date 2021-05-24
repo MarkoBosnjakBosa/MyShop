@@ -45,6 +45,7 @@ module.exports = function(mongoose) {
 	const invoiceScheme = new mongoose.Schema({
 		invoiceNumber: {type: Number, required: true, index: {unique: true}},
 		username: {type: String, required: true},
+		paymentType: {type: String, required: true},
 		products: {type: Array},
 		date: {type: String, required: true}
 	});

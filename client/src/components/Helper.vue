@@ -65,6 +65,7 @@
                 else return "";
             },
             formatNumber(number) {
+                number = number.toString();
                 if(number.includes(".")) {
                     var decimalPart = number.substr(number.lastIndexOf(".") + 1);
                     if(decimalPart.length == 1){

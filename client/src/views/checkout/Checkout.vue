@@ -58,7 +58,7 @@
                             </div>
                             <div class="col payPal">
                                 <h3>PayPal <i class="fab fa-cc-paypal"></i></h3>
-                                <button class="btn btn-primary" @click="openPayPalCheckout()">Pay {{totalCost}}</button>
+                                <div ref="paypal"></div>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -88,6 +88,7 @@
         data() {
 			return {
                 username: this.$store.getters.getUser,
+                products: this.$store.getters.getShoppingCart,
                 address: {
                     street: "",
 					houseNumber: "",
@@ -97,7 +98,8 @@
                 },
                 totalCost: "0.00 €",
                 stripe: "",
-                stripePublishableKey: process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY
+                stripePublishableKey: process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY,
+                payPalClientId: process.env.VUE_APP_PAYPAL_CLIENT_ID
 			}
 		},
         methods: {
@@ -114,19 +116,9 @@
                 });
                 this.totalCost = this.formatNumber(totalCost) + " €";
             },
-            openProfile() {
-                route.methods.openProfile();
-            },
-            toggleTab(tab) {
-                helper.methods.toggleTab(tab);
-			},
-            formatNumber(number) {
-                return helper.methods.formatNumber(number.toString());
-            },
             openStripeCheckout() {
                 document.getElementById("stripeCheckout").innerHTML = "<i class='fas fa-spinner fa-spin'></i>";
-                var products = this.$store.getters.getShoppingCart;
-                var line_items = products.map(product => {
+                var line_items = this.products.map(product => {
                     var line_item = {};
                     line_item.quantity = Number(product.selectedQuantity);
                     var price_data = {};
@@ -140,27 +132,67 @@
                 });
                 var body = {line_items: JSON.stringify(line_items)};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/stripe/checkout", body).then(response => {
-                    this.$store.dispatch("setCheckout", true);
+                    this.$store.dispatch("setCheckout", "Credit card");
                     return this.stripe.redirectToCheckout({sessionId: response.data.sessionId});
                 }).catch(error => console.log(error));
             },
-            includeStripe(stripeUrl, callback) {
-                var script = "script";
-                var element = document.createElement(script);
-                var scriptTag = document.getElementsByTagName(script)[0];
-                element.src = stripeUrl;
-                if(callback) element.addEventListener("load", function(event) {callback(null, event);}, false);
-                scriptTag.parentNode.insertBefore(element, scriptTag);
+            includeStripeAndPayPal() {
+                var stripeScript = document.createElement("script");
+                stripeScript.src = "https://js.stripe.com/v3/";
+                stripeScript.addEventListener("load", this.configureStripe);
+                document.body.appendChild(stripeScript);
+                var payPalScript = document.createElement("script");
+                payPalScript.src = "https://www.paypal.com/sdk/js?client-id=" + this.payPalClientId + "&currency=EUR";
+                payPalScript.addEventListener("load", this.configurePayPal);
+                document.body.appendChild(payPalScript);
             },
             configureStripe(){
                 this.stripe = Stripe(this.stripePublishableKey);            
+            },
+            configurePayPal() {
+                var purchase_units = this.products.map(product => {
+                    var purchase_unit = {};
+                    purchase_unit.description = product.title;
+                    var amount = {};
+                    amount.value = product.price * product.selectedQuantity;
+                    purchase_unit.amount = amount;
+                    return purchase_unit;
+                });
+                window.paypal.Buttons({
+                    createOrder: (data, actions) => {
+                        return actions.order.create({purchase_units: purchase_units});
+                    },
+                    onApprove: async(data, actions, response) => {
+                        const payment = await actions.order.capture();
+                        this.$store.dispatch("setCheckout", "PayPal");
+                        this.openCheckoutSuccess();
+                    },
+                    onError: (error) => {
+                        this.openCheckoutCancel();
+                    }
+                }).render(this.$refs.paypal);
+            },
+            openProfile() {
+                route.methods.openProfile();
+            },
+            toggleTab(tab) {
+                helper.methods.toggleTab(tab);
+			},
+            formatNumber(number) {
+                return helper.methods.formatNumber(number);
+            },
+            openCheckoutSuccess() {
+                route.methods.openCheckoutSuccess();
+            },
+            openCheckoutCancel() {
+                route.methods.openCheckoutCancel();
             }
         },
         mounted() {
             checkLogin.methods.isLoggedIn();
             this.getUser();
             this.getTotalCost();
-            this.includeStripe("https://js.stripe.com/v3/", function() {this.configureStripe();}.bind(this));
+            this.includeStripeAndPayPal();
         }
     }
 </script>

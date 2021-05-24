@@ -4,11 +4,11 @@
 			<sidebar></sidebar>
 			<div id="pageDiv">
 				<navigation></navigation>
-                <div v-if="isPayed" class="alert alert-success" role="alert">
+                <div v-if="paymentType" class="alert alert-success" role="alert">
                     Your payment has been successfully processed.<br>
                     Thank you for buying at MyShop.
                 </div>
-                <table v-if="isPayed" class="table table-success table-striped">
+                <table v-if="paymentType" class="table table-success table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -61,14 +61,15 @@
 			return {
                 invoiceNumber: "",
                 username: this.$store.getters.getUser,
+                paymentType: "",
                 products: [],
-                isPayed: false
+                paymentType: ""
 			}
 		},
         methods: {
             finalizePayment() {
-                this.isPayed = this.$store.getters.getCheckout;
-                if(this.isPayed) {
+                this.paymentType = this.$store.getters.getCheckout;
+                if(this.paymentType != "") {
                     this.products = this.$store.getters.getShoppingCart;
                     var products = this.products.map(product => {
                         var productObject = {};
@@ -78,11 +79,11 @@
                         productObject.selectedQuantity = product.selectedQuantity;
                         return productObject;
                     });
-                    var body = {username: this.username, products: products, totalPrice: this.getTotalCost()};
+                    var body = {username: this.username, paymentType: this.paymentType, products: products, totalPrice: this.getTotalCost()};
                     axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/finalizePayment", body).then(response => {
                         if(response.data.finalized) {
                             this.invoiceNumber = response.data.invoiceNumber;
-                            this.$store.dispatch("setCheckout", false);
+                            this.$store.dispatch("setCheckout", "");
                         }
                     }).catch(error => console.log(error));
                 }

@@ -4,13 +4,14 @@ module.exports = function(app, models, stripe, moment, fs, path, ejs, pdf, email
 	const Product = models.Product;
 	app.post("/stripe/checkout", (request, response) => {
 		var line_items = JSON.parse(request.body.line_items);
-		var options = {payment_method_types: ["card"], line_items: line_items, mode: "payment", success_url: process.env.CHECKOUT_SUCCESS, cancel_url: process.env.CHECKOUT_CANCEL};
+		var options = {payment_method_types: ["card"], line_items: line_items, mode: "payment", success_url: process.env.CHECKOUT_SUCCESS + "?paymentType=creditCard", cancel_url: process.env.CHECKOUT_CANCEL};
 		stripe.checkout.sessions.create(options).then(session => {
 			response.status(200).json({sessionId: session.id}).end();
 		});
 	});
 	app.post("/finalizePayment", (request, response) => {
 		var username = request.body.username;
+		var paymentType = request.body.paymentType;
 		var products = request.body.products;
 		var totalPrice = request.body.totalPrice;
 		var date = moment(new Date()).format("DD.MM.YYYY HH:mm");
@@ -18,9 +19,9 @@ module.exports = function(app, models, stripe, moment, fs, path, ejs, pdf, email
 		User.findOne(query).then(user => {
 			Invoice.countDocuments().then(count => {
 				var invoiceNumber = ++count;
-				var newInvoice = getInvoiceScheme(Invoice, invoiceNumber, username, products, date);
+				var newInvoice = getInvoiceScheme(Invoice, invoiceNumber, username, paymentType, products, date);
 				newInvoice.save().then(invoice => {
-					createInvoicePdf(invoiceNumber, date, "credit card", user, products, totalPrice);
+					createInvoicePdf(invoiceNumber, date, paymentType, user, products, totalPrice);
 					updateQuantities(products);
 					response.status(200).json({finalized: true, invoiceNumber: invoiceNumber}).end();
 				}).catch(error => console.error(error));
@@ -28,10 +29,10 @@ module.exports = function(app, models, stripe, moment, fs, path, ejs, pdf, email
 		}).catch(error => console.error(error));
 	});
 
-	function getInvoiceScheme(Invoice, invoiceNumber, username, products, date) {
-		return new Invoice({invoiceNumber: invoiceNumber, username: username, products: products, date: date});
+	function getInvoiceScheme(Invoice, invoiceNumber, username, paymentType, products, date) {
+		return new Invoice({invoiceNumber: invoiceNumber, username: username, paymentType: paymentType, products: products, date: date});
 	}
-	function createInvoicePdf(invoiceNumber, date, paymentMethod, user, products, totalPrice) {
+	function createInvoicePdf(invoiceNumber, date, paymentType, user, products, totalPrice) {
 		products = products.map(product => {
 			var updatedProduct = {};
 			updatedProduct.title = product.title;
@@ -41,7 +42,7 @@ module.exports = function(app, models, stripe, moment, fs, path, ejs, pdf, email
 			return updatedProduct;
 		});
 		var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../invoices/template/invoice.html"), "utf-8"));
-		var html = htmlCompiled({invoiceNumber: invoiceNumber, date: date, paymentMethod: paymentMethod, user: user, products: products, totalPrice: totalPrice});
+		var html = htmlCompiled({invoiceNumber: invoiceNumber, date: date, paymentType: paymentType, user: user, products: products, totalPrice: totalPrice});
 		pdf.create(html).toFile(path.join(__dirname, "../invoices/invoice_" + invoiceNumber + ".pdf"), function(error, response) {
 			emailEvent.emit("sendInvoiceEmail", user.email, user.firstName, invoiceNumber);
 		});
