@@ -19,7 +19,7 @@ module.exports = function(app, models, stripe, moment, fs, path, ejs, pdf, email
 		User.findOne(query).then(user => {
 			Invoice.countDocuments().then(count => {
 				var invoiceNumber = ++count;
-				var newInvoice = getInvoiceScheme(Invoice, invoiceNumber, username, paymentType, products, date);
+				var newInvoice = getInvoiceScheme(Invoice, invoiceNumber, username, paymentType, products, totalPrice, date);
 				newInvoice.save().then(invoice => {
 					createInvoicePdf(invoiceNumber, date, paymentType, user, products, totalPrice);
 					updateQuantities(products);
@@ -29,8 +29,8 @@ module.exports = function(app, models, stripe, moment, fs, path, ejs, pdf, email
 		}).catch(error => console.error(error));
 	});
 
-	function getInvoiceScheme(Invoice, invoiceNumber, username, paymentType, products, date) {
-		return new Invoice({invoiceNumber: invoiceNumber, username: username, paymentType: paymentType, products: products, date: date});
+	function getInvoiceScheme(Invoice, invoiceNumber, username, paymentType, products, totalPrice, date) {
+		return new Invoice({invoiceNumber: invoiceNumber, username: username, paymentType: paymentType, products: products, totalPrice: totalPrice, date: date});
 	}
 	function createInvoicePdf(invoiceNumber, date, paymentType, user, products, totalPrice) {
 		products = products.map(product => {

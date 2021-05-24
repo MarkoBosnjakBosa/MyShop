@@ -1,7 +1,7 @@
 <template>
     <div id="cart">
         <a id="cartProducts" href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-shopping-cart"></i><span class="badge bg-dark">{{totalQuantity}}</span></a>
-        <ul class="dropdown-menu dropdown-menu-end cartProducts" aria-labelledby="cartProducts">
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cartProducts">
             <li v-for="(product, index) in products" :key="product._id" class="row product dropdownDivider" :class="{'lowerProduct' : index > 0}">
                 <div class="col-md-4">
                     <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="rounded img-fluid" @click="openProduct(product._id)">
@@ -83,7 +83,8 @@
     .badge {
         margin-left: 5px;
     }
-    .cartProducts {
+    .dropdown-menu {
+        margin-top: 8px;
         width: 400px;
     }
     .row {

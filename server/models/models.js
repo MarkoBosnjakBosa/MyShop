@@ -47,6 +47,7 @@ module.exports = function(mongoose) {
 		username: {type: String, required: true},
 		paymentType: {type: String, required: true},
 		products: {type: Array},
+		totalPrice: {type: Number, required: true},
 		date: {type: String, required: true}
 	});
 	const homeSettingsScheme = new mongoose.Schema({

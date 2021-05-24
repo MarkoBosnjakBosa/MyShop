@@ -23,8 +23,11 @@
             openSetup() {
                 router.push("/setup");
             },
-            openOrders() {
-                router.push("/orders");
+            openInvoices() {
+                router.push("/invoices");
+            },
+            openInvoice(invoiceId) {
+                router.push("/invoice/" + invoiceId);
             },
             openLogin() {
                 router.push("/login");

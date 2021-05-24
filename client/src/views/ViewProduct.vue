@@ -282,6 +282,12 @@
                 Object.assign(review, this.cachedReview);
                 this.editing = null;
             },
+            loadPage(page) {
+                if(page > 0 && page <= this.pagesNumber) {
+                    this.page = page;
+                    this.getReviews();
+                }
+            },
             hideNotification() {
                 this.message = "";
             }
@@ -387,5 +393,8 @@
     .pages {
         margin: 10px auto;
         text-align: center;
+    }
+    .page {
+        margin-left: 10px;
     }
 </style>
