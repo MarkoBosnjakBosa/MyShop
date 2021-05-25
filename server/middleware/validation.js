@@ -6,62 +6,53 @@ const reCaptcha_v3_SecretKey = process.env.RECAPTCHA_v3_SECRET_KEY;
 function validateRegistration(request, response, next) {
     var allowRegistration = true;
     var errorFields = [];
-    var username = request.body.username;
-    if(validation.invalidUsername(username)) {
+    var account = request.body.account;
+    var address = request.body.address;
+    var reCaptchaToken = request.body.reCaptchaToken;
+    if(validation.invalidUsername(account.username)) {
         errorFields.push("username");
         allowRegistration = false;
     }
-    var email = request.body.email;
-    if(validation.invalidEmail(email)) {
+    if(validation.invalidEmail(account.email)) {
         errorFields.push("email");
         allowRegistration = false;
     }
-    var password = request.body.password;
-    if(validation.invalidPassword(password)) {
+    if(validation.invalidPassword(account.password)) {
         errorFields.push("password");
         allowRegistration = false;
     }
-    var firstName = request.body.firstName;
-    if(validation.invalidFirstName(firstName)) {
+    if(validation.invalidFirstName(account.firstName)) {
         errorFields.push("firstName");
         allowRegistration = false;
     }
-    var lastName = request.body.lastName;
-    if(validation.invalidLastName(lastName)) {
+    if(validation.invalidLastName(account.lastName)) {
         errorFields.push("lastName");
         allowRegistration = false;
     }
-    var mobileNumber = request.body.mobileNumber;
-    if(validation.invalidMobileNumber(mobileNumber)) {
+    if(validation.invalidMobileNumber(account.mobileNumber)) {
         errorFields.push("mobileNumber");
         allowRegistration = false;
     }
-    var street = request.body.street;
-    if(validation.invalidStreet(street)) {
+    if(validation.invalidStreet(address.street)) {
         errorFields.push("street");
         allowRegistration = false;
     }
-    var houseNumber = request.body.houseNumber;
-    if(validation.invalidHouseNumber(houseNumber)) {
+    if(validation.invalidHouseNumber(address.houseNumber)) {
         errorFields.push("houseNumber");
         allowRegistration = false;
     }
-    var city = request.body.city;
-    if(validation.invalidCity(city)) {
+    if(validation.invalidCity(address.city)) {
         errorFields.push("city");
         allowRegistration = false;
     }
-    var zipCode = request.body.zipCode;
-    if(validation.invalidZipCode(zipCode)) {
+    if(validation.invalidZipCode(address.zipCode)) {
         errorFields.push("zipCode");
         allowRegistration = false;
     }
-    var country = request.body.country;
-    if(validation.invalidCountry(country)) {
+    if(validation.invalidCountry(address.country)) {
         errorFields.push("country");
         allowRegistration = false;
     }
-    var reCaptchaToken = request.body.reCaptchaToken;
     if(validation.invalidReCaptchaToken(reCaptcha_v2_SecretKey, axios, reCaptchaToken, request.connection.remoteAddress)) {
         errorFields.push("reCaptchaToken");
         allowRegistration = false;

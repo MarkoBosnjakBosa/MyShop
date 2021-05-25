@@ -5,7 +5,7 @@
 			<div id="pageDiv">
 				<navigation></navigation>
                 <h1>Checkout</h1>
-                 <div class="nav nav-tabs justify-content-center" role="tablist">
+                <div class="nav nav-tabs justify-content-center" role="tablist">
                     <button type="button" id="addressNavTab" data-bs-toggle="tab" data-bs-target="#addressTab" class="nav-link active" role="tab">Address</button>
                     <button type="button" id="paymentNavTab" data-bs-toggle="tab" data-bs-target="#paymentTab" class="nav-link" role="tab">Payment</button>
                 </div>
