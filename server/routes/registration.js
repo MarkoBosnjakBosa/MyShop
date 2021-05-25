@@ -3,7 +3,7 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
     app.post("/createUser", validation.validateRegistration, (request, response) => {
         var account = request.body.account;
         var address = request.body.address;
-        var query = {$or: [{username: account.username}, {email: account.email}, {mobileNumber: account.mobileNumber}]};
+        var query = {$or: [{"account.username": account.username}, {"account.email": account.email}, {"account.mobileNumber": account.mobileNumber}]};
         User.findOne(query).then(user => {
             if(!validation.isEmpty(user)) {
                 var error = {created: false, alreadyExists: true};
@@ -15,8 +15,8 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
                 response.status(200).json(error).end();
             } else {
                 var acceptance = {accepted: false, acceptanceToken: Math.floor(100000 + Math.random() * 900000), authenticationEnabled: true, authenticationToken: "", authenticationEnablingToken: ""};
-                var isAdmin = false;
-                var newUser = getUserScheme(User, account, address, acceptance, isAdmin);
+                account.isAdmin = false;
+                var newUser = getUserScheme(User, account, address, acceptance);
                 bcryptjs.genSalt(10, (error, salt) => {
                     bcryptjs.hash(newUser.account.password, salt, (error, hashedPassword) => {
                         newUser.account.password = hashedPassword;
@@ -43,7 +43,7 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 		}).catch(error => console.log(error));
 	});
 
-    function getUserScheme(User, account, address, acceptance, isAdmin) {
-		return new User({account: account, address: address, acceptance: acceptance, isAdmin: isAdmin});
+    function getUserScheme(User, account, address, acceptance) {
+		return new User({account: account, address: address, acceptance: acceptance});
 	}
 }

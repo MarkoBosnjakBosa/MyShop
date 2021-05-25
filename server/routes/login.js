@@ -29,7 +29,7 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation) {
 								const token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey", {expiresIn: "2h"});
 								var update = {"acceptance.authenticationToken": ""};
 								User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-									response.status(200).json({authentication: true, valid: true, token: token, user: updatedUser.account.username, isAdmin: updatedUser.isAdmin}).end();
+									response.status(200).json({authentication: true, valid: true, token: token, user: updatedUser.account.username, isAdmin: updatedUser.account.isAdmin}).end();
 								}).catch(error => console.log(error));
 							} else {
 								response.status(200).json({authentication: true, valid: false, authenticationToken: false}).end();
@@ -46,15 +46,14 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation) {
 										var authenticationToken = Math.floor(100000 + Math.random() * 900000);
 										var update = {"acceptance.authenticationToken": authenticationToken};
 										User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-											//smsEvent.emit("sendAuthenticationToken", updatedUser.mobileNumber, updatedUser.firstName, updatedUser.authenticationToken);
-											response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: user.account.username, isAdmin: updatedUser.isAdmin}).end();
+											//smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.acceptance.authenticationToken);
+											response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: user.account.username, isAdmin: updatedUser.account.isAdmin}).end();
 										}).catch(error => console.log(error));
 									} else {
 										const token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey", {expiresIn: "2h"});
-										response.status(200).json({authentication: false, valid: true, token: token, user: user.account.username, isAdmin: user.isAdmin}).end();
+										response.status(200).json({authentication: false, valid: true, token: token, user: user.account.username, isAdmin: user.account.isAdmin}).end();
 									}
 								} else {
-									console.log("33");
 									response.status(200).json({authentication: false, valid: false, allowed: true}).end();
 								}
 							});

@@ -6,7 +6,8 @@ module.exports = function(mongoose) {
 			password: {type: String, required: true},
 			firstName: {type: String, required: true},
 			lastName: {type: String, required: true},
-			mobileNumber: {type: Number, required: true, index: {unique: true}}
+			mobileNumber: {type: Number, required: true, index: {unique: true}},
+			isAdmin: {type: Boolean, required: true}
 		},
 		address: {
 			street: {type: String, required: true},
@@ -21,8 +22,7 @@ module.exports = function(mongoose) {
 			authenticationEnabled: {type: Boolean, required: true},
 			authenticationToken: {type: String},
 			authenticationEnablingToken: {type: String}
-		},
-		isAdmin: {type: Boolean, required: true}
+		}
 	});
 	const productScheme = new mongoose.Schema({
 		title: {type: String, required: true},
