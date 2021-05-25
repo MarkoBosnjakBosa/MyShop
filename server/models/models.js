@@ -21,7 +21,7 @@ module.exports = function(mongoose) {
 	const productScheme = new mongoose.Schema({
 		title: {type: String, required: true},
 		description: {type: String, required: true},
-		price: {type: Number, required: true},
+		price: {type: String, required: true},
 		quantity: {type: Number, required: true, min: 0},
 		category: {type: String, required: true},
 		technicalData: {type: Array},
@@ -47,8 +47,8 @@ module.exports = function(mongoose) {
 		username: {type: String, required: true},
 		paymentType: {type: String, required: true},
 		products: {type: Array},
-		totalPrice: {type: Number, required: true},
-		date: {type: String, required: true}
+		totalPrice: {type: String, required: true},
+		created: {type: String, required: true}
 	});
 	const homeSettingsScheme = new mongoose.Schema({
 		message: {type: String},

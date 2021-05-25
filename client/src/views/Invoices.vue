@@ -15,7 +15,7 @@
                         <div id="invoices" class="accordion">
                             <div :id="'collapse_' + invoice._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + invoice._id" data-bs-parent="#invoices">
                                 <div>
-                                    Created: <b>{{invoice.date}}</b><br>
+                                    Created: <b>{{invoice.created}}</b><br>
                                     Payment type: <b>{{invoice.paymentType}}</b><br>
                                     <i class="fas fa-external-link-square-alt icon" @click="openInvoice(invoice._id)"></i>
                                     <i class="fas fa-file-download icon" @click="downloadInvoice(invoice.invoiceNumber)"></i>

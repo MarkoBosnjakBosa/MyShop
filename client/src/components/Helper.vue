@@ -74,7 +74,7 @@
                 } else {
                     number = number + ".00";
                 }
-                return Number(number).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
+                return Number(number).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
             },
             removeDate(imageName) {
                 var index = imageName.lastIndexOf("_");

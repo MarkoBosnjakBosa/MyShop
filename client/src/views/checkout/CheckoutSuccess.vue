@@ -30,7 +30,7 @@
                         </tr>
                         <tr>
                             <th colspan="4">Total</th>
-                            <th>{{getTotalCost()}}</th>
+                            <th>{{getTotalCost()}} €</th>
                             <td><i class="fas fa-file-download" @click="downloadInvoice()"></i></td>
                         </tr>
                     </tbody>
@@ -99,7 +99,7 @@
                 route.methods.downloadInvoice(this.invoiceNumber);
             },
             formatNumber(number) {
-                return helper.methods.formatNumber(number.toString()) + " €";
+                return helper.methods.formatNumber(number.toString());
             },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
