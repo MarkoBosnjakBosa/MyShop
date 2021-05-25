@@ -3,7 +3,7 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation) {
     app.post("/checkUsername", (request, response) => {
 		var username = request.body.username;
 		if(username) {
-			var query = {username: username};
+			var query = {"account.username": username};
 			User.findOne(query).then(user => {
 				if(!validation.isEmpty(user)) {
 					response.status(200).json({exists: true}).end();
@@ -18,18 +18,18 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation) {
 	app.post("/login", validation.validateLogin, (request, response) => {
 		var errorFields = [];
 		var username = request.body.username;
-		var query = {username: username};
+		var query = {"account.username": username};
 		User.findOne(query).then(user => {
 			if(!validation.isEmpty(user)) {
-				if(user.accepted) {
-					if(user.authenticationToken) {
+				if(user.acceptance.accepted) {
+					if(user.acceptance.authenticationToken) {
 						if(request.headers["authentication"]) {
 							var authenticationToken = request.headers["authentication"];
-							if(authenticationToken == user.authenticationToken) {
-								const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});
-								var update = {authenticationToken: ""};
+							if(authenticationToken == user.acceptance.authenticationToken) {
+								const token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey", {expiresIn: "2h"});
+								var update = {"acceptance.authenticationToken": ""};
 								User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-									response.status(200).json({authentication: true, valid: true, token: token, user: updatedUser.username, isAdmin: updatedUser.isAdmin}).end();
+									response.status(200).json({authentication: true, valid: true, token: token, user: updatedUser.account.username, isAdmin: updatedUser.isAdmin}).end();
 								}).catch(error => console.log(error));
 							} else {
 								response.status(200).json({authentication: true, valid: false, authenticationToken: false}).end();
@@ -40,20 +40,21 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation) {
 					} else {
 						var password = request.body.password;
 						if(validation.validPassword(password)) {
-							bcryptjs.compare(password, user.password, function(error, foundPassword) {
+							bcryptjs.compare(password, user.account.password, function(error, foundPassword) {
 								if(foundPassword) {
-									if(user.authenticationEnabled) {
+									if(user.acceptance.authenticationEnabled) {
 										var authenticationToken = Math.floor(100000 + Math.random() * 900000);
-										var update = {authenticationToken: authenticationToken};
+										var update = {"acceptance.authenticationToken": authenticationToken};
 										User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
 											//smsEvent.emit("sendAuthenticationToken", updatedUser.mobileNumber, updatedUser.firstName, updatedUser.authenticationToken);
-											response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: user.username, isAdmin: updatedUser.isAdmin}).end();
+											response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: user.account.username, isAdmin: updatedUser.isAdmin}).end();
 										}).catch(error => console.log(error));
 									} else {
-										const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});
-										response.status(200).json({authentication: false, valid: true, token: token, user: user.username, isAdmin: user.isAdmin}).end();
+										const token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey", {expiresIn: "2h"});
+										response.status(200).json({authentication: false, valid: true, token: token, user: user.account.username, isAdmin: user.isAdmin}).end();
 									}
 								} else {
+									console.log("33");
 									response.status(200).json({authentication: false, valid: false, allowed: true}).end();
 								}
 							});
