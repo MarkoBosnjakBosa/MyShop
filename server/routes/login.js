@@ -47,7 +47,7 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation) {
 										var update = {"acceptance.authenticationToken": authenticationToken};
 										User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
 											//smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.acceptance.authenticationToken);
-											response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: user.account.username, isAdmin: updatedUser.account.isAdmin}).end();
+											response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: updatedUser.account.username, isAdmin: updatedUser.account.isAdmin}).end();
 										}).catch(error => console.log(error));
 									} else {
 										const token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey", {expiresIn: "2h"});
