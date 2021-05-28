@@ -1,60 +1,60 @@
 const validation = require("../helpers/validation.js");
-const axios = require("axios");
 const reCaptcha_v2_SecretKey = process.env.RECAPTCHA_v2_SECRET_KEY;
 const reCaptcha_v3_SecretKey = process.env.RECAPTCHA_v3_SECRET_KEY;
 
 function validateRegistration(request, response, next) {
     var allowRegistration = true;
     var errorFields = [];
-    var account = request.body.account;
-    var address = request.body.address;
+    var user = request.body.user;
+    var account = user.account;
+    var address = user.address;
     var reCaptchaToken = request.body.reCaptchaToken;
     if(validation.invalidUsername(account.username)) {
-        errorFields.push("username");
+        errorFields = [...errorFields, "username"];
         allowRegistration = false;
     }
     if(validation.invalidEmail(account.email)) {
-        errorFields.push("email");
+        errorFields = [...errorFields, "email"];
         allowRegistration = false;
     }
     if(validation.invalidPassword(account.password)) {
-        errorFields.push("password");
+        errorFields = [...errorFields, "password"];
         allowRegistration = false;
     }
     if(validation.invalidFirstName(account.firstName)) {
-        errorFields.push("firstName");
+        errorFields = [...errorFields, "firstName"];
         allowRegistration = false;
     }
     if(validation.invalidLastName(account.lastName)) {
-        errorFields.push("lastName");
+        errorFields = [...errorFields, "lastName"];
         allowRegistration = false;
     }
     if(validation.invalidMobileNumber(account.mobileNumber)) {
-        errorFields.push("mobileNumber");
+        errorFields = [...errorFields, "mobileNumber"];
         allowRegistration = false;
     }
     if(validation.invalidStreet(address.street)) {
-        errorFields.push("street");
+        errorFields = [...errorFields, "street"];
         allowRegistration = false;
     }
     if(validation.invalidHouseNumber(address.houseNumber)) {
-        errorFields.push("houseNumber");
+        errorFields = [...errorFields, "houseNumber"];
         allowRegistration = false;
     }
     if(validation.invalidCity(address.city)) {
-        errorFields.push("city");
+        errorFields = [...errorFields, "city"];
         allowRegistration = false;
     }
     if(validation.invalidZipCode(address.zipCode)) {
-        errorFields.push("zipCode");
+        errorFields = [...errorFields, "zipCode"];
         allowRegistration = false;
     }
     if(validation.invalidCountry(address.country)) {
-        errorFields.push("country");
+        errorFields = [...errorFields, "country"];
         allowRegistration = false;
     }
-    if(validation.invalidReCaptchaToken(reCaptcha_v2_SecretKey, axios, reCaptchaToken, request.connection.remoteAddress)) {
-        errorFields.push("reCaptchaToken");
+    if(validation.invalidReCaptchaToken(reCaptcha_v2_SecretKey, reCaptchaToken, request.connection.remoteAddress)) {
+        errorFields = [...errorFields, "reCaptchaToken"];
         allowRegistration = false;
     }
     if(allowRegistration) next();

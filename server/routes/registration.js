@@ -1,12 +1,13 @@
-module.exports = function(app, bcryptjs, models, emailEvent, validation) {
+module.exports = function(app, models, validation, bcryptjs, emailEvent) {
     const User = models.User;
-    app.post("/createUser", validation.validateRegistration, (request, response) => {
-        var account = request.body.account;
-        var address = request.body.address;
+    app.post("/registerUser", validation.validateRegistration, (request, response) => {
+        var user = request.body.user;
+        var account = user.account;
+        var address = user.address;
         var query = {$or: [{"account.username": account.username}, {"account.email": account.email}, {"account.mobileNumber": account.mobileNumber}]};
         User.findOne(query).then(user => {
             if(!validation.isEmpty(user)) {
-                var error = {created: false, alreadyExists: true};
+                var error = {registered: false, alreadyExists: true};
                 if(user.account.username == username) {
                     error.field = "username";
                 } else {
@@ -22,7 +23,7 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
                         newUser.account.password = hashedPassword;
                         newUser.save().then(user => {
                             emailEvent.emit("sendConfirmationEmail", user.account.email, user.account.firstName, user.account.username, user.acceptance.acceptanceToken);
-                            response.status(200).json({created: true}).end();
+                            response.status(200).json({registered: true}).end();
                         }).catch(error => console.log(error));
                     });
                 });

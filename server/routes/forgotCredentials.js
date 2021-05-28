@@ -29,11 +29,11 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 	});
     app.post("/sendConfirmationEmail", (request, response) => {
         var username = request.body.username;
-        var query = {username: username};
-        var authenticationToken = Math.floor(100000 + Math.random() * 900000);
-        var update = {authenticationToken: authenticationToken};
+        var query = {"account.username": username};
+        var acceptanceToken = Math.floor(100000 + Math.random() * 900000);
+        var update = {"acceptance.acceptanceToken": acceptanceToken};
         User.findOneAndUpdate(query, update, {new: true}).then(user => {
-            emailEvent.emit("sendConfirmationEmail", user.email, user.firstName, user.username, user.acceptanceToken);
+            emailEvent.emit("sendConfirmationEmail", user.account, user.acceptance.acceptanceToken);
             response.status(200).json({emailSent: true}).end();
         })
     });

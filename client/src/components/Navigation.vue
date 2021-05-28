@@ -63,7 +63,7 @@
                 this.userData = checkLogin.methods.getUserData();
             },
             checkRoutePath() {
-                if(this.routePath != "/login" && this.routePath != "/registration") return true;
+                if(this.routePath != "/login" && this.routePath != "/registration" && this.routePath != "/confirm/registration") return true;
                 else return false;
             },
             openHome() {

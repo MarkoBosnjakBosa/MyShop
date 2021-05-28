@@ -2,7 +2,7 @@
 	<div id="registration" class="container-fluid">
 		<navigation></navigation>
 		<div class="registrationForm">
-			<form autocomplete="off" @submit.prevent="createUser()">
+			<form autocomplete="off" @submit.prevent="registerUser()">
 				<div class="registrationTitle">
 					<h1>Register</h1>
 					<p>Please fill in this form to create an account.</p>
@@ -15,14 +15,12 @@
                 </div>
 				<div class="tab-content">
 					<div id="accountTab" class="tab-pane fade active show">
-						<div v-if="userCreated" class="alert alert-success alert-dismissible" role="alert">
-							<div>User has been successfully created!</div>
+						<div v-if="userRegistered" class="alert alert-success alert-dismissible" role="alert">
+							<div>User has been successfully registered!</div>
 							<div>Please visit your inbox and confirm your registration!</div>
-							<button type="button" class="close" @click="closeRegistrationAlert()">
-								<span aria-hidden="true">&times;</span>
-							</button>
+							<button type="button" class="btn-close" data-bs-dismiss="alert" @click="closeRegistrationAlert()"></button>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<label for="username" class="form-label">Username:</label>
 							<div class="input-group">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -30,7 +28,7 @@
 							</div>
 							<small v-if="errors.account.usernameError && submitting" class="form-text errorInput">Please provide a valid username!</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<label for="email" class="form-label">Email:</label>
 							<div class="input-group">
 								<span class="input-group-text"><i class="fas fa-envelope"></i></span>
@@ -38,7 +36,7 @@
 							</div>
 							<small v-if="errors.account.emailError && submitting" class="form-text errorInput">Please provide a valid email!</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<label for="password" class="form-label">Password:</label>
 							<div class="input-group">
 								<span class="input-group-text"><i class="fas fa-lock"></i></span>
@@ -49,7 +47,7 @@
 							</div>
 							<small v-if="errors.account.passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<label for="firstName" class="form-label">First name:</label>
 							<div class="input-group">
 								<span class="input-group-text"><i class="fas fa-pencil-alt"></i></span>
@@ -57,7 +55,7 @@
 							</div>
 							<small v-if="errors.account.firstNameError && submitting" class="form-text errorInput">Please provide a valid first name!</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<label for="lastName" class="form-label">Last name:</label>
 							<div class="input-group">
 								<span class="input-group-text"><i class="fas fa-pen"></i></span>
@@ -65,7 +63,7 @@
 							</div>
 							<small v-if="errors.account.lastNameError && submitting" class="form-text errorInput">Please provide a valid last name!</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<label for="mobileNumber" class="form-label">Mobile number:</label>
 							<div class="input-group">
 								<span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
@@ -75,41 +73,41 @@
 							<small class="form-text text-muted">Please insert your mobile number with the country calling code.</small><br>
 							<small v-if="errors.account.mobileNumberError && submitting" class="form-text errorInput">Please provide a valid mobile number!</small>
 						</div>
-						<div class="form-group">
-							<button type="button" class="btn btn-info nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
+						<div>
+							<button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
 						</div>
 					</div>
 					<div id="addressTab" class="tab-pane fade">
-						<div class="form-row">
-							<div class="form-group col-md-8">
+						<div class="row">
+							<div class="mb-3 col-md-8">
 								<label for="street">Street:</label>
 								<input type="text" id="street" class="form-control" :class="{'errorField' : errors.address.streetError && submitting}" v-model="user.address.street" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
 								<small v-if="(errors.address.streetError || errors.address.houseNumberError) && submitting" class="form-text errorInput">Please provide a valid street / house number!</small>
 							</div>
-							<div class="form-group col-md-4">
+							<div class="mb-3 col-md-4">
 								<label for="houseNumber">House number:</label>
 								<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : errors.address.houseNumberError && submitting}" v-model="user.address.houseNumber" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
 							</div>
 						</div>
-						<div class="form-row">
-							<div class="form-group col-md-8">
+						<div class="row">
+							<div class="mb-3 col-md-8">
 								<label for="city">City:</label>
 								<input type="text" id="city" class="form-control" :class="{'errorField' : errors.address.cityError && submitting}" v-model="user.address.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
 								<small v-if="(errors.address.cityError || errors.address.zipCodeError) && submitting" class="form-text errorInput">Please provide a valid city / zip code!</small>
 							</div>
-							<div class="form-group col-md-4">
+							<div class="mb-3 col-md-4">
 								<label for="zipCode">Zip code:</label>
 								<input type="number" id="zipCode" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submitting}" v-model="user.address.zipCode" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<label for="country" class="form-label">Country:</label>
 							<input type="text" id="country" class="form-control" :class="{'errorField' : errors.address.countryError && submitting}" v-model="user.address.country" @focus="clearCountryStatus()" @keypress="clearCountryStatus()"/>
 							<small v-if="errors.address.countryError && submitting" class="form-text errorInput">Please provide a valid country!</small>
 						</div>
-						<div class="form-group">
-							<button type="button" class="btn btn-info previousButton" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
-							<button type="button" class="btn btn-info nextButton" @click="toggleTab('check')">Next <i class="fas fa-angle-double-right"></i></button>
+						<div>
+							<button type="button" class="btn btn-dark previousButton" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
+							<button type="button" class="btn btn-dark nextButton" @click="toggleTab('check')">Next <i class="fas fa-angle-double-right"></i></button>
 						</div>
 					</div>
 					<div id="checkTab" class="tab-pane fade">
@@ -117,10 +115,10 @@
 						<div v-if="alreadyExists == 'username'" class="alert alert-danger" role="alert">Username already exists!</div>
 						<div v-if="alreadyExists == 'email'" class="alert alert-danger" role="alert">Email already exists!</div>
 						<p :class="{'errorInput' : errors.reCaptchaTokenError && submitting}">Please confirm that you are not a robot.</p>
-						<div class="form-group text-xs-center">
+						<div class="mb-3 recaptcha">
 							<div class="g-recaptcha" :data-sitekey="reCaptchaSiteKey"></div>
 						</div>
-						<button type="button" class="btn btn-info previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
+						<button type="button" class="btn btn-dark previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
 						<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
 					</div>
 				</div>
@@ -130,8 +128,6 @@
 </template>
 
 <script>
-	import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
 	import navigation from "../components/Navigation.vue";
 	import validation from "../components/Validation.vue"; 
 	import helper from "../components/Helper.vue"; 
@@ -157,9 +153,9 @@
 					},
 					address: {
 						street: "",
-						houseNumber: "",
+						houseNumber: 0,
 						city: "",
-						zipCode: "",
+						zipCode: 0,
 						country: ""
 					}
 				},
@@ -181,12 +177,12 @@
 					},
 					reCaptchaTokenError: false
 				},
-				userCreated: false,
+				userRegistered: false,
 				alreadyExists: ""
 			}
 		},
         methods: {
-			createUser() {
+			registerUser() {
 				this.submitting = true;
 				this.clearUsernameStatus();
 				this.clearEmailStatus();
@@ -249,14 +245,14 @@
 				}
 				if(!allowSubmit) {
 					this.alreadyExists = "";
-					this.userCreated = false;
+					this.userRegistered = false;
 					return;
 				}
-				var body = {account: this.user.account, address: this.user.address, reCaptchaToken: grecaptcha.getResponse()};
-				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createUser", body).then(response => {
-					if(response.data.created) {
-						this.userCreated = true;
-						this.user = {account: {username: "", email: "", password: "", firstName: "", lastName: "", mobileNumber: ""}, address:{ street: "", houseNumber: "", city: "", zipCode: "", country: ""}};
+				var body = {user: this.user, reCaptchaToken: grecaptcha.getResponse()};
+				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/registerUser", body).then(response => {
+					if(response.data.registered) {
+						this.userRegistered = true;
+						this.user = {account: {username: "", email: "", password: "", firstName: "", lastName: "", mobileNumber: ""}, address:{ street: "", houseNumber: 0, city: "", zipCode: 0, country: ""}};
 						grecaptcha.reset();
 						this.alreadyExists = "";
 						this.errors = {account: {usernameError: false, emailError: false, passwordError: false, firstNameError: false, lastNameError: false, mobileNumberError: false}, address: {streetError: false, houseNumberError: false, cityError: false, zipCodeError: false, countryError: false}, reCaptchaTokenError: false};
@@ -265,7 +261,7 @@
 					} else {
 						if(response.data.alreadyExists) {
 							this.alreadyExists = response.data.field;
-							this.userCreated = false;
+							this.userRegistered = false;
 						} else {
 							var errorFields = response.data.errorFields;
 							if(errorFields.includes("username")) this.errors.account.usernameError = true;
@@ -281,10 +277,15 @@
 							if(errorFields.includes("country")) this.errors.address.countryError = true;
 							if(errorFields.includes("reCaptchaToken")) this.errors.reCaptchaTokenError = true;
 							this.alreadyExists = "";
-							this.userCreated = false;
+							this.userRegistered = false;
 						}
 					}
 				}).catch(error => console.log(error));
+			},
+			loadReCaptcha() {
+				var reCaptchaScript = document.createElement("script");
+				reCaptchaScript.setAttribute("src", "https://www.google.com/recaptcha/api.js");
+				document.head.appendChild(reCaptchaScript);
 			},
 			clearUsernameStatus() { this.errors.account.usernameError = false; },
 			clearEmailStatus() { this.errors.account.emailError = false; },
@@ -300,21 +301,11 @@
 				this.errors.address.cityError = false; 
 				this.errors.address.zipCodeError = false;
 			},
-			clearCountryStatus() {
-				this.errors.address.countryError = false;
-			},
-			clearReCaptchaTokenStatus() {
-				this.errors.reCaptchaTokenError = false;
-			},
-            togglePassword() {
-				helper.methods.togglePassword();
-			},
-			toggleTab(tab) {
-                helper.methods.toggleTab(tab);
-			},
-			closeRegistrationAlert() {
-				this.userCreated = false;
-			}
+			clearCountryStatus() { this.errors.address.countryError = false; },
+			clearReCaptchaTokenStatus() { this.errors.reCaptchaTokenError = false; },
+            togglePassword() { helper.methods.togglePassword(); },
+			toggleTab(tab) { helper.methods.toggleTab(tab); },
+			closeRegistrationAlert() { this.userCreated = false; }
         },
         computed: {
 			invalidUsername() { return validation.methods.invalidUsername(this.user.account.username); },
@@ -330,9 +321,7 @@
 			invalidCountry() { return validation.methods.invalidCountry(this.user.address.country); }
 		},
 		mounted() {
-			var reCaptchaScript = document.createElement("script");
-			reCaptchaScript.setAttribute("src", "https://www.google.com/recaptcha/api.js");
-			document.head.appendChild(reCaptchaScript);
+			this.loadReCaptcha();
 		}
 	}
 </script>
@@ -357,7 +346,7 @@
 	.nextButton, .submitButton {
 		float: right;
 	}
-	.text-xs-center {
+	.recaptcha {
 		text-align: center;
 	}
 	.g-recaptcha {

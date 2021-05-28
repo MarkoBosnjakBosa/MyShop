@@ -1,3 +1,5 @@
+const axios = require("axios");
+
 function invalidUsername(username) {
     var usernameFormat = /^[a-z0-9_.-]*$/;
     if(username != "" && usernameFormat.test(username)) return false;
@@ -43,7 +45,7 @@ function invalidZipCode(zipCode) {
 function invalidCountry(country) {
     return country == "";
 }
-function invalidReCaptchaToken(reCaptchaSecretKey, axios, reCaptchaToken, remoteIp) {
+function invalidReCaptchaToken(reCaptchaSecretKey, reCaptchaToken, remoteIp) {
     if(reCaptchaToken == "" || reCaptchaToken == undefined || reCaptchaToken == null) return true;
     else {
         var reCaptchaVerificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + reCaptchaSecretKey + "&response=" + reCaptchaToken + "&remoteip=" + remoteIp;
