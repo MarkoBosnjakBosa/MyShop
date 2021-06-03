@@ -73,8 +73,6 @@
 </template>
 
 <script>
-    import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
 	import checkLogin from "../../components/CheckLogin.vue";
 	import navigation from "../../components/Navigation.vue";
 	import sidebar from "../../components/Sidebar.vue";
@@ -144,7 +142,7 @@
                 modal.methods.openModal(event);
             }
         },
-        created() {
+        mounted() {
 			checkLogin.methods.isLoggedIn();
             this.getProducts();
             this.getCategories();

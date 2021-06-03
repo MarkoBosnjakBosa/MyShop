@@ -9,19 +9,20 @@
 					<hr>
 				</div>
 				<div class="mb-3">
-					<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
-					<small v-if="usernameError" class="errorInput">Please provide a valid username!</small>
+					<input type="text" id="username" class="form-control" :class="{'errorField' : errors.usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
+					<small v-if="errors.usernameError" class="errorInput">Please provide a valid username!</small>
 				</div>
 				<div class="mb-3">
 					<div class="input-group">
-						<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
+						<input type="password" id="password" class="form-control" :class="{'errorField' : errors.passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
 						<div class="input-group-append">
-							<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+							<button type="button" class="btn btn-light" :class="{'errorIcon' : errors.passwordError && submitting}" @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
 						</div>
 					</div>
-					<small v-if="passwordError && submitting" class="errorInput">Please provide a valid password!</small>
+					<small v-if="errors.passwordError && submitting" class="errorInput">Please provide a valid password!</small>
 				</div>
-				<div v-if="noPasswordMatch" class="mb-3 loginFailed">Password does not match!</div>
+				<div v-if="errors.notConfirmed" class="mb-3 loginFailed">You have to confirm your registration!</div>
+				<div v-if="errors.noPasswordMatch" class="mb-3 loginFailed">Password does not match!</div>
 				<div class="mb-3 forgotCredentials">
 					<a href="#" @click="openForgotCredentials()">Forgot credentials?</a>
 				</div>
@@ -49,26 +50,36 @@
 		data() {
 			return {
 				submitting: false,
-				usernameError: false,
-				passwordError: false,
 				user: {
 					username: "",
 					password: ""
 				},
-				noPasswordMatch: false
+				errors: {
+					usernameError: false,
+					passwordError: false,
+					notConfirmed: false,
+					noPasswordMatch: false
+				}
 			}
 		},
 		methods: {
+			checkLogin() {
+				if(this.$store.getters.isLoggedIn) {
+					axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => {
+						if(response.data.loggedIn) this.openHome();
+					}).catch(error => console.log(error));
+				}
+			},
 			checkUsername() {
 				var body = {username: this.user.username};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkUsername", body).then(response => {
 					if(response.data.exists) {
-						this.usernameError = false;
+						this.errors.usernameError = false;
 					} else {
 						if(response.data.empty) {
-							this.usernameError = false;
+							this.errors.usernameError = false;
 						} else {
-							this.usernameError = true;
+							this.errors.usernameError = true;
 						}
 					}
 				}).catch(error => console.log(error));
@@ -79,73 +90,77 @@
 				this.clearPasswordStatus();
 				var allowSubmit = true;
 				if(this.invalidUsername) {
-					this.usernameError = true;
+					this.errors.usernameError = true;
 					allowSubmit = false;
 				}
 				if(this.invalidPassword) {
-					this.passwordError = true;
+					this.errors.passwordError = true;
 					allowSubmit = false;
 				}
 				if(!allowSubmit) {
-					this.noPasswordMatch = false;
+					this.errors.passwordMatch = false, this.errors.isConfirmed = false;
 					return;
 				}
 				var body = {username: this.user.username, password: this.user.password};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/login", body).then(response => {
-					if(response.data.authentication && !response.data.valid && response.data.authenticationToken) {
+					if(response.data.authentication) {
 						this.user = {username: "", password: ""};
-						this.usernameError = false, this.passwordError = false, this.noPasswordMatch = false, this.submitting = false;
-						const username = response.data.username;
-						this.$store.dispatch("authenticate", {username});
+						this.errors = {usernameError: false, passwordError: false, noPasswordMatch: false, notConfirmed: false};
+						this.submitting = false;
+						var username = response.data.username;
+						this.$store.dispatch("authenticate", username);
 						route.methods.openAuthentication();
 					} else {
 						if(response.data.valid) {
 							this.user = {username: "", password: ""};
-							this.usernameError = false, this.passwordError = false, this.noPasswordMatch = false, this.submitting = false;
-							const token = response.data.token;
-							const user = response.data.user;
-							const isAdmin = response.data.isAdmin;
+							this.errors = {usernameError: false, passwordError: false, noPasswordMatch: false, notConfirmed: false};
+							this.submitting = false;
+							var token = response.data.token;
+							var user = response.data.username;
+							var isAdmin = response.data.isAdmin;
 							this.$store.dispatch("login", {token, user, isAdmin});
-							route.methods.openHome();
+							this.openHome();
 						} else {
-							if(response.data.allowed) {
-								this.noPasswordMatch = true;
+							if(response.data.found) {
+								if(response.data.error == "notConfirmed") {
+									this.errors.notConfirmed = true;
+								} else {
+									this.errors.noPasswordMatch = true;
+								}
 							} else {
 								var errorFields = response.data.errorFields;
-								if(errorFields.includes("username")) this.usernameError = true;
-								if(errorFields.includes("password")) this.passwordError = true;
-								this.noPasswordMatch = false;
+								if(errorFields.includes("username")) this.errors.usernameError = true;
+								if(errorFields.includes("password")) this.errors.passwordError = true;
+								this.errors.noPasswordMatch = false, this.errors.notConfirmed = false;
 							}
 						}
 					}
 				}).catch(error => console.log(error));
 			},
-			openForgotCredentials() {
-				route.methods.openForgotCredentials();
+			openForgotCredentials() { route.methods.openForgotCredentials(); },
+			openRegistration() { route.methods.openRegistration(); },
+			openHome() { 
+				var isAdmin = this.$store.getters.isAdmin;
+				if(isAdmin) route.methods.openProducts();
+				else route.methods.openHome();
 			},
-			openRegistration() {
-				route.methods.openRegistration();
-			},
-			clearUsernameStatus() { this.usernameError = false; },
-			clearPasswordStatus() { this.passwordError = false; },
-			togglePassword() {
-				helper.methods.togglePassword();
-			}
+			clearUsernameStatus() { this.errors.usernameError = false; },
+			clearPasswordStatus() { this.errors.passwordError = false; },
+			togglePassword() { helper.methods.togglePassword(); }
 		},
 		computed: {
-			invalidUsername: function() {
-				return validation.methods.invalidUsername(this.user.username);
-			},
-			invalidPassword() {
-				return validation.methods.invalidPassword(this.user.password);
-			}
+			invalidUsername() { return validation.methods.invalidUsername(this.user.username); },
+			invalidPassword() { return validation.methods.invalidPassword(this.user.password); }
+		},
+		mounted() {
+            this.checkLogin();
 		}
 	}
 </script>
 
 <style scoped>
 	.loginForm {
-		margin: 0 auto;
+		margin: auto;
 		max-width: 400px;
 	}
 	.loginTitle {

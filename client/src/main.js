@@ -6,6 +6,6 @@ import Axios from "axios";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-Axios.defaults.headers.common["Authorization"] = "Bearer " + store.state.token;
+Axios.defaults.headers.common["Authorization"] = "Bearer " + store.state.jwtData.token;
 
 createApp(App).use(store).use(router).mount("#app");

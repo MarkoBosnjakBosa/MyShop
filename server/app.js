@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 const validation = require("./middleware/validation.js");
 const uploadImages = require("./middleware/uploadImages.js");
+const checkStatus = require("./middleware/checkStatus.js");
 const fs = require("fs");
 const path = require("path");
 const EventEmitter = require("events").EventEmitter;
@@ -25,8 +26,8 @@ app.use(cors({origin: "*"}));
 app.use(express.json());
 app.use(express.static(__dirname + "/images/products"));
 
-const registration = require("./routes/registration.js")(app, models, validation, bcryptjs, emailEvent);
-const login = require("./routes/login.js")(app, jwt, bcryptjs, models, smsEvent, validation);
+const registration = require("./routes/registration.js")(app, models, bcryptjs, emailEvent, validation);
+const login = require("./routes/login.js")(app, models, jwt, bcryptjs, smsEvent, validation, checkStatus);
 const forgotCredentials = require("./routes/forgotCredentials.js")(app, bcryptjs, models, emailEvent, validation);
 const profile = require("./routes/profile.js")(app, models, validation);
 const setup = require("./routes/setup.js")(app, models, smsEvent);

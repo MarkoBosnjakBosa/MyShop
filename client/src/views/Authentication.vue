@@ -2,7 +2,7 @@
     <div id="authentication" class="container-fluid">
         <navigation></navigation>
         <div class="authenticationForm">
-            <form autocomplete="off" @submit.prevent="loginUser()">
+            <form autocomplete="off" @submit.prevent="authenticateUser()">
                 <div class="authenticationTitle">
 					<h1>Authenticate</h1>
 					<p>Please insert the authentication token to log in.</p>
@@ -16,7 +16,6 @@
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
                 <div class="mb-3">
-                    <a :href="'mailto:' + adminEmail" class="btn btn-info" role="button">Contact the Admin team <i class="fas fa-envelope"></i></a>
                 </div>
             </form>
         </div>
@@ -36,13 +35,12 @@
         },
         data() {
             return {
-                adminEmail: process.env.VUE_APP_ADMIN_EMAIL,
-                authenticationTokenError: false,
-                authenticationToken: ""
+                authenticationToken: "",
+                authenticationTokenError: false
             }
         },
         methods: {
-            loginUser() {
+            authenticateUser() {
                 this.clearAuthenticationTokenStatus();
                 if(this.invalidAuthenticationToken) {
                     this.authenticationTokenError = true;
@@ -50,20 +48,29 @@
                 }
                 var options = {headers: {["authentication"]: this.authenticationToken}};
                 var username = this.$store.getters.isAuthenticated;
-                var body = {username: username, authenticationToken: this.authenticationToken};
-                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/login", body, options).then(response => {
-                    if(response.data.authentication && response.data.valid) {
-                        const token = response.data.token;
-                        const user = response.data.user;
-                        const isAdmin = response.data.isAdmin;
+                var body = {username: username};
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/authenticate", body, options).then(response => {
+                    if(response.data.authenticated) {
+                        this.authenticationToken = "";
+                        this.authenticationTokenError = false;
+                        var token = response.data.token;
+                        var user = response.data.user;
+                        var isAdmin = response.data.isAdmin;
                         this.$store.dispatch("login", {token, user, isAdmin});
                         this.$store.dispatch("clearAuthentication");
-                        route.methods.openHome();
+                        this.openHome();
                     } else {
                         this.authenticationTokenError = true;
                     }
                 }).catch(error => console.log(error));
             },
+            openHome() { 
+                console.log("test");
+				var isAdmin = this.$store.getters.isAdmin;
+                console.log("isAdmin: " + isAdmin);
+				if(isAdmin) route.methods.openProducts();
+				else route.methods.openHome();
+			},
             clearAuthenticationTokenStatus() { this.authenticationTokenError = false; }
         },
         computed: {

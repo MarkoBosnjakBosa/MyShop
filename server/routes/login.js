@@ -1,4 +1,4 @@
-module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation) {
+module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation, checkStatus) {
     const User = models.User;
     app.post("/checkUsername", (request, response) => {
 		var username = request.body.username;
@@ -21,65 +21,62 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation) {
 		var query = {"account.username": username};
 		User.findOne(query).then(user => {
 			if(!validation.isEmpty(user)) {
-				if(user.acceptance.accepted) {
-					if(user.acceptance.authenticationToken) {
-						if(request.headers["authentication"]) {
-							var authenticationToken = request.headers["authentication"];
-							if(authenticationToken == user.acceptance.authenticationToken) {
-								const token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey", {expiresIn: "2h"});
-								var update = {"acceptance.authenticationToken": ""};
-								User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-									response.status(200).json({authentication: true, valid: true, token: token, user: updatedUser.account.username, isAdmin: updatedUser.account.isAdmin}).end();
-								}).catch(error => console.log(error));
-							} else {
-								response.status(200).json({authentication: true, valid: false, authenticationToken: false}).end();
-							}
-						} else {
-							response.status(200).json({authentication: true, valid: false, authenticationToken: false}).end();
-						}
-					} else {
-						var password = request.body.password;
-						if(validation.validPassword(password)) {
-							bcryptjs.compare(password, user.account.password, function(error, foundPassword) {
-								if(foundPassword) {
-									if(user.acceptance.authenticationEnabled) {
-										var authenticationToken = Math.floor(100000 + Math.random() * 900000);
-										var update = {"acceptance.authenticationToken": authenticationToken};
-										User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-											//smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.acceptance.authenticationToken);
-											response.status(200).json({authentication: true, valid: false, authenticationToken: true, username: updatedUser.account.username, isAdmin: updatedUser.account.isAdmin}).end();
-										}).catch(error => console.log(error));
-									} else {
-										const token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey", {expiresIn: "2h"});
-										response.status(200).json({authentication: false, valid: true, token: token, user: user.account.username, isAdmin: user.account.isAdmin}).end();
-									}
+				if(user.confirmation.confirmed) {
+					var password = request.body.password;
+					if(validation.validPassword(password)) {
+						bcryptjs.compare(password, user.account.password, function(error, foundPassword) {
+							if(foundPassword) {
+								if(user.confirmation.authenticationEnabled) {
+									var authenticationToken = Math.floor(100000 + Math.random() * 900000);
+									var update = {"confirmation.authenticationToken": authenticationToken};
+									User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
+										//smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
+										response.status(200).json({authentication: true, username: updatedUser.account.username}).end();
+									}).catch(error => console.log(error));
 								} else {
-									response.status(200).json({authentication: false, valid: false, allowed: true}).end();
+									var token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey");
+									response.status(200).json({authentication: false, valid: true, token: token, username: user.account.username, isAdmin: user.account.isAdmin}).end();
 								}
-							});
-						} else {
-							errorFields.push("password");
-							response.status(200).json({authentication: false, valid: false, allowed: false, errorFields: errorFields}).end();
-						}
+							} else {
+								response.status(200).json({authentication: false, valid: false, found: true, error: "noPasswordMatch"}).end();
+							}
+						});
+					} else {
+						errorFields = [...errorFields, "password"];
+						response.status(200).json({authentication: false, valid: false, found: false, errorFields: errorFields}).end();
 					}
 				} else {
-					errorFields.push("username");
-					response.status(200).json({authentication: false, valid: false, allowed: false, errorFields: errorFields}).end();
+					response.status(200).json({authentication: false, valid: false, found: true, error: "notConfirmed"}).end();	
 				}
 			} else {
-				errorFields.push("username");
-				response.status(200).json({authentication: false, valid: false, allowed: false, errorFields: errorFields}).end();
+				errorFields = [...errorFields, "username"];
+				response.status(200).json({authentication: false, valid: false, found: false, errorFields: errorFields}).end();
 			}
 		}).catch(error => console.log(error));
 	});
-	app.get("/checkStatus", (request, response) => {
-		try {
-			const token = request.headers.authorization.split(" ")[1];
-			const decodedToken = jwt.verify(token, "newSecretKey");
-			request.userData = decodedToken;
-			response.status(200).json({loggedIn: true}).end();
-		} catch(error) {
-			response.status(200).json({loggedIn: false}).end();
-		}
+	app.post("/authenticate", (request, response) => {
+		var username = request.body.username;
+		var query = {"account.username": username};
+		User.findOne(query).then(user => {
+			if(!validation.isEmpty(user)) {
+				if(request.headers["authentication"]) {
+					var authenticationToken = request.headers["authentication"];
+					if(authenticationToken == user.confirmation.authenticationToken) {
+						var token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey");
+						var update = {"confirmation.authenticationToken": ""};
+						User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
+							response.status(200).json({authenticated: true, token: token, user: updatedUser.account.username, isAdmin: updatedUser.account.isAdmin}).end();
+						}).catch(error => console.log(error));
+					} else {
+						response.status(200).json({authenticated: false}).end();
+					}
+				} else {
+					response.status(200).json({authenticated: false}).end();
+				}
+			}
+		}).catch(error => console.log(error));
+	});
+	app.get("/checkStatus", checkStatus.isLoggedIn, (request, response) => {
+		response.status(200).json({loggedIn: true}).end();
 	});
 }

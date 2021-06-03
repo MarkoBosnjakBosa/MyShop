@@ -16,9 +16,9 @@ module.exports = function(mongoose) {
 			zipCode: {type: Number, required: true},
 			country: {type: String, required: true}
 		},
-		acceptance: {
-			accepted: {type: Boolean, required: true},
-			acceptanceToken: {type: String},
+		confirmation: {
+			confirmed: {type: Boolean, required: true},
+			confirmationToken: {type: String},
 			authenticationEnabled: {type: Boolean, required: true},
 			authenticationToken: {type: String},
 			authenticationEnablingToken: {type: String}

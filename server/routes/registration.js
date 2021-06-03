@@ -1,4 +1,4 @@
-module.exports = function(app, models, validation, bcryptjs, emailEvent) {
+module.exports = function(app, models, bcryptjs, emailEvent, validation) {
     const User = models.User;
     app.post("/registerUser", validation.validateRegistration, (request, response) => {
         var user = request.body.user;
@@ -15,14 +15,14 @@ module.exports = function(app, models, validation, bcryptjs, emailEvent) {
                 }
                 response.status(200).json(error).end();
             } else {
-                var acceptance = {accepted: false, acceptanceToken: Math.floor(100000 + Math.random() * 900000), authenticationEnabled: true, authenticationToken: "", authenticationEnablingToken: ""};
+                var confirmation = {confirmed: false, confirmationToken: Math.floor(100000 + Math.random() * 900000), authenticationEnabled: true, authenticationToken: "", authenticationEnablingToken: ""};
                 account.isAdmin = false;
-                var newUser = getUserScheme(User, account, address, acceptance);
+                var newUser = getUserScheme(User, account, address, confirmation);
                 bcryptjs.genSalt(10, (error, salt) => {
                     bcryptjs.hash(newUser.account.password, salt, (error, hashedPassword) => {
                         newUser.account.password = hashedPassword;
                         newUser.save().then(user => {
-                            emailEvent.emit("sendConfirmationEmail", user.account.email, user.account.firstName, user.account.username, user.acceptance.acceptanceToken);
+                            emailEvent.emit("sendConfirmationEmail", user.account.email, user.account.firstName, user.account.username, user.confirmation.confirmationToken);
                             response.status(200).json({registered: true}).end();
                         }).catch(error => console.log(error));
                     });
@@ -32,9 +32,9 @@ module.exports = function(app, models, validation, bcryptjs, emailEvent) {
     });
     app.get("/confirm/registration", (request, response) => {
 		var username = request.query.username;
-		var acceptanceToken = request.query.acceptanceToken;
-		var query = {$and: [{"account.username": username}, {"acceptance.acceptanceToken": acceptanceToken}]}; 
-		var update = {"acceptance.accepted": true, "acceptance.acceptanceToken": ""};
+		var confirmationToken = request.query.confirmationToken;
+		var query = {$and: [{"account.username": username}, {"confirmation.confirmationToken": confirmationToken}]}; 
+		var update = {"confirmation.confirmed": true, "confirmation.confirmationToken": ""};
 		User.findOneAndUpdate(query, update, {new: true}).then(user => {
 			if(!validation.isEmpty(user)) {
 				response.status(200).json({confirmed: true}).end();
@@ -44,7 +44,7 @@ module.exports = function(app, models, validation, bcryptjs, emailEvent) {
 		}).catch(error => console.log(error));
 	});
 
-    function getUserScheme(User, account, address, acceptance) {
-		return new User({account: account, address: address, acceptance: acceptance});
+    function getUserScheme(User, account, address, confirmation) {
+		return new User({account: account, address: address, confirmation: confirmation});
 	}
 }

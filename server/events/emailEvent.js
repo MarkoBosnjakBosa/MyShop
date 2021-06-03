@@ -35,11 +35,9 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
 	}
-    function sendConfirmationEmail(account, acceptanceToken) {
-		console.log("aaaaaaaaaaaaa");
-		console.log(account);
+    function sendConfirmationEmail(account, confirmationToken) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/confirmation.html"), "utf-8"));
-		var html = compiledHtml({firstName: account.firstName, username: account.username, acceptanceToken: acceptanceToken, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
+		var html = compiledHtml({firstName: account.firstName, username: account.username, confirmationToken: confirmationToken, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: account.email,
