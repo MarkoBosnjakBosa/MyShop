@@ -7,18 +7,18 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 		User.findOne(query).then(user => {
 			if(!validation.isEmpty(user)) {
 				if(option == "password") {
-					var acceptanceToken = Math.floor(100000 + Math.random() * 900000);
-					var update = {acceptanceToken: acceptanceToken};
+					var confirmationToken = Math.floor(100000 + Math.random() * 900000);
+					var update = {"confirmation.confirmationToken": confirmationToken};
 					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-						emailEvent.emit("sendResetPasswordEmail", updatedUser.email, updatedUser.firstName, updatedUser.username, updatedUser.acceptanceToken);
+						emailEvent.emit("sendResetPasswordEmail", updatedUser.account, updatedUser.confirmation.confirmationToken);
 					}).catch(error => console.log(error));
 				} else if(option == "username") {
 					emailEvent.emit("sendForgotUsernameEmail", user.account);
 				} else {
-					var acceptanceToken = Math.floor(100000 + Math.random() * 900000);
-					var update = {"acceptance.acceptanceToken": acceptanceToken};
+					var confirmationToken = Math.floor(100000 + Math.random() * 900000);
+					var update = {"confirmation.confirmationToken": confirmationToken};
 					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-						emailEvent.emit("sendConfirmationEmail", updatedUser.account, updatedUser.acceptance.acceptanceToken);
+						emailEvent.emit("sendConfirmationEmail", updatedUser.account, updatedUser.confirmation.confirmationToken);
 					}).catch(error => console.log(error));
 				}
 				response.status(200).json({sent: true}).end();
@@ -30,10 +30,10 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
     app.post("/sendConfirmationEmail", (request, response) => {
         var username = request.body.username;
         var query = {"account.username": username};
-        var acceptanceToken = Math.floor(100000 + Math.random() * 900000);
-        var update = {"acceptance.acceptanceToken": acceptanceToken};
+        var confirmationToken = Math.floor(100000 + Math.random() * 900000);
+        var update = {"confirmation.confirmationToken": confirmationToken};
         User.findOneAndUpdate(query, update, {new: true}).then(user => {
-            emailEvent.emit("sendConfirmationEmail", user.account, user.acceptance.acceptanceToken);
+            emailEvent.emit("sendConfirmationEmail", user.account, user.confirmation.confirmationToken);
             response.status(200).json({emailSent: true}).end();
         })
     });

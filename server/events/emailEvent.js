@@ -1,21 +1,21 @@
 module.exports = function(EventEmitter, ejs, fs, path, transporter) {
     const emailEvent = new EventEmitter();
-    emailEvent.on("sendResetPasswordEmail", (email, firstName, username, acceptanceToken) => {
-        sendResetPasswordEmail(email, firstName, username, acceptanceToken); 
+    emailEvent.on("sendResetPasswordEmail", (account, confirmationToken) => {
+        sendResetPasswordEmail(account, confirmationToken); 
     });
-	emailEvent.on("sendForgotUsernameEmail", (email, firstName, username) => {
-        sendForgotUsernameEmail(email, firstName, username); 
+	emailEvent.on("sendForgotUsernameEmail", (account) => {
+        sendForgotUsernameEmail(account); 
     });
-	emailEvent.on("sendConfirmationEmail", (account, acceptanceToken) => {
-        sendConfirmationEmail(account, acceptanceToken); 
+	emailEvent.on("sendConfirmationEmail", (account, confirmationToken) => {
+        sendConfirmationEmail(account, confirmationToken); 
     });
-	emailEvent.on("sendInvoiceEmail", (email, firstName, username, acceptanceToken) => {
-        sendInvoiceEmail(email, firstName, username, acceptanceToken); 
+	emailEvent.on("sendInvoiceEmail", (account, confirmationToken) => {
+        sendInvoiceEmail(account, confirmationToken); 
     });
 
-	function sendResetPasswordEmail(account, acceptanceToken) {
+	function sendResetPasswordEmail(account, confirmationToken) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/resetPassword.html"), "utf-8"));
-		var html = compiledHtml({firstName: account.firstName, username: account.username, acceptanceToken: acceptanceToken, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
+		var html = compiledHtml({firstName: account.firstName, username: account.username, confirmationToken: confirmationToken, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: account.email,

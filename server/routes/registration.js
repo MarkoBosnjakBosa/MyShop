@@ -33,6 +33,8 @@ module.exports = function(app, models, bcryptjs, emailEvent, validation) {
     app.get("/confirm/registration", (request, response) => {
 		var username = request.query.username;
 		var confirmationToken = request.query.confirmationToken;
+        console.log(username);
+        console.log(confirmationToken);
 		var query = {$and: [{"account.username": username}, {"confirmation.confirmationToken": confirmationToken}]}; 
 		var update = {"confirmation.confirmed": true, "confirmation.confirmationToken": ""};
 		User.findOneAndUpdate(query, update, {new: true}).then(user => {

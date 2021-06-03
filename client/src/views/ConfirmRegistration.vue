@@ -34,8 +34,8 @@
         },
         methods: {
             getRegistrationConfirmation() {
-                var acceptanceToken = this.$route.query.acceptanceToken;
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/confirm/registration?username=" + this.username + "&acceptanceToken=" + acceptanceToken).then(response => {
+                var confirmationToken = this.$route.query.confirmationToken;
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/confirm/registration?username=" + this.username + "&confirmationToken=" + confirmationToken).then(response => {
                     this.registrationConfirmed = response.data.confirmed;
                 }).catch(error => console.log(error));
             },
