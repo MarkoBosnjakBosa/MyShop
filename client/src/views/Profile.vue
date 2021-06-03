@@ -20,7 +20,7 @@
 							<form autocomplete="off" @submit.prevent="editAccount()">
 								<div v-if="edits.accountEdited" class="alert alert-success alert-dismissible" role="alert">
 									<div>Your account has been successfully edited.</div>
-									<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+									<button type="button" class="btn-close" @click="closeAlert('account')"></button>
 								</div>
 								<div class="mb-3">
 									<label for="username" class="form-label">Username:</label>
@@ -73,7 +73,7 @@
 							<form autocomplete="off" @submit.prevent="editAddress()">
 								<div v-if="edits.addressEdited" class="alert alert-success alert-dismissible" role="alert">
 									<div>Your address has been successfully edited.</div>
-									<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+									<button type="button" class="btn-close" @click="closeAlert('address')"></button>
 								</div>
 								<div class="row">
 									<div class="mb-3 col-md-8">
@@ -113,7 +113,7 @@
 							<form autocomplete="off" @submit.prevent="resetPassword()">
 								<div v-if="edits.passwordReset" class="alert alert-success alert-dismissible" role="alert">
 									<div>Your password has been successfully reset.</div>
-									<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+									<button type="button" class="btn-close" @click="closeAlert('resetPassword')"></button>
 								</div>
 								<div class="mb-3">
 									<label for="password" class="form-label">Password:</label>
@@ -334,7 +334,20 @@
 			},
             clearPasswordStatus() { this.passwordError = false; },
             togglePassword() { helper.methods.togglePassword(); },
-			toggleTab(tab) { helper.methods.toggleTab(tab); }
+			toggleTab(tab) { helper.methods.toggleTab(tab); },
+			closeAlert(type) {
+                switch(type) {
+                    case "account":
+                        this.edits.accountEdited = false;
+                        break;
+                    case "address":
+                        this.edits.addressEdited = false;
+                        break;
+                    case "resetPassword":
+                        this.edits.passwordReset = false;
+                        break;
+                }
+			}
         },
         computed: {
 			invalidEmail() { return validation.methods.invalidEmail(this.user.account.email); },

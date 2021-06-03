@@ -18,7 +18,7 @@
 						<div v-if="userRegistered" class="alert alert-success alert-dismissible" role="alert">
 							<div>User has been successfully registered!</div>
 							<div>Please visit your inbox and confirm your registration!</div>
-							<button type="button" class="btn-close" data-bs-dismiss="alert" @click="closeRegistrationAlert()"></button>
+							<button type="button" class="btn-close" @click="closeRegistrationAlert()"></button>
 						</div>
 						<div class="mb-3">
 							<label for="username" class="form-label">Username:</label>
