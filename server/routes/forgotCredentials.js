@@ -43,14 +43,14 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 		var isLoggedIn = request.body.isLoggedIn;
 		var query;
 		if(isLoggedIn) {
-			query = {username: username};
+			query = {"account.username": username};
 		} else {
-			var acceptanceToken = request.body.acceptanceToken;
-			query = {$and: [{username: username}, {acceptanceToken: acceptanceToken}]};
+			var confirmationToken = request.body.confirmationToken;
+			query = {$and: [{"account.username": username}, {"confirmation.confrmationToken": confirmationToken}]};
 		} 
 		bcryptjs.genSalt(10, (error, salt) => {
 			bcryptjs.hash(password, salt, (error, hashedPassword) => {
-				var update = {password: hashedPassword, acceptanceToken: ""};
+				var update = {"account.password": hashedPassword, "account.confirmationToken": ""};
 				User.findOneAndUpdate(query, update, {new: true}).then(user => {
 					if(!validation.isEmpty(user)) {
 						response.status(200).json({reset: true}).end();

@@ -104,8 +104,8 @@ function validPassword(password) {
     if(password != "" && passwordFormat.test(password)) return true;
     else return false;
 }
-function validOption(option) {
-    if(option == "password" || option == "username" || option == "confirmation") return true;
+function invalidOption(option) {
+    if(option != "password" && option != "username" && option != "confirmation") return true;
     else return false;
 }
 
@@ -132,8 +132,8 @@ module.exports = {
     invalidMessage: invalidMessage,
     invalidRating: invalidRating,
     invalidReview: invalidReview,
+    invalidOption: invalidOption,
     validUsername: validUsername,
     validEmail: validEmail,
-    validPassword: validPassword,
-    validOption: validOption
+    validPassword: validPassword
 };

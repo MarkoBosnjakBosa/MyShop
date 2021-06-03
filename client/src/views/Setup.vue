@@ -7,32 +7,34 @@
                 <div class="setupDialog">
                     <div class="setupTitle">
                         <h1>Setup</h1>
-                        <p>
+                        <div>
                             <span>Enable / disable authentication.</span>
                             <span v-if="authenticationEnabled" class="badge bg-primary text-light">Enabled</span>
                             <span v-else class="badge bg-danger text-light">Disabled</span>
-                        </p>
+                        </div>
                         <hr>
                     </div>
                     <div v-if="authenticationEnabled">
-                        <p>
+                        <div class="mb-3">
                             Disable 2fa authentication.<br>
                             SMS authentication will not be required, when logging in.
-                        </p>
+                        </div>
                         <button type="button" class="btn btn-danger" @click="setAuthentication(false)">Disable authentication</button>
                     </div>
                     <div v-else>
-                        <p>
+                        <div class="mb-3">
                             Enable 2fa authentication.<br>
                             SMS authentication will be required, when logging in.
-                        </p>
-                        <p>
+                        </div>
+                        <div class="mb-3">
                             <button type="button" class="btn btn-primary" @click="sendAuthenticationEnablingToken()">Send token</button>
-                            <small v-if="authenticationEnablingTokenSent" class="form-text authenticationEnablingTokenSent">
-                                Authentication token has been sent to your mobile phone.<br>
-                                Insert the token and enable the authentication.
-                            </small>
-                        </p>
+                            <div>
+                                <small v-if="authenticationEnablingTokenSent" class="form-text authenticationEnablingTokenSent">
+                                    Authentication token has been sent to your mobile phone.<br>
+                                    Insert the token and enable the authentication.
+                                </small>
+                            </div>
+                        </div>
                         <form autocomplete="off" @submit.prevent="setAuthentication(true)">
                             <div class="input-group">
                                 <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : authenticationEnablingTokenError}" placeholder="Authentication token" v-model="authenticationEnablingToken" @focus="clearAuthenticationEnablingTokenStatus()" @keypress="clearAuthenticationEnablingTokenStatus()"/>
@@ -122,7 +124,7 @@
 
 <style scoped>
 	.setupDialog {
-		margin: 0 auto;
+		margin: auto;
 		max-width: 450px;
 	}
 	.setupTitle {

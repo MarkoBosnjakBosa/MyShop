@@ -63,46 +63,47 @@ function validateRegistration(request, response, next) {
 
 function validateLogin(request, response, next) {
     var username = request.body.username;
-    if(validation.validUsername(username)) next();
+    if(!validation.invalidUsername(username)) next();
     else response.status(200).json({authentication: false, valid: false, allowed: false, errorFields: ["username"]}).end();
 }
 
 function validateForgotCredentials(request, response, next) {
     var email = request.body.email;
     var option = request.body.option;
-    if(validation.validEmail(email) && validation.validOption(option)) next();
+    if(!validation.invalidEmail(email) && !validation.invalidOption(option)) next();
     else response.status(200).json({sent: false}).end();
 }
 
 function validatePasswordResetting(request, response, next) {
     var username = request.body.username;
     var password = request.body.password;
-    if(validation.validUsername(username) && validation.validPassword(password)) next();
+    if(!validation.invalidUsername(username) && !validation.invalidPassword(password)) next();
     else response.status(200).json({reset: false}).end();
 }
 
 function validateAccountEdit(request, response, next) {
     var allowEdit = true;
     var errorFields = [];
-    var username = request.body.username;
-    var email = request.body.email;
+    var account = request.body.account;
+    var username = account.username;
+    var email = account.email;
     if(validation.invalidUsername(username) || validation.invalidEmail(email)) {
-        errorFields.push("email");
+        errorFields = [...errorFields, "email"];
         allowEdit = false;
     }
-    var firstName = request.body.firstName;
+    var firstName = account.firstName;
     if(validation.invalidFirstName(firstName)) {
-        errorFields.push("firstName");
+        errorFields = [...errorFields, "firstName"];
         allowEdit = false;
     }
-    var lastName = request.body.lastName;
+    var lastName = account.lastName;
     if(validation.invalidLastName(lastName)) {
-        errorFields.push("lastName");
+        errorFields = [...errorFields, "lastName"];
         allowEdit = false;
     }
-    var mobileNumber = request.body.mobileNumber;
+    var mobileNumber = account.mobileNumber;
     if(validation.invalidMobileNumber(mobileNumber)) {
-        errorFields.push("mobileNumber");
+        errorFields = [...errorFields, "mobileNumber"];
         allowEdit = false;
     }
     if(allowEdit) next();
@@ -112,30 +113,31 @@ function validateAccountEdit(request, response, next) {
 function validateAddressEdit(request, response, next) {
     var allowEdit = true;
     var errorFields = [];
-    var username = request.body.username;
-    var street = request.body.street;
+    var address = request.body.address;
+    var username = address.username;
+    var street = address.street;
     if(validation.invalidUsername(username) || validation.invalidStreet(street)) {
-        errorFields.push("street");
+        errorFields = [...errorFields, "street"];
         allowEdit = false;
     }
-    var houseNumber = request.body.houseNumber;
+    var houseNumber = address.houseNumber;
     if(validation.invalidHouseNumber(houseNumber)) {
-        errorFields.push("houseNumber");
+        errorFields = [...errorFields, "houseNumber"];
         allowEdit = false;
     }
-    var city = request.body.city;
+    var city = address.city;
     if(validation.invalidCity(city)) {
-        errorFields.push("city");
+        errorFields = [...errorFields, "city"];
         allowEdit = false;
     }
-    var zipCode = request.body.zipCode;
+    var zipCode = address.zipCode;
     if(validation.invalidZipCode(zipCode)) {
-        errorFields.push("zipCode");
+        errorFields = [...errorFields, "zipCode"];
         allowEdit = false;
     }
-    var country = request.body.country;
+    var country = address.country;
     if(validation.invalidCountry(country)) {
-        errorFields.push("country");
+        errorFields = [...errorFields, "country"];
         allowEdit = false;
     }
     if(allowEdit) next();

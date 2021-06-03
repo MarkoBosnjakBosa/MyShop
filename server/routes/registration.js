@@ -21,8 +21,8 @@ module.exports = function(app, models, bcryptjs, emailEvent, validation) {
                 bcryptjs.genSalt(10, (error, salt) => {
                     bcryptjs.hash(newUser.account.password, salt, (error, hashedPassword) => {
                         newUser.account.password = hashedPassword;
-                        newUser.save().then(user => {
-                            emailEvent.emit("sendConfirmationEmail", user.account.email, user.account.firstName, user.account.username, user.confirmation.confirmationToken);
+                        newUser.save().then(createdUser => {
+                            emailEvent.emit("sendConfirmationEmail", createdUser.account.email, createdUser.account.firstName, createdUser.account.username, createdUser.confirmation.confirmationToken);
                             response.status(200).json({registered: true}).end();
                         }).catch(error => console.log(error));
                     });
