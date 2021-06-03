@@ -8,9 +8,9 @@
                     <p>Please insert the your new password.</p>
                     <hr>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <div class="input-group">
-                        <input type="password" id="password" class="form-control" :class="{'errorField' : passwordError}" placeholder="Password" v-model="user.password" ref="first" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
+                        <input type="password" id="password" class="form-control" :class="{'errorField' : passwordError}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
                         <div class="input-group-append">
                             <button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
                         </div>
@@ -18,11 +18,11 @@
                     <small v-if="passwordError" class="form-text errorInput">Please provide a valid password!</small>
                 </div>
                 <div v-if="passwordReset" class="passwordResetSuccessful">Your password has been successfully reset!</div>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
-                <div class="form-group">
-                    <button type="button" class="btn btn-info" @click.prevent="login()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
+                <div>
+                    <button type="button" class="btn btn-dark" @click.prevent="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
                 </div>
             </form>
         </div>
@@ -30,11 +30,10 @@
 </template>
 
 <script>
-	import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
     import navigation from "../components/Navigation.vue";
 	import validation from "../components/Validation.vue";
 	import helper from "../components/Helper.vue";
+	import route from "../components/Route.vue"; 
 	var axios = require("axios");
 
 	export default {
@@ -44,12 +43,12 @@
         },
 		data() {
 			return {
-				passwordError: false,
 				user: {
 					username: "",
-					acceptanceToken: "",
+					confirmationToken: "",
 					password: ""
 				},
+				passwordError: false,
 				passwordReset: false
 			}
 		},
@@ -61,11 +60,10 @@
 					this.passwordReset = false;
 					return;
 				}
-				var body = {username: this.user.username, isLoggedIn: false, acceptanceToken: this.user.acceptanceToken, password: this.user.password};
+				var body = {username: this.user.username, isLoggedIn: false, confirmationToken: this.user.confirmationToken, password: this.user.password};
 				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/resetPassword", body).then(response => {
 					if(response.data.reset) {
 						this.passwordReset = true;
-						this.$refs.first.focus();
 						this.user.password = "";
 						this.passwordError = false;
 					} else {
@@ -74,17 +72,19 @@
 					}
 				}).catch(error => console.log(error));
 			},
-			clearPasswordStatus() { this.passwordError = false; },
-			togglePassword() {
-				helper.methods.togglePassword();
-			}
+			openLogin() { route.methods.openLogin(); },
+			clearPasswordStatus() { 
+				this.passwordError = false;
+				this.passwordReset = false;
+			},
+			togglePassword() { helper.methods.togglePassword(); }
 		},
 		computed: {
 			invalidPassword() { return validation.methods.invalidPassword(this.user.password); }
 		},
 		created() {
 			this.user.username = this.$route.query.username;
-			this.user.acceptanceToken = this.$route.query.acceptanceToken;
+			this.user.confirmationToken = this.$route.query.confirmationToken;
 		}
 	}
 </script>
