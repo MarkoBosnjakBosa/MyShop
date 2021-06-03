@@ -8,10 +8,10 @@
 					<p>Please check an option.</p>
 					<hr>
 				</div>
-                <fieldset class="form-group options">
+                <fieldset class="mb-3 options">
                     <div class="row">
-                        <legend class="col-form-label col-sm-2 pt-0">Forgot:</legend>
-                        <div class="col-sm-10">
+                        <legend class="col-form-label col-md-2 pt-0">Forgot:</legend>
+                        <div class="col-md-10">
                             <div class="form-check">
                                 <input type="radio" name="option" id="password" class="form-check-input" value="password" v-model="option" checked/>
                                 <label for="password" class="form-check-label">Password</label>
@@ -27,16 +27,16 @@
                         </div>
                     </div>
                 </fieldset>
-                <div class="form-group emailDiv">
+                <div class="mb-3 emailDiv">
                     <input type="text" id="email" class="form-control" placeholder="Email" v-model="email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
                     <small v-if="emailError" class="form-text errorInput">Please provide a valid email!</small>
                 </div>
                 <div v-if="emailSent" class="form-group emailSentSuccessful">Please visit your inbox and follow suggested steps!</div>
-                <div class="form-group submitDiv">
+                <div class="mb-3 submitDiv">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
-                <div class="form-group loginDiv">
-                    <button type="button" class="btn btn-info" @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
+                <div class="mb-3 loginDiv">
+                    <button type="button" class="btn btn-dark" @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
                 </div>
             </form>
         </div>

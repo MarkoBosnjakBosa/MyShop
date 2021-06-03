@@ -3,7 +3,7 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
     app.post("/forgotCredentials", validation.validateForgotCredentials, (request, response) => {
 		var email = request.body.email;
 		var option = request.body.option;
-		var query = {email: email}; 
+		var query = {"account.email": email}; 
 		User.findOne(query).then(user => {
 			if(!validation.isEmpty(user)) {
 				if(option == "password") {
@@ -13,12 +13,12 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 						emailEvent.emit("sendResetPasswordEmail", updatedUser.email, updatedUser.firstName, updatedUser.username, updatedUser.acceptanceToken);
 					}).catch(error => console.log(error));
 				} else if(option == "username") {
-					emailEvent.emit("sendForgotUsernameEmail", user.email, user.firstName, user.username);
+					emailEvent.emit("sendForgotUsernameEmail", user.account);
 				} else {
 					var acceptanceToken = Math.floor(100000 + Math.random() * 900000);
-					var update = {acceptanceToken: acceptanceToken};
+					var update = {"acceptance.acceptanceToken": acceptanceToken};
 					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-						emailEvent.emit("sendConfirmationEmail", updatedUser.email, updatedUser.firstName, updatedUser.username, updatedUser.acceptanceToken);
+						emailEvent.emit("sendConfirmationEmail", updatedUser.account, updatedUser.acceptance.acceptanceToken);
 					}).catch(error => console.log(error));
 				}
 				response.status(200).json({sent: true}).end();
