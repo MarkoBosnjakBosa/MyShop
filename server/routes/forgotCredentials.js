@@ -46,8 +46,6 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 			query = {"account.username": username};
 		} else {
 			var confirmationToken = request.body.confirmationToken;
-			console.log(username);
-			console.log(confirmationToken);
 			query = {$and: [{"account.username": username}, {"confirmation.confirmationToken": confirmationToken}]};
 		} 
 		bcryptjs.genSalt(10, (error, salt) => {
