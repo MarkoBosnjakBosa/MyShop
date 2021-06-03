@@ -1,4 +1,4 @@
-module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation, checkStatus) {
+module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, checkStatus) {
     const User = models.User;
     app.post("/checkUsername", (request, response) => {
 		var username = request.body.username;
@@ -72,6 +72,22 @@ module.exports = function(app, jwt, bcryptjs, models, smsEvent, validation, chec
 					}
 				} else {
 					response.status(200).json({authenticated: false}).end();
+				}
+			}
+		}).catch(error => console.log(error));
+	});
+	app.post("/sendAuthenticationToken", (request, response) => {
+		var username = request.body.username;
+		var query = {"account.username": username};
+		User.findOne(query).then(user => {
+			if(!validation.isEmpty(user)) {
+				if(user.confirmation.authenticationEnabled) {
+					var authenticationToken = Math.floor(100000 + Math.random() * 900000);
+					var update = {"confirmation.authenticationToken": authenticationToken};
+					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
+						//smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
+						response.status(200).json({sent: true}).end();
+					}).catch(error => console.log(error));
 				}
 			}
 		}).catch(error => console.log(error));

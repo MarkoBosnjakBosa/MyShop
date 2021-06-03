@@ -13,15 +13,15 @@ const fs = require("fs");
 const path = require("path");
 const EventEmitter = require("events").EventEmitter;
 const mailer = require("nodemailer");
-const Nexmo = require("nexmo");
+const Vonage = require('@vonage/server-sdk')
 const moment = require("moment");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const ejs = require("ejs");
 const pdf = require("html-pdf");
-const nexmo = new Nexmo({apiKey: process.env.NEXMO_API_KEY, apiSecret: process.env.NEXMO_API_SECRET});
+const vonage = new Vonage({apiKey: process.env.VONAGE_API_KEY, apiSecret: process.env.VONAGE_API_SECRET});
 const transporter = getTransporter();
 const emailEvent = require("./events/emailEvent.js")(EventEmitter, ejs, fs, path, transporter);
-const smsEvent = require("./events/smsEvent.js")(EventEmitter, nexmo);
+const smsEvent = require("./events/smsEvent.js")(EventEmitter, vonage);
 app.use(cors({origin: "*"}));
 app.use(express.json());
 app.use(express.static(__dirname + "/images/products"));
