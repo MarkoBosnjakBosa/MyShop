@@ -1,8 +1,8 @@
 <template>
     <div id="createProduct" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
+		<div class="d-flex" id="barsStyle">
 			<sidebar></sidebar>
-			<div id="pageDiv">
+			<div id="pageStyle">
 				<navigation></navigation>
                 <h1>Create Product</h1>
                 <form autocomplete="off" enctype="multipart/form-data" @submit.prevent="createProduct()">
@@ -15,137 +15,114 @@
                         <div id="mainTab" class="tab-pane fade active show" role="tabpanel">
                             <div v-if="productCreated" class="alert alert-success alert-dismissible" role="alert">
                                 <div>Product has been successfully created!</div>
-                                <button type="button" class="close" @click="closeCreationAlert()">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                                <button type="button" class="btn-close" @click="closeCreationAlert()"></button>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <label for="title" class="input-group-text">Title</label>
-                                    </div>
-                                    <input type="text" id="title" class="form-control" v-model="product.title" @focus="clearTitleStatus()" @keypress="clearTitleStatus()"/>
+                                    <label for="title" class="input-group-text">Title</label>
+                                    <input type="text" id="title" class="form-control" :class="{'errorField' : errors.titleError && submitting}" v-model="product.title" @focus="clearTitleStatus()" @keypress="clearTitleStatus()"/>
                                 </div>
                                 <small v-if="errors.titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <label for="description" class="input-group-text">Description</label>
-                                    </div>
-                                    <textarea id="email" class="form-control" v-model="product.description" @focus="clearDescriptionStatus()" @keypress="clearDescriptionStatus()"/>
+                                    <label for="description" class="input-group-text">Description</label>
+                                    <textarea id="description" class="form-control" :class="{'errorField' : errors.descriptionError && submitting}" v-model="product.description" @focus="clearDescriptionStatus()" @keypress="clearDescriptionStatus()"/>
                                 </div>
                                 <small v-if="errors.descriptionError && submitting" class="form-text errorInput">Please provide a valid description!</small>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <label for="price" class="input-group-text">Price</label>
-                                    </div>
-                                    <input type="text" id="price" class="form-control" v-model="product.price" @focus="clearPriceStatus()" @keypress="clearPriceStatus()"/>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">.00</span>
-                                    </div>
+                                    <label for="price" class="input-group-text">Price</label>
+                                    <input type="text" id="price" class="form-control" :class="{'errorField' : errors.priceError && submitting}" v-model="product.price" @focus="clearPriceStatus()" @keypress="clearPriceStatus()"/>
+                                    <span class="input-group-text">0.00 €</span>
                                 </div>
                                 <small v-if="errors.priceError && submitting" class="form-text errorInput">Please provide a valid price!</small>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <label for="quantity" class="input-group-text">Quantity</label>
-                                    </div>
-                                    <input type="number" id="quantity" class="form-control" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
+                                    <label for="quantity" class="input-group-text">Quantity</label>
+                                    <input type="number" id="quantity" class="form-control" :class="{'errorField' : errors.quantityError && submitting}" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
                                 </div>
                                 <small v-if="errors.quantityError && submitting" class="form-text errorInput">Please provide a valid quantity!</small>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <label for="category" class="input-group-text">Category</label>
-                                    </div>
-                                    <select id="category" class="form-control" v-model="product.category" @focus="clearCategoryStatus()" @keypress="clearCategoryStatus()">
+                                    <label for="category" class="input-group-text">Category</label>
+                                    <select id="category" class="form-control" :class="{'errorField' : errors.categoryError && submitting}" v-model="product.category" @focus="clearCategoryStatus()" @keypress="clearCategoryStatus()">
                                         <option value="" disabled selected>Select category...</option>
                                         <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
                                     </select>
                                 </div>
                                 <small v-if="errors.categoryError && submitting" class="form-text errorInput">Please provide a valid category!</small>
                             </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-info nextButton" @click="toggleTab('technicalData')">Next <i class="fas fa-angle-double-right"></i></button>
+                            <div>
+                                <button type="button" class="btn btn-dark nextButton" @click="toggleTab('technicalData')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </div>
                         <div id="technicalDataTab" class="tab-pane fade" role="tabpanel">
-                            <div class="form-group input-group">
-                                <div class="input-group-prepend">
-                                    <label for="technicalData" class="input-group-text">Technical Data</label>
-                                </div>
+                            <div class="mb-3 input-group">
+                                <label for="technicalData" class="input-group-text">Technical data</label>
                                 <select id="technicalData" class="form-control">
                                     <option value="" disabled selected>Select technical information...</option>
                                     <option v-for="technicalInformation in technicalData" :key="technicalInformation._id" :value="technicalInformation.title" :type="technicalInformation.type">{{technicalInformation.title}}</option>
                                 </select>
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-primary" @click="selectTechnicalData()">Add</button>
-                                </div>
+                                <button type="button" class="btn btn-primary" @click="selectTechnicalInformation()">Add</button>
                             </div>
-                            <table v-if="product.technicalData.length" class="table">
-                                <thead class="thead-light">
+                            <table v-if="product.technicalData.length" class="table table-hover">
+                                <thead>
                                     <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Title</th>
-                                        <th scope="col">Value</th>
-                                        <th scope="col">Action</th>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Value</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="(technicalInformation, index) in product.technicalData" :key="technicalInformation.title" :row="technicalInformation.title">
-                                        <td>{{index + 1}}</td>
-                                        <td>{{technicalInformation.title}}</td>
+                                        <th class="padding">{{index + 1}}</th>
+                                        <td class="padding">{{technicalInformation.title}}</td>
                                         <td><textarea class="form-control" rows="1" v-model="product.technicalData[index].value"></textarea></td>
-                                        <td><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
+                                        <td class="padding"><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-info previousButton" @click="toggleTab('main')"><i class="fas fa-angle-double-left"></i> Previous</button>
-                                <button type="button" class="btn btn-info nextButton" @click="toggleTab('images')">Next <i class="fas fa-angle-double-right"></i></button>
+                            <div>
+                                <button type="button" class="btn btn-dark previousButton" @click="toggleTab('main')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                                <button type="button" class="btn btn-dark nextButton" @click="toggleTab('images')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </div>
                         <div id="imagesTab" class="tab-pane fade" role="tabpanel">
                             <div v-if="errors.titleError || errors.descriptionError || errors.priceError || errors.quantityError || errors.categoryError || errors.primaryImageError" class="alert alert-danger" role="alert">Please insert missing data!</div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Primary Image</span>
-                                    </div>
-                                    <div class="custom-file">
-                                        <input type="file" id="primaryImage" name="primaryImage" class="custom-file-input" @change="selectImages($event, 'primaryImage')"/>
-                                        <label id="primaryImageLabel" for="primaryImage" class="custom-file-label">Choose image</label>
-                                    </div>
+                                    <span for="primaryImage" class="input-group-text">Primary image</span>
+                                    <input type="file" id="primaryImage" class="form-control" :class="{'errorField' : errors.primaryImageError && submitting}" @change="selectImages($event, 'primaryImage')"/>
                                 </div>
                                 <small v-if="errors.primaryImageError && submitting" class="form-text errorInput">Please provide a valid primary image!</small>
                             </div>
                             <div id="previewPrimaryImage"></div>
                             <h3>Images</h3>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div id="dropzone" @dragover.prevent="addDragOver()" @dragleave.prevent="removeDragOver()" @drop="removeDragOver()" @change="selectImages($event, 'images')">
                                 <div id="dropzoneDescription">
                                     <i class="fas fa-upload fa-2x"></i>
                                     <p>Choose more images or drag them here.</p>
                                 </div>
-                                    <input type="file" id="images" name="images[]" class="images" multiple/>
+                                    <input type="file" id="images" class="images" multiple/>
                                 </div>
-                                <small v-if="errors.imagesError && submitting" class="form-text errorInput">Please provide less than 10 images!</small>
+                                <small v-if="errors.imagesError && submitting" class="form-text errorInput">Please provide less than 10 valid images!</small>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
-                                    <div v-for="(image, index) in product.images" :key="image.name" class="col-md-3">
+                                    <div v-for="(image, index) in product.images" :key="image.name" class="col-md-3 position">
                                         <img :src="image.src" :alt="image.name" class="img-fluid rounded image"/>
                                         <i class="fas fa-times-circle removeImage" @click="removeImage(index)"></i>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-info previousButton" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                            <div>
+                                <button type="button" class="btn btn-dark previousButton" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
 						        <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
                             </div>
                         </div>
@@ -157,8 +134,6 @@
 </template>
 
 <script>
-    import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
 	import checkLogin from "../../components/CheckLogin.vue";
 	import navigation from "../../components/Navigation.vue";
 	import sidebar from "../../components/Sidebar.vue";
@@ -196,8 +171,7 @@
                     primaryImageError: false,
                     imagesError: false
                 },
-                productCreated: false,
-                editing: null
+                productCreated: false
 			}
 		},
         methods: {
@@ -210,6 +184,11 @@
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getTechnicalData").then(response => {
                     this.technicalData = response.data.technicalData;
                 }).catch(error => console.log(error));
+            },
+            loadReCaptcha() {
+                var reCaptchaScript = document.createElement("script");
+                reCaptchaScript.setAttribute("src", "https://www.google.com/recaptcha/api.js?render=" + process.env.VUE_APP_RECAPTCHA_v3_SITE_KEY);
+                document.head.appendChild(reCaptchaScript);
             },
             createProduct() {
                 this.submitting = true;
@@ -274,7 +253,6 @@
                                     temp.productCreated = true;
                                     temp.product = {title: "", description: "", price: "", quantity: "", category: "", technicalData: [], primaryImage: "", images: []};
                                     document.getElementById("primaryImage").value = "";
-                                    document.getElementById("primaryImageLabel").innerText = "";
                                     document.getElementById("previewPrimaryImage").innerText = "";
                                     document.getElementById("images").value = "";
                                     temp.errors = {titleError: false, descriptionError: false, priceError: false, quantityError: false, categoryError: false, primaryImageError: false};
@@ -300,7 +278,7 @@
             clearQuantityStatus() { this.errors.quantityError = false },
             clearCategoryStatus() { this.errors.categoryError = false },
             clearPrimaryImageStatus() { this.errors.primaryImageError = false },
-            selectTechnicalData() {
+            selectTechnicalInformation() {
                 var technicalInformationTitle = document.getElementById("technicalData").value;
                 if(technicalInformationTitle != "") {
                     var newTechnicalInformation = {title: technicalInformationTitle, value: ""};
@@ -322,7 +300,6 @@
                         fileReader.onload = function(e) {
                             var previewPrimaryImage = document.getElementById("previewPrimaryImage");
                             previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "' style='height: 150px; weight: 150px;'/>";
-                            document.getElementById("primaryImageLabel").innerText = file.name;
                         }
                         this.product.primaryImage = file;
 					    this.clearPrimaryImageStatus();
@@ -372,14 +349,11 @@
             invalidImages() { return validation.methods.invalidImages(this.product.images.length); }
         },
         mounted() {
-            var reCaptchaScript = document.createElement("script");
-			reCaptchaScript.setAttribute("src", "https://www.google.com/recaptcha/api.js?render=" + process.env.VUE_APP_RECAPTCHA_v3_SITE_KEY);
-			document.head.appendChild(reCaptchaScript);
-        },
-        created() {
-			checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isLoggedIn();
             this.getCategories();
             this.getTechnicalData();
+            this.loadReCaptcha();
+            
         }
     }
 </script>
@@ -391,9 +365,12 @@
         margin-bottom: 20px;
     }
     #mainTab, #technicalDataTab, #imagesTab {
-        margin: 0 auto;
+        margin: auto;
         max-width: 800px;
         margin-top: 20px;
+    }
+    .padding {
+        padding-top: 12px;
     }
     #previewPrimaryImage {
 		text-align: center;
@@ -441,13 +418,16 @@
     .removeImage {
         position: absolute;
         top: 0px;
-        right: 0px;
+        right: -5px;
         color: #ff0000;
         background-color: #fff;
         cursor: pointer;
     }
     #dropzone:hover, #dropzone.onDragOver {
         background: #ecf0f5;
+    }
+    .position {
+        position: relative;
     }
     .creationSuccessful {
         color: #008000;

@@ -1,25 +1,25 @@
 <template>
     <div id="categories" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
+		<div class="d-flex" id="barsStyle">
 			<sidebar></sidebar>
-			<div id="pageDiv">
+			<div id="pageStyle">
 				<navigation></navigation>
                 <h1>Products</h1>
                 <form autocomplete="off" class="productsForm" @submit.prevent="getProducts()">
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
+                    <div class="row">
+                        <div class="mb-3 col-md-4">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="mb-3 col-md-2">
                             <select id="category" class="form-control" v-model="category">
                                 <option value="" selected>Category</option>
                                 <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
                             </select>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="mb-3 col-md-2">
                             <input type="number" id="limit" min="1" class="form-control" v-model="limit"/>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="mb-3 col-md-2">
                             <select id="orderBy" class="form-control" v-model="orderBy">
                                 <option value="" selected>Order by</option>
                                 <option value="titleAsc">Title &#129045;</option>
@@ -28,33 +28,33 @@
                                 <option value="priceDesc">Price &#129047;</option>
                             </select>
                         </div>
-                        <div class="form-group col-md-1">
+                        <div class="mb-3 col-md-1">
                             <button type="submit" class="btn btn-primary md-1">Search</button>
                         </div>
-                        <div class="form-group col-md-1">
-                            <button type="button" class="btn btn-info">{{total}}</button>
+                        <div class="mb-3 col-md-1">
+                            <button type="button" class="btn btn-dark" data-toggle="tooltip" title="Total">{{total}}</button>
                         </div>
                     </div>
                 </form>
                 <table v-if="products.length" class="table">
                     <thead class="thead-light">
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Primary image</th>
-                            <th scope="col">Actions</th>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Primary image</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(product, index) in products" :key="product._id">
-                            <td>{{index + 1}}</td>
-                            <td>{{product.title}}</td>
-                            <td>{{product.price}}</td>
-                            <td>{{product.quantity}}</td>
-                            <td><img :src="renderPrimaryImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid primaryImage" @click="openModal($event)"></td>
-                            <td>
+                            <th class="padding">{{++index}}</th>
+                            <td class="padding">{{product.title}}</td>
+                            <td class="padding">{{product.price}}</td>
+                            <td class="padding">{{product.quantity}}</td>
+                            <td><img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image" @click="openModal($event)"></td>
+                            <td class="padding">
                                 <i class="fas fa-external-link-alt" @click="openEditProduct(product._id)"></i>
                                 <i class="fas fa-trash" @click="deleteProduct(product._id, product.title)"></i>
                             </td>
@@ -62,9 +62,9 @@
                     </tbody>
                 </table>
                 <div class="form-group pages">
-                    <button v-if="page - 1 > 0" type="button" class="btn btn-info page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
-                    <button type="button" class="btn btn-info page">{{page}}</button>
-                    <button v-if="page < pagesNumber" type="button" class="btn btn-info page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
+                    <button v-if="page - 1 > 0" type="button" class="btn btn-dark page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
+                    <button type="button" class="btn btn-dark page">{{page}}</button>
+                    <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
                 </div>
                 <modal></modal>
             </div>
@@ -76,6 +76,7 @@
 	import checkLogin from "../../components/CheckLogin.vue";
 	import navigation from "../../components/Navigation.vue";
 	import sidebar from "../../components/Sidebar.vue";
+    import helper from "../../components/Helper.vue"; 
     import route from "../../components/Route.vue";
     import modal from "../../components/Modal.vue";
 	var axios = require("axios");
@@ -122,12 +123,8 @@
                     }).catch(error => console.log(error));
                 }
             },
-            renderPrimaryImage(primaryImage) {
-                if(primaryImage && !(primaryImage instanceof File)) {
-                    return "data:" + primaryImage.contentType + ";base64," + (new Buffer.from(primaryImage.image)).toString("base64");
-                } else {
-                    return "";
-                }
+            renderImage(image) {
+                return helper.methods.renderImage(image);
             },
             loadPage(page) {
                 if(page > 0 && page <= this.pagesNumber) {
@@ -157,21 +154,24 @@
         margin-bottom: 20px;
     }
     .productsForm {
-        margin: 0 auto;
+        margin: auto;
 		max-width: 1000px;
+    }
+    .padding {
+        padding-top: 20px;
     }
     tbody .fas {
         cursor: pointer;
         margin-right: 5px;
     }
-    .primaryImage {
+    .image {
         height: 50px;
         width: 50px;
         cursor: pointer;
     }
     .pages {
         text-align: center;
-        margin: 0 auto;
+        margin: auto;
     }
     .page {
         margin-left: 10px;

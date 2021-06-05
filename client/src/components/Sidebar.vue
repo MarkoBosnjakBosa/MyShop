@@ -1,5 +1,5 @@
 <template>
-    <div id="sidebarDiv" class="bg-light border-right">
+    <div id="sidebarStyle" class="bg-light border-right">
         <div class="heading">
             <span v-if="userData.isAdmin">MyShop Admin</span>
             <span v-else>MyShop</span>    
@@ -76,51 +76,51 @@
 </script>
 
 <style>
-#barsDiv {
-    overflow-x: hidden;
-}
-#sidebarDiv {
-    min-height: 100vh;
-    margin-left: -15rem;
-    -webkit-transition: margin .25s ease-out;
-    -moz-transition: margin .25s ease-out;
-    -o-transition: margin .25s ease-out;
-    transition: margin .25s ease-out;
-}
-#sidebarDiv .heading {
-    padding: 0.875rem 1.25rem;
-    font-size: 1.2rem;
-}
-#sidebarDiv .list {
-    width: 15rem;
-    padding-left: 0px;
-}
-#pageDiv {
-    min-width: 100vw;
-}
-#barsDiv.toggled #sidebarDiv {
-    margin-left: 0;
-}
-.list-group-item {
-    display: inline-block;
-}
-li {
-    cursor: pointer;
-}
-.categoryIcon {
-    float: left;
-    width: 10%;
-}
-@media (min-width: 768px) {
-    #sidebarDiv {
+    #barsStyle {
+        overflow-x: hidden;
+    }
+    #sidebarStyle {
+        min-height: 100vh;
+        margin-left: -15rem;
+        -webkit-transition: margin .25s ease-out;
+        -moz-transition: margin .25s ease-out;
+        -o-transition: margin .25s ease-out;
+        transition: margin .25s ease-out;
+    }
+    #sidebarStyle .heading {
+        padding: 0.875rem 1.25rem;
+        font-size: 1.2rem;
+    }
+    #sidebarStyle .list {
+        width: 15rem;
+        padding-left: 0px;
+    }
+    #pageStyle {
+        min-width: 100vw;
+    }
+    #barsStyle.toggled #sidebarDiv {
         margin-left: 0;
     }
-    #pageDiv {
-        min-width: 0;
-        width: 100%;
+    .list-group-item {
+        display: inline-block;
     }
-    #barsDiv.toggled #sidebarDiv {
-        margin-left: -15rem;
+    li {
+        cursor: pointer;
     }
-}
+    .categoryIcon {
+        float: left;
+        width: 10%;
+    }
+    @media (min-width: 768px) {
+        #sidebarStyle {
+            margin-left: 0;
+        }
+        #pageStyle {
+            min-width: 0;
+            width: 100%;
+        }
+        #barsStyle.toggled #sidebarStyle {
+            margin-left: -15rem;
+        }
+    }
 </style>

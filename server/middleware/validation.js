@@ -149,12 +149,12 @@ function validateCategoryCreation(request, response, next) {
     var errorFields = [];
     var title = request.body.title;
     if(validation.invalidTitle(title)) {
-        errorFields.push("title");
+        errorFields = [...errorFields, "title"];
         allowCreation = false;
     }
     var icon = request.body.icon;
     if(validation.invalidIcon(icon)) {
-        errorFields.push("icon");
+        errorFields = [...errorFields, "icon"];
         allowCreation = false;
     }
     if(allowCreation) next();
@@ -187,37 +187,37 @@ function validateProductCreation(request, response, next) {
     var errorFields = [];
     var title = request.body.title;
     if(validation.invalidTitle(title)) {
-        errorFields.push("title");
+        errorFields = [...errorFields, "title"];
         allowCreation = false;
     }
     var description = request.body.description;
     if(validation.invalidDescription(description)) {
-        errorFields.push("description");
+        errorFields = [...errorFields, "description"];
         allowCreation = false;
     }
     var price = request.body.price;
     if(validation.invalidPrice(price)) {
-        errorFields.push("price");
+        errorFields = [...errorFields, "price"];
         allowCreation = false;
     }
     var quantity = request.body.quantity;
     if(validation.invalidQuantity(quantity)) {
-        errorFields.push("quantity");
+        errorFields = [...errorFields, "quantity"];
         allowCreation = false;
     }
     var category = request.body.category;
     if(validation.invalidCategory(category)) {
-        errorFields.push("category");
+        errorFields = [...errorFields, "category"];
         allowCreation = false;
     }
     var primaryImage = request.files["primaryImage"][0];
     if(validation.invalidPrimaryImage(primaryImage) || request.extensionValidationError) {
-        errorFields.push("primaryImage");
+        errorFields = [...errorFields, "primaryImage"];
         allowCreation = false;
     }
     var reCaptchaToken = request.body.reCaptchaToken;
-    if(validation.invalidReCaptchaToken(reCaptcha_v3_SecretKey, axios, reCaptchaToken, request.connection.remoteAddress)) {
-        errorFields.push("reCaptchaToken");
+    if(validation.invalidReCaptchaToken(reCaptcha_v3_SecretKey, reCaptchaToken, request.connection.remoteAddress)) {
+        errorFields = [...errorFields, "reCaptchaToken"];
         allowCreation = false;
     }
     if(allowCreation) next();
@@ -229,29 +229,29 @@ function validateProductEdit(request, response, next) {
     var errorFields = [];
     var type = request.body.type;
     if(type == "main") {
-        var title = "";
+        var title = request.body.title;
         if(validation.invalidTitle(title)) {
-            errorFields.push("title");
+            errorFields = [...errorFields, "title"];
             allowEdit = false;
         }
         var description = request.body.description;
         if(validation.invalidDescription(description)) {
-            errorFields.push("description");
+            errorFields = [...errorFields, "description"];
             allowEdit = false;
         }
         var price = request.body.price;
         if(validation.invalidPrice(price)) {
-            errorFields.push("price");
+            errorFields = [...errorFields, "price"];
             allowEdit = false;
         }
         var quantity = request.body.quantity;
         if(validation.invalidQuantity(quantity)) {
-            errorFields.push("quantity");
+            errorFields = [...errorFields, "quantity"];
             allowEdit = false;
         }
         var category = request.body.category;
         if(validation.invalidCategory(category)) {
-            errorFields.push("category");
+            errorFields = [...errorFields, "category"];
             allowEdit = false;
         }
         if(allowEdit) next();
