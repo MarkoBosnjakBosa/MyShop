@@ -305,7 +305,7 @@
 			clearReCaptchaTokenStatus() { this.errors.reCaptchaTokenError = false; },
             togglePassword() { helper.methods.togglePassword(); },
 			toggleTab(tab) { helper.methods.toggleTab(tab); },
-			closeRegistrationAlert() { this.userCreated = false; }
+			closeRegistrationAlert() { this.userRegistered = false; }
         },
         computed: {
 			invalidUsername() { return validation.methods.invalidUsername(this.user.account.username); },

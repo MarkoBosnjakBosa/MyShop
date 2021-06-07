@@ -8,7 +8,7 @@ module.exports = function(app, models, bcryptjs, emailEvent, validation) {
         User.findOne(query).then(user => {
             if(!validation.isEmpty(user)) {
                 var error = {registered: false, alreadyExists: true};
-                if(user.account.username == username) {
+                if(user.account.username == account.username) {
                     error.field = "username";
                 } else {
                     error.field = "email";
@@ -22,7 +22,10 @@ module.exports = function(app, models, bcryptjs, emailEvent, validation) {
                     bcryptjs.hash(newUser.account.password, salt, (error, hashedPassword) => {
                         newUser.account.password = hashedPassword;
                         newUser.save().then(createdUser => {
-                            emailEvent.emit("sendConfirmationEmail", createdUser.account.email, createdUser.account.firstName, createdUser.account.username, createdUser.confirmation.confirmationToken);
+                            emailEvent.emit("sendConfirmationEmail", createdUser.account, createdUser.confirmation.confirmationToken);
+                            setTimeout(function() {
+                                deleteConfirmationToken(createdUser.account.username);    
+                            }, 2 * 60 * 1000);
                             response.status(200).json({registered: true}).end();
                         }).catch(error => console.log(error));
                     });
@@ -33,8 +36,6 @@ module.exports = function(app, models, bcryptjs, emailEvent, validation) {
     app.get("/confirm/registration", (request, response) => {
 		var username = request.query.username;
 		var confirmationToken = request.query.confirmationToken;
-        console.log(username);
-        console.log(confirmationToken);
 		var query = {$and: [{"account.username": username}, {"confirmation.confirmationToken": confirmationToken}]}; 
 		var update = {"confirmation.confirmed": true, "confirmation.confirmationToken": ""};
 		User.findOneAndUpdate(query, update, {new: true}).then(user => {
@@ -46,6 +47,11 @@ module.exports = function(app, models, bcryptjs, emailEvent, validation) {
 		}).catch(error => console.log(error));
 	});
 
+    function deleteConfirmationToken(username) {
+        var query = {"account.username": username};
+        var update = {"confirmation.confirmationToken": ""};
+        User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
+    }
     function getUserScheme(User, account, address, confirmation) {
 		return new User({account: account, address: address, confirmation: confirmation});
 	}
