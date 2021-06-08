@@ -39,7 +39,16 @@ module.exports = function(app, models, smsEvent) {
         var update = {"confirmation.authenticationEnablingToken": authenticationEnablingToken};
         User.findOneAndUpdate(query, update, {new: true}).then(user => {
             //smsEvent.emit("sendAuthenticationEnablingToken", user.account.mobileNumber, user.account.firstName, user.confirmation.authenticationEnablingToken);
+            setTimeout(function() {
+				deleteAuthenticationToken(user.account.username);    
+			}, 5 * 60 * 1000);
             response.status(200).json({authenticationEnablingTokenSent: true}).end();
         }).catch(error => console.log(error));
     });
+
+    function deleteAuthenticationToken(username) {
+        var query = {"account.username": username};
+        var update = {"confirmation.authenticationEnablingToken": ""};
+        User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
+    }
 }

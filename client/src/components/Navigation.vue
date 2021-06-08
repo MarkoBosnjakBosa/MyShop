@@ -18,7 +18,7 @@
                     </li>
                     <li v-if="userData.userLoggedIn" class="nav-item dropdown">
                         <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="far fa-user-circle"></i></a>
-                        <ul class="dropdown-menu" aria-labelledby="userOptions">
+                        <ul class="dropdown-menu" :class="userData.isAdmin ? 'adminDropdownMenu' : 'userDropdownMenu'" aria-labelledby="userOptions">
                             <li><a class="dropdown-item" href="#" @click="openProfile()">Profile</a></li>
                             <li><a class="dropdown-item" href="#" @click="openSetup()">Authentication</a></li>
                             <li><a v-if="!userData.isAdmin" class="dropdown-item" href="#" @click="openInvoices()">Invoices</a></li>
@@ -108,7 +108,11 @@
     #toggleSidebar {
         margin-left: 5px;
     }
-    .dropdown-menu {
+    .adminDropdownMenu {
+        left: -115px;
+        margin-top: 8px;
+    }
+    .userDropdownMenu {
         left: -40px;
         margin-top: 8px;
     }

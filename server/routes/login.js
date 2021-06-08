@@ -31,6 +31,9 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, chec
 									var update = {"confirmation.authenticationToken": authenticationToken};
 									User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
 										//smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
+										setTimeout(function() {
+											deleteAuthenticationToken(updatedUser.account.username);    
+										}, 5 * 60 * 1000);
 										response.status(200).json({authentication: true, username: updatedUser.account.username}).end();
 									}).catch(error => console.log(error));
 								} else {
@@ -86,6 +89,9 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, chec
 					var update = {"confirmation.authenticationToken": authenticationToken};
 					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
 						//smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
+						setTimeout(function() {
+							deleteAuthenticationToken(updatedUser.account.username);    
+						}, 5 * 60 * 1000);
 						response.status(200).json({sent: true}).end();
 					}).catch(error => console.log(error));
 				}
@@ -95,4 +101,10 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, chec
 	app.get("/checkStatus", checkStatus.isLoggedIn, (request, response) => {
 		response.status(200).json({loggedIn: true}).end();
 	});
+
+	function deleteAuthenticationToken(username) {
+        var query = {"account.username": username};
+        var update = {"confirmation.authenticationToken": ""};
+        User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
+    }
 }

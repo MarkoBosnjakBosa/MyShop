@@ -1,8 +1,8 @@
 <template>
 	<div id="setup" class="container-fluid">
-        <div class="d-flex" id="barsDiv">
+        <div class="d-flex" id="barsStyle">
 			<sidebar></sidebar>
-            <div id="pageDiv">
+            <div id="pageStyle">
                 <navigation></navigation>
                 <div class="setupDialog">
                     <div class="setupTitle">
@@ -52,8 +52,6 @@
 </template>
 
 <script>
-	import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
     import checkLogin from "../components/CheckLogin.vue";
 	import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";  

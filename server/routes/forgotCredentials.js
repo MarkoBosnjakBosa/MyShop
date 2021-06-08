@@ -11,6 +11,9 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 					var update = {"confirmation.confirmationToken": confirmationToken};
 					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
 						emailEvent.emit("sendResetPasswordEmail", updatedUser.account, updatedUser.confirmation.confirmationToken);
+						setTimeout(function() {
+							deleteConfirmationToken(user.account.username);    
+						}, 5 * 60 * 1000);
 					}).catch(error => console.log(error));
 				} else if(option == "username") {
 					emailEvent.emit("sendForgotUsernameEmail", user.account);
@@ -34,6 +37,9 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
         var update = {"confirmation.confirmationToken": confirmationToken};
         User.findOneAndUpdate(query, update, {new: true}).then(user => {
             emailEvent.emit("sendConfirmationEmail", user.account, user.confirmation.confirmationToken);
+			setTimeout(function() {
+				deleteConfirmationToken(user.account.username);    
+			}, 5 * 60 * 1000);
             response.status(200).json({emailSent: true}).end();
         })
     });
@@ -61,4 +67,10 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 			});
 		});
 	});
+
+	function deleteConfirmationToken(username) {
+        var query = {"account.username": username};
+        var update = {"confirmation.confirmationToken": ""};
+        User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
+    }
 }

@@ -25,7 +25,7 @@ module.exports = function(app, models, bcryptjs, emailEvent, validation) {
                             emailEvent.emit("sendConfirmationEmail", createdUser.account, createdUser.confirmation.confirmationToken);
                             setTimeout(function() {
                                 deleteConfirmationToken(createdUser.account.username);    
-                            }, 2 * 60 * 1000);
+                            }, 5 * 60 * 1000);
                             response.status(200).json({registered: true}).end();
                         }).catch(error => console.log(error));
                     });
