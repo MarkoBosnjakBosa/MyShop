@@ -12,6 +12,9 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 	emailEvent.on("sendInvoiceEmail", (account, confirmationToken) => {
         sendInvoiceEmail(account, confirmationToken); 
     });
+	emailEvent.on("sendContactEmail", (contact) => {
+        sendContactEmail(contact); 
+    });
 
 	function sendResetPasswordEmail(account, confirmationToken) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/resetPassword.html"), "utf-8"));
@@ -54,6 +57,18 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 			to: account.email,
 			subject: "Invoice " + invoiceNumber,
 			attachments: [{filename: "invoice_" + invoiceNumber, path: path.join(__dirname, "../invoices/invoice_" + invoiceNumber + ".pdf"), contentType: "application/pdf"}],
+			html: html
+		};
+		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
+	}
+	function sendContactEmail(contact) {
+		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/contact.html"), "utf-8"));
+		console.log(contact);
+		var html = compiledHtml({firstName: contact.firstName, lastName: contact.lastName});
+		var mailOptions = {
+			from: process.env.EMAIL_USER,
+			to: contact.email,
+			subject: "Contact",
 			html: html
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));

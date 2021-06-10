@@ -133,7 +133,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div>
                                 <button type="button" class="btn btn-dark previousButton" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
                                 <button type="button" class="btn btn-dark nextButton" @click="toggleTab('delete')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>

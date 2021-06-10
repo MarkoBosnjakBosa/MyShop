@@ -63,7 +63,7 @@
                 this.userData = checkLogin.methods.getUserData();
             },
             checkRoutePath() {
-                if(this.routePath != "/login" && this.routePath != "/authentication" && this.routePath != "/registration" && this.routePath != "/confirm/registration" && this.routePath != "/forgot/credentials" && this.routePath != "/reset/password") return true;
+                if(this.routePath != "/login" && this.routePath != "/authentication" && this.routePath != "/registration" && this.routePath != "/confirm/registration" && this.routePath != "/forgot/credentials" && this.routePath != "/reset/password" && this.routePath != "/contact") return true;
                 else return false;
             },
             openHome() {

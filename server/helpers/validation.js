@@ -89,6 +89,13 @@ function invalidRating(rating) {
 function invalidReview(review) {
     return review == "";
 }
+function invalidOption(option) {
+    if(option != "password" && option != "username" && option != "confirmation") return true;
+    else return false;
+}
+function invalidMessage(message) {
+    return message == "";
+}
 function validUsername(username) {
     var usernameFormat = /^[a-z0-9_.-]*$/;
     if(username != "" && usernameFormat.test(username)) return true;
@@ -102,10 +109,6 @@ function validEmail(email) {
 function validPassword(password) {
     var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     if(password != "" && passwordFormat.test(password)) return true;
-    else return false;
-}
-function invalidOption(option) {
-    if(option != "password" && option != "username" && option != "confirmation") return true;
     else return false;
 }
 
@@ -133,6 +136,7 @@ module.exports = {
     invalidRating: invalidRating,
     invalidReview: invalidReview,
     invalidOption: invalidOption,
+    invalidMessage: invalidMessage,
     validUsername: validUsername,
     validEmail: validEmail,
     validPassword: validPassword

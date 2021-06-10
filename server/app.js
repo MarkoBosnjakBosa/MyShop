@@ -37,6 +37,7 @@ const products = require("./routes/admin/products.js")(app, models, uploadImages
 const homeSettings = require("./routes/admin/homeSettings.js")(app, models, uploadImages, fs, path, validation);
 const checkout = require("./routes/checkout.js")(app, models, stripe, moment, fs, path, ejs, pdf, emailEvent);
 const invoices = require("./routes/invoices.js")(app, models, path);
+const contact = require("./routes/contact.js")(app, models, emailEvent, validation);
 
 mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);

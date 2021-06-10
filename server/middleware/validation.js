@@ -293,6 +293,34 @@ function validateReviewEdit(request, response, next) {
     else response.status(200).json({edited: false}).end();
 }
 
+function validateContact(request, response, next) {
+    var allowSubmission = true;
+    var errorFields = [];
+    var contact = request.body.contact;
+    var firstName = contact.firstName;
+    if(validation.invalidFirstName(firstName)) {
+        errorFields = [...errorFields, "firstName"];
+        allowSubmission = false;
+    }
+    var lastName = contact.lastName;
+    if(validation.invalidLastName(lastName)) {
+        errorFields = [...errorFields, "lastName"];
+        allowSubmission = false;
+    }
+    var email = contact.email;
+    if(validation.invalidEmail(email)) {
+        errorFields = [...errorFields, "email"];
+        allowSubmission = false;
+    }
+    var message = contact.message;
+    if(validation.invalidMessage(message)) {
+        errorFields = [...errorFields, "message"];
+        allowSubmission = false;
+    }
+    if(allowSubmission) next();
+    else response.status(200).json({submitted: false, errorFields: errorFields}).end();
+}
+
 function validPassword(password) {
     var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     if(password != "" && passwordFormat.test(password)) return true;
@@ -319,6 +347,7 @@ module.exports = {
     validateRating: validateRating,
     validateReviewWriting: validateReviewWriting,
     validateReviewEdit: validateReviewEdit,
+    validateContact: validateContact,
     validPassword: validPassword,
     isEmpty: isEmpty
 };

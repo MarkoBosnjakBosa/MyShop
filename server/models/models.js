@@ -60,6 +60,12 @@ module.exports = function(mongoose) {
 		message: {type: String},
 		images: [{name: String, contentType: String, image: Buffer}]
 	});
+	const contactScheme = new mongoose.Schema({
+		firstName: {type: String},
+		lastName: {type: String},
+		email: {type: String},
+		message: {type: String}
+	});
     const models = {
 		User: mongoose.model("User", userScheme),
 		Product: mongoose.model("Product", productScheme),
@@ -67,7 +73,8 @@ module.exports = function(mongoose) {
 		TechnicalInformation: mongoose.model("TechnicalInformation", technicalInformationScheme),
 		Category: mongoose.model("Category", categoryScheme),
 		Invoice: mongoose.model("Invoice", invoiceScheme),
-		HomeSettings: mongoose.model("HomeSettings", homeSettingsScheme)
+		HomeSettings: mongoose.model("HomeSettings", homeSettingsScheme),
+		Contact: mongoose.model("Contact", contactScheme)
 	}
 	return models;
 }
