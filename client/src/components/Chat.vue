@@ -12,14 +12,16 @@
             </div>
             <hr>
             <div class="messages">
-                <div class="message myMessage">
-                    12334543543
+                <div v-for="message in messages" :key="message._id" class="message myMessage">
+                    {{message.message}}
                 </div>
             </div>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="New message">
-                <button type="button" class="btn btn-primary">Submit</button>
-            </div>
+            <form autocomplete="off" @submit.prevent="sendMessage()">
+                <div class="input-group">
+                    <input type="text" class="form-control" :class="{'errorField' : newMessageError}" placeholder="New message..." v-model="newMessage" ref="first" @focus="clearNewMessageStatus()" @keypress="clearNewMessageStatus()">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
         </div>
     </div>
 </template>
@@ -33,9 +35,8 @@
         data() {
             return {
                 socket: io(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT, {transports: ["websocket", "polling", "flashsocket"]}),
-                baseUrl: process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT,
+                username: this.$store.getters.getUser,
                 isAdmin: false,
-                chatroomId: "",
                 messages: [],
                 editing: null,
                 onlineUsers: {},
@@ -49,6 +50,7 @@
                 var chatBox = document.getElementById("chatBox");
                 if (chatBox.style.display == "none") {
                     chatBox.style.display = "block";
+                    this.joinChat();
                 } else {
                     chatBox.style.display = "none";
                 }
@@ -58,14 +60,15 @@
                 chatBox.style.display = "none";
             },
             joinChat() {
-                this.socket.emit("userJoining", this.chatroomId, this.username);
-                this.socket.on("userJoined", data => {
-                    this.messages = data.messages;
-                    this.onlineUsers = Object.fromEntries(Object.entries(data.users).filter(([socketId, username]) => username != this.username));
-                    this.currentChatroom = data.currentChatroom;
-                    this.socket.emit("newUser", this.chatroomId, this.username);
-                });
-                this.listen();
+                if(this.username != "") {
+                    this.socket.emit("userJoining", this.username);
+                    this.socket.on("userJoined", data => {
+                        this.messages = data.messages;
+                        //this.onlineUsers = Object.fromEntries(Object.entries(data.users).filter(([socketId, username]) => username != this.username));
+                        //this.socket.emit("newUser", this.chatroomId, this.username);
+                    });
+                    this.listen();
+                }
             },
             listen() {
                 this.socket.on("userOnline", user => {
@@ -77,7 +80,7 @@
                     delete this.onlineUsers[socketId];
                     this.typing = "";
                 });
-                this.socket.on("newMessage", message => this.messages.push(message));
+                this.socket.on("newMessage", message => this.messages = [...this.messages, message]);
                 this.socket.on("editMessage", editedMessage => {
                     this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
                     this.editing = null;
@@ -87,13 +90,14 @@
                 this.socket.on("stopTyping", () => this.typing = "");
             },
             sendMessage() {
+                console.log("123");
                 this.clearNewMessageStatus();
                 if(this.invalidNewMessage) {
                     this.newMessageError = true;
                     return;
                 }
-                this.socket.emit("newMessage", this.chatroomId, this.newMessage);
-                this.$refs.first.focus();
+                console.log("fsdfsd");
+                this.socket.emit("newMessage", this.username, this.newMessage);
                 this.newMessage = "";
                 this.newMessageError = false;
             },
@@ -135,7 +139,7 @@
             }
         },
         computed: {
-            invalidNewMessage() { return this.newMessage === ""; }
+            invalidNewMessage() { return this.newMessage == ""; }
         },
         mounted() {
         }
@@ -185,5 +189,9 @@
     .otherMessage {
         background-color: #9999ff;
         color: #fff;
+    }
+    .errorField {
+        border: 1px solid #ff0000;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;
     }
 </style>

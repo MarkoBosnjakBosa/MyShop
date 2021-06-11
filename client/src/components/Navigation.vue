@@ -109,11 +109,11 @@
         margin-left: 5px;
     }
     .adminDropdownMenu {
-        left: -115px;
-        margin-top: 8px;
+        left: -115px !important;
+        margin-top: 8px !important;
     }
     .userDropdownMenu {
-        left: -40px;
-        margin-top: 8px;
+        left: -40px !important;
+        margin-top: 8px !important;
     }
 </style>

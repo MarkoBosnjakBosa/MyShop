@@ -66,6 +66,12 @@ module.exports = function(mongoose) {
 		email: {type: String},
 		message: {type: String}
 	});
+	const messageScheme = new mongoose.Schema({
+		chatroomId: {type: String},
+		username: {type: String},
+		message: {type: String},
+		date: {type: String}
+	});
     const models = {
 		User: mongoose.model("User", userScheme),
 		Product: mongoose.model("Product", productScheme),
@@ -74,7 +80,8 @@ module.exports = function(mongoose) {
 		Category: mongoose.model("Category", categoryScheme),
 		Invoice: mongoose.model("Invoice", invoiceScheme),
 		HomeSettings: mongoose.model("HomeSettings", homeSettingsScheme),
-		Contact: mongoose.model("Contact", contactScheme)
+		Contact: mongoose.model("Contact", contactScheme),
+		Message: mongoose.model("Message", messageScheme)
 	}
 	return models;
 }
