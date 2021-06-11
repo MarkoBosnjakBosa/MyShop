@@ -40,6 +40,7 @@ const homeSettings = require("./routes/admin/homeSettings.js")(app, models, uplo
 const checkout = require("./routes/checkout.js")(app, models, stripe, moment, fs, path, ejs, pdf, emailEvent);
 const invoices = require("./routes/invoices.js")(app, models, path);
 const contact = require("./routes/contact.js")(app, models, emailEvent, validation);
+const chat = require("./chat/chat.js")(io, models);
 
 mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);

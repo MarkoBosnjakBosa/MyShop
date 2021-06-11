@@ -12,7 +12,9 @@
             </div>
             <hr>
             <div class="messages">
-
+                <div class="message myMessage">
+                    12334543543
+                </div>
             </div>
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="New message">
@@ -165,10 +167,23 @@
     }
     .messages {
         width: 100%;
-        min-height: 200px;
+        min-height: 300px;
         border: 1px solid #000;
         border-radius: 10px;
         background-color: #fff;
         margin-bottom: 10px;
+    }
+    .message {
+        margin: 5px;
+        padding: 5px;
+        border-radius: 10px;
+    }
+    .myMessage {
+        background-color: #f2f2f2;
+        text-align: right;
+    }
+    .otherMessage {
+        background-color: #9999ff;
+        color: #fff;
     }
 </style>
