@@ -18,7 +18,7 @@
             </div>
             <form autocomplete="off" @submit.prevent="sendMessage()">
                 <div class="input-group">
-                    <input type="text" class="form-control" :class="{'errorField' : newMessageError}" placeholder="New message..." v-model="newMessage" ref="first" @focus="clearNewMessageStatus()" @keypress="clearNewMessageStatus()">
+                    <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+    import validation from "../components/Validation.vue"; 
     import io from "socket.io-client";
     var axios = require("axios");
 
@@ -40,8 +41,8 @@
                 messages: [],
                 editing: null,
                 onlineUsers: {},
-                newMessageError: false,
-                newMessage: "",
+                messageError: false,
+                message: "",
                 typing: "",
             }
         },
@@ -80,7 +81,7 @@
                     delete this.onlineUsers[socketId];
                     this.typing = "";
                 });
-                this.socket.on("newMessage", message => this.messages = [...this.messages, message]);
+                this.socket.on("sendMessage", message => this.messages = [...this.messages, message]);
                 this.socket.on("editMessage", editedMessage => {
                     this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
                     this.editing = null;
@@ -90,16 +91,14 @@
                 this.socket.on("stopTyping", () => this.typing = "");
             },
             sendMessage() {
-                console.log("123");
-                this.clearNewMessageStatus();
-                if(this.invalidNewMessage) {
-                    this.newMessageError = true;
+                this.clearMessageStatus();
+                if(this.invalidMessage) {
+                    this.messageError = true;
                     return;
                 }
-                console.log("fsdfsd");
-                this.socket.emit("newMessage", this.username, this.newMessage);
-                this.newMessage = "";
-                this.newMessageError = false;
+                this.socket.emit("sendMessage", this.username, this.message);
+                this.message = "";
+                this.messageError = false;
             },
             enableEditing(message) {
                 this.cachedMessage = Object.assign({}, message);
@@ -127,10 +126,10 @@
             scrollDown() {
                 window.scroll({top: document.body.scrollHeight, behavior: "smooth"});
             },
-            clearNewMessageStatus() { this.newMessageError = false; },
+            clearMessageStatus() { this.messageError = false; },
         },
         watch: {
-            newMessage(value) {
+            message(value) {
                 if(value) {
                     this.socket.emit("typing", this.chatroomId, this.username);
                 } else {
@@ -139,7 +138,7 @@
             }
         },
         computed: {
-            invalidNewMessage() { return this.newMessage == ""; }
+            invalidMessage() { return validation.methods.invalidMessage(this.message); }
         },
         mounted() {
         }
@@ -172,8 +171,10 @@
     .messages {
         width: 100%;
         min-height: 300px;
+        overflow-y: scroll;
         border: 1px solid #000;
-        border-radius: 10px;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
         background-color: #fff;
         margin-bottom: 10px;
     }

@@ -14,14 +14,14 @@ module.exports = function(io, models, moment) {
                 socket.emit("userJoined", {messages: messages, users: chatrooms[username].users});
             }).catch(error => console.log(error));
         });
-        socket.on("newMessage", (chatroomId, message) => {
+        socket.on("sendMessage", (chatroomId, message) => {
             if(chatroomId && message) {
                 var dateFormat = "DD.MM.YYYY HH:mm";
                 var date = moment().format(dateFormat);
                 var username = chatrooms[chatroomId].users[socket.id];
                 var newMessage = getMessageScheme(Message, chatroomId, username, message, date);
                 newMessage.save().then(message => {
-                    io.sockets.in(chatroomId).emit("newMessage", message);
+                    io.sockets.in(chatroomId).emit("sendMessage", message);
                 }).catch(error => console.log(error));
             }
         });
