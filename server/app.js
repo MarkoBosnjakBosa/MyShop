@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
 const cors = require("cors");
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
@@ -50,7 +52,7 @@ database.on("open", function() {
     console.log("Connection to the database has been successfully established!");
 });
 
-app.listen(process.env.SERVER_PORT, function() {
+http.listen(process.env.SERVER_PORT, function() {
     console.log("MyShop app listening on " + process.env.BASE_URL + process.env.SERVER_PORT + "!");
 });
 

@@ -1,8 +1,8 @@
 <template>
     <div id="home" class="container-fluid">
-        <div class="d-flex" id="barsDiv">
+        <div class="d-flex" id="barsStyle">
             <sidebar></sidebar>
-			<div id="pageDiv">
+			<div id="pageStyle">
 				<navigation></navigation>
                 <div id="imagesCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
@@ -24,23 +24,24 @@
                     <h1>MyShop</h1>
                     <h3 v-html="homeSettings.message"></h3>
                 </div>
+                <chat></chat>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import "bootstrap";
-    import "bootstrap/dist/css/bootstrap.min.css";
     import navigation from "../components/Navigation.vue"; 
     import sidebar from "../components/Sidebar.vue";
+    import chat from "../components/Chat.vue";
     var axios = require("axios");
 
     export default {
         name: "home",
         components: {
             navigation,
-            sidebar
+            sidebar,
+            chat
         },
         data() {
             return {
