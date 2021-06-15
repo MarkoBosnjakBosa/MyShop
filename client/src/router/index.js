@@ -14,6 +14,7 @@ import TechnicalData from "../views/admin/TechnicalData.vue";
 import Products from "../views/admin/Products.vue";
 import CreateProduct from "../views/admin/CreateProduct.vue";
 import EditProduct from "../views/admin/EditProduct.vue";
+import Chats from "../views/admin/Chats.vue";
 import Shop from "../views/Shop.vue";
 import ShopCategory from "../views/ShopCategory.vue";
 import ViewProduct from "../views/ViewProduct.vue";
@@ -42,6 +43,7 @@ const routes = [
 	{path: "/admin/products", name: "Products", component: Products},
 	{path: "/admin/create/product", name: "CreateProduct", component: CreateProduct},
 	{path: "/admin/edit/product/:productId", name: "EditProduct", component: EditProduct},
+	{path: "/admin/chats", name: "Chats", component: Chats},
 	{path: "/shop", name: "Shop", component: Shop},
 	{path: "/shop/category/:categoryId", name: "ShopCategory", component: ShopCategory},
 	{path: "/view/product/:productId", name: "ViewProduct", component: ViewProduct},

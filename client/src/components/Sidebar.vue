@@ -5,11 +5,12 @@
             <span v-else>MyShop</span>    
         </div>
         <ul v-if="userData.isAdmin" class="list list-group-flush">
-            <li class="list-group-item list-group-item-action bg-light" @click="openHomeSettings()">Home Settings</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openProducts()">Products</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openCreateProduct()">Create Product</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openCategories()">Categories</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openTechnicalData()">Technical Data</li>
+            <li class="list-group-item list-group-item-action bg-light" @click="openHomeSettings()">Home Settings</li>
+            <li class="list-group-item list-group-item-action bg-light" @click="openChats()">Chats</li>
         </ul>
         <ul v-else class="list list-group-flush">
             <li class="list-group-item list-group-item-action bg-light" @click="openShop()"><div class="categoryIcon"><i class="fas fa-search"></i></div>Shop</li>
@@ -44,9 +45,6 @@
                     this.categories = response.data.categories;
                 }).catch(error => console.log(error));
             },
-            openHomeSettings() {
-                route.methods.openHomeSettings();
-            },
             openProducts() {
                 route.methods.openProducts();
             },
@@ -58,6 +56,12 @@
             },
             openTechnicalData() {
                 route.methods.openTechnicalData();
+            },
+            openHomeSettings() {
+                route.methods.openHomeSettings();
+            },
+            openChats() {
+                route.methods.openChats();
             },
             openShop() {
                 route.methods.openShop();

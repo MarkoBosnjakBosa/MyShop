@@ -35,9 +35,6 @@
             openAuthentication() {
                 router.push("/authentication");
             },
-            openHomeSettings() {
-                router.push("/admin/home/settings");
-            },
             openProducts() {
                 router.push("/admin/products");
             },
@@ -52,6 +49,12 @@
             },
             openTechnicalData() {
                 router.push("/admin/technical/data");
+            },
+            openHomeSettings() {
+                router.push("/admin/home/settings");
+            },
+            openChats() {
+                router.push("/admin/chats");
             },
             openShop() {
                 router.push("/shop");

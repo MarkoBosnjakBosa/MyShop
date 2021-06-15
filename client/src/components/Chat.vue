@@ -1,32 +1,49 @@
 <template>
     <div id="chat" class="container-fluid">
-        <i class="fas fa-comments fa-2x chat" @click="displayChatBox()"></i>
-        <div id="chatBox" style="display: none;">
+        <div  v-if="userData.isAdmin">
             <div class="row">
-                <div class="col-md-10">
-                    <h3>Admin</h3>
+                <div class="col-md-4">
+                    <ul class="list-group">
+                        <li v-for="onlineUser in onlineUsers" :key="onlineUser" class="list-group-item" @click="joinChat(onlineUser)">{{onlineUser}}</li>
+                    </ul>
                 </div>
-                <div class="col-md-2">
-                    <i class="fas fa-times fa-2x hideChatBox" @click="hideChatBox()"></i>
-                </div>
-            </div>
-            <hr>
-            <div class="messages">
-                <div v-for="message in messages" :key="message._id" class="message myMessage">
-                    {{message.message}}
+                <div class="col-md-8">
+                    <div v-for="message in messages" :key="message._id">
+                        {{message.message}}
+                    </div>
                 </div>
             </div>
-            <form autocomplete="off" @submit.prevent="sendMessage()">
-                <div class="input-group">
-                    <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        <div v-else>
+            <i class="fas fa-comments fa-2x chat" @click="displayChatBox()"></i>
+            <div id="chatBox" style="display: none;">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h3>Admin</h3>
+                    </div>
+                    <div class="col-md-2">
+                        <i class="fas fa-times fa-2x hideChatBox" @click="hideChatBox()"></i>
+                    </div>
                 </div>
-            </form>
+                <hr>
+                <div class="messages">
+                    <div v-for="message in messages" :key="message._id" class="message myMessage">
+                        {{message.message}}
+                    </div>
+                </div>
+                <form autocomplete="off" @submit.prevent="sendMessage()">
+                    <div class="input-group">
+                        <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+    import checkLogin from "../components/CheckLogin.vue";
     import validation from "../components/Validation.vue"; 
     import io from "socket.io-client";
     var axios = require("axios");
@@ -36,11 +53,14 @@
         data() {
             return {
                 socket: io(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT, {transports: ["websocket", "polling", "flashsocket"]}),
-                username: this.$store.getters.getUser,
-                isAdmin: false,
+                userData: {
+                    userLoggedIn: false,
+                    username: "",
+                    isAdmin: false
+                },
                 messages: [],
+                onlineUsers: [],
                 editing: null,
-                onlineUsers: {},
                 messageError: false,
                 message: "",
                 typing: "",
@@ -60,28 +80,28 @@
                 var chatBox = document.getElementById("chatBox");
                 chatBox.style.display = "none";
             },
-            joinChat() {
-                if(this.username != "") {
-                    this.socket.emit("userJoining", this.username);
-                    this.socket.on("userJoined", data => {
-                        this.messages = data.messages;
-                        //this.onlineUsers = Object.fromEntries(Object.entries(data.users).filter(([socketId, username]) => username != this.username));
-                        //this.socket.emit("newUser", this.chatroomId, this.username);
-                    });
+            joinChat(onlineUser) {
+                if(this.userData.username != "") {
+                    if(onlineUser != "" && this.userData.isAdmin) {
+                        this.socket.emit("adminJoining", onlineUser, this.userData.username);
+                    } else {
+                        this.socket.emit("userJoining", this.userData.username, this.userData.isAdmin);
+                    }
                     this.listen();
                 }
             },
             listen() {
+                this.socket.on("userJoined", data => this.messages = data.messages);
                 this.socket.on("userOnline", user => {
-                    if(user.username != this.username && !Object.values(this.onlineUsers).includes(user.username)) {
-                        this.onlineUsers[user.socketId] = user.username;
+                    if(this.userData.isAdmin && user != this.userData.username && !Object.values(this.onlineUsers).includes(user)) {
+                        this.onlineUsers = [...this.onlineUsers, user];
                     }
                 });
                 this.socket.on("userOffline", socketId => {
                     delete this.onlineUsers[socketId];
                     this.typing = "";
                 });
-                this.socket.on("sendMessage", message => this.messages = [...this.messages, message]);
+                this.socket.on("messageSent", message => this.messages = [...this.messages, message]);
                 this.socket.on("editMessage", editedMessage => {
                     this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
                     this.editing = null;
@@ -90,13 +110,17 @@
                 this.socket.on("typing", user => this.typing = user);
                 this.socket.on("stopTyping", () => this.typing = "");
             },
-            sendMessage() {
+            sendMessage(chatroomId) {
                 this.clearMessageStatus();
                 if(this.invalidMessage) {
                     this.messageError = true;
                     return;
                 }
-                this.socket.emit("sendMessage", this.username, this.message);
+                if(chatroomId != "" && this.userData.isAdmin) {
+                    this.socket.emit("sendMessage", chatroomId, this.userData.isAdmin, this.userData.username, this.message);
+                } else {
+                    this.socket.emit("sendMessage", this.userData.username, this.userData.isAdmin, "", this.message);
+                }
                 this.message = "";
                 this.messageError = false;
             },
@@ -141,6 +165,9 @@
             invalidMessage() { return validation.methods.invalidMessage(this.message); }
         },
         mounted() {
+            checkLogin.methods.isLoggedIn();
+            this.userData = checkLogin.methods.getUserData();
+            if(this.userData.isAdmin) this.joinChat();
         }
     }
 </script>
