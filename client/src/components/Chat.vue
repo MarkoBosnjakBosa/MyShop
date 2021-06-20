@@ -4,13 +4,28 @@
             <div class="row">
                 <div class="col-md-4">
                     <ul class="list-group">
-                        <li v-for="onlineUser in onlineUsers" :key="onlineUser" class="list-group-item" @click="joinChat(onlineUser)">{{onlineUser}}</li>
+                        <li v-for="onlineUser in onlineUsers" :key="onlineUser" class="list-group-item" @click="loadMessages(onlineUser)">{{onlineUser}}</li>
                     </ul>
                 </div>
                 <div class="col-md-8">
-                    <div v-for="message in messages" :key="message._id">
-                        {{message.message}}
+                    <div class="adminMessages">
+                        <div v-for="message in messages" :key="message._id" class="card">
+                            <div class="card-header">
+                                <div class="username">{{message.username}}</div>
+                                <div class="date">{{message.date}}</div>
+                            </div>
+                            <div class="card-body">
+                                {{message.message}}
+                            </div>
+                            <div class="card-footer"></div>
+                        </div>
                     </div>
+                    <form autocomplete="off" @submit.prevent="sendMessage()">
+                        <div class="input-group">
+                            <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -60,6 +75,7 @@
                 },
                 messages: [],
                 onlineUsers: [],
+                chatroomId: "",
                 editing: null,
                 messageError: false,
                 message: "",
@@ -80,28 +96,25 @@
                 var chatBox = document.getElementById("chatBox");
                 chatBox.style.display = "none";
             },
-            joinChat(onlineUser) {
+            joinChat() {
                 if(this.userData.username != "") {
-                    if(onlineUser != "" && this.userData.isAdmin) {
-                        this.socket.emit("adminJoining", onlineUser, this.userData.username);
-                    } else {
-                        this.socket.emit("userJoining", this.userData.username, this.userData.isAdmin);
-                    }
+                    this.socket.emit("userJoining", this.userData.username, this.userData.isAdmin);
                     this.listen();
                 }
             },
+            loadMessages(user) {
+                this.chatroomId = user;
+                this.socket.emit("loadMessages", user);
+            },
             listen() {
+                this.socket.on("adminJoined", data => this.onlineUsers = data.users);
                 this.socket.on("userJoined", data => this.messages = data.messages);
-                this.socket.on("userOnline", user => {
-                    if(this.userData.isAdmin && user != this.userData.username && !Object.values(this.onlineUsers).includes(user)) {
-                        this.onlineUsers = [...this.onlineUsers, user];
-                    }
+                this.socket.on("userOnline", data => this.onlineUsers = [...this.onlineUsers, data.user]);
+                this.socket.on("messagesLoaded", data => {
+                    this.messages = data.messages;
+                    this.chatroomId = "";
                 });
-                this.socket.on("userOffline", socketId => {
-                    delete this.onlineUsers[socketId];
-                    this.typing = "";
-                });
-                this.socket.on("messageSent", message => this.messages = [...this.messages, message]);
+                this.socket.on("messageSent", data => this.messages = [...this.messages, data.message]);
                 this.socket.on("editMessage", editedMessage => {
                     this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
                     this.editing = null;
@@ -110,14 +123,14 @@
                 this.socket.on("typing", user => this.typing = user);
                 this.socket.on("stopTyping", () => this.typing = "");
             },
-            sendMessage(chatroomId) {
+            sendMessage() {
                 this.clearMessageStatus();
                 if(this.invalidMessage) {
                     this.messageError = true;
                     return;
                 }
-                if(chatroomId != "" && this.userData.isAdmin) {
-                    this.socket.emit("sendMessage", chatroomId, this.userData.isAdmin, this.userData.username, this.message);
+                if(this.userData.isAdmin) {
+                    this.socket.emit("sendMessage", this.chatroomId, this.userData.isAdmin, this.userData.username, this.message);
                 } else {
                     this.socket.emit("sendMessage", this.userData.username, this.userData.isAdmin, "", this.message);
                 }
@@ -173,6 +186,26 @@
 </script>
 
 <style scoped>
+    .adminMessages {
+        width: 100%;
+        height: 700px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        border: 1px solid #000;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        background-color: #fff;
+        margin-bottom: 10px;
+    }
+    .card {
+        margin-bottom: 10px;
+    }
+    .username {
+        float: left;
+    }
+    .date {
+        float: right;
+    }
     .chat {
         position: absolute;
         right: 20px;
@@ -197,8 +230,9 @@
     }
     .messages {
         width: 100%;
-        min-height: 300px;
+        height: 300px;
         overflow-y: scroll;
+        overflow-x: hidden;
         border: 1px solid #000;
         border-top-left-radius: 10px;
         border-bottom-left-radius: 10px;
