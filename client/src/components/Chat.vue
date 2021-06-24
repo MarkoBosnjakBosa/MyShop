@@ -4,10 +4,10 @@
             <div class="row">
                 <div class="col-md-4">
                     <ul class="list-group">
-                        <li v-for="onlineUser in onlineUsers" :key="onlineUser" class="list-group-item" @click="loadMessages(onlineUser)">{{onlineUser}}</li>
+                        <li v-for="onlineUser in onlineUsers" :key="onlineUser" class="list-group-item" @click="loadMessages(onlineUser.user)">{{onlineUser.user}}</li>
                     </ul>
                 </div>
-                <div class="col-md-8">
+                <div v-if="messages.length" class="col-md-8">
                     <div class="adminMessages">
                         <div v-for="message in messages" :key="message._id" class="card">
                             <div class="card-header">
@@ -41,9 +41,10 @@
                     </div>
                 </div>
                 <hr>
-                <div class="messages">
-                    <div v-for="message in messages" :key="message._id" class="message myMessage">
-                        {{message.message}}
+                <div id="messages">
+                    <div v-for="message in messages" :key="message._id" class="message" :class="message.username == userData.username ? 'myMessage' : 'otherMessage'">
+                        <div>{{message.message}}</div>
+                        <div class="userDate">{{renderDate(message.date)}}</div>
                     </div>
                 </div>
                 <form autocomplete="off" @submit.prevent="sendMessage()">
@@ -61,6 +62,7 @@
     import checkLogin from "../components/CheckLogin.vue";
     import validation from "../components/Validation.vue"; 
     import io from "socket.io-client";
+    import moment from "moment";
     var axios = require("axios");
 
     export default {
@@ -79,7 +81,7 @@
                 editing: null,
                 messageError: false,
                 message: "",
-                typing: "",
+                typing: ""
             }
         },
         methods: {
@@ -87,7 +89,6 @@
                 var chatBox = document.getElementById("chatBox");
                 if (chatBox.style.display == "none") {
                     chatBox.style.display = "block";
-                    this.joinChat();
                 } else {
                     chatBox.style.display = "none";
                 }
@@ -110,10 +111,7 @@
                 this.socket.on("adminJoined", data => this.onlineUsers = data.users);
                 this.socket.on("userJoined", data => this.messages = data.messages);
                 this.socket.on("userOnline", data => this.onlineUsers = [...this.onlineUsers, data.user]);
-                this.socket.on("messagesLoaded", data => {
-                    this.messages = data.messages;
-                    this.chatroomId = "";
-                });
+                this.socket.on("messagesLoaded", data => this.messages = data.messages);
                 this.socket.on("messageSent", data => this.messages = [...this.messages, data.message]);
                 this.socket.on("editMessage", editedMessage => {
                     this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
@@ -137,6 +135,22 @@
                 this.message = "";
                 this.messageError = false;
             },
+            renderDate(date) {
+                if(date) {
+                    var dateAndTime = date.split(" ");
+                    var temporaryDateArray = dateAndTime[0].split(".");
+                    var temporaryDate = temporaryDateArray[2] + "-" + temporaryDateArray[1] + "-" + temporaryDateArray[0];
+                    var parsedDate = moment(temporaryDate);
+                    var currentDate = moment().startOf("day");
+                    if(parsedDate.isBefore(currentDate)) {
+                        return dateAndTime[0];
+                    } else {
+                        return dateAndTime[1];
+                    }
+                } else {
+                    return moment().format("HH:mm");
+                }
+            },
             enableEditing(message) {
                 this.cachedMessage = Object.assign({}, message);
                 this.editing = message._id;
@@ -152,16 +166,6 @@
             },
             deleteMessage(messageId) {
                 this.socket.emit("deleteMessage", messageId);
-            },
-            isMyMessage(username) {
-                if(username == this.username) {
-                    return true;
-                } else {
-                    return false;
-                }
-            },
-            scrollDown() {
-                window.scroll({top: document.body.scrollHeight, behavior: "smooth"});
             },
             clearMessageStatus() { this.messageError = false; },
         },
@@ -180,7 +184,7 @@
         mounted() {
             checkLogin.methods.isLoggedIn();
             this.userData = checkLogin.methods.getUserData();
-            if(this.userData.isAdmin) this.joinChat();
+            this.joinChat();
         }
     }
 </script>
@@ -228,7 +232,7 @@
     .hideChatBox {
         cursor: pointer;
     }
-    .messages {
+    #messages {
         width: 100%;
         height: 300px;
         overflow-y: scroll;
@@ -249,8 +253,12 @@
         text-align: right;
     }
     .otherMessage {
-        background-color: #9999ff;
+        background-color: #4d4dff;
         color: #fff;
+    }
+    .userDate {
+        text-align: right;
+        font-size: 10px;
     }
     .errorField {
         border: 1px solid #ff0000;
