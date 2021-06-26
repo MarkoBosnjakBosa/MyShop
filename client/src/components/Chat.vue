@@ -4,26 +4,26 @@
             <div class="row">
                 <div class="col-md-4">
                     <ul class="list-group">
-                        <li v-for="onlineUser in onlineUsers" :key="onlineUser" class="list-group-item" @click="loadMessages(onlineUser.user)">{{onlineUser.user}}</li>
+                        <li v-for="onlineUser in onlineUsers" :key="onlineUser" :id="'user_' + onlineUser.user" class="list-group-item" @click="loadMessages(onlineUser.user)">{{onlineUser.user}}</li>
                     </ul>
                 </div>
-                <div v-if="messages.length" class="col-md-8">
-                    <div class="adminMessages">
-                        <div v-for="message in messages" :key="message._id" class="card">
+                <div v-if="displayMessages" class="col-md-8">
+                    <div id="adminMessages">
+                        <div v-for="message in displayMessages" :key="message._id" class="card" :class="message.username == userData.username ? 'adminMessage' : 'userMessage'">
                             <div class="card-header">
-                                <div class="username">{{message.username}}</div>
-                                <div class="date">{{message.date}}</div>
+                                <div v-if="message.username != userData.username" class="username">{{message.username}}</div>
+                                <div class="date">{{renderDate(message.date)}}</div>
                             </div>
                             <div class="card-body">
                                 {{message.message}}
                             </div>
-                            <div class="card-footer"></div>
                         </div>
                     </div>
                     <form autocomplete="off" @submit.prevent="sendMessage()">
                         <div class="input-group">
                             <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">Send</button>
+                            <button type="button" id="adminScrollDownButton" class="btn btn-light" @click="scrollDown('adminMessages')"><i id="adminScrollDownIcon" class="fas fa-arrow-down"></i></button>
                         </div>
                     </form>
                 </div>
@@ -50,7 +50,8 @@
                 <form autocomplete="off" @submit.prevent="sendMessage()">
                     <div class="input-group">
                         <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                        <button type="button" class="btn btn-light" @click="scrollDown('messages')"><i class="fas fa-arrow-down"></i></button>
                     </div>
                 </form>
             </div>
@@ -75,8 +76,8 @@
                     username: "",
                     isAdmin: false
                 },
-                messages: [],
                 onlineUsers: [],
+                messages: [],
                 chatroomId: "",
                 editing: null,
                 messageError: false,
@@ -105,14 +106,29 @@
             },
             loadMessages(user) {
                 this.chatroomId = user;
-                this.socket.emit("loadMessages", user);
+                document.getElementById("user_" + this.chatroomId).classList.remove("unreadMessageList");
             },
             listen() {
                 this.socket.on("adminJoined", data => this.onlineUsers = data.users);
                 this.socket.on("userJoined", data => this.messages = data.messages);
                 this.socket.on("userOnline", data => this.onlineUsers = [...this.onlineUsers, data.user]);
-                this.socket.on("messagesLoaded", data => this.messages = data.messages);
-                this.socket.on("messageSent", data => this.messages = [...this.messages, data.message]);
+                this.socket.on("userOffline", data => this.onlineUsers = this.onlineUsers.filter(onlineUser => onlineUser.user = data.user));
+                this.socket.on("messageSentToAdmin", data => {
+                    var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
+                    if(foundIndex > -1) {
+                        this.onlineUsers[foundIndex].messages = [...this.onlineUsers[foundIndex].messages, data.message];
+                    } else {
+                        this.onlineUsers = [...this.onlineUsers, data];
+                    }
+                    document.getElementById("user_" + data.user).classList.add("unreadMessageList");
+                    if(document.getElementById("adminScrollDownButton")) {
+                        document.getElementById("adminScrollDownButton").classList.add("unreadMessageButton");
+                    }
+                    if(document.getElementById("adminScrollDownIcon")) {
+                        document.getElementById("adminScrollDownIcon").classList.add("unreadMessageIcon");
+                    }
+                });
+                this.socket.on("messageSentToUser", data => this.messages = [...this.messages, data.message]);
                 this.socket.on("editMessage", editedMessage => {
                     this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
                     this.editing = null;
@@ -134,6 +150,14 @@
                 }
                 this.message = "";
                 this.messageError = false;
+            },
+            scrollDown(type) {
+                document.getElementById(type).scrollTop = document.getElementById(type).scrollHeight;
+                if(type == "adminMessages") {
+                    document.getElementById("user_" + this.chatroomId).classList.remove("unreadMessageList");
+                    document.getElementById("adminScrollDownButton").classList.remove("unreadMessageButton");
+                    document.getElementById("adminScrollDownIcon").classList.remove("unreadMessageIcon");
+                }
             },
             renderDate(date) {
                 if(date) {
@@ -179,6 +203,14 @@
             }
         },
         computed: {
+            displayMessages() {
+                if(this.chatroomId) {
+                    var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == this.chatroomId);
+                    if(foundIndex > -1) {
+                        return this.onlineUsers[foundIndex].messages;
+                    }
+                }
+            },
             invalidMessage() { return validation.methods.invalidMessage(this.message); }
         },
         mounted() {
@@ -190,7 +222,7 @@
 </script>
 
 <style scoped>
-    .adminMessages {
+    #adminMessages {
         width: 100%;
         height: 700px;
         overflow-y: scroll;
@@ -248,17 +280,26 @@
         padding: 5px;
         border-radius: 10px;
     }
+    .adminMessage {
+        text-align: right;
+    }
     .myMessage {
         background-color: #f2f2f2;
         text-align: right;
     }
-    .otherMessage {
+    .userMessage > .card-header, .otherMessage {
         background-color: #4d4dff;
         color: #fff;
     }
     .userDate {
         text-align: right;
         font-size: 10px;
+    }
+    .unreadMessageList, .unreadMessageButton {
+        border-color: #ff0000;
+    }
+    .unreadMessageIcon {
+        color: #ff0000;
     }
     .errorField {
         border: 1px solid #ff0000;

@@ -8,25 +8,21 @@ module.exports = function(io, models, moment) {
             if(isAdmin) {
                 if(Object.keys(admin).length < 1) {
                     admin = {socketId: socket.id, user: user};
+                    socket.emit("adminJoined", {users: users});
                 }
-                socket.emit("adminJoined", {users: users});
             } else {
-                var foundIndex = users.findIndex(foundUser => foundUser.user == user);
-                if(foundIndex < 0) {
-                    users = [...users, {socketId: socket.id, user: user}];
-                    socket.broadcast.emit("userOnline", {user: {socketId: socket.id, user: user}});
-                }
                 var query = {chatroomId: user};
+                //var foundIndex = users.findIndex(foundUser => foundUser.user == user);
+                //if(foundIndex < 0) {
+                    Message.find(query).then(messages => {
+                        users = [...users, {socketId: socket.id, user: user, messages: messages}];
+                        socket.broadcast.emit("userOnline", {user: {user: user, messages: messages}});
+                    });
+                //}
                 Message.find(query).then(messages => {
                     socket.emit("userJoined", {messages: messages});
                 }).catch(error => console.log(error));
             }
-        });
-        socket.on("loadMessages", user => {
-            var query = {chatroomId: user};
-            Message.find(query).then(messages => {
-                socket.emit("messagesLoaded", {messages: messages});
-            }).catch(error => console.log(error));
         });
         socket.on("sendMessage", (chatroomId, isAdmin, user, message) => {
             if(chatroomId && message) {
@@ -36,29 +32,40 @@ module.exports = function(io, models, moment) {
                 if(isAdmin) {
                     newMessage = getMessageScheme(Message, chatroomId, user, message, date);
                     newMessage.save().then(message => {
-                        socket.emit("messageSent", {message: message});
+                        socket.emit("messageSentToAdmin", {user: chatroomId, message: message});
                         var foundIndex = users.findIndex(foundUser => foundUser.user == chatroomId);
                         if(foundIndex > -1) {
-                            socket.broadcast.to(users[foundIndex].socketId).emit("messageSent", {message: message});
+                            users[foundIndex].messages = [...users[foundIndex].messages, message];
+                            socket.broadcast.to(users[foundIndex].socketId).emit("messageSentToUser", {message: message});
                         }
                     });
                 } else {
                     newMessage = getMessageScheme(Message, chatroomId, chatroomId, message, date);
                     newMessage.save().then(message => {
-                        socket.emit("messageSent", {message: message});
+                        var foundIndex = users.findIndex(foundUser => foundUser.user == chatroomId);
+                        if(foundIndex > -1) {
+                            users[foundIndex].messages = [...users[foundIndex].messages, message];
+                            socket.emit("messageSentToUser", {message: message});
+                        }
                         if(Object.keys(admin).length) {
-                            socket.broadcast.to(admin.socketId).emit("messageSent", {message: message});
+                            console.log("Admin Socket: " + admin.socketId);
+                            socket.broadcast.to(admin.socketId).emit("messageSentToAdmin", {user: chatroomId, message: message});
                         }
                     }).catch(error => console.log(error));
                 }
             }
         });
-        /**socket.on("disconnect", () => {
-            delete chatrooms[chatroomId];
-            if(admins.length) {
-                socket.broadcast.to(admins[0].socketId).emit("userOffline", {message: message});
+        socket.on("disconnect", () => {
+            if(admin.socketId == socket.id) {
+                admin = {};
+            } else {
+                var userOffline = users.filter(user => user.socketId == socket.id);
+                users = users.filter(user => user.socketId != socket.id);
+                if(Object.keys(admin).length && Object.keys(userOffline).length) {
+                    socket.broadcast.to(admin.socketId).emit("userOffline", {user: userOffline.user});
+                }
             }
-        });*/
+        });
 
     });
 
