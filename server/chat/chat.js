@@ -29,11 +29,11 @@ module.exports = function(io, models, moment) {
                 if(isAdmin) {
                     newMessage = getMessageScheme(Message, chatroomId, user, message, date);
                     newMessage.save().then(message => {
-                        socket.emit("messageSentToAdmin", {user: chatroomId, message: message});
+                        socket.emit("messageSentToAdmin", {user: chatroomId, message: message, myself: true});
                         var foundIndex = users.findIndex(foundUser => foundUser.user == chatroomId);
                         if(foundIndex > -1) {
                             users[foundIndex].messages = [...users[foundIndex].messages, message];
-                            socket.broadcast.to(users[foundIndex].socketId).emit("messageSentToUser", {message: message});
+                            socket.broadcast.to(users[foundIndex].socketId).emit("messageSentToUser", {message: message, myself: false});
                         }
                     });
                 } else {
@@ -42,11 +42,10 @@ module.exports = function(io, models, moment) {
                         var foundIndex = users.findIndex(foundUser => foundUser.user == chatroomId);
                         if(foundIndex > -1) {
                             users[foundIndex].messages = [...users[foundIndex].messages, message];
-                            socket.emit("messageSentToUser", {message: message});
+                            socket.emit("messageSentToUser", {message: message, myself: true});
                         }
                         if(Object.keys(admin).length) {
-                            console.log("Admin Socket: " + admin.socketId);
-                            socket.broadcast.to(admin.socketId).emit("messageSentToAdmin", {user: chatroomId, message: message});
+                            socket.broadcast.to(admin.socketId).emit("messageSentToAdmin", {user: chatroomId, message: message, myself: false});
                         }
                     }).catch(error => console.log(error));
                 }

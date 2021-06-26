@@ -120,19 +120,23 @@
                     } else {
                         this.onlineUsers = [...this.onlineUsers, data];
                     }
-                    document.getElementById("user_" + data.user).classList.add("unreadMessageList");
-                    if(document.getElementById("adminScrollDownButton")) {
-                        document.getElementById("adminScrollDownButton").classList.add("unreadMessageButton");
-                    }
-                    if(document.getElementById("adminScrollDownIcon")) {
-                        document.getElementById("adminScrollDownIcon").classList.add("unreadMessageIcon");
+                    if(!data.myself) {
+                        document.getElementById("user_" + data.user).classList.add("unreadMessageList");
+                        if(document.getElementById("adminScrollDownButton")) {
+                            document.getElementById("adminScrollDownButton").classList.add("unreadMessageButton");
+                        }
+                        if(document.getElementById("adminScrollDownIcon")) {
+                            document.getElementById("adminScrollDownIcon").classList.add("unreadMessageIcon");
+                        }
                     }
                 });
                 this.socket.on("messageSentToUser", data => {
                     this.messages = [...this.messages, data.message];
-                    document.getElementById("chatIcon").classList.add("unreadMessageChat");
-                    document.getElementById("scrollDownButton").classList.add("unreadMessageButton");
-                    document.getElementById("scrollDownIcon").classList.add("unreadMessageIcon");
+                    if(!data.myself) {
+                        document.getElementById("chatIcon").classList.add("unreadMessageChat");
+                        document.getElementById("scrollDownButton").classList.add("unreadMessageButton");
+                        document.getElementById("scrollDownIcon").classList.add("unreadMessageIcon");
+                    }
                 });
                 this.socket.on("editMessage", editedMessage => {
                     this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
