@@ -30,7 +30,7 @@
             </div>
         </div>
         <div v-else>
-            <i class="fas fa-comments fa-2x chat" @click="displayChatBox()"></i>
+            <i id="chatIcon" class="fas fa-comments fa-2x chat" @click="displayChatBox()"></i>
             <div id="chatBox" style="display: none;">
                 <div class="row">
                     <div class="col-md-10">
@@ -51,7 +51,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
                         <button type="submit" class="btn btn-primary">Send</button>
-                        <button type="button" class="btn btn-light" @click="scrollDown('messages')"><i class="fas fa-arrow-down"></i></button>
+                        <button type="button" id="scrollDownButton" class="btn btn-light" @click="scrollDown('messages')"><i id="scrollDownIcon" class="fas fa-arrow-down"></i></button>
                     </div>
                 </form>
             </div>
@@ -128,7 +128,12 @@
                         document.getElementById("adminScrollDownIcon").classList.add("unreadMessageIcon");
                     }
                 });
-                this.socket.on("messageSentToUser", data => this.messages = [...this.messages, data.message]);
+                this.socket.on("messageSentToUser", data => {
+                    this.messages = [...this.messages, data.message];
+                    document.getElementById("chatIcon").classList.add("unreadMessageChat");
+                    document.getElementById("scrollDownButton").classList.add("unreadMessageButton");
+                    document.getElementById("scrollDownIcon").classList.add("unreadMessageIcon");
+                });
                 this.socket.on("editMessage", editedMessage => {
                     this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
                     this.editing = null;
@@ -157,6 +162,10 @@
                     document.getElementById("user_" + this.chatroomId).classList.remove("unreadMessageList");
                     document.getElementById("adminScrollDownButton").classList.remove("unreadMessageButton");
                     document.getElementById("adminScrollDownIcon").classList.remove("unreadMessageIcon");
+                } else {
+                    document.getElementById("chatIcon").classList.remove("unreadMessageChat");
+                    document.getElementById("scrollDownButton").classList.remove("unreadMessageButton");
+                    document.getElementById("scrollDownIcon").classList.remove("unreadMessageIcon");
                 }
             },
             renderDate(date) {
@@ -298,7 +307,7 @@
     .unreadMessageList, .unreadMessageButton {
         border-color: #ff0000;
     }
-    .unreadMessageIcon {
+    .unreadMessageChat, .unreadMessageIcon {
         color: #ff0000;
     }
     .errorField {

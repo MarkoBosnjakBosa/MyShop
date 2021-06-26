@@ -12,13 +12,10 @@ module.exports = function(io, models, moment) {
                 }
             } else {
                 var query = {chatroomId: user};
-                //var foundIndex = users.findIndex(foundUser => foundUser.user == user);
-                //if(foundIndex < 0) {
-                    Message.find(query).then(messages => {
-                        users = [...users, {socketId: socket.id, user: user, messages: messages}];
-                        socket.broadcast.emit("userOnline", {user: {user: user, messages: messages}});
-                    });
-                //}
+                Message.find(query).then(messages => {
+                    users = [...users, {socketId: socket.id, user: user, messages: messages}];
+                    socket.broadcast.emit("userOnline", {user: {user: user, messages: messages}});
+                });
                 Message.find(query).then(messages => {
                     socket.emit("userJoined", {messages: messages});
                 }).catch(error => console.log(error));
@@ -66,7 +63,6 @@ module.exports = function(io, models, moment) {
                 }
             }
         });
-
     });
 
     function getMessageScheme(Message, chatroomId, username, message, date) {
