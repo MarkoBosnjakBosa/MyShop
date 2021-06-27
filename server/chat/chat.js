@@ -14,11 +14,9 @@ module.exports = function(io, models, moment) {
                 var query = {chatroomId: user};
                 Message.find(query).then(messages => {
                     users = [...users, {socketId: socket.id, user: user, messages: messages}];
+                    socket.emit("userJoined", {messages: messages});
                     socket.broadcast.emit("userOnline", {user: {user: user, messages: messages}});
                 });
-                Message.find(query).then(messages => {
-                    socket.emit("userJoined", {messages: messages});
-                }).catch(error => console.log(error));
             }
         });
         socket.on("sendMessage", (chatroomId, isAdmin, user, message) => {
