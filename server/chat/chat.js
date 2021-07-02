@@ -1,4 +1,4 @@
-module.exports = function(io, models, moment) {
+module.exports = function(io, models, moment, validation) {
     const Message = models.Message;
     var admin = {};
     var users = [];
@@ -24,29 +24,60 @@ module.exports = function(io, models, moment) {
                 var newMessage;
                 var dateFormat = "DD.MM.YYYY HH:mm";
                 var date = moment().format(dateFormat);
-                if(isAdmin) {
-                    newMessage = getMessageScheme(Message, chatroomId, user, message, date);
-                    newMessage.save().then(message => {
-                        socket.emit("messageSentToAdmin", {user: chatroomId, message: message, myself: true});
-                        var foundIndex = users.findIndex(foundUser => foundUser.user == chatroomId);
-                        if(foundIndex > -1) {
-                            users[foundIndex].messages = [...users[foundIndex].messages, message];
+                newMessage = getMessageScheme(Message, chatroomId, user, message, date);
+                newMessage.save().then(message => {
+                    var foundIndex = users.findIndex(foundUser => foundUser.user == chatroomId);
+                    if(foundIndex > -1) {
+                        users[foundIndex].messages = [...users[foundIndex].messages, message];
+                        if(isAdmin) {
+                            socket.emit("messageSentToAdmin", {user: chatroomId, message: message, myself: true});
                             socket.broadcast.to(users[foundIndex].socketId).emit("messageSentToUser", {message: message, myself: false});
-                        }
-                    });
-                } else {
-                    newMessage = getMessageScheme(Message, chatroomId, chatroomId, message, date);
-                    newMessage.save().then(message => {
-                        var foundIndex = users.findIndex(foundUser => foundUser.user == chatroomId);
-                        if(foundIndex > -1) {
-                            users[foundIndex].messages = [...users[foundIndex].messages, message];
+                        } else {
+                            if(Object.keys(admin).length) {
+                                socket.broadcast.to(admin.socketId).emit("messageSentToAdmin", {user: chatroomId, message: message, myself: false});
+                            }
                             socket.emit("messageSentToUser", {message: message, myself: true});
                         }
-                        if(Object.keys(admin).length) {
-                            socket.broadcast.to(admin.socketId).emit("messageSentToAdmin", {user: chatroomId, message: message, myself: false});
+                    }
+                }).catch(error => console.log(error));
+            }
+        });
+        socket.on("editMessage", (chatroomId, message) => {
+            if(message._id && message.message) {
+                var query = {_id: message._id};
+                var update = {message: message.message};
+                Message.findOneAndUpdate(query, update, {new: true}).then(foundMessage => {
+                    if(!validation.isEmpty(foundMessage)) {
+                        var foundIndex = users.findIndex(foundUser => foundUser.user == chatroomId);
+                        if(foundIndex > -1) {
+                            users[foundIndex].messages = users[foundIndex].messages.map(message => String(message._id) == String(foundMessage._id) ? foundMessage : message);
+                            socket.emit("messageEditedToAdmin", {user: chatroomId, message: message});
+                            socket.broadcast.to(users[foundIndex].socketId).emit("messageEditedToUser", {message: message});
                         }
-                    }).catch(error => console.log(error));
-                }
+                    }
+                }).catch(error => console.log(error));
+            }
+        });
+        socket.on("deleteMessage", (chatroomId, isAdmin, messageId) => {
+            if(messageId) {
+                var query = {_id: messageId};
+                Message.findOneAndRemove(query).then(message => {
+                    if(!validation.isEmpty(message)) {
+                        var foundIndex = users.findIndex(foundUser => foundUser.user == chatroomId);
+                        if(foundIndex > -1) {
+                            users[foundIndex].messages = users[foundIndex].messages.filter(message => message._id != messageId);
+                            if(isAdmin) {
+                                socket.emit("messageDeletedToAdmin", {user: chatroomId, messageId: messageId});
+                                socket.broadcast.to(users[foundIndex].socketId).emit("messageDeletedToUser", {messageId: messageId});
+                            } else {
+                                if(Object.keys(admin).length) {
+                                    socket.broadcast.to(admin.socketId).emit("messageDeletedToAdmin", {user: chatroomId, messageId: messageId});
+                                }
+                                socket.emit("messageDeletedToUser", {messageId: messageId});
+                            }
+                        }
+                    }
+                }).catch(error => console.log(error));
             }
         });
         socket.on("disconnect", () => {

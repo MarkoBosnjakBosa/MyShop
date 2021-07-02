@@ -15,7 +15,22 @@
                                 <div class="date">{{renderDate(message.date)}}</div>
                             </div>
                             <div class="card-body">
-                                {{message.message}}
+                                <div v-if="editing == message._id">
+                                    <input type="text" class="form-control" v-model="message.message"/>	
+                                </div>
+                                <div v-else>
+                                    {{message.message}}
+                                </div>
+                            </div>
+                            <div v-if="message.username == userData.username" class="card-footer">
+                                <div v-if="editing != message._id">
+                                    <i class="fas fa-pencil-alt enableEditing" @click="enableEditing(message)"></i>
+                                    <i class="fas fa-times-circle deleteMessage" @click="deleteMessage(message._id)"></i>
+                                </div>
+                                <div v-else>
+                                    <i class="far fa-check-circle editMessage" @click="editMessage(message)"></i>
+                                    <i class="far fa-times-circle disableEditing" @click="disableEditing(message)"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -44,7 +59,7 @@
                 <div id="messages">
                     <div v-for="message in messages" :key="message._id" class="message" :class="message.username == userData.username ? 'myMessage' : 'otherMessage'">
                         <div>{{message.message}}</div>
-                        <div class="userDate">{{renderDate(message.date)}}</div>
+                        <div class="userDate">{{renderDate(message.date)}}<i v-if="message.username == userData.username" class="fas fa-times deleteMessage" @click="deleteMessage(message._id)"></i></div>
                     </div>
                 </div>
                 <form autocomplete="off" @submit.prevent="sendMessage()">
@@ -138,11 +153,25 @@
                         document.getElementById("scrollDownIcon").classList.add("unreadMessageIcon");
                     }
                 });
-                this.socket.on("editMessage", editedMessage => {
-                    this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
-                    this.editing = null;
+                this.socket.on("messageEditedToAdmin", data => {
+                    var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
+                    if(foundIndex > -1) {
+                        this.onlineUsers[foundIndex].messages = this.onlineUsers[foundIndex].messages.map(message => message._id == data.message._id ? data.message : message);
+                        this.editing = null;
+                    }
                 });
-                this.socket.on("deleteMessage", messageId => this.messages = this.messages.filter(message => message._id != messageId));
+                this.socket.on("messageEditedToUser", data => {
+                    this.messages = this.messages.map(message => message._id == data.message._id ? data.message : message);
+                });
+                this.socket.on("messageDeletedToAdmin", data => {
+                    var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
+                    if(foundIndex > -1) {
+                        this.onlineUsers[foundIndex].messages = this.onlineUsers[foundIndex].messages.filter(message => message._id != data.messageId);
+                    }
+                });
+                this.socket.on("messageDeletedToUser", data => {
+                    this.messages = this.messages.filter(message => message._id != data.messageId);
+                });
                 this.socket.on("typing", user => this.typing = user);
                 this.socket.on("stopTyping", () => this.typing = "");
             },
@@ -155,10 +184,25 @@
                 if(this.userData.isAdmin) {
                     this.socket.emit("sendMessage", this.chatroomId, this.userData.isAdmin, this.userData.username, this.message);
                 } else {
-                    this.socket.emit("sendMessage", this.userData.username, this.userData.isAdmin, "", this.message);
+                    this.socket.emit("sendMessage", this.userData.username, this.userData.isAdmin, this.userData.username, this.message);
                 }
                 this.message = "";
                 this.messageError = false;
+            },
+            editMessage(message) {
+                if(message._id && message.message) {
+                    this.socket.emit("editMessage", this.chatroomId, message);
+                }
+            },
+            deleteMessage(messageId) {
+                var confirmed = confirm("Delete message?");
+                if(confirmed) {
+                    if(this.userData.isAdmin) {
+                        this.socket.emit("deleteMessage", this.chatroomId, this.userData.isAdmin, messageId);
+                    } else {
+                        this.socket.emit("deleteMessage", this.userData.username, this.userData.isAdmin, messageId);
+                    }
+                }
             },
             scrollDown(type) {
                 document.getElementById(type).scrollTop = document.getElementById(type).scrollHeight;
@@ -195,14 +239,6 @@
             disableEditing(message) { 
                 Object.assign(message, this.cachedMessage);
                 this.editing = null;
-            },
-            editMessage(messageId, message) {
-                if(message) {
-                    this.socket.emit("editMessage", messageId, message);
-                }
-            },
-            deleteMessage(messageId) {
-                this.socket.emit("deleteMessage", messageId);
             },
             clearMessageStatus() { this.messageError = false; },
         },
@@ -307,6 +343,15 @@
     .userDate {
         text-align: right;
         font-size: 10px;
+    }
+    .enableEditing, .editMessage {
+        color: #008000;
+        cursor: pointer;
+    }
+    .deleteMessage, .disableEditing {
+        color: #ff0000;
+        margin-left: 5px;
+        cursor: pointer;
     }
     .unreadMessageList, .unreadMessageButton {
         border-color: #ff0000;
