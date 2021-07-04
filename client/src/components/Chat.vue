@@ -176,8 +176,24 @@
                 this.socket.on("messageDeletedToUser", (data) => {
                     this.messages = this.messages.filter(message => message._id != data.messageId);
                 });
-                this.socket.on("typingStarted", (data) => this.typing = data.user);
-                this.socket.on("typingStopped", () => this.typing = "");
+                this.socket.on("typingStarted", (data) => {
+                    if(this.userData.isAdmin) {
+                        if(this.chatId == data.user) {
+                            this.typing = data.user;
+                        }
+                    } else {
+                        this.typing = data.user;
+                    }
+                });
+                this.socket.on("typingStopped", (data) => {
+                    if(this.userData.isAdmin) {
+                        if(this.chatId == data.user) {
+                            this.typing = "";
+                        }
+                    } else {
+                        this.typing = "";
+                    }
+                });
             },
             sendMessage() {
                 this.clearMessageStatus();
@@ -256,9 +272,9 @@
                     }
                 } else {
                     if(this.userData.isAdmin) {
-                        this.socket.emit("stopTyping", this.chatId, this.userData.isAdmin);
+                        this.socket.emit("stopTyping", this.chatId, this.userData.isAdmin, this.userData.username);
                     } else {
-                        this.socket.emit("stopTyping", this.userData.username, this.userData.isAdmin);
+                        this.socket.emit("stopTyping", this.userData.username, this.userData.isAdmin, this.userData.username);
                     }
                 }
             }

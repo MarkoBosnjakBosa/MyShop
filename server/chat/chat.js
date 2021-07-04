@@ -90,13 +90,13 @@ module.exports = function(io, models, moment, validation) {
                 }
             }
         });
-        socket.on("stopTyping", (chatId, isAdmin) => {
+        socket.on("stopTyping", (chatId, isAdmin, username) => {
             var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
             if(foundIndex > -1) {
                 if(isAdmin) {
-                    socket.broadcast.to(users[foundIndex].socketId).emit("typingStopped");
+                    socket.broadcast.to(users[foundIndex].socketId).emit("typingStopped", {user: username});
                 } else {
-                    socket.broadcast.to(admin.socketId).emit("typingStopped");
+                    socket.broadcast.to(admin.socketId).emit("typingStopped", {user: username});
                 }
             }
         });
