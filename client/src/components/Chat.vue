@@ -1,6 +1,6 @@
 <template>
     <div id="chat" class="container-fluid">
-        <div  v-if="userData.isAdmin">
+        <div v-if="userData.isAdmin">
             <div class="row">
                 <div class="col-md-4">
                     <ul class="list-group">
@@ -9,6 +9,7 @@
                 </div>
                 <div v-if="displayMessages" class="col-md-8">
                     <div id="adminMessages">
+                        <div v-if="!displayMessages.length" class="noMessages">No messages yet.</div>
                         <div v-for="message in displayMessages" :key="message._id" class="card" :class="message.username == userData.username ? 'adminMessage' : 'userMessage'">
                             <div class="card-header">
                                 <div v-if="message.username != userData.username" class="username">{{message.username}}</div>
@@ -34,6 +35,7 @@
                             </div>
                         </div>
                     </div>
+                    <small v-if="typing" class="typing"><b>{{typing}}</b> is typing...</small>
                     <form autocomplete="off" @submit.prevent="sendMessage()">
                         <div class="input-group">
                             <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
@@ -50,6 +52,7 @@
                 <div class="row">
                     <div class="col-md-10">
                         <h3>Admin</h3>
+                        <small v-if="typing" class="typing"><b>{{typing}}</b> is typing...</small>
                     </div>
                     <div class="col-md-2">
                         <i class="fas fa-times fa-2x hideChatBox" @click="hideChatBox()"></i>
@@ -57,6 +60,7 @@
                 </div>
                 <hr>
                 <div id="messages">
+                    <div v-if="!messages.length" class="noMessages">No messages yet.</div>
                     <div v-for="message in messages" :key="message._id" class="message" :class="message.username == userData.username ? 'myMessage' : 'otherMessage'">
                         <div>{{message.message}}</div>
                         <div class="userDate">{{renderDate(message.date)}}<i v-if="message.username == userData.username" class="fas fa-times deleteMessage" @click="deleteMessage(message._id)"></i></div>
@@ -93,10 +97,10 @@
                 },
                 onlineUsers: [],
                 messages: [],
-                chatroomId: "",
+                chatId: "",
                 editing: null,
-                messageError: false,
                 message: "",
+                messageError: false,
                 typing: ""
             }
         },
@@ -120,15 +124,15 @@
                 }
             },
             loadMessages(user) {
-                this.chatroomId = user;
-                document.getElementById("user_" + this.chatroomId).classList.remove("unreadMessageList");
+                this.chatId = user;
+                document.getElementById("user_" + this.chatId).classList.remove("unreadMessageList");
             },
             listen() {
-                this.socket.on("adminJoined", data => this.onlineUsers = data.users);
-                this.socket.on("userJoined", data => this.messages = data.messages);
-                this.socket.on("userOnline", data => this.onlineUsers = [...this.onlineUsers, data.user]);
-                this.socket.on("userOffline", data => this.onlineUsers = this.onlineUsers.filter(onlineUser => onlineUser.user = data.user));
-                this.socket.on("messageSentToAdmin", data => {
+                this.socket.on("adminJoined", (data) => this.onlineUsers = data.users);
+                this.socket.on("userJoined", (data) => this.messages = data.messages);
+                this.socket.on("userOnline", (data) => this.onlineUsers = [...this.onlineUsers, data.user]);
+                this.socket.on("userOffline", (data) => this.onlineUsers = this.onlineUsers.filter(onlineUser => onlineUser.user = data.user));
+                this.socket.on("messageSentToAdmin", (data) => {
                     var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
                     if(foundIndex > -1) {
                         this.onlineUsers[foundIndex].messages = [...this.onlineUsers[foundIndex].messages, data.message];
@@ -145,7 +149,7 @@
                         }
                     }
                 });
-                this.socket.on("messageSentToUser", data => {
+                this.socket.on("messageSentToUser", (data) => {
                     this.messages = [...this.messages, data.message];
                     if(!data.myself) {
                         document.getElementById("chatIcon").classList.add("unreadMessageChat");
@@ -153,27 +157,27 @@
                         document.getElementById("scrollDownIcon").classList.add("unreadMessageIcon");
                     }
                 });
-                this.socket.on("messageEditedToAdmin", data => {
+                this.socket.on("messageEditedToAdmin", (data) => {
                     var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
                     if(foundIndex > -1) {
                         this.onlineUsers[foundIndex].messages = this.onlineUsers[foundIndex].messages.map(message => message._id == data.message._id ? data.message : message);
                         this.editing = null;
                     }
                 });
-                this.socket.on("messageEditedToUser", data => {
+                this.socket.on("messageEditedToUser", (data) => {
                     this.messages = this.messages.map(message => message._id == data.message._id ? data.message : message);
                 });
-                this.socket.on("messageDeletedToAdmin", data => {
+                this.socket.on("messageDeletedToAdmin", (data) => {
                     var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
                     if(foundIndex > -1) {
                         this.onlineUsers[foundIndex].messages = this.onlineUsers[foundIndex].messages.filter(message => message._id != data.messageId);
                     }
                 });
-                this.socket.on("messageDeletedToUser", data => {
+                this.socket.on("messageDeletedToUser", (data) => {
                     this.messages = this.messages.filter(message => message._id != data.messageId);
                 });
-                this.socket.on("typing", user => this.typing = user);
-                this.socket.on("stopTyping", () => this.typing = "");
+                this.socket.on("typingStarted", (data) => this.typing = data.user);
+                this.socket.on("typingStopped", () => this.typing = "");
             },
             sendMessage() {
                 this.clearMessageStatus();
@@ -182,7 +186,7 @@
                     return;
                 }
                 if(this.userData.isAdmin) {
-                    this.socket.emit("sendMessage", this.chatroomId, this.userData.isAdmin, this.userData.username, this.message);
+                    this.socket.emit("sendMessage", this.chatId, this.userData.isAdmin, this.userData.username, this.message);
                 } else {
                     this.socket.emit("sendMessage", this.userData.username, this.userData.isAdmin, this.userData.username, this.message);
                 }
@@ -191,14 +195,14 @@
             },
             editMessage(message) {
                 if(message._id && message.message) {
-                    this.socket.emit("editMessage", this.chatroomId, message);
+                    this.socket.emit("editMessage", this.chatId, message);
                 }
             },
             deleteMessage(messageId) {
                 var confirmed = confirm("Delete message?");
                 if(confirmed) {
                     if(this.userData.isAdmin) {
-                        this.socket.emit("deleteMessage", this.chatroomId, this.userData.isAdmin, messageId);
+                        this.socket.emit("deleteMessage", this.chatId, this.userData.isAdmin, messageId);
                     } else {
                         this.socket.emit("deleteMessage", this.userData.username, this.userData.isAdmin, messageId);
                     }
@@ -207,7 +211,7 @@
             scrollDown(type) {
                 document.getElementById(type).scrollTop = document.getElementById(type).scrollHeight;
                 if(type == "adminMessages") {
-                    document.getElementById("user_" + this.chatroomId).classList.remove("unreadMessageList");
+                    document.getElementById("user_" + this.chatId).classList.remove("unreadMessageList");
                     document.getElementById("adminScrollDownButton").classList.remove("unreadMessageButton");
                     document.getElementById("adminScrollDownIcon").classList.remove("unreadMessageIcon");
                 } else {
@@ -245,22 +249,33 @@
         watch: {
             message(value) {
                 if(value) {
-                    this.socket.emit("typing", this.chatroomId, this.username);
+                    if(this.userData.isAdmin) {
+                        this.socket.emit("startTyping", this.chatId, this.userData.isAdmin, this.userData.username);
+                    } else {
+                        this.socket.emit("startTyping", this.userData.username, this.userData.isAdmin, this.userData.username);
+                    }
                 } else {
-                    this.socket.emit("stopTyping", this.chatroomId);
+                    if(this.userData.isAdmin) {
+                        this.socket.emit("stopTyping", this.chatId, this.userData.isAdmin);
+                    } else {
+                        this.socket.emit("stopTyping", this.userData.username, this.userData.isAdmin);
+                    }
                 }
             }
         },
         computed: {
             displayMessages() {
-                if(this.chatroomId) {
-                    var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == this.chatroomId);
+                if(this.chatId) {
+                    var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == this.chatId);
                     if(foundIndex > -1) {
                         return this.onlineUsers[foundIndex].messages;
                     }
                 }
             },
             invalidMessage() { return validation.methods.invalidMessage(this.message); }
+        },
+        beforeUnmount() {
+            this.socket.emit("userLeaving");
         },
         mounted() {
             checkLogin.methods.isLoggedIn();
@@ -323,6 +338,10 @@
         border-bottom-left-radius: 10px;
         background-color: #fff;
         margin-bottom: 10px;
+    }
+    .noMessages {
+        text-align: center;
+        margin-top: 10px;
     }
     .message {
         margin: 5px;

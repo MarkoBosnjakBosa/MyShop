@@ -67,7 +67,7 @@ module.exports = function(mongoose) {
 		message: {type: String}
 	});
 	const messageScheme = new mongoose.Schema({
-		chatroomId: {type: String},
+		chatId: {type: String},
 		username: {type: String},
 		message: {type: String},
 		date: {type: String}
