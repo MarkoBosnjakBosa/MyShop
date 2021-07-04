@@ -4,11 +4,13 @@
             <div class="row">
                 <div class="col-md-4">
                     <ul class="list-group">
-                        <li v-for="onlineUser in onlineUsers" :key="onlineUser" :id="'user_' + onlineUser.user" class="list-group-item" @click="loadMessages(onlineUser.user)">{{onlineUser.user}}</li>
+                        <li v-for="onlineUser in onlineUsers" :key="onlineUser" class="list-group-item d-flex justify-content-between align-items-center" @click="loadMessages(onlineUser.user)">
+                            <span :id="'user_' + onlineUser.user">{{onlineUser.user}}</span><i :id="'messageStatus_'  + onlineUser.user" class="fa fa-eye"></i>
+                        </li>
                     </ul>
                 </div>
                 <div v-if="displayMessages" class="col-md-8">
-                    <div id="adminMessages">
+                    <div id="adminMessages" @click="readMessage()">
                         <div v-if="!displayMessages.length" class="noMessages">No messages yet.</div>
                         <div v-for="message in displayMessages" :key="message._id" class="card" :class="message.username == userData.username ? 'adminMessage' : 'userMessage'">
                             <div class="card-header">
@@ -19,9 +21,7 @@
                                 <div v-if="editing == message._id">
                                     <input type="text" class="form-control" v-model="message.message"/>	
                                 </div>
-                                <div v-else>
-                                    {{message.message}}
-                                </div>
+                                <div v-else>{{message.message}}</div>
                             </div>
                             <div v-if="message.username == userData.username" class="card-footer">
                                 <div v-if="editing != message._id">
@@ -36,11 +36,11 @@
                         </div>
                     </div>
                     <small v-if="typing" class="typing"><b>{{typing}}</b> is typing...</small>
-                    <form autocomplete="off" @submit.prevent="sendMessage()">
+                    <form autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()">
                         <div class="input-group">
                             <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
                             <button type="submit" class="btn btn-primary">Send</button>
-                            <button type="button" id="adminScrollDownButton" class="btn btn-light" @click="scrollDown('adminMessages')"><i id="adminScrollDownIcon" class="fas fa-arrow-down"></i></button>
+                            <button type="button" class="btn btn-light" @click="scrollDown('adminMessages')"><i id="adminScrollDownIcon" class="fas fa-arrow-down"></i></button>
                         </div>
                     </form>
                 </div>
@@ -59,20 +59,22 @@
                     </div>
                 </div>
                 <hr>
-                <div id="messages">
+                <div id="messages" @click="readMessage()">
                     <div v-if="!messages.length" class="noMessages">No messages yet.</div>
                     <div v-for="message in messages" :key="message._id" class="message" :class="message.username == userData.username ? 'myMessage' : 'otherMessage'">
                         <div>{{message.message}}</div>
                         <div class="userDate">{{renderDate(message.date)}}<i v-if="message.username == userData.username" class="fas fa-times deleteMessage" @click="deleteMessage(message._id)"></i></div>
                     </div>
                 </div>
-                <form autocomplete="off" @submit.prevent="sendMessage()">
+                <form v-if="adminOnline" autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()">
                     <div class="input-group">
                         <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
                         <button type="submit" class="btn btn-primary">Send</button>
-                        <button type="button" id="scrollDownButton" class="btn btn-light" @click="scrollDown('messages')"><i id="scrollDownIcon" class="fas fa-arrow-down"></i></button>
+                        <button type="button" class="btn btn-secondary"><i id="messageStatus" class="fa fa-eye"></i></button>
+                        <button type="button" class="btn btn-light" @click="scrollDown('messages')"><i id="scrollDownIcon" class="fas fa-arrow-down"></i></button>
                     </div>
                 </form>
+                <div v-else>The admin is not online.</div>
             </div>
         </div>
     </div>
@@ -86,7 +88,7 @@
     var axios = require("axios");
 
     export default {
-        name: "chatroom",
+        name: "chat",
         data() {
             return {
                 socket: io(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT, {transports: ["websocket", "polling", "flashsocket"]}),
@@ -96,6 +98,7 @@
                     isAdmin: false
                 },
                 onlineUsers: [],
+                adminOnline: true,
                 messages: [],
                 chatId: "",
                 editing: null,
@@ -107,8 +110,10 @@
         methods: {
             displayChatBox() {
                 var chatBox = document.getElementById("chatBox");
-                if (chatBox.style.display == "none") {
+                if(chatBox.style.display == "none") {
                     chatBox.style.display = "block";
+                    this.$forceUpdate();
+                    this.readMessage();
                 } else {
                     chatBox.style.display = "none";
                 }
@@ -125,56 +130,80 @@
             },
             loadMessages(user) {
                 this.chatId = user;
-                document.getElementById("user_" + this.chatId).classList.remove("unreadMessageList");
+                this.readMessage();
             },
             listen() {
-                this.socket.on("adminJoined", (data) => this.onlineUsers = data.users);
-                this.socket.on("userJoined", (data) => this.messages = data.messages);
-                this.socket.on("userOnline", (data) => this.onlineUsers = [...this.onlineUsers, data.user]);
-                this.socket.on("userOffline", (data) => this.onlineUsers = this.onlineUsers.filter(onlineUser => onlineUser.user = data.user));
-                this.socket.on("messageSentToAdmin", (data) => {
-                    var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
-                    if(foundIndex > -1) {
-                        this.onlineUsers[foundIndex].messages = [...this.onlineUsers[foundIndex].messages, data.message];
+                this.socket.on("adminJoined", (data) => {
+                    if(data.isAdmin) {
+                        this.onlineUsers = data.users;
                     } else {
-                        this.onlineUsers = [...this.onlineUsers, data];
+                        this.adminOnline = true;
                     }
-                    if(!data.myself) {
-                        document.getElementById("user_" + data.user).classList.add("unreadMessageList");
-                        if(document.getElementById("adminScrollDownButton")) {
-                            document.getElementById("adminScrollDownButton").classList.add("unreadMessageButton");
+                });
+                this.socket.on("adminOffline", () => {
+                    this.adminOnline = false;
+                    this.message = "";
+                });
+                this.socket.on("userJoined", (data) => {
+                    this.messages = data.messages
+                    this.adminOnline = data.adminOnline;
+                });
+                this.socket.on("userOnline", (data) => this.onlineUsers = [...this.onlineUsers, data.user]);
+                this.socket.on("userOffline", (data) => {
+                    this.onlineUsers = this.onlineUsers.filter(onlineUser => onlineUser.user = data.user);
+                    this.message = "";   
+                });
+                this.socket.on("messageSent", (data) => {
+                    if(data.isAdmin) {
+                        var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
+                        if(foundIndex > -1) {
+                            this.onlineUsers[foundIndex].messages = [...this.onlineUsers[foundIndex].messages, data.message];
+                        } else {
+                            this.onlineUsers = [...this.onlineUsers, data];
                         }
-                        if(document.getElementById("adminScrollDownIcon")) {
-                            document.getElementById("adminScrollDownIcon").classList.add("unreadMessageIcon");
+                        if(!data.myself) {
+                            document.getElementById("user_" + data.user).classList.add("unreadMessage");
+                        } else {
+                            this.toggleMessageStatus("unread", data.user);
+                        }
+                    } else {
+                        this.messages = [...this.messages, data.message];
+                        if(!data.myself) {
+                            document.getElementById("chatIcon").classList.add("unreadMessage");
+                        } else {
+                            this.toggleMessageStatus("unread", data.user);
                         }
                     }
                 });
-                this.socket.on("messageSentToUser", (data) => {
-                    this.messages = [...this.messages, data.message];
-                    if(!data.myself) {
-                        document.getElementById("chatIcon").classList.add("unreadMessageChat");
-                        document.getElementById("scrollDownButton").classList.add("unreadMessageButton");
-                        document.getElementById("scrollDownIcon").classList.add("unreadMessageIcon");
+                this.socket.on("messageEdited", (data) => {
+                    if(data.isAdmin) {
+                        var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
+                        if(foundIndex > -1) {
+                            this.onlineUsers[foundIndex].messages = this.onlineUsers[foundIndex].messages.map(message => message._id == data.message._id ? data.message : message);
+                            this.editing = null;
+                        }
+                    } else {
+                        this.messages = this.messages.map(message => message._id == data.message._id ? data.message : message);
                     }
                 });
-                this.socket.on("messageEditedToAdmin", (data) => {
-                    var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
-                    if(foundIndex > -1) {
-                        this.onlineUsers[foundIndex].messages = this.onlineUsers[foundIndex].messages.map(message => message._id == data.message._id ? data.message : message);
-                        this.editing = null;
+                this.socket.on("messageDeleted", (data) => {
+                    if(data.isAdmin) {
+                        var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
+                        if(foundIndex > -1) {
+                            this.onlineUsers[foundIndex].messages = this.onlineUsers[foundIndex].messages.filter(message => message._id != data.messageId);
+                        }
+                    } else {
+                        this.messages = this.messages.filter(message => message._id != data.messageId);
                     }
                 });
-                this.socket.on("messageEditedToUser", (data) => {
-                    this.messages = this.messages.map(message => message._id == data.message._id ? data.message : message);
-                });
-                this.socket.on("messageDeletedToAdmin", (data) => {
-                    var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
-                    if(foundIndex > -1) {
-                        this.onlineUsers[foundIndex].messages = this.onlineUsers[foundIndex].messages.filter(message => message._id != data.messageId);
+                this.socket.on("messageRead", (data) => {
+                     if(this.userData.isAdmin) {
+                        if(this.chatId == data.user) {
+                            this.toggleMessageStatus("read", data.user);
+                        }
+                    } else {
+                        this.toggleMessageStatus("read", data.user);
                     }
-                });
-                this.socket.on("messageDeletedToUser", (data) => {
-                    this.messages = this.messages.filter(message => message._id != data.messageId);
                 });
                 this.socket.on("typingStarted", (data) => {
                     if(this.userData.isAdmin) {
@@ -224,17 +253,46 @@
                     }
                 }
             },
+            readMessage() {
+                if(this.userData.isAdmin) {
+                    document.getElementById("user_" + this.chatId).classList.remove("unreadMessage");
+                    this.socket.emit("readMessage", this.chatId, this.userData.isAdmin, this.userData.username);
+                } else {
+                    document.getElementById("chatIcon").classList.remove("unreadMessage");
+                    this.socket.emit("readMessage", this.userData.username, this.userData.isAdmin, this.userData.username);
+                }
+            },
+            toggleMessageStatus(status, user) {
+                var statusClass = "";
+                if(document.getElementById("messageStatus_" + user)) {
+                    statusClass = document.getElementById("messageStatus_" + user).className;
+                } else {
+                    statusClass = document.getElementById("messageStatus").className;
+                }
+                if(status == "read") {
+                    if(statusClass.includes("fa-eye-slash")) {
+                        if(this.userData.isAdmin) {
+                            document.getElementById("messageStatus_" + user).classList.remove("fa-eye-slash");
+                            document.getElementById("messageStatus_" + user).classList.add("fa-eye");
+                        } else {
+                            document.getElementById("messageStatus").classList.remove("fa-eye-slash");
+                            document.getElementById("messageStatus").classList.add("fa-eye");
+                        }
+                    }
+                } else {
+                    if(statusClass.includes("fa-eye")) {
+                        if(this.userData.isAdmin) {
+                            document.getElementById("messageStatus_" + user).classList.remove("fa-eye");
+                            document.getElementById("messageStatus_" + user).classList.add("fa-eye-slash");
+                        } else {
+                            document.getElementById("messageStatus").classList.remove("fa-eye");
+                            document.getElementById("messageStatus").classList.add("fa-eye-slash");
+                        }
+                    }
+                }
+			},
             scrollDown(type) {
                 document.getElementById(type).scrollTop = document.getElementById(type).scrollHeight;
-                if(type == "adminMessages") {
-                    document.getElementById("user_" + this.chatId).classList.remove("unreadMessageList");
-                    document.getElementById("adminScrollDownButton").classList.remove("unreadMessageButton");
-                    document.getElementById("adminScrollDownIcon").classList.remove("unreadMessageIcon");
-                } else {
-                    document.getElementById("chatIcon").classList.remove("unreadMessageChat");
-                    document.getElementById("scrollDownButton").classList.remove("unreadMessageButton");
-                    document.getElementById("scrollDownIcon").classList.remove("unreadMessageIcon");
-                }
             },
             renderDate(date) {
                 if(date) {
@@ -248,8 +306,6 @@
                     } else {
                         return dateAndTime[1];
                     }
-                } else {
-                    return moment().format("HH:mm");
                 }
             },
             enableEditing(message) {
@@ -289,6 +345,14 @@
                 }
             },
             invalidMessage() { return validation.methods.invalidMessage(this.message); }
+        },
+        updated() {
+            if(document.getElementById("adminMessages")) {
+                this.scrollDown("adminMessages");
+            }
+            if(document.getElementById("messages")) {
+                this.scrollDown("messages");
+            }
         },
         beforeUnmount() {
             this.socket.emit("userLeaving");
@@ -345,7 +409,7 @@
         cursor: pointer;
     }
     #messages {
-        width: 100%;
+        width: 350px;
         height: 300px;
         overflow-y: scroll;
         overflow-x: hidden;
@@ -388,10 +452,7 @@
         margin-left: 5px;
         cursor: pointer;
     }
-    .unreadMessageList, .unreadMessageButton {
-        border-color: #ff0000;
-    }
-    .unreadMessageChat, .unreadMessageIcon {
+    .unreadMessage {
         color: #ff0000;
     }
     .errorField {
