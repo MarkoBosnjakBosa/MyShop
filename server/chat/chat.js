@@ -1,4 +1,4 @@
-module.exports = function(io, models, moment, validation) {
+module.exports = function(io, app, models, moment, validation) {
     const Message = models.Message;
     var admin = {};
     var users = [];
@@ -130,6 +130,17 @@ module.exports = function(io, models, moment, validation) {
                 }
             }
         });
+    });
+
+    app.post("/findUser", (request, response) => {
+    });
+    app.get("/getMessages", (request, response) => {
+    })
+    app.post("/sendMessage", (request, response) => {
+    });
+    app.put("/editMessage", (request, response) => {
+    });
+    app.delete("/deleteMessage/:messageId", (request, response) => {
     });
 
     function getMessageScheme(Message, chatId, username, message, date) {
