@@ -98,7 +98,7 @@
                     isAdmin: false
                 },
                 onlineUsers: [],
-                adminOnline: true,
+                adminOnline: false,
                 messages: [],
                 chatId: "",
                 editing: null,
