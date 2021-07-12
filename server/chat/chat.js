@@ -1,4 +1,5 @@
 module.exports = function(io, app, models, moment, validation) {
+    const User = models.User;
     const Message = models.Message;
     var admin = {};
     var users = [];
@@ -14,7 +15,7 @@ module.exports = function(io, app, models, moment, validation) {
             } else {
                 var query = {chatId: user};
                 Message.find(query).then(messages => {
-                    users = [...users, {socketId: socket.id, user: user, messages: messages}];
+                    users = [...users, {socketId: socket.id, user: user, messages: messages, isOnline: true}];
                     var adminOnline;
                     if(Object.keys(admin).length) {
                         adminOnline = true;
@@ -22,7 +23,7 @@ module.exports = function(io, app, models, moment, validation) {
                         adminOnline = false;
                     }
                     socket.emit("userJoined", {adminOnline: adminOnline, messages: messages});
-                    socket.broadcast.emit("userOnline", {user: {user: user, messages: messages}});
+                    socket.broadcast.emit("userOnline", {user: {user: user, messages: messages, isOnline: true}});
                 });
             }
         });
@@ -126,21 +127,31 @@ module.exports = function(io, app, models, moment, validation) {
                 var userOffline = users.filter(user => user.socketId == socket.id);
                 users = users.filter(user => user.socketId != socket.id);
                 if(Object.keys(admin).length && Object.keys(userOffline).length) {
-                    socket.broadcast.to(admin.socketId).emit("userOffline", {user: userOffline.user});
+                    socket.broadcast.to(admin.socketId).emit("userOffline", {user: userOffline[0].user});
                 }
             }
         });
     });
 
-    app.post("/findUser", (request, response) => {
+    app.get("/findUser/:username", (request, response) => {
+        var username = request.params.username;
+        var userQuery = {"account.username": username};
+        User.findOne(userQuery).then(user => {
+            if(!validation.isEmpty(user)) {
+                var messageQuery = {chatId: user.account.username};
+                Message.find(messageQuery).then(messages => {
+                    users = [...users, {socketId: "socketId_" + user.account.username, user: user.account.username, messages: messages, isOnline: false}];
+                    response.status(200).json({exists: true, user: {user: user.account.username, messages: messages, isOnline: false}}).end();
+                });
+            } else {
+                response.status(200).json({exists: false}).end();
+            }
+        }).catch(error => console.log(error));
     });
-    app.get("/getMessages", (request, response) => {
-    })
-    app.post("/sendMessage", (request, response) => {
-    });
-    app.put("/editMessage", (request, response) => {
-    });
-    app.delete("/deleteMessage/:messageId", (request, response) => {
+    app.delete("/removeUser/:username", (request, response) => {
+        var username = request.params.username;
+        users = users.filter(user => user.socketId != "socketId_" + username);
+        response.status(200).json({user: username}).end();
     });
 
     function getMessageScheme(Message, chatId, username, message, date) {

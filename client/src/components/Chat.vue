@@ -8,6 +8,18 @@
                             <span :id="'user_' + onlineUser.user">{{onlineUser.user}}</span><i :id="'messageStatus_'  + onlineUser.user" class="fa fa-eye"></i>
                         </li>
                     </ul>
+                    <h3 class="findUser">Find user</h3>
+                    <form autocomplete="off" @submit.prevent="findUser()">
+                        <div class="input-group">
+                            <input type="text" id="findUser" class="form-control" :class="{'errorField' : errors.foundUserError}" placeholder="Find user..." v-model="foundUser" @focus="clearFoundUserStatus()" @keypress="clearFoundUserStatus()">
+                            <button type="submit" class="btn btn-primary">Find</button>
+                        </div>
+                    </form>
+                    <ul class="list-group offlineUsers">
+                        <li v-for="offlineUser in offlineUsers" :key="offlineUser" class="list-group-item d-flex justify-content-between align-items-center" @click="loadMessages(offlineUser.user)">
+                            {{offlineUser.user}}<i class="fa fa-times" @click="removeUser(offlineUser.user)"></i>
+                        </li>
+                    </ul>
                 </div>
                 <div v-if="displayMessages" class="col-md-8">
                     <div id="adminMessages" @click="readMessage()">
@@ -38,7 +50,7 @@
                     <small v-if="typing" class="typing"><b>{{typing}}</b> is typing...</small>
                     <form autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()">
                         <div class="input-group">
-                            <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
+                            <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
                             <button type="submit" class="btn btn-primary">Send</button>
                             <button type="button" class="btn btn-light" @click="scrollDown('adminMessages')"><i id="adminScrollDownIcon" class="fas fa-arrow-down"></i></button>
                         </div>
@@ -68,7 +80,7 @@
                 </div>
                 <form v-if="adminOnline" autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()">
                     <div class="input-group">
-                        <input type="text" class="form-control" :class="{'errorField' : messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
+                        <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
                         <button type="submit" class="btn btn-primary">Send</button>
                         <button type="button" class="btn btn-secondary"><i id="messageStatus" class="fa fa-eye"></i></button>
                         <button type="button" class="btn btn-light" @click="scrollDown('messages')"><i id="scrollDownIcon" class="fas fa-arrow-down"></i></button>
@@ -97,14 +109,18 @@
                     username: "",
                     isAdmin: false
                 },
-                onlineUsers: [],
+                users: [],
                 adminOnline: false,
                 messages: [],
                 chatId: "",
-                editing: null,
                 message: "",
-                messageError: false,
-                typing: ""
+                foundUser: "",
+                editing: null,
+                typing: "",
+                errors: {
+                    messageError: false,
+                    foundUserError: false
+                }
             }
         },
         methods: {
@@ -135,7 +151,7 @@
             listen() {
                 this.socket.on("adminJoined", (data) => {
                     if(data.isAdmin) {
-                        this.onlineUsers = data.users;
+                        this.users = data.users;
                     } else {
                         this.adminOnline = true;
                     }
@@ -148,18 +164,18 @@
                     this.messages = data.messages
                     this.adminOnline = data.adminOnline;
                 });
-                this.socket.on("userOnline", (data) => this.onlineUsers = [...this.onlineUsers, data.user]);
+                this.socket.on("userOnline", (data) => this.users = [...this.users, data.user]);
                 this.socket.on("userOffline", (data) => {
-                    this.onlineUsers = this.onlineUsers.filter(onlineUser => onlineUser.user = data.user);
+                    this.users = this.users.filter(user => user.user != data.user);
                     this.message = "";   
                 });
                 this.socket.on("messageSent", (data) => {
                     if(data.isAdmin) {
-                        var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
+                        var foundIndex = this.users.findIndex(foundUser => foundUser.user == data.user);
                         if(foundIndex > -1) {
-                            this.onlineUsers[foundIndex].messages = [...this.onlineUsers[foundIndex].messages, data.message];
+                            this.users[foundIndex].messages = [...this.users[foundIndex].messages, data.message];
                         } else {
-                            this.onlineUsers = [...this.onlineUsers, data];
+                            this.users = [...this.users, data];
                         }
                         if(!data.myself) {
                             document.getElementById("user_" + data.user).classList.add("unreadMessage");
@@ -177,9 +193,9 @@
                 });
                 this.socket.on("messageEdited", (data) => {
                     if(data.isAdmin) {
-                        var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
+                        var foundIndex = this.users.findIndex(foundUser => foundUser.user == data.user);
                         if(foundIndex > -1) {
-                            this.onlineUsers[foundIndex].messages = this.onlineUsers[foundIndex].messages.map(message => message._id == data.message._id ? data.message : message);
+                            this.users[foundIndex].messages = this.users[foundIndex].messages.map(message => message._id == data.message._id ? data.message : message);
                             this.editing = null;
                         }
                     } else {
@@ -188,9 +204,9 @@
                 });
                 this.socket.on("messageDeleted", (data) => {
                     if(data.isAdmin) {
-                        var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == data.user);
+                        var foundIndex = this.users.findIndex(foundUser => foundUser.user == data.user);
                         if(foundIndex > -1) {
-                            this.onlineUsers[foundIndex].messages = this.onlineUsers[foundIndex].messages.filter(message => message._id != data.messageId);
+                            this.users[foundIndex].messages = this.users[foundIndex].messages.filter(message => message._id != data.messageId);
                         }
                     } else {
                         this.messages = this.messages.filter(message => message._id != data.messageId);
@@ -227,7 +243,7 @@
             sendMessage() {
                 this.clearMessageStatus();
                 if(this.invalidMessage) {
-                    this.messageError = true;
+                    this.errors.messageError = true;
                     return;
                 }
                 if(this.userData.isAdmin) {
@@ -236,7 +252,7 @@
                     this.socket.emit("sendMessage", this.userData.username, this.userData.isAdmin, this.userData.username, this.message);
                 }
                 this.message = "";
-                this.messageError = false;
+                this.errors.messageError = false;
             },
             editMessage(message) {
                 if(message._id && message.message) {
@@ -255,19 +271,45 @@
             },
             readMessage() {
                 if(this.userData.isAdmin) {
-                    document.getElementById("user_" + this.chatId).classList.remove("unreadMessage");
-                    this.socket.emit("readMessage", this.chatId, this.userData.isAdmin, this.userData.username);
+                    if(document.getElementById("user_" + this.chatId)) {
+                        document.getElementById("user_" + this.chatId).classList.remove("unreadMessage");
+                        this.socket.emit("readMessage", this.chatId, this.userData.isAdmin, this.userData.username);
+                    }
                 } else {
                     document.getElementById("chatIcon").classList.remove("unreadMessage");
                     this.socket.emit("readMessage", this.userData.username, this.userData.isAdmin, this.userData.username);
                 }
+            },
+            findUser() {
+                this.clearFoundUserStatus();
+                if(this.invalidFoundUser) {
+                    this.errors.foundUserError = true;
+                    return;
+                }
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/findUser/" + this.foundUser).then(response => {
+                    if(response.data.exists) {
+                        this.users = [...this.users, response.data.user];
+                        this.foundUser = "";
+                        this.errors.foundUserError = false;
+                    } else {
+                        this.errors.foundUserError = true;
+                    }
+                }).catch(error => console.log(error));
+            },
+            removeUser(user) {
+                axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/removeUser/" + user).then(response => {
+                    this.users = this.users.filter(user => user.user != response.data.user);
+                    this.message = "";
+                }).catch(error => console.log(error));
             },
             toggleMessageStatus(status, user) {
                 var statusClass = "";
                 if(document.getElementById("messageStatus_" + user)) {
                     statusClass = document.getElementById("messageStatus_" + user).className;
                 } else {
-                    statusClass = document.getElementById("messageStatus").className;
+                    if(document.getElementById("messageStatus_")) {
+                        statusClass = document.getElementById("messageStatus").className;
+                    }
                 }
                 if(status == "read") {
                     if(statusClass.includes("fa-eye-slash")) {
@@ -316,7 +358,8 @@
                 Object.assign(message, this.cachedMessage);
                 this.editing = null;
             },
-            clearMessageStatus() { this.messageError = false; },
+            clearMessageStatus() { this.errors.messageError = false; },
+            clearFoundUserStatus() { this.errors.foundUserError = false; }
         },
         watch: {
             message(value) {
@@ -336,15 +379,22 @@
             }
         },
         computed: {
+            onlineUsers() {
+                return this.users.filter(user => user.isOnline);
+            },
+            offlineUsers() {
+                return this.users.filter(user => !user.isOnline);
+            },
             displayMessages() {
                 if(this.chatId) {
-                    var foundIndex = this.onlineUsers.findIndex(foundUser => foundUser.user == this.chatId);
+                    var foundIndex = this.users.findIndex(foundUser => foundUser.user == this.chatId);
                     if(foundIndex > -1) {
-                        return this.onlineUsers[foundIndex].messages;
+                        return this.users[foundIndex].messages;
                     }
                 }
             },
-            invalidMessage() { return validation.methods.invalidMessage(this.message); }
+            invalidMessage() { return validation.methods.invalidMessage(this.message); },
+            invalidFoundUser() { return validation.methods.invalidFoundUser(this.foundUser); }
         },
         updated() {
             if(document.getElementById("adminMessages")) {
@@ -454,6 +504,14 @@
     }
     .unreadMessage {
         color: #ff0000;
+    }
+    .findUser {
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .offlineUsers {
+        margin-top: 10px;
     }
     .errorField {
         border: 1px solid #ff0000;
