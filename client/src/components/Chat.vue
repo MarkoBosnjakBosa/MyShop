@@ -185,7 +185,6 @@
                     if(data.isAdmin) {
                         var foundIndex = this.users.findIndex(foundUser => foundUser.user == data.user);
                         if(foundIndex > -1) {
-
                             this.users[foundIndex].messages = [...this.users[foundIndex].messages, data.message];
                         } else {
                             this.users = [...this.users, data];
