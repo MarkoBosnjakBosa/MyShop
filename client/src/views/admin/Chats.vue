@@ -24,13 +24,6 @@
 			sidebar,
             chat
         },
-        data() {
-			return {
-			}
-		},
-        methods: {
-            
-        },
         mounted() {
 			checkLogin.methods.isLoggedIn();
         }

@@ -9,21 +9,28 @@ module.exports = function(io, app, models, moment, validation) {
             if(isAdmin) {
                 if(Object.keys(admin).length < 1) {
                     admin = {socketId: socket.id, user: user};
-                    socket.emit("adminJoined", {isAdmin: true, users: users});
-                    users.forEach(user => socket.broadcast.to(user.socketId).emit("adminJoined", {isAdmin: false, users: []}));
+                    socket.emit("adminOnline", {isAdmin: true, users: users});
+                    users.forEach(user => socket.broadcast.to(user.socketId).emit("adminOnline", {isAdmin: false, users: []}));
                 }
             } else {
+                var adminOnline;
+                if(Object.keys(admin).length) {
+                    adminOnline = true;
+                } else {
+                    adminOnline = false;
+                }
                 var query = {chatId: user};
                 Message.find(query).then(messages => {
-                    users = [...users, {socketId: socket.id, user: user, messages: messages, isOnline: true}];
-                    var adminOnline;
-                    if(Object.keys(admin).length) {
-                        adminOnline = true;
+                    socket.emit("userOnline", {isAdmin: false, adminOnline: adminOnline, messages: messages});
+                    var foundIndex = users.findIndex(foundUser => foundUser.user == user);
+                    if(foundIndex > -1) {
+                        users[foundIndex].socketId = socket.id;
+                        users[foundIndex].isOnline = true;
+                        socket.broadcast.emit("userOnline", {isAdmin: true, exists: true, user: user});
                     } else {
-                        adminOnline = false;
+                        users = [...users, {socketId: socket.id, user: user, messages: messages, isOnline: true}];
+                        socket.broadcast.emit("userOnline", {isAdmin: true, exists: false, user: {user: user, messages: messages, isOnline: true}});
                     }
-                    socket.emit("userJoined", {adminOnline: adminOnline, messages: messages});
-                    socket.broadcast.emit("userOnline", {user: {user: user, messages: messages, isOnline: true}});
                 });
             }
         });

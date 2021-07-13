@@ -24,13 +24,14 @@
                     <h1>MyShop</h1>
                     <h3 v-html="homeSettings.message"></h3>
                 </div>
-                <chat></chat>
+                <chat v-if="userData.userLoggedIn"></chat>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import checkLogin from "../components/CheckLogin.vue";
     import navigation from "../components/Navigation.vue"; 
     import sidebar from "../components/Sidebar.vue";
     import chat from "../components/Chat.vue";
@@ -45,6 +46,11 @@
         },
         data() {
             return {
+                userData: {
+                    userLoggedIn: false,
+                    username: "",
+                    isAdmin: false
+                },
                 homeSettings: {
                     message: "",
                     images: []
@@ -52,6 +58,9 @@
             }
         },
         methods: {
+            getUserData() {
+                this.userData = checkLogin.methods.getUserData();
+            },
             getHomeSettings() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getHomeSettings").then(response => {
                     this.homeSettings.message = response.data.message;
@@ -67,6 +76,7 @@
             }
         },
         mounted() {
+            this.getUserData();
             this.getHomeSettings();
         }
     }

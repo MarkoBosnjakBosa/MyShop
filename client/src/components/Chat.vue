@@ -3,6 +3,7 @@
         <div v-if="userData.isAdmin">
             <div class="row">
                 <div class="col-md-4">
+                    <h3 v-if="onlineUsers.length" class="onlineUsers">Online</h3>
                     <ul class="list-group">
                         <li v-for="onlineUser in onlineUsers" :key="onlineUser" class="list-group-item d-flex justify-content-between align-items-center" @click="loadMessages(onlineUser.user)">
                             <span :id="'user_' + onlineUser.user">{{onlineUser.user}}</span><i :id="'messageStatus_'  + onlineUser.user" class="fa fa-eye"></i>
@@ -22,6 +23,7 @@
                     </ul>
                 </div>
                 <div v-if="displayMessages" class="col-md-8">
+                    <h3 class="chat">{{chatId}}</h3>
                     <div id="adminMessages" @click="readMessage()">
                         <div v-if="!displayMessages.length" class="noMessages">No messages yet.</div>
                         <div v-for="message in displayMessages" :key="message._id" class="card" :class="message.username == userData.username ? 'adminMessage' : 'userMessage'">
@@ -52,18 +54,18 @@
                         <div class="input-group">
                             <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
                             <button type="submit" class="btn btn-primary">Send</button>
-                            <button type="button" class="btn btn-light" @click="scrollDown('adminMessages')"><i id="adminScrollDownIcon" class="fas fa-arrow-down"></i></button>
+                            <button type="button" class="btn btn-dark" @click="scrollDown('adminMessages')"><i id="adminScrollDownIcon" class="fas fa-arrow-down"></i></button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
         <div v-else>
-            <i id="chatIcon" class="fas fa-comments fa-2x chat" @click="displayChatBox()"></i>
+            <i id="chatIcon" class="fas fa-comments fa-2x" @click="displayChatBox()"></i>
             <div id="chatBox" style="display: none;">
-                <div class="row">
+                <div class="row informationRow">
                     <div class="col-md-10">
-                        <h3>Admin</h3>
+                        <h3 class="informationTitle">Admin</h3>
                         <small v-if="typing" class="typing"><b>{{typing}}</b> is typing...</small>
                     </div>
                     <div class="col-md-2">
@@ -83,7 +85,7 @@
                         <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
                         <button type="submit" class="btn btn-primary">Send</button>
                         <button type="button" class="btn btn-secondary"><i id="messageStatus" class="fa fa-eye"></i></button>
-                        <button type="button" class="btn btn-light" @click="scrollDown('messages')"><i id="scrollDownIcon" class="fas fa-arrow-down"></i></button>
+                        <button type="button" class="btn btn-dark" @click="scrollDown('messages')"><i id="scrollDownIcon" class="fas fa-arrow-down"></i></button>
                     </div>
                 </form>
                 <div v-else>The admin is not online.</div>
@@ -149,7 +151,7 @@
                 this.readMessage();
             },
             listen() {
-                this.socket.on("adminJoined", (data) => {
+                this.socket.on("adminOnline", (data) => {
                     if(data.isAdmin) {
                         this.users = data.users;
                     } else {
@@ -160,11 +162,21 @@
                     this.adminOnline = false;
                     this.message = "";
                 });
-                this.socket.on("userJoined", (data) => {
-                    this.messages = data.messages
-                    this.adminOnline = data.adminOnline;
+                this.socket.on("userOnline", (data) => {
+                    if(data.isAdmin) {
+                        if(data.exists) {
+                            var foundIndex = this.users.findIndex(foundUser => foundUser.user == data.user);
+                            if(foundIndex > -1) {
+                                this.users[foundIndex].isOnline = true;
+                            }
+                        } else {
+                            this.users = [...this.users, data.user];
+                        }
+                    } else {
+                        this.messages = data.messages;
+                        this.adminOnline = data.adminOnline;
+                    }
                 });
-                this.socket.on("userOnline", (data) => this.users = [...this.users, data.user]);
                 this.socket.on("userOffline", (data) => {
                     this.users = this.users.filter(user => user.user != data.user);
                     this.message = "";   
@@ -173,6 +185,7 @@
                     if(data.isAdmin) {
                         var foundIndex = this.users.findIndex(foundUser => foundUser.user == data.user);
                         if(foundIndex > -1) {
+
                             this.users[foundIndex].messages = [...this.users[foundIndex].messages, data.message];
                         } else {
                             this.users = [...this.users, data];
@@ -307,7 +320,7 @@
                 if(document.getElementById("messageStatus_" + user)) {
                     statusClass = document.getElementById("messageStatus_" + user).className;
                 } else {
-                    if(document.getElementById("messageStatus_")) {
+                    if(document.getElementById("messageStatus")) {
                         statusClass = document.getElementById("messageStatus").className;
                     }
                 }
@@ -418,17 +431,32 @@
 <style scoped>
     #adminMessages {
         width: 100%;
-        height: 700px;
+        height: 650px;
         overflow-y: scroll;
         overflow-x: hidden;
         border: 1px solid #000;
         border-top-left-radius: 10px;
         border-bottom-left-radius: 10px;
         background-color: #fff;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
+    }
+    .adminMessage {
+        float: right;
+        min-width: 50%;
+        text-align: right;
+    }
+    .userMessage {
+        float: left;
+        min-width: 50%;
     }
     .card {
+        clear: both;
+        margin: 5px;
         margin-bottom: 10px;
+    }
+    .userMessage > .card-header {
+        background-color: #4d4dff;
+        color: #fff;
     }
     .username {
         float: left;
@@ -436,7 +464,7 @@
     .date {
         float: right;
     }
-    .chat {
+    #chatIcon {
         position: absolute;
         right: 20px;
         bottom: 20px;
@@ -452,11 +480,14 @@
         background-color: #f2f2f2;
         z-index: 10;
     }
-    .row {
-        margin-bottom: -15px;
-    }
     .hideChatBox {
         cursor: pointer;
+    }  
+    .informationRow {
+        margin-bottom: -15px;
+    }
+    .informationTitle {
+        margin-bottom: 0px;
     }
     #messages {
         width: 350px;
@@ -469,25 +500,26 @@
         background-color: #fff;
         margin-bottom: 10px;
     }
-    .noMessages {
-        text-align: center;
-        margin-top: 10px;
-    }
     .message {
         margin: 5px;
         padding: 5px;
         border-radius: 10px;
     }
-    .adminMessage {
-        text-align: right;
-    }
     .myMessage {
-        background-color: #f2f2f2;
+        float: right;
+        min-width: 50%;
         text-align: right;
+        background-color: #f2f2f2;
     }
-    .userMessage > .card-header, .otherMessage {
+    .otherMessage {
+        float: left;
+        min-width: 50%;
         background-color: #4d4dff;
         color: #fff;
+    }
+    .noMessages {
+        text-align: center;
+        margin-top: 10px;
     }
     .userDate {
         text-align: right;
@@ -505,10 +537,12 @@
     .unreadMessage {
         color: #ff0000;
     }
+    .onlineUsers, .chat {
+        text-align: center;
+    }
     .findUser {
         text-align: center;
         margin-top: 10px;
-        margin-bottom: 10px;
     }
     .offlineUsers {
         margin-top: 10px;
