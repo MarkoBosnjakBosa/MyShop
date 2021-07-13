@@ -442,11 +442,15 @@
     .adminMessage {
         float: right;
         min-width: 50%;
+        max-width: 75%;
+        word-wrap: break-word;
         text-align: right;
     }
     .userMessage {
         float: left;
         min-width: 50%;
+        max-width: 75%;
+        word-wrap: break-word;
     }
     .card {
         clear: both;
@@ -507,12 +511,18 @@
     .myMessage {
         float: right;
         min-width: 50%;
+        max-width: 75%;
+        word-wrap: break-word;
         text-align: right;
+        padding: 10px;
         background-color: #f2f2f2;
     }
     .otherMessage {
         float: left;
         min-width: 50%;
+        max-width: 75%;
+        word-wrap: break-word;
+        padding: 10px;
         background-color: #4d4dff;
         color: #fff;
     }
