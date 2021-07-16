@@ -15,11 +15,12 @@ const fs = require("fs");
 const path = require("path");
 const EventEmitter = require("events").EventEmitter;
 const mailer = require("nodemailer");
-const Vonage = require('@vonage/server-sdk')
+const Vonage = require("@vonage/server-sdk");
 const moment = require("moment");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const ejs = require("ejs");
 const pdf = require("html-pdf");
+const spawn = require("child_process").spawn;
 const vonage = new Vonage({apiKey: process.env.VONAGE_API_KEY, apiSecret: process.env.VONAGE_API_SECRET});
 const transporter = getTransporter();
 const emailEvent = require("./events/emailEvent.js")(EventEmitter, ejs, fs, path, transporter);
@@ -41,6 +42,7 @@ const checkout = require("./routes/checkout.js")(app, models, stripe, moment, fs
 const invoices = require("./routes/invoices.js")(app, models, path);
 const contact = require("./routes/contact.js")(app, models, emailEvent, validation);
 const chat = require("./chat/chat.js")(io, app, models, moment, validation);
+const backup = require("./database/backup.js")(spawn, fs, path, moment);
 
 mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);

@@ -3,6 +3,8 @@ node_modules/
 server/images/home/*
 server/images/products/*
 server/invoices/*
+server/database/backups/*
 !server/images/home/.gitkeep
 !server/images/products/.gitkeep
 !server/invoices/template/
+!server/database/backups/.gitkeep
