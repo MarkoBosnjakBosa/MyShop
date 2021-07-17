@@ -293,6 +293,49 @@ function validateReviewEdit(request, response, next) {
     else response.status(200).json({edited: false}).end();
 }
 
+function validateContactSettings(request, response, next) {
+    var allowSubmission = true;
+    var errorFields = [];
+    var contactSettings = request.body.contactSettings;
+    var latitude = contactSettings.latitude.toString();
+    if(validation.invalidLatitude(latitude)) {
+        errorFields = [...errorFields, "latitude"];
+        allowSubmission = false;
+    }
+    var longitude = contactSettings.longitude.toString();
+    if(validation.invalidLongitude(longitude)) {
+        errorFields = [...errorFields, "longitude"];
+        allowSubmission = false;
+    }
+    var street = contactSettings.street;
+    if(validation.invalidStreet(street)) {
+        errorFields = [...errorFields, "street"];
+        allowSubmission = false;
+    }
+    var houseNumber = contactSettings.houseNumber.toString();
+    if(validation.invalidHouseNumber(houseNumber)) {
+        errorFields = [...errorFields, "houseNumber"];
+        allowSubmission = false;
+    }
+    var city = contactSettings.city;
+    if(validation.invalidCity(city)) {
+        errorFields = [...errorFields, "city"];
+        allowSubmission = false;
+    }
+    var zipCode = contactSettings.zipCode.toString();
+    if(validation.invalidZipCode(zipCode)) {
+        errorFields = [...errorFields, "zipCode"];
+        allowSubmission = false;
+    }
+    var country = contactSettings.country;
+    if(validation.invalidCountry(country)) {
+        errorFields = [...errorFields, "country"];
+        allowSubmission = false;
+    }
+    if(allowSubmission) next();
+    else response.status(200).json({saved: false, errorFields: errorFields}).end();
+}
+
 function validateContact(request, response, next) {
     var allowSubmission = true;
     var errorFields = [];
@@ -347,6 +390,7 @@ module.exports = {
     validateRating: validateRating,
     validateReviewWriting: validateReviewWriting,
     validateReviewEdit: validateReviewEdit,
+    validateContactSettings: validateContactSettings,
     validateContact: validateContact,
     validPassword: validPassword,
     isEmpty: isEmpty

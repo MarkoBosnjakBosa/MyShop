@@ -95,7 +95,21 @@
 			invalidRating(rating) { return rating < 1 || rating > 5; },
 			invalidReview(review) { return review == ""},
 			invalidMessage(message) { return message == ""},
-			invalidFoundUser(user) { return user == ""}
+			invalidFoundUser(user) { return user == ""},
+			invalidLatitude(latitude) {
+				if(latitude != "" && !isNaN(latitude)) {
+					return false;
+				} else {
+					return true;
+				}
+			},
+			invalidLongitude(longitude) { 
+				if(longitude != "" && !isNaN(longitude)) {
+					return false;
+				} else {
+					return true;
+				}
+			}
         }
     }
 </script>

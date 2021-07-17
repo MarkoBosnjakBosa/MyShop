@@ -53,6 +53,9 @@
             openHomeSettings() {
                 router.push("/admin/home/settings");
             },
+            openContactSettings() {
+                router.push("/admin/contact/settings");
+            },
             openChats() {
                 router.push("/admin/chats");
             },

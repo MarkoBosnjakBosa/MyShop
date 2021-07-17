@@ -96,6 +96,14 @@ function invalidOption(option) {
 function invalidMessage(message) {
     return message == "";
 }
+function invalidLatitude(latitude) {
+    if(latitude != "" && !isNaN(latitude)) return false;
+    else return true;
+}
+function invalidLongitude(longitude) {
+    if(longitude != "" && !isNaN(longitude)) return false;
+    else return true;
+}
 function validUsername(username) {
     var usernameFormat = /^[a-z0-9_.-]*$/;
     if(username != "" && usernameFormat.test(username)) return true;
@@ -137,6 +145,8 @@ module.exports = {
     invalidReview: invalidReview,
     invalidOption: invalidOption,
     invalidMessage: invalidMessage,
+    invalidLatitude: invalidLatitude,
+    invalidLongitude: invalidLongitude,
     validUsername: validUsername,
     validEmail: validEmail,
     validPassword: validPassword

@@ -353,7 +353,6 @@
             this.getCategories();
             this.getTechnicalData();
             this.loadReCaptcha();
-            
         }
     }
 </script>

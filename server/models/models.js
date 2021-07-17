@@ -60,6 +60,15 @@ module.exports = function(mongoose) {
 		message: {type: String},
 		images: [{name: String, contentType: String, image: Buffer}]
 	});
+	const contactSettingsScheme = new mongoose.Schema({
+		latitude: {type: Number, required: true},
+		longitude: {type: Number, required: true},
+		street: {type: String, required: true},
+		houseNumber: {type: Number, required: true},
+		city: {type: String, required: true},
+		zipCode: {type: Number, required: true},
+		country: {type: String, required: true}
+	});
 	const contactScheme = new mongoose.Schema({
 		firstName: {type: String},
 		lastName: {type: String},
@@ -80,6 +89,7 @@ module.exports = function(mongoose) {
 		Category: mongoose.model("Category", categoryScheme),
 		Invoice: mongoose.model("Invoice", invoiceScheme),
 		HomeSettings: mongoose.model("HomeSettings", homeSettingsScheme),
+		ContactSettings: mongoose.model("ContactSettings", contactSettingsScheme),
 		Contact: mongoose.model("Contact", contactScheme),
 		Message: mongoose.model("Message", messageScheme)
 	}
