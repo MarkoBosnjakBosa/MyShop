@@ -11,6 +11,7 @@ const bcryptjs = require("bcryptjs");
 const validation = require("./middleware/validation.js");
 const uploadImages = require("./middleware/uploadImages.js");
 const checkStatus = require("./middleware/checkStatus.js");
+const cron = require("node-cron");
 const fs = require("fs");
 const path = require("path");
 const EventEmitter = require("events").EventEmitter;
@@ -42,7 +43,7 @@ const checkout = require("./routes/checkout.js")(app, models, stripe, moment, fs
 const invoices = require("./routes/invoices.js")(app, models, path);
 const contact = require("./routes/contact.js")(app, models, emailEvent, validation);
 const chat = require("./chat/chat.js")(io, app, models, moment, validation);
-const backup = require("./database/backup.js")(spawn, fs, path, moment);
+const backup = require("./database/backup.js")(spawn, cron, fs, path, moment);
 
 mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);

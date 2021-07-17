@@ -1,0 +1,1 @@
+# This is the log file for daily database backups:
