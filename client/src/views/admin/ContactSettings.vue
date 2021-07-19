@@ -9,13 +9,13 @@
                     <div class="row">
                         <div class="mb-3 col-md-5">
                             <label for="latitude">Latitude:</label>
-                            <input type="text" id="latitude" class="form-control" :class="{'errorField' : errors.latitudeError && submitting}" v-model="contactSettings.latitude" @focus="clearLatitudeStatus()" @keypress="clearLatitudeStatus()"/>
+                            <input type="text" id="latitude" step="any" class="form-control" :class="{'errorField' : errors.latitudeError && submitting}" v-model="contactSettings.coordinates.lat" @focus="clearLatitudeStatus()" @keypress="clearLatitudeStatus()"/>
                             <small v-if="(errors.latitudeError || errors.longitudeError) && submitting" class="form-text errorInput">Please provide valid coordinates!</small>
                             <small v-if="errors.geolocationError" class="form-text errorInput">Geolocation is not provided by this browser!</small>
                         </div>
                         <div class="mb-3 col-md-5">
                             <label for="longitude">Longitude:</label>
-                            <input type="number" id="longitude" class="form-control" :class="{'errorField' : errors.longitudeError && submitting}" v-model="contactSettings.longitude" @focus="clearLongitudeStatus()" @keypress="clearLongitudeStatus()"/>
+                            <input type="number" id="longitude" step="any" class="form-control" :class="{'errorField' : errors.longitudeError && submitting}" v-model="contactSettings.coordinates.lng" @focus="clearLongitudeStatus()" @keypress="clearLongitudeStatus()"/>
                         </div>
                         <div class="mb-3 col-md-2">
                             <button type="button" class="btn btn-secondary coordinates" @click="getCoordinates()">Coordinates</button>
@@ -48,6 +48,7 @@
                         <input type="text" id="country" class="form-control" :class="{'errorField' : errors.countryError && submitting}" v-model="contactSettings.country" @focus="clearCountryStatus()" @keypress="clearCountryStatus()"/>
                         <small v-if="errors.countryError && submitting" class="form-text errorInput">Please provide a valid country!</small>
                     </div>
+                    <div v-if="contactSettingsSaved" class="mb-3 contactSettingsSaved">Contact settings have been successfully saved!</div>
                     <div>
                         <button type="submit" class="btn btn-primary submitButton">Submit</button>
                     </div>
@@ -62,7 +63,6 @@
 	import navigation from "../../components/Navigation.vue";
 	import sidebar from "../../components/Sidebar.vue";
 	import validation from "../../components/Validation.vue";
-    import helper from "../../components/Helper.vue"; 
 	var axios = require("axios");
 	
 	export default {
@@ -75,13 +75,15 @@
 			return {
                 submitting: false,
                 contactSettings: {
-                    id: "",
-                    latitude: 0,
-                    longitude: 0,
+                    _id: "",
+                    coordinates: {
+                        lat: "",
+                        lng: ""
+                    },
                     street: "",
-                    houseNumber: 0,
+                    houseNumber: "",
                     city: "",
-                    zipCode: 0,
+                    zipCode: "",
                     country: ""
                 },
                 errors: {
@@ -146,7 +148,8 @@
                 var body = {contactSettings: this.contactSettings};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/saveContactSettings", body).then(response => {
                     if(response.data.saved) {
-                        this.homeSettingsSaved = true;
+                        this.contactSettingsSaved = true;
+                        this.contactSettings._id = response.data.id;
                         this.errors = {latitudeError: false, longitudeError: false, geolocationError: false, streetError: false, houseNumberError: false, cityError: false, zipCodeError: false, countryError: false};
 						this.submitting = false;
                     } else {
@@ -158,39 +161,41 @@
                         if(errorFields.includes("city")) this.errors.cityError = true;
                         if(errorFields.includes("zipCode")) this.errors.zipCodeError = true;
                         if(errorFields.includes("country")) this.errors.countryError = true;
-                        this.homeSettingsSaved = false;
+                        this.contactSettingsSaved = false;
                     }
                 }).catch(error => console.log(error));
             },
             getCoordinates() {
                 if(navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(position => {
-                        this.contactSettings.latitude = position.coords.latitude;
-                        this.contactSettings.longitude = position.coords.longitude;
+                        this.contactSettings.coordinates.lat = position.coords.latitude;
+                        this.contactSettings.coordinates.lng = position.coords.longitude;
                     });
                 } else {
                     this.errors.geolocationError = true;
                 }
             },
-            clearLatitudeStatus() { this.errors.latitudeError = false },
-            clearLongitudeStatus() { this.errors.longitudeError = false },
+            clearLatitudeStatus() { this.errors.latitudeError = false, this.contactSettingsSaved = false; },
+            clearLongitudeStatus() { this.errors.longitudeError = false, this.contactSettingsSaved = false; },
             clearStreetAndHouseNumberStatus() { 
 				this.errors.streetError = false; 
 				this.errors.houseNumberError = false;
+                this.contactSettingsSaved = false;
 			},
 			clearCityAndZipCodeStatus() { 
 				this.errors.cityError = false; 
 				this.errors.zipCodeError = false;
+                this.contactSettingsSaved = false;
 			},
-			clearCountryStatus() { this.errors.countryError = false; }
+			clearCountryStatus() { this.errors.countryError = false, this.contactSettingsSaved = false; }
         },
         computed: {
-			invalidLatitude() { return validation.methods.invalidLatitude(this.contactSettings.latitude.toString()); },
-			invalidLongitude() { return validation.methods.invalidLongitude(this.contactSettings.longitude.toString()); },
+			invalidLatitude() { return validation.methods.invalidLatitude(this.contactSettings.coordinates.lat); },
+			invalidLongitude() { return validation.methods.invalidLongitude(this.contactSettings.coordinates.lng); },
 			invalidStreet() { return validation.methods.invalidStreet(this.contactSettings.street); },
-			invalidHouseNumber() { return validation.methods.invalidHouseNumber(this.contactSettings.houseNumber.toString()); },
+			invalidHouseNumber() { return validation.methods.invalidHouseNumber(this.contactSettings.houseNumber); },
 			invalidCity() { return validation.methods.invalidCity(this.contactSettings.city); },
-			invalidZipCode() { return validation.methods.invalidZipCode(this.contactSettings.zipCode.toString()); },
+			invalidZipCode() { return validation.methods.invalidZipCode(this.contactSettings.zipCode); },
 			invalidCountry() { return validation.methods.invalidCountry(this.contactSettings.country); }
 		},
         mounted() {
@@ -216,6 +221,10 @@
     }
     .submitButton {
         float: right;
+    }
+    .contactSettingsSaved {
+        color: #008000;
+        margin-bottom: 10px;
     }
     .errorField {
         border: 1px solid #ff0000;

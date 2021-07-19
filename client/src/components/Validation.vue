@@ -39,7 +39,7 @@
 			invalidStreet(street) { return street == ""; },
 			invalidHouseNumber(houseNumber) {
 				var houseNumberFormat = /^[0-9]\d*$/;
-				if(houseNumber != "" && houseNumberFormat.test(houseNumber)) {
+				if(houseNumber && houseNumberFormat.test(houseNumber)) {
 					return false;
 				} else {
 					return true;
@@ -48,7 +48,7 @@
 			invalidCity(city) { return city == ""; },
 			invalidZipCode(zipCode) {
 				var zipCodeFormat = /^[0-9]\d*$/;
-				if(zipCode != "" && zipCodeFormat.test(zipCode)) {
+				if(zipCode && zipCodeFormat.test(zipCode)) {
 					return false;
 				} else {
 					return true;
@@ -97,14 +97,14 @@
 			invalidMessage(message) { return message == ""},
 			invalidFoundUser(user) { return user == ""},
 			invalidLatitude(latitude) {
-				if(latitude != "" && !isNaN(latitude)) {
+				if(latitude && !isNaN(latitude)) {
 					return false;
 				} else {
 					return true;
 				}
 			},
 			invalidLongitude(longitude) { 
-				if(longitude != "" && !isNaN(longitude)) {
+				if(longitude && !isNaN(longitude)) {
 					return false;
 				} else {
 					return true;

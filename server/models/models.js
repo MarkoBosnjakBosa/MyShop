@@ -61,8 +61,10 @@ module.exports = function(mongoose) {
 		images: [{name: String, contentType: String, image: Buffer}]
 	});
 	const contactSettingsScheme = new mongoose.Schema({
-		latitude: {type: Number, required: true},
-		longitude: {type: Number, required: true},
+		coordinates: {
+			lat: {type: Number, required: true},
+			lng: {type: Number, required: true}
+		},
 		street: {type: String, required: true},
 		houseNumber: {type: Number, required: true},
 		city: {type: String, required: true},
@@ -73,7 +75,8 @@ module.exports = function(mongoose) {
 		firstName: {type: String},
 		lastName: {type: String},
 		email: {type: String},
-		message: {type: String}
+		message: {type: String},
+		date: {type: String}
 	});
 	const messageScheme = new mongoose.Schema({
 		chatId: {type: String},

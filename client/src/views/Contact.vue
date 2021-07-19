@@ -34,11 +34,19 @@
                                 <small v-if="errors.messageError && submitting" class="form-text errorInput">Please provide a valid message!</small>
                             </div>
                             <div v-if="messageSubmitted" class="mb-3 submissionSuccessful">Your message has been successfully submitted!</div>
-                            <div>
+                            <div class="mb-3">
                                 <button type="button" class="btn btn-danger" @click="resetMessage()">Reset</button>
                                 <button type="button" class="btn btn-primary submitButton" @click="submitMessage()">Submit</button>
                             </div>
                         </form>
+                        <div>
+                            <h3>My Shop</h3>
+                            <div>
+                                {{contactSettings.street}} {{contactSettings.houseNumber}}<br/>
+                                {{contactSettings.zipCode}} {{contactSettings.city}}<br/>
+                                {{contactSettings.country}}
+                            </div>
+                        </div>
                     </div>
                     <div id="mapTab" class="tab-pane fade" role="tabpanel">
                         <div id="map"></div>
@@ -77,12 +85,26 @@
                 messageSubmitted: false,
                 map: null,
                 coordinates: {
-                    lat: 50.932980,
-                    lng: 7.040375
+                    lat: 0,
+                    lng: 0
+                },
+                contactSettings: {
+                    street: "",
+                    houseNumber: "",
+                    city: "",
+                    zipCode: "",
+                    country: ""
                 }
 			}
 		},
         methods: {
+            getContactSettings() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getContactSettings").then(response => {
+                    this.contactSettings = {street: response.data.contactSettings.street, houseNumber: response.data.contactSettings.houseNumber, city: response.data.contactSettings.city, zipCode: response.data.contactSettings.zipCode, country: response.data.contactSettings.country};
+                    this.coordinates = response.data.contactSettings.coordinates;
+                    this.loadGoogleMaps();
+                }).catch(error => console.log(error));
+            },
             submitMessage() {
                 this.submitting = true;
                 this.clearFirstNameStatus();
@@ -148,7 +170,7 @@
             setLocation() {
                 var icon = {url: require("../assets/images/GoogleMapsIcon.png"), scaledSize: new google.maps.Size(50, 50)};
                 var location = new google.maps.Marker({position: this.coordinates, map: this.map, icon: icon});
-                var infoWindow = new google.maps.InfoWindow({content: "<h3 style='text-align: center'>MyShop</h3><div>Henri-Dunant-Str. 71, Ostheim, Köln, Deutschland</div>"});
+                var infoWindow = new google.maps.InfoWindow({content: "<h3 style='text-align: center'>MyShop</h3><div>" + this.contactSettings.street + " " + this.contactSettings.houseNumber + ", " + this.contactSettings.zipCode + " " + this.contactSettings.city + ", " + this.contactSettings.country + "</div>"});
                 location.addListener("mouseover", function() {
                     infoWindow.open(this.map, location);
                 });
@@ -156,10 +178,10 @@
                     infoWindow.close();
                 });
             },
-            clearFirstNameStatus() { this.errors.firstNameError = false },
-            clearLastNameStatus() { this.errors.lastNameError = false },
-            clearEmailStatus() { this.errors.emailError = false },
-            clearMessageStatus() { this.errors.messageError = false },
+            clearFirstNameStatus() { this.errors.firstNameError = false, this.messageSubmitted = false },
+            clearLastNameStatus() { this.errors.lastNameError = false, this.messageSubmitted = false },
+            clearEmailStatus() { this.errors.emailError = false, this.messageSubmitted = false },
+            clearMessageStatus() { this.errors.messageError = false, this.messageSubmitted = false }
         },
         computed: {
             invalidFirstName() { return validation.methods.invalidFirstName(this.contact.firstName); },
@@ -168,7 +190,7 @@
             invalidMessage() { return validation.methods.invalidMessage(this.contact.message); }
         },
         mounted() {
-            this.loadGoogleMaps();
+            this.getContactSettings();
         }
     }
 </script>

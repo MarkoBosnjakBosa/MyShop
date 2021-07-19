@@ -97,11 +97,11 @@ function invalidMessage(message) {
     return message == "";
 }
 function invalidLatitude(latitude) {
-    if(latitude != "" && !isNaN(latitude)) return false;
+    if(latitude && !isNaN(latitude)) return false;
     else return true;
 }
 function invalidLongitude(longitude) {
-    if(longitude != "" && !isNaN(longitude)) return false;
+    if(longitude && !isNaN(longitude)) return false;
     else return true;
 }
 function validUsername(username) {

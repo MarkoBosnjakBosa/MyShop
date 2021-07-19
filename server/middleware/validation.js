@@ -297,12 +297,12 @@ function validateContactSettings(request, response, next) {
     var allowSubmission = true;
     var errorFields = [];
     var contactSettings = request.body.contactSettings;
-    var latitude = contactSettings.latitude.toString();
+    var latitude = contactSettings.coordinates.lat;
     if(validation.invalidLatitude(latitude)) {
         errorFields = [...errorFields, "latitude"];
         allowSubmission = false;
     }
-    var longitude = contactSettings.longitude.toString();
+    var longitude = contactSettings.coordinates.lng;
     if(validation.invalidLongitude(longitude)) {
         errorFields = [...errorFields, "longitude"];
         allowSubmission = false;
