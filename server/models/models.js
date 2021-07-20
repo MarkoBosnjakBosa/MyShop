@@ -66,9 +66,9 @@ module.exports = function(mongoose) {
 			lng: {type: Number, required: true}
 		},
 		street: {type: String, required: true},
-		houseNumber: {type: Number, required: true},
+		houseNumber: {type: String, required: true},
 		city: {type: String, required: true},
-		zipCode: {type: Number, required: true},
+		zipCode: {type: String, required: true},
 		country: {type: String, required: true}
 	});
 	const contactScheme = new mongoose.Schema({

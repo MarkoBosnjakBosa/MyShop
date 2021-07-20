@@ -30,29 +30,20 @@
 			invalidLastName(lastName) { return lastName == ""; },
 			invalidMobileNumber(mobileNumber) {
 				var mobileNumberFormat = /^[0-9]\d*$/;
-				if(mobileNumber != "" && mobileNumberFormat.test(mobileNumber)) {
-					return false;
-				} else {
-					return true;
-				}
+				if(mobileNumber && mobileNumberFormat.test(mobileNumber)) return false;
+				else return true;
 			},
 			invalidStreet(street) { return street == ""; },
 			invalidHouseNumber(houseNumber) {
 				var houseNumberFormat = /^[0-9]\d*$/;
-				if(houseNumber && houseNumberFormat.test(houseNumber)) {
-					return false;
-				} else {
-					return true;
-				}
+				if(houseNumber && houseNumberFormat.test(houseNumber)) return false;
+				else return true;
 			},
 			invalidCity(city) { return city == ""; },
 			invalidZipCode(zipCode) {
 				var zipCodeFormat = /^[0-9]\d*$/;
-				if(zipCode && zipCodeFormat.test(zipCode)) {
-					return false;
-				} else {
-					return true;
-				}
+				if(zipCode && zipCodeFormat.test(zipCode)) return false;
+				else return true;
 			},
 			invalidCountry(country) { return country == ""; },
 			invalidAuthenticationToken(authenticationToken) { 
