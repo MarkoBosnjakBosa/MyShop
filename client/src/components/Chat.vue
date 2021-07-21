@@ -97,6 +97,7 @@
 <script>
     import checkLogin from "../components/CheckLogin.vue";
     import validation from "../components/Validation.vue"; 
+    import route from "../components/Route.vue"; 
     import io from "socket.io-client";
     import moment from "moment";
     var axios = require("axios");
@@ -250,6 +251,9 @@
                     } else {
                         this.typing = "";
                     }
+                });
+                this.socket.on("closeTab", () => {
+                    route.methods.openPageNotFound();
                 });
             },
             sendMessage() {
@@ -419,7 +423,7 @@
         beforeUnmount() {
             this.socket.emit("userLeaving");
         },
-        mounted() {
+        created() {
             checkLogin.methods.isLoggedIn();
             this.userData = checkLogin.methods.getUserData();
             this.joinChat();

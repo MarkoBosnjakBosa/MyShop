@@ -7,11 +7,12 @@ module.exports = function(io, app, models, moment, validation) {
     io.on("connection", socket => {
         socket.on("userJoining", (user, isAdmin) => {
             if(isAdmin) {
-                if(Object.keys(admin).length < 1) {
-                    admin = {socketId: socket.id, user: user};
-                    socket.emit("adminOnline", {isAdmin: true, users: users});
-                    users.forEach(user => socket.broadcast.to(user.socketId).emit("adminOnline", {isAdmin: false, users: []}));
+                if(Object.keys(admin).length) {
+                    socket.broadcast.to(admin.socketId).emit("closeTab");
                 }
+                admin = {socketId: socket.id, user: user};
+                socket.emit("adminOnline", {isAdmin: true, users: users});
+                users.forEach(user => socket.broadcast.to(user.socketId).emit("adminOnline", {isAdmin: false, users: []}));
             } else {
                 var adminOnline;
                 if(Object.keys(admin).length) {
@@ -24,6 +25,7 @@ module.exports = function(io, app, models, moment, validation) {
                     socket.emit("userOnline", {isAdmin: false, adminOnline: adminOnline, messages: messages});
                     var foundIndex = users.findIndex(foundUser => foundUser.user == user);
                     if(foundIndex > -1) {
+                        socket.broadcast.to(users[foundIndex].socketId).emit("closeTab");
                         users[foundIndex].socketId = socket.id;
                         users[foundIndex].isOnline = true;
                         socket.broadcast.emit("userOnline", {isAdmin: true, exists: true, user: user});
