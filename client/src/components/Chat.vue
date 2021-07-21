@@ -167,6 +167,7 @@
                 this.socket.on("adminOffline", () => {
                     this.adminOnline = false;
                     this.message = "";
+                    this.typing = "";
                 });
                 this.socket.on("userOnline", (data) => {
                     if(data.isAdmin) {
