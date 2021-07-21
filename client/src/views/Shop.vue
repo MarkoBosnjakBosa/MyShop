@@ -1,8 +1,8 @@
 <template>
     <div id="shop" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
+		<div class="d-flex" id="barsStyle">
 			<sidebar></sidebar>
-			<div id="pageDiv">
+			<div id="pageStyle">
 				<navigation></navigation>
                 <h1>Shop</h1>
                 <form autocomplete="off" class="row productsForm" @submit.prevent="getProducts()">
@@ -31,7 +31,7 @@
                         <button type="submit" class="btn btn-primary md-1">Search</button>
                     </div>
                     <div class="mb-3 col-md-1">
-                        <button type="button" class="btn btn-info">{{total}}</button>
+                        <button type="button" class="btn btn-dark" data-toggle="tooltip" :title="'Total:' + total">{{total}}</button>
                     </div>
                 </form>
                 <div class="row products">
@@ -51,6 +51,7 @@
                     <button type="button" class="btn btn-dark page">{{page}}</button>
                     <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
                 </div>
+                <chat v-if="userData.userLoggedIn"></chat>
                 <modal></modal>
             </div>
         </div>
@@ -58,11 +59,11 @@
 </template>
 
 <script>
-    import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
+    import checkLogin from "../components/CheckLogin.vue";
 	import navigation from "../components/Navigation.vue";
 	import sidebar from "../components/Sidebar.vue";
     import route from "../components/Route.vue";
+    import chat from "../components/Chat.vue";
     import modal from "../components/Modal.vue";
 	const axios = require("axios");
 	
@@ -71,10 +72,16 @@
 		components: {
             navigation,
 			sidebar,
+            chat,
             modal
         },
         data() {
 			return {
+                userData: {
+                    userLoggedIn: false,
+                    username: "",
+                    isAdmin: false
+                },
                 products: [],
                 search: "",
                 category: "",
@@ -86,6 +93,9 @@
 			}
 		},
         methods: {
+            getUserData() {
+                this.userData = checkLogin.methods.getUserData();
+            },
             getProducts() {
                 var body = {search: this.search, page: this.page, limit: this.limit, orderBy: this.orderBy, category: this.category};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProducts", body).then(response => {
@@ -119,7 +129,8 @@
                 modal.methods.openModal(event);
             }
         },
-        mounted() {
+        created() {
+            this.getUserData();
             this.getProducts();
             this.getCategories();
         }
