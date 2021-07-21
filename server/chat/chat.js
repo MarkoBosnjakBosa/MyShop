@@ -37,7 +37,7 @@ module.exports = function(io, app, models, moment, validation) {
             }
         });
         socket.on("sendMessage", (chatId, isAdmin, user, message) => {
-            if(chatId && message) {
+            if(chatId && validation.validateMessage(message)) {
                 var newMessage;
                 var dateFormat = "DD.MM.YYYY HH:mm";
                 var date = moment().format(dateFormat);
@@ -60,7 +60,7 @@ module.exports = function(io, app, models, moment, validation) {
             }
         });
         socket.on("editMessage", (chatId, message) => {
-            if(message._id && message.message) {
+            if(message._id && validation.validateMessage(message.message)) {
                 var query = {_id: message._id};
                 var update = {message: message.message};
                 Message.findOneAndUpdate(query, update, {new: true}).then(foundMessage => {

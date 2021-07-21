@@ -93,9 +93,6 @@ function invalidOption(option) {
     if(option != "password" && option != "username" && option != "confirmation") return true;
     else return false;
 }
-function invalidMessage(message) {
-    return message == "";
-}
 function invalidLatitude(latitude) {
     if(latitude && !isNaN(latitude)) return false;
     else return true;
@@ -144,7 +141,6 @@ module.exports = {
     invalidRating: invalidRating,
     invalidReview: invalidReview,
     invalidOption: invalidOption,
-    invalidMessage: invalidMessage,
     invalidLatitude: invalidLatitude,
     invalidLongitude: invalidLongitude,
     validUsername: validUsername,

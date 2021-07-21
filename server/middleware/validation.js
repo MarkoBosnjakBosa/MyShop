@@ -364,6 +364,11 @@ function validateContact(request, response, next) {
     else response.status(200).json({submitted: false, errorFields: errorFields}).end();
 }
 
+function validateMessage(message) {
+    if(message) return true;
+    else return false;
+}
+
 function validPassword(password) {
     var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     if(password != "" && passwordFormat.test(password)) return true;
@@ -392,6 +397,7 @@ module.exports = {
     validateReviewEdit: validateReviewEdit,
     validateContactSettings: validateContactSettings,
     validateContact: validateContact,
+    validateMessage: validateMessage,
     validPassword: validPassword,
     isEmpty: isEmpty
 };
