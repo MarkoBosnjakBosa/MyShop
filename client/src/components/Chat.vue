@@ -148,6 +148,11 @@
                 }
             },
             loadMessages(user) {
+                this.message = "";
+                this.typing = "";
+                if(this.userData.isAdmin) {
+                    this.socket.emit("stopTyping", this.chatId, this.userData.isAdmin, this.userData.username);
+                }
                 this.chatId = user;
                 this.readMessage();
             },
@@ -271,7 +276,7 @@
                 this.errors.messageError = false;
             },
             editMessage(message) {
-                if(message._id && message.message) {
+                if(message._id && !validation.methods.invalidMessage(message.message)) {
                     this.socket.emit("editMessage", this.chatId, message);
                 }
             },
