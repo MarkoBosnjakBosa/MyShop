@@ -96,8 +96,8 @@
 
 <script>
     import checkLogin from "../components/CheckLogin.vue";
-    import validation from "../components/Validation.vue"; 
     import route from "../components/Route.vue"; 
+    import validation from "../components/Validation.vue"; 
     import io from "socket.io-client";
     import moment from "moment";
     var axios = require("axios");
