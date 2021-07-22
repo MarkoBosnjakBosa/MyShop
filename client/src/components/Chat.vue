@@ -254,6 +254,7 @@
                     }
                 });
                 this.socket.on("closeTab", () => {
+                    this.clearData();
                     route.methods.openPageNotFound();
                 });
             },
