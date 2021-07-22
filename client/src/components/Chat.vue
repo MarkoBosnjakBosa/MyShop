@@ -148,11 +148,7 @@
                 }
             },
             loadMessages(user) {
-                this.message = "";
-                this.typing = "";
-                if(this.userData.isAdmin) {
-                    this.socket.emit("stopTyping", this.chatId, this.userData.isAdmin, this.userData.username);
-                }
+                this.clearData();
                 this.chatId = user;
                 this.readMessage();
             },
@@ -166,8 +162,7 @@
                 });
                 this.socket.on("adminOffline", () => {
                     this.adminOnline = false;
-                    this.message = "";
-                    this.typing = "";
+                    this.clearData();
                 });
                 this.socket.on("userOnline", (data) => {
                     if(data.isAdmin) {
@@ -186,7 +181,7 @@
                 });
                 this.socket.on("userOffline", (data) => {
                     this.users = this.users.filter(user => user.user != data.user);
-                    this.message = "";   
+                    this.clearData();
                 });
                 this.socket.on("messageSent", (data) => {
                     if(data.isAdmin) {
@@ -323,6 +318,15 @@
                     this.users = this.users.filter(user => user.user != response.data.user);
                     this.message = "";
                 }).catch(error => console.log(error));
+            },
+            clearData() {
+                this.message = "";
+                this.typing = "";
+                if(this.userData.isAdmin) {
+                    this.socket.emit("stopTyping", this.chatId, this.userData.isAdmin, this.userData.username);
+                } else {
+                    this.socket.emit("stopTyping", this.userData.username, this.userData.isAdmin, this.userData.username);
+                }
             },
             toggleMessageStatus(status, user) {
                 var statusClass = "";
