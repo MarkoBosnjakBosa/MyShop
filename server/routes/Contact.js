@@ -33,6 +33,12 @@ module.exports = function(app, models, emailEvent, moment, validation) {
             }).catch(error => console.log(error));
         }
     });
+    app.get("/getContacts", (request, response) => {
+        var query = {};
+        Contact.find(query).then(contacts => {
+            response.status(200).json({contacts: contacts}).end();
+        }).catch(error => console.log(error));
+    });
     app.post("/contact", validation.validateContact, (request, response) => {
         var contact = request.body.contact;
         var firstName = contact.firstName;

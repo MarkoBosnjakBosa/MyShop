@@ -10,6 +10,7 @@
             <li class="list-group-item list-group-item-action bg-light" @click="openCategories()">Categories</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openTechnicalData()">Technical Data</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openHomeSettings()">Home Settings</li>
+            <li class="list-group-item list-group-item-action bg-light" @click="openContacts()">Contacts</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openContactSettings()">Contact Settings</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openChats()">Chats</li>
         </ul>
@@ -61,6 +62,9 @@
             openHomeSettings() {
                 route.methods.openHomeSettings();
             },
+            openContacts() {
+                route.methods.openContacts();
+            },
             openContactSettings() {
                 route.methods.openContactSettings();
             },
@@ -74,7 +78,7 @@
                 route.methods.openShopCategory(categoryId);
             }
         },
-        mounted() {
+        created() {
             this.getUserData();
             if(!this.userData.isAdmin) {
                 this.getCategories();
