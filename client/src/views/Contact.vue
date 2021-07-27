@@ -1,6 +1,7 @@
 <template>
     <div id="contact" class="container-fluid">
 		<div class="d-flex" id="barsStyle">
+            <sidebar></sidebar>
 			<div id="pageStyle">
 				<navigation></navigation>
                 <h1>Contact</h1>
@@ -59,13 +60,15 @@
 
 <script>
 	import navigation from "../components/Navigation.vue";
+    import sidebar from "../components/Sidebar.vue";
     import validation from "../components/Validation.vue"; 
 	const axios = require("axios");
 	
 	export default {
 		name: "contact",
 		components: {
-            navigation
+            navigation,
+            sidebar
         },
         data() {
 			return {
@@ -189,7 +192,7 @@
             invalidEmail() { return validation.methods.invalidEmail(this.contact.email); },
             invalidMessage() { return validation.methods.invalidMessage(this.contact.message); }
         },
-        mounted() {
+        created() {
             this.getContactSettings();
         }
     }

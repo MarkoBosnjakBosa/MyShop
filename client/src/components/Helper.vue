@@ -51,7 +51,7 @@
                 }
 			},
             toggleSidebar() {
-                var bars = document.getElementById("barsDiv");
+                var bars = document.getElementById("barsStyle");
                 var toggleSidebar = document.getElementById("toggleSidebar");
                 bars.classList.toggle("toggled");
                 if(bars.classList.contains("toggled")) {

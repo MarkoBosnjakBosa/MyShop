@@ -118,7 +118,7 @@
         margin-bottom: 20px;
     }
     .contactsForm, .contacts {
-        margin: 0 auto;
+        margin: auto;
         max-width: 900px;
     }
     .contact {
