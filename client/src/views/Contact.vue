@@ -133,7 +133,7 @@
                     return;
                 }
                 var body = {contact: this.contact};
-                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/contact", body).then(response => {
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/newContact", body).then(response => {
                     if(response.data.submitted) {
                         this.messageSubmitted = true;
                         this.contact = {firstName: "", lastName: "", email: "", message: ""};

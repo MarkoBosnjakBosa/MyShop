@@ -7,21 +7,29 @@
                 <h1>Contacts</h1>
                 <form autocomplete="off" class="contactsForm" @submit.prevent="getContacts()">
                     <div class="row">
-                        <div class="mb-3 col-md-7">
+                        <div class="mb-3 col-md-5">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
                         </div>
                         <div class="mb-3 col-md-3">
                             <input type="number" id="limit" min="1" class="form-control" v-model="limit"/>
                         </div>
+                        <div class="mb-3 col-md-2">
+                            <select id="orderBy" class="form-control" v-model="orderBy">
+                                <option value="" selected>Order by</option>
+                                <option value="dateAsc">Date &#129045;</option>
+                                <option value="dateDesc">Date &#129047;</option>
+                            </select>
+                        </div>
                         <div class="mb-3 col-md-1">
                             <button type="submit" class="btn btn-primary md-1">Search</button>
                         </div>
                         <div class="mb-3 col-md-1">
-                            <button type="button" class="btn btn-dark" data-toggle="tooltip" title="Total">{{total}}</button>
+                            <button type="button" class="btn btn-dark" data-toggle="tooltip" :title="'Total: ' + total">{{total}}</button>
                         </div>
                     </div>
                 </form>
                 <div class="contacts">
+                    <div v-if="!contacts.length" class="noContacts">No contacts found!</div>
                     <div class="card contact" v-for="contact in contacts" :key="contact._id">
                         <div class="card-header">
                             {{contact.firstName}} {{contact.lastName}} <div class="date">{{contact.date}}</div>
@@ -30,7 +38,11 @@
                             {{contact.message}}
                         </div>
                         <div class="card-footer">
-                            {{contact.email}} <a :href="'mailto:' + contact.email" class="btn btn-primary email">Answer</a>
+                            <div class="email">{{contact.email}}</div> 
+                            <div class="action">
+                                <a :href="'mailto:' + contact.email" class="btn btn-primary">Answer</a>
+                                <button type="button" class="btn btn-danger delete" @click="deleteContact(contact._id)">Delete</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -62,18 +74,28 @@
                 search: "",
                 page: 1,
                 limit: 10,
+                orderBy: "",
                 total: 0,
                 pagesNumber: 1
             }
         },
         methods: {
             getContacts() {
-                var body = {search: this.search, page: this.page, limit: this.limit};
+                var body = {search: this.search, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getContacts", body).then(response => {
                     this.contacts = response.data.contacts;
                     this.total = response.data.total;
                     this.pagesNumber = response.data.pagesNumber;
                 }).catch(error => console.log(error));
+            },
+            deleteContact(contactId) {
+                var confirmed = confirm("Delete contact?");
+                if(confirmed) {
+                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteContact/" + contactId).then(response => {
+                        this.contacts = this.contacts.filter(contact => contact._id != contactId);
+                        this.total = this.total - 1;
+                    }).catch(error => console.log(error));
+                }
             },
             loadPage(page) {
                 if(page > 0 && page <= this.pagesNumber) {
@@ -102,11 +124,24 @@
     .contact {
         margin-bottom: 10px;
     }
-    .date, .email {
+    .date, .action {
         float: right;
+    }
+    .email {
+        float: left;
+        padding-top: 5px;
+    }
+    .delete {
+        margin-left: 5px;
+    }
+    .noContacts {
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 10px;
     }
     .pages {
         text-align: center;
+        margin-bottom: 10px;
     }
     .page {
         margin-left: 10px;

@@ -38,8 +38,20 @@ module.exports = function(app, models, emailEvent, moment, validation) {
 		var page = Number(request.body.page) - 1; 
 		var limit = Number(request.body.limit);
 		var skip = page * limit;
+        var orderBy = request.body.orderBy;
+		var sort = {};
+		switch(orderBy) {
+			case "dateAsc":
+				sort = {"date": 1};
+				break;
+			case "dateDesc":
+				sort = {"date": -1};
+				break;
+			default:
+			  	sort = {};
+		}
 		var query = search != "" ? {$or: [{firstName: {$regex: search, $options: "i" }}, {lastName: {$regex: search, $options: "i"}}, {email: {$regex: search, $options: "i"}}, {message: {$regex: search, $options: "i"}}]} : {};
-		var contactsQuery = Contact.find(query).skip(skip).limit(limit);
+		var contactsQuery = Contact.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = Contact.find(query).countDocuments();
 		var queries = [contactsQuery, totalQuery];
 		Promise.all(queries).then(results => {
@@ -49,7 +61,7 @@ module.exports = function(app, models, emailEvent, moment, validation) {
 			response.status(200).json({contacts: results[0], total: total, pagesNumber: pagesNumber}).end();
 		});
     });
-    app.post("/contact", validation.validateContact, (request, response) => {
+    app.post("/newContact", validation.validateContact, (request, response) => {
         var contact = request.body.contact;
         var firstName = contact.firstName;
         var lastName = contact.lastName;
@@ -63,6 +75,21 @@ module.exports = function(app, models, emailEvent, moment, validation) {
             response.status(200).json({submitted: true}).end();
         }).catch(error => console.log(error));
     });
+    app.delete("/deleteContact/:contactId", (request, response) => {
+		var contactId = request.params.contactId;
+		if(contactId) {
+			var query = {_id: contactId};
+			Contact.findOneAndRemove(query).then(contact => {
+				if(!validation.isEmpty(contact)) {
+					response.status(200).json({deleted: true}).end();
+				} else {
+					response.status(200).json({deleted: false}).end(); 
+				}
+			}).catch(error => console.log(error));
+		} else {
+			response.status(200).json({deleted: false}).end();
+		}
+	});
 
     function getContactSettingsScheme(ContactSettings, coordinates, street, houseNumber, city, zipCode, country) {
 		return new ContactSettings({coordinates: coordinates, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country});
