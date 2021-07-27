@@ -33,11 +33,21 @@ module.exports = function(app, models, emailEvent, moment, validation) {
             }).catch(error => console.log(error));
         }
     });
-    app.get("/getContacts", (request, response) => {
-        var query = {};
-        Contact.find(query).then(contacts => {
-            response.status(200).json({contacts: contacts}).end();
-        }).catch(error => console.log(error));
+    app.post("/getContacts", (request, response) => {
+        var search = request.body.search;
+		var page = Number(request.body.page) - 1; 
+		var limit = Number(request.body.limit);
+		var skip = page * limit;
+		var query = search != "" ? {$or: [{firstName: {$regex: search, $options: "i" }}, {lastName: {$regex: search, $options: "i"}}, {email: {$regex: search, $options: "i"}}, {message: {$regex: search, $options: "i"}}]} : {};
+		var contactsQuery = Contact.find(query).skip(skip).limit(limit);
+		var totalQuery = Contact.find(query).countDocuments();
+		var queries = [contactsQuery, totalQuery];
+		Promise.all(queries).then(results => {
+			var total = results[1];
+			var pagesNumber = 1;
+			if(total >= limit) pagesNumber = Math.ceil(total / limit);
+			response.status(200).json({contacts: results[0], total: total, pagesNumber: pagesNumber}).end();
+		});
     });
     app.post("/contact", validation.validateContact, (request, response) => {
         var contact = request.body.contact;
