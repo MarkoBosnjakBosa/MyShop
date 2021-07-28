@@ -211,6 +211,7 @@
     }
     #map {
         height: 700px;
+        margin-bottom: 20px;
     }
     .submitButton {
         float: right;
