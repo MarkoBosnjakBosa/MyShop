@@ -5,27 +5,28 @@ const io = require("socket.io")(http);
 const cors = require("cors");
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
-const models = require("./models/models.js")(mongoose);
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
-const validation = require("./middleware/validation.js");
-const uploadImages = require("./middleware/uploadImages.js");
-const checkStatus = require("./middleware/checkStatus.js");
 const cron = require("node-cron");
-const fs = require("fs");
-const path = require("path");
-const EventEmitter = require("events").EventEmitter;
-const mailer = require("nodemailer");
-const Vonage = require("@vonage/server-sdk");
-const moment = require("moment");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const ejs = require("ejs");
 const pdf = require("html-pdf");
 const spawn = require("child_process").spawn;
+const moment = require("moment");
+const fs = require("fs");
+const path = require("path");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const Vonage = require("@vonage/server-sdk");
 const vonage = new Vonage({apiKey: process.env.VONAGE_API_KEY, apiSecret: process.env.VONAGE_API_SECRET});
-const transporter = getTransporter();
-const emailEvent = require("./events/emailEvent.js")(EventEmitter, ejs, fs, path, transporter);
+const models = require("./models/models.js")(mongoose);
+const validation = require("./middleware/validation.js");
+const uploadImages = require("./middleware/uploadImages.js");
+const checkStatus = require("./middleware/checkStatus.js");
+const mailer = require("nodemailer");
+const emailTransporter = mailer.createTransport({service: "gmail", auth: {user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASSWORD}});
+const EventEmitter = require("events").EventEmitter;
+const emailEvent = require("./events/emailEvent.js")(EventEmitter, ejs, fs, path, emailTransporter);
 const smsEvent = require("./events/smsEvent.js")(EventEmitter, vonage);
+
 app.use(cors({origin: "*"}));
 app.use(express.json());
 app.use(express.static(__dirname + "/images/products"));
@@ -59,7 +60,3 @@ database.on("open", function() {
 http.listen(process.env.SERVER_PORT, function() {
     console.log("MyShop app listening on " + process.env.BASE_URL + process.env.SERVER_PORT + "!");
 });
-
-function getTransporter() {
-    return mailer.createTransport({service: "gmail", auth: {user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASSWORD}});
-}
