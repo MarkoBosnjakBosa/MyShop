@@ -36,13 +36,13 @@ const login = require("./routes/login.js")(app, models, jwt, bcryptjs, smsEvent,
 const forgotCredentials = require("./routes/forgotCredentials.js")(app, bcryptjs, models, emailEvent, validation);
 const profile = require("./routes/profile.js")(app, models, validation);
 const setup = require("./routes/setup.js")(app, models, smsEvent);
-const categories = require("./routes/admin/categories.js")(app, models, validation);
-const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
-const products = require("./routes/admin/products.js")(app, models, uploadImages, fs, path, moment, validation);
-const homeSettings = require("./routes/admin/homeSettings.js")(app, models, uploadImages, fs, path, validation);
-const contact = require("./routes/admin/contact.js")(app, models, emailEvent, moment, validation);
 const checkout = require("./routes/checkout.js")(app, models, stripe, moment, fs, path, ejs, pdf, emailEvent);
 const invoices = require("./routes/invoices.js")(app, models, path);
+const products = require("./routes/admin/products.js")(app, models, uploadImages, fs, path, moment, validation)
+const categories = require("./routes/admin/categories.js")(app, models, validation);
+const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);;
+const homeSettings = require("./routes/admin/homeSettings.js")(app, models, uploadImages, fs, path, validation);
+const contact = require("./routes/admin/contact.js")(app, models, emailEvent, moment, validation);
 const chat = require("./chat/chat.js")(io, app, models, moment, validation);
 const backup = require("./database/backup.js")(spawn, cron, fs, path, moment);
 
@@ -54,9 +54,23 @@ database.on("error", function(error) {
     console.log(error);
 });
 database.on("open", function() {
+    createAdmin();
     console.log("Connection to the database has been successfully established!");
 });
 
 http.listen(process.env.SERVER_PORT, function() {
     console.log("MyShop app listening on " + process.env.BASE_URL + process.env.SERVER_PORT + "!");
 });
+
+function createAdmin() {
+    const User = models.User;
+    var query = {"account.username": "admin"};
+    var password = "admin";
+    bcryptjs.genSalt(10, (error, salt) => {
+        bcryptjs.hash(password, salt, (error, hashedPassword) => {
+            var update = {$setOnInsert: {account: {username: "admin", email: "default", password: hashedPassword, firstName: "default", lastName: "default", mobileNumber: 0, isAdmin: true}, address: {street: "default", houseNumber: 0, city: "default", zipCode: 0, country: "default"}, confirmation: {confirmed: true, confirmationToken: "", authenticationEnabled: false, authenticationToken: "", authenticationEnablingToken: ""}}};
+            var options = {upsert: true};
+            User.findOneAndUpdate(query, update, options).then().catch(error => console.log(error));
+        });
+    });
+}
