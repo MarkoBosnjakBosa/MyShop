@@ -101,21 +101,6 @@ function invalidLongitude(longitude) {
     if(longitude && !isNaN(longitude)) return false;
     else return true;
 }
-function validUsername(username) {
-    var usernameFormat = /^[a-z0-9_.-]*$/;
-    if(username != "" && usernameFormat.test(username)) return true;
-    else return false;
-}
-function validEmail(email) {
-    var emailFormat = /\S+@\S+\.\S+/;
-    if(email != "" && emailFormat.test(email)) return true;
-    else return false;
-}
-function validPassword(password) {
-    var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    if(password != "" && passwordFormat.test(password)) return true;
-    else return false;
-}
 
 module.exports = {
     invalidUsername: invalidUsername, 
@@ -142,8 +127,5 @@ module.exports = {
     invalidReview: invalidReview,
     invalidOption: invalidOption,
     invalidLatitude: invalidLatitude,
-    invalidLongitude: invalidLongitude,
-    validUsername: validUsername,
-    validEmail: validEmail,
-    validPassword: validPassword
+    invalidLongitude: invalidLongitude
 };

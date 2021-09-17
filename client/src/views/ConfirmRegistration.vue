@@ -49,15 +49,15 @@
                 route.methods.openLogin();
             }
         },
-        mounted() {
+        created() {
             this.getRegistrationConfirmation();
         }
-    }
+    }   
 </script>
 
 <style scoped>
     .confirmation {
-        margin: 0 auto;
+        margin: auto;
         max-width: 600px;
         text-align: center;
         margin-top: 20px;
