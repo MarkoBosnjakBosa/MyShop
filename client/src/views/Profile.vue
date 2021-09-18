@@ -155,7 +155,7 @@
 		},
 		data() {
 			return {
-                username: this.$store.getters.getUser,
+				username: this.$store.getters.getUser,
 				user: {
 					account: {
 						username: "",
