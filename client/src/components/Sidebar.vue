@@ -88,7 +88,7 @@
 </script>
 
 <style>
-    #barsStyle {
+    #pageContent {
         overflow-x: hidden;
     }
     #sidebarStyle {
@@ -110,7 +110,7 @@
     #pageStyle {
         min-width: 100vw;
     }
-    #barsStyle.toggled #sidebarDiv {
+    #pageContent.toggled #sidebarDiv {
         margin-left: 0;
     }
     .list-group-item {
@@ -131,7 +131,7 @@
             min-width: 0;
             width: 100%;
         }
-        #barsStyle.toggled #sidebarStyle {
+        #pageContent.toggled #sidebarStyle {
             margin-left: -15rem;
         }
     }

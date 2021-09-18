@@ -1,8 +1,8 @@
 <template>
 	<div id="profile" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
+		<div class="d-flex" id="pageContent">
 			<sidebar></sidebar>
-			<div id="pageDiv">
+			<div id="pageStyle">
 				<navigation></navigation>
 				<div class="profileForm">
 					<div class="profileTitle">
@@ -60,8 +60,8 @@
 										<span class="input-group-text countryCodePrefix">+</span>
 										<input type="text" id="mobileNumber" class="form-control" :class="{'errorField' : errors.account.mobileNumberError && submittings.accountSubmitting}" v-model="user.account.mobileNumber" @focus="clearMobileNumberStatus()" @keypress="clearMobileNumberStatus()"/>
 									</div>
-									<small class="form-text text-muted">Please insert your mobile number with the country calling code.</small>
-									<small v-if="errors.account.mobileNumberError && submittings.accountSubmitting" class="form-text errorInput">Please provide a valid last name!</small>
+									<small class="form-text text-muted">Please insert your mobile number with the country calling code.</small><br>
+									<small v-if="errors.account.mobileNumberError && submittings.accountSubmitting" class="form-text errorInput">Please provide a valid mobile number!</small>
 								</div>
 								<div>
 									<button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
@@ -78,23 +78,23 @@
 								<div class="row">
 									<div class="mb-3 col-md-8">
 										<label for="street">Street:</label>
-										<input type="text" id="street" class="form-control" :class="{'errorField' : errors.address.streetError && submittings.addressSubmitting}" v-model="user.address.street" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
+										<input type="text" id="street" class="form-control" :class="{'errorField' : errors.address.streetError && submittings.addressSubmitting}" v-model="user.address.street" @focus="clearStreetAndHouseNumberStatus()" @keypress="clearStreetAndHouseNumberStatus()"/>
 										<small v-if="(errors.address.streetError || errors.address.houseNumberError) && submittings.addressSubmitting" class="form-text errorInput">Please provide a valid street / house number!</small>
 									</div>
 									<div class="mb-3 col-md-4">
 										<label for="houseNumber">House number:</label>
-										<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : errors.address.houseNumberError && submittings.addressSubmitting}" v-model="user.address.houseNumber" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
+										<input type="number" id="houseNumber" class="form-control" :class="{'errorField' : errors.address.houseNumberError && submittings.addressSubmitting}" v-model="user.address.houseNumber" @focus="clearStreetAndHouseNumberStatus()" @keypress="clearStreetAndHouseNumberStatus()"/>
 									</div>
 								</div>
 								<div class="row">
 									<div class="mb-3 col-md-8">
 										<label for="city">City:</label>
-										<input type="text" id="city" class="form-control" :class="{'errorField' : errors.address.cityError && submittings.addressSubmitting}" v-model="user.address.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
+										<input type="text" id="city" class="form-control" :class="{'errorField' : errors.address.cityError && submittings.addressSubmitting}" v-model="user.address.city" @focus="clearCityAndZipCodeStatus()" @keypress="clearCityAndZipCodeStatus()"/>
 										<small v-if="(errors.address.cityError || errors.address.zipCodeError) && submittings.addressSubmitting" class="form-text errorInput">Please provide a valid city / zip code!</small>
 									</div>
 									<div class="mb-3 col-md-4">
 										<label for="zipCode">Zip code:</label>
-										<input type="number" id="zipCode" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submittings.addressSubmitting}" v-model="user.address.zipCode" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
+										<input type="number" id="zipCode" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submittings.addressSubmitting}" v-model="user.address.zipCode" @focus="clearCityAndZipCodeStatus()" @keypress="clearCityAndZipCodeStatus()"/>
 									</div>
 								</div>
 								<div class="mb-3">
@@ -145,14 +145,14 @@
 	import sidebar from "../components/Sidebar.vue";
 	import validation from "../components/Validation.vue";
 	import helper from "../components/Helper.vue";
-	var axios = require("axios");
+	const axios = require("axios");
 	
 	export default {
 		name: "profile",
 		components: {
-            navigation,
+			navigation,
 			sidebar
-        },
+		},
 		data() {
 			return {
                 username: this.$store.getters.getUser,
@@ -233,29 +233,29 @@
 				}
 				if(!allowSubmit) {
 					this.edits.accountEdited = false;
-                    return;
+					return;
 				}
 				var body = {account: this.user.account};
 				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editAccount", body).then(response => {
 					if(response.data.edited) {
-						this.edits.accountEdited = true;
 						this.errors.account = {emailError: false, passwordError: false, firstNameError: false, lastNameError: false, mobileNumberError: false};
 						this.submittings.accountSubmitting = false;
+						this.edits.accountEdited = true;
 					} else {
 						var errorFields = response.data.errorFields;
-                        if(errorFields.includes("email")) this.errors.account.emailError = true;
-                        if(errorFields.includes("firstName")) this.errors.account.firstNameError = true;
-                        if(errorFields.includes("lastName")) this.errors.account.lastNameError = true;
-                        if(errorFields.includes("mobileNumber")) this.errors.account.mobileNumberError = true;
-                        this.edits.accountEdited = false;
+						if(errorFields.includes("email")) this.errors.account.emailError = true;
+						if(errorFields.includes("firstName")) this.errors.account.firstNameError = true;
+						if(errorFields.includes("lastName")) this.errors.account.lastNameError = true;
+						if(errorFields.includes("mobileNumber")) this.errors.account.mobileNumberError = true;
+						this.edits.accountEdited = false;
 					}
 				}).catch(error => console.log(error));
 			},
-            editAddress() {
+			editAddress() {
 				this.submittings.addressSubmitting = true;
-				this.clearStreetStatus();
-				this.clearCityStatus();
-                this.clearCountryStatus();
+				this.clearStreetAndHouseNumberStatus();
+				this.clearCityAndZipCodeStatus();
+				this.clearCountryStatus();
 				var allowSubmit = true;
 				if(this.invalidStreet) {
 					this.errors.address.streetError = true;
@@ -273,7 +273,7 @@
 					this.errors.address.zipCodeError = true;
 					allowSubmit = false;
 				}
-                if(this.invalidCountry) {
+				if(this.invalidCountry) {
 					this.errors.address.countryError = true;
 					allowSubmit = false;
 				}
@@ -284,72 +284,72 @@
 				var body = {username: this.username, address: this.user.address};
 				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editAddress", body).then(response => {
 					if(response.data.edited) {
-						this.edits.addressEdited = true;
 						this.errors.address = {streetError: false, houseNumberError: false, cityError: false, zipCodeError: false, countryError: false};
 						this.submittings.addressSubmitting = false;
+						this.edits.addressEdited = true;
 					} else {
 						var errorFields = response.data.errorFields;
-                        if(errorFields.includes("street")) this.errors.address.streetError = true;
-                        if(errorFields.includes("houseNumber")) this.errors.address.houseNumberError = true;
-                        if(errorFields.includes("city")) this.errors.address.cityError = true;
-                        if(errorFields.includes("zipCode")) this.errors.address.zipCodeError = true;
-                        if(errorFields.includes("country")) this.errors.address.countryError = true;
-                        this.edits.addressEdited = false;
+						if(errorFields.includes("street")) this.errors.address.streetError = true;
+						if(errorFields.includes("houseNumber")) this.errors.address.houseNumberError = true;
+						if(errorFields.includes("city")) this.errors.address.cityError = true;
+						if(errorFields.includes("zipCode")) this.errors.address.zipCodeError = true;
+						if(errorFields.includes("country")) this.errors.address.countryError = true;
+						this.edits.addressEdited = false;
 					}
 				}).catch(error => console.log(error));
 			},
-            resetPassword() {
-                this.clearPasswordStatus();
-                if(this.invalidPassword) {
-                    this.errors.passwordError = true;
-                    this.edits.passwordReset = false;
-                    return;
-                }
-                var body = {username: this.username, isLoggedIn: true, password: this.user.password};
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/resetPassword", body).then(response => {
-                    if(response.data.reset) {
-                        this.edits.passwordReset = true;
-                        this.user.password = "";
-                        this.errors.passwordError = false;
-                    } else {
-                        this.errors.passwordError = true;
-                        this.edits.passwordReset = false;
-                    }
-                }).catch(error => console.log(error));
-            },
+			resetPassword() {
+				this.clearPasswordStatus();
+				if(this.invalidPassword) {
+					this.errors.passwordError = true;
+					this.edits.passwordReset = false;
+					return;
+				}
+				var body = {username: this.username, isLoggedIn: true, password: this.user.password};
+				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/resetPassword", body).then(response => {
+					if(response.data.reset) {
+						this.user.password = "";
+						this.errors.passwordError = false;
+						this.edits.passwordReset = true;
+					} else {
+						this.errors.passwordError = true;
+						this.edits.passwordReset = false;
+					}
+				}).catch(error => console.log(error));
+			},
 			clearEmailStatus() { this.errors.account.emailError = false; },
 			clearFirstNameStatus() { this.errors.account.firstNameError = false; },
 			clearLastNameStatus() { this.errors.account.lastNameError = false; },
 			clearMobileNumberStatus() { this.errors.account.mobileNumberError = false; },
-			clearStreetStatus() { 
+			clearStreetAndHouseNumberStatus() { 
 				this.errors.address.streetError = false; 
 				this.errors.address.houseNumberError = false;
 			},
-			clearCityStatus() { 
+			clearCityAndZipCodeStatus() { 
 				this.errors.address.cityError = false; 
 				this.errors.address.zipCodeError = false;
 			},
 			clearCountryStatus() {
 				this.errors.address.countryError = false;
 			},
-            clearPasswordStatus() { this.passwordError = false; },
-            togglePassword() { helper.methods.togglePassword(); },
+			clearPasswordStatus() { this.errors.passwordError = false; },
+			togglePassword() { helper.methods.togglePassword(); },
 			toggleTab(tab) { helper.methods.toggleTab(tab); },
 			closeAlert(type) {
-                switch(type) {
-                    case "account":
-                        this.edits.accountEdited = false;
-                        break;
-                    case "address":
-                        this.edits.addressEdited = false;
-                        break;
-                    case "resetPassword":
-                        this.edits.passwordReset = false;
-                        break;
-                }
+				switch(type) {
+					case "account":
+						this.edits.accountEdited = false;
+						break;
+					case "address":
+						this.edits.addressEdited = false;
+						break;
+					case "resetPassword":
+						this.edits.passwordReset = false;
+						break;
+				}
 			}
         },
-        computed: {
+		computed: {
 			invalidEmail() { return validation.methods.invalidEmail(this.user.account.email); },
 			invalidFirstName() { return validation.methods.invalidFirstName(this.user.account.firstName); },
 			invalidLastName() { return validation.methods.invalidLastName(this.user.account.lastName); },
@@ -359,12 +359,12 @@
 			invalidCity() { return validation.methods.invalidCity(this.user.address.city); },
 			invalidZipCode() { return validation.methods.invalidZipCode(this.user.address.zipCode); },
 			invalidCountry() { return validation.methods.invalidCountry(this.user.address.country); },
-            invalidPassword() { return validation.methods.invalidPassword(this.user.password); }
+			invalidPassword() { return validation.methods.invalidPassword(this.user.password); }
 		},
-        created() {
+		created() {
 			checkLogin.methods.isLoggedIn();
-            this.getUser();
-        }
+			this.getUser();
+		}
 	}
 </script>
 
@@ -385,17 +385,17 @@
 	.previousButton {
 		float: left;
 	} 
-    .nextButton {
+	.nextButton {
 		float: right;
-        margin-left: 5px;
+		margin-left: 5px;
 	}
-    .submitButton {
-        float: right;
-    }
-    .input-group-text {
-        border-right: 0px;
-        border-radius: 0px;
-    }
+	.submitButton {
+		float: right;
+	}
+	.input-group-text {
+		border-right: 0px;
+		border-radius: 0px;
+	}
 	.errorField {
 		border: 1px solid #ff0000;
 		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;

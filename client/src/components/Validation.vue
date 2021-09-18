@@ -20,19 +20,19 @@
 			invalidFirstName(firstName) { return firstName == ""; },
 			invalidLastName(lastName) { return lastName == ""; },
 			invalidMobileNumber(mobileNumber) {
-				var mobileNumberFormat = /^[0-9]\d*$/;
+				var mobileNumberFormat = /^[1-9]\d*$/;
 				if(mobileNumber && mobileNumberFormat.test(mobileNumber)) return false;
 				else return true;
 			},
 			invalidStreet(street) { return street == ""; },
 			invalidHouseNumber(houseNumber) {
-				var houseNumberFormat = /^[0-9]\d*$/;
+				var houseNumberFormat = /^[1-9]\d*$/;
 				if(houseNumber && houseNumberFormat.test(houseNumber)) return false;
 				else return true;
 			},
 			invalidCity(city) { return city == ""; },
 			invalidZipCode(zipCode) {
-				var zipCodeFormat = /^[0-9]\d*$/;
+				var zipCodeFormat = /^[1-9]\d*$/;
 				if(zipCode && zipCodeFormat.test(zipCode)) return false;
 				else return true;
 			},
@@ -46,12 +46,12 @@
 			invalidIcon(icon) { return icon == ""; },
 			invalidDescription(description) { return description == ""; },
 			invalidPrice(price) {
-				var priceFormat = /^[0-9]*\.[0-9]{2}$/;
+				var priceFormat = /^[1-9]*\.[0-9]{2}$/;
 				if(price != "" && priceFormat.test(price)) return false;
 				else return true;
 			},
 			invalidQuantity(quantity) {
-				var quantityFormat = /^[0-9]\d*$/;
+				var quantityFormat = /^[1-9]\d*$/;
 				if(quantity != "" && quantityFormat.test(quantity)) return false;
 				else return true;
 			},

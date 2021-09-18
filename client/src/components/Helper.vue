@@ -30,6 +30,9 @@
                     case "check":
                         document.getElementById("checkNavTab").click();
                         break;
+                    case "resetPassword":
+                        document.getElementById("resetPasswordNavTab").click();
+                        break;
                     case "main":
                         document.getElementById("mainNavTab").click();
                         break;
@@ -51,10 +54,10 @@
                 }
             },
             toggleSidebar() {
-                var bars = document.getElementById("barsStyle");
+                var pageContent = document.getElementById("pageContent");
                 var toggleSidebar = document.getElementById("toggleSidebar");
-                bars.classList.toggle("toggled");
-                if(bars.classList.contains("toggled")) toggleSidebar.innerHTML = "<i class='fas fa-angle-double-right'></i>";
+                pageContent.classList.toggle("toggled");
+                if(pageContent.classList.contains("toggled")) toggleSidebar.innerHTML = "<i class='fas fa-angle-double-right'></i>";
                 else toggleSidebar.innerHTML = "<i class='fas fa-angle-double-left'></i>";
             },
             renderImage(image) {
