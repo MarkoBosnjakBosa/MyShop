@@ -1,51 +1,51 @@
 <template>
 	<div id="resetPassword" class="container-fluid">
-        <navigation></navigation>
-        <div class="resetPasswordForm">
-            <form autocomplete="off" @submit.prevent="resetPassword()">
-                <div class="resetPasswordTitle">
-                    <h1>Reset password</h1>
-                    <p>Please insert the your new password.</p>
-                    <hr>
-                </div>
-                <div class="mb-3">
-                    <div class="input-group">
-                        <input type="password" id="password" class="form-control" :class="{'errorField' : passwordError}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
-                        </div>
-                    </div>
-                    <small v-if="passwordError" class="form-text errorInput">Please provide a valid password!</small>
-                </div>
-                <div v-if="passwordReset" class="passwordResetSuccessful">Your password has been successfully reset!</div>
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-dark" @click.prevent="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
-                </div>
-            </form>
-        </div>
+		<navigation></navigation>
+		<div class="resetPasswordForm">
+			<form autocomplete="off" @submit.prevent="resetPassword()">
+					<div class="resetPasswordTitle">
+					<h1>Reset password</h1>
+					<p>Please insert your new password.</p>
+					<hr>
+				</div>
+				<div class="mb-3">
+					<div class="input-group">
+						<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
+						<div class="input-group-append">
+							<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, including uppercase and lowercase letters, digits and special characters." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+						</div>
+					</div>
+					<small v-if="passwordError" class="form-text errorInput">Please provide a valid password!</small>
+				</div>
+				<div v-if="passwordReset" class="passwordResetSuccessful">Your password has been successfully reset!</div>
+				<div class="mb-3">
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</div>
+				<div>
+					<button type="button" class="btn btn-dark" @click.prevent="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
+				</div>
+			</form>
+		</div>
 	</div>
 </template>
 
 <script>
-    import navigation from "../components/Navigation.vue";
+	import navigation from "../components/Navigation.vue";
 	import validation from "../components/Validation.vue";
 	import helper from "../components/Helper.vue";
 	import route from "../components/Route.vue"; 
-	var axios = require("axios");
+	const axios = require("axios");
 
 	export default {
 		name: "resetPassword",
-        components: {
-            navigation
-        },
+		components: {
+			navigation
+		},
 		data() {
 			return {
 				user: {
 					username: "",
-					confirmationToken: "",
+					resetPasswordToken: "",
 					password: ""
 				},
 				passwordError: false,
@@ -60,12 +60,12 @@
 					this.passwordReset = false;
 					return;
 				}
-				var body = {username: this.user.username, isLoggedIn: false, confirmationToken: this.user.confirmationToken, password: this.user.password};
+				var body = {username: this.user.username, isLoggedIn: false, resetPasswordToken: this.user.resetPasswordToken, password: this.user.password};
 				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/resetPassword", body).then(response => {
 					if(response.data.reset) {
-						this.passwordReset = true;
 						this.user.password = "";
 						this.passwordError = false;
+						this.passwordReset = true;
 					} else {
 						this.passwordError = true;
 						this.passwordReset = false;
@@ -84,20 +84,20 @@
 		},
 		created() {
 			this.user.username = this.$route.query.username;
-			this.user.confirmationToken = this.$route.query.confirmationToken;
+			this.user.resetPasswordToken = this.$route.query.resetPasswordToken;
 		}
 	}
 </script>
 
 <style scoped>
 	.resetPasswordForm {
-		margin: 0 auto;
+		margin: auto;
 		max-width: 400px;
 		text-align: center;
 	}
 	.resetPasswordTitle {
 		margin-top: 20px;
-        text-align: left;
+		text-align: left;
 	}
 	.passwordResetSuccessful {
 		color: #008000;

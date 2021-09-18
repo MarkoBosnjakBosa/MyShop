@@ -4,10 +4,10 @@
         <div class="forgotCredentialsForm">
             <form autocomplete="off" @submit.prevent="sendEmail()">
                 <div class="forgotCredentialsTitle">
-					<h1>Forgot credentials</h1>
-					<p>Please check an option.</p>
-					<hr>
-				</div>
+                    <h1>Forgot credentials</h1>
+                    <p>Please check an option.</p>
+                    <hr>
+                </div>
                 <fieldset class="mb-3 options">
                     <div class="row">
                         <legend class="col-form-label col-md-2 pt-0">Forgot:</legend>
@@ -27,15 +27,15 @@
                         </div>
                     </div>
                 </fieldset>
-                <div class="mb-3 emailDiv">
+                <div class="mb-3 email">
                     <input type="text" id="email" class="form-control" placeholder="Email" v-model="email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
                     <small v-if="emailError" class="form-text errorInput">Please provide a valid email!</small>
                 </div>
                 <div v-if="emailSent" class="form-group emailSentSuccessful">Please visit your inbox and follow suggested steps!</div>
-                <div class="mb-3 submitDiv">
+                <div class="mb-3 submit">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
-                <div class="mb-3 loginDiv">
+                <div class="mb-3 login">
                     <button type="button" class="btn btn-dark" @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
                 </div>
             </form>
@@ -44,12 +44,10 @@
 </template>
 
 <script>
-    import "bootstrap";
-    import "bootstrap/dist/css/bootstrap.min.css";
     import navigation from "../components/Navigation.vue"; 
     import validation from "../components/Validation.vue";
     import route from "../components/Route.vue";
-    var axios = require("axios");
+    const axios = require("axios");
 
     export default {
         name: "forgotCredentials",
@@ -58,9 +56,9 @@
         },
         data() {
             return {
-                emailError: false,
                 option: "password",
                 email: "",
+                emailError: false,
                 emailSent: false
             }
         },
@@ -75,10 +73,10 @@
                 var body = {option: this.option, email: this.email};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/forgotCredentials", body).then(response => {
                     if(response.data.sent) {
-                        this.emailSent = true;
                         this.option = "password";
                         this.email = "";
                         this.emailError = false;
+                        this.emailSent = true;
                     } else {
                         this.emailError = true;
                         this.emailSent = false;
@@ -101,7 +99,7 @@
 
 <style scoped>
     .forgotCredentialsForm {
-        margin: 0 auto;
+        margin: auto;
         max-width: 400px;
         text-align: center;
     }
@@ -112,7 +110,7 @@
     .options {
         text-align: left;
     }
-    .emailDiv, .submitDiv, .loginDiv {
+    .email, .submit, .login {
         text-align: center;
     }
     .emailSentSuccessful {

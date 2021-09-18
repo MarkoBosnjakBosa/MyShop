@@ -40,7 +40,7 @@
 	import validation from "../components/Validation.vue";
 	import helper from "../components/Helper.vue"; 
 	import route from "../components/Route.vue"; 
-	var axios = require("axios");
+	const axios = require("axios");
 	
 	export default {
 		name: "login",

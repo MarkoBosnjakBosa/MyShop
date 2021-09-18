@@ -18,7 +18,7 @@
 <script>
     import navigation from "../components/Navigation.vue";
     import route from "../components/Route.vue"; 
-    var axios = require("axios");
+    const axios = require("axios");
 
     export default {
         name: "confirmRegistration",

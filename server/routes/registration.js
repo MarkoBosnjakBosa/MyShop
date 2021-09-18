@@ -17,7 +17,7 @@ module.exports = function(app, models, bcryptjs, emailEvent, validation) {
                 }
                 response.status(200).json(error).end();
             } else {
-                var confirmation = {confirmed: false, confirmationToken: Math.floor(100000 + Math.random() * 900000), authenticationEnabled: true, authenticationToken: "", authenticationEnablingToken: ""};
+                var confirmation = {confirmed: false, confirmationToken: Math.floor(100000 + Math.random() * 900000), authenticationEnabled: true, authenticationToken: "", authenticationEnablingToken: "", resetPasswordToken: ""};
                 account.isAdmin = false;
                 var newUser = getUserScheme(User, account, address, confirmation);
                 bcryptjs.genSalt(10, (error, salt) => {

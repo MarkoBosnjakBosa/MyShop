@@ -1,7 +1,7 @@
 module.exports = function(EventEmitter, ejs, fs, path, transporter) {
     const emailEvent = new EventEmitter();
-    emailEvent.on("sendResetPasswordEmail", (account, confirmationToken) => {
-        sendResetPasswordEmail(account, confirmationToken); 
+    emailEvent.on("sendResetPasswordEmail", (account, resetPasswordToken) => {
+        sendResetPasswordEmail(account, resetPasswordToken); 
     });
 	emailEvent.on("sendForgotUsernameEmail", (account) => {
         sendForgotUsernameEmail(account); 
@@ -16,9 +16,9 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
         sendContactEmail(contact); 
     });
 
-	function sendResetPasswordEmail(account, confirmationToken) {
+	function sendResetPasswordEmail(account, resetPasswordToken) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/resetPassword.html"), "utf-8"));
-		var html = compiledHtml({firstName: account.firstName, username: account.username, confirmationToken: confirmationToken, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
+		var html = compiledHtml({firstName: account.firstName, username: account.username, resetPasswordToken: resetPasswordToken, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: account.email,

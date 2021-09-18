@@ -33,7 +33,7 @@ app.use(express.static(__dirname + "/images/products"));
 
 const registration = require("./routes/registration.js")(app, models, bcryptjs, emailEvent, validation);
 const login = require("./routes/login.js")(app, models, jwt, bcryptjs, smsEvent, validation, checkStatus);
-const forgotCredentials = require("./routes/forgotCredentials.js")(app, bcryptjs, models, emailEvent, validation);
+const forgotCredentials = require("./routes/forgotCredentials.js")(app, models, bcryptjs, emailEvent, validation);
 const profile = require("./routes/profile.js")(app, models, validation);
 const setup = require("./routes/setup.js")(app, models, smsEvent);
 const checkout = require("./routes/checkout.js")(app, models, stripe, moment, fs, path, ejs, pdf, emailEvent);
@@ -64,11 +64,11 @@ http.listen(process.env.SERVER_PORT, function() {
 
 function createAdmin() {
     const User = models.User;
-    var query = {"account.username": "admin"};
     var password = "Admin10!";
     bcryptjs.genSalt(10, (error, salt) => {
         bcryptjs.hash(password, salt, (error, hashedPassword) => {
-            var update = {$setOnInsert: {account: {username: "admin", email: "default", password: hashedPassword, firstName: "default", lastName: "default", mobileNumber: 0, isAdmin: true}, address: {street: "default", houseNumber: 0, city: "default", zipCode: 0, country: "default"}, confirmation: {confirmed: true, confirmationToken: "", authenticationEnabled: false, authenticationToken: "", authenticationEnablingToken: ""}}};
+            var query = {"account.username": "admin"};
+            var update = {$setOnInsert: {account: {username: "admin", email: "default", password: hashedPassword, firstName: "default", lastName: "default", mobileNumber: 0, isAdmin: true}, address: {street: "default", houseNumber: 0, city: "default", zipCode: 0, country: "default"}, confirmation: {confirmed: true, confirmationToken: "", authenticationEnabled: false, authenticationToken: "", authenticationEnablingToken: "", resetPasswordToken: ""}}};
             var options = {upsert: true};
             User.findOneAndUpdate(query, update, options).then().catch(error => console.log(error));
         });

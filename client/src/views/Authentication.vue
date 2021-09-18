@@ -26,7 +26,7 @@
     import navigation from "../components/Navigation.vue";
     import validation from "../components/Validation.vue";
     import route from "../components/Route.vue";
-    var axios = require("axios");
+    const axios = require("axios");
 	
     export default {
         name: "authentication",

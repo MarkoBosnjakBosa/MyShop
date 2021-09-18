@@ -1,4 +1,4 @@
-module.exports = function(app, bcryptjs, models, emailEvent, validation) {
+module.exports = function(app, models, bcryptjs, emailEvent, validation) {
     const User = models.User;
     app.post("/forgotCredentials", validation.validateForgotCredentials, (request, response) => {
 		var email = request.body.email;
@@ -7,12 +7,12 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 		User.findOne(query).then(user => {
 			if(!validation.isEmpty(user)) {
 				if(option == "password") {
-					var confirmationToken = Math.floor(100000 + Math.random() * 900000);
-					var update = {"confirmation.confirmationToken": confirmationToken};
+					var resetPasswordToken = Math.floor(100000 + Math.random() * 900000);
+					var update = {"confirmation.resetPasswordToken": resetPasswordToken};
 					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-						emailEvent.emit("sendResetPasswordEmail", updatedUser.account, updatedUser.confirmation.confirmationToken);
+						emailEvent.emit("sendResetPasswordEmail", updatedUser.account, updatedUser.confirmation.resetPasswordToken);
 						setTimeout(function() {
-							deleteConfirmationToken(user.account.username);    
+							deleteToken("resetPasswordToken", user.account.username);    
 						}, 5 * 60 * 1000);
 					}).catch(error => console.log(error));
 				} else if(option == "username") {
@@ -22,6 +22,9 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 					var update = {"confirmation.confirmationToken": confirmationToken};
 					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
 						emailEvent.emit("sendConfirmationEmail", updatedUser.account, updatedUser.confirmation.confirmationToken);
+						setTimeout(function() {
+							deleteToken("confirmationToken", user.account.username);    
+						}, 5 * 60 * 1000);
 					}).catch(error => console.log(error));
 				}
 				response.status(200).json({sent: true}).end();
@@ -38,7 +41,7 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
         User.findOneAndUpdate(query, update, {new: true}).then(user => {
             emailEvent.emit("sendConfirmationEmail", user.account, user.confirmation.confirmationToken);
 			setTimeout(function() {
-				deleteConfirmationToken(user.account.username);    
+				deleteToken("confirmationToken", user.account.username);    
 			}, 5 * 60 * 1000);
             response.status(200).json({emailSent: true}).end();
         })
@@ -51,12 +54,12 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 		if(isLoggedIn) {
 			query = {"account.username": username};
 		} else {
-			var confirmationToken = request.body.confirmationToken;
-			query = {$and: [{"account.username": username}, {"confirmation.confirmationToken": confirmationToken}]};
+			var resetPasswordToken = request.body.resetPasswordToken;
+			query = {$and: [{"account.username": username}, {"confirmation.resetPasswordToken": resetPasswordToken}]};
 		} 
 		bcryptjs.genSalt(10, (error, salt) => {
 			bcryptjs.hash(password, salt, (error, hashedPassword) => {
-				var update = {"account.password": hashedPassword, "confirmation.confirmationToken": ""};
+				var update = {"account.password": hashedPassword, "confirmation.resetPasswordToken": ""};
 				User.findOneAndUpdate(query, update, {new: true}).then(user => {
 					if(!validation.isEmpty(user)) {
 						response.status(200).json({reset: true}).end();
@@ -68,9 +71,14 @@ module.exports = function(app, bcryptjs, models, emailEvent, validation) {
 		});
 	});
 
-	function deleteConfirmationToken(username) {
-        var query = {"account.username": username};
-        var update = {"confirmation.confirmationToken": ""};
+	function deleteToken(type, username) {
+		var query = {"account.username": username};
+		var update;
+		if(type == "resetPasswordToken") {
+			update = {"confirmation.resetPasswordToken": ""};
+		} else {
+			update = {"confirmation.confirmationToken": ""};
+		}
         User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
     }
 }

@@ -21,7 +21,8 @@ module.exports = function(mongoose) {
 			confirmationToken: {type: String},
 			authenticationEnabled: {type: Boolean, required: true},
 			authenticationToken: {type: String},
-			authenticationEnablingToken: {type: String}
+			authenticationEnablingToken: {type: String},
+			resetPasswordToken: {type: String}
 		}
 	});
 	const productScheme = new mongoose.Schema({

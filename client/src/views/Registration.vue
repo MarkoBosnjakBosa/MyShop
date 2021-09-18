@@ -132,7 +132,7 @@
 	import navigation from "../components/Navigation.vue";
 	import validation from "../components/Validation.vue"; 
 	import helper from "../components/Helper.vue"; 
-	var axios = require("axios");
+	const axios = require("axios");
 
 	export default {
 		name: "registration",
