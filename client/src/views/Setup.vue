@@ -1,7 +1,7 @@
 <template>
-	<div id="setup" class="container-fluid">
-        <div class="d-flex" id="barsStyle">
-			<sidebar></sidebar>
+    <div id="setup" class="container-fluid">
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
                 <div class="setupDialog">
@@ -37,7 +37,7 @@
                         </div>
                         <form autocomplete="off" @submit.prevent="setAuthentication(true)">
                             <div class="input-group">
-                                <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : authenticationEnablingTokenError}" placeholder="Authentication token" v-model="authenticationEnablingToken" @focus="clearAuthenticationEnablingTokenStatus()" @keypress="clearAuthenticationEnablingTokenStatus()"/>
+                            <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : authenticationEnablingTokenError}" placeholder="Authentication token" v-model="authenticationEnablingToken" @focus="clearAuthenticationEnablingTokenStatus()" @keypress="clearAuthenticationEnablingTokenStatus()"/>
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-primary">Enable</button>
                                 </div>
@@ -48,7 +48,7 @@
                 </div>
             </div>
         </div>
-	</div>
+    </div>
 </template>
 
 <script>
@@ -56,23 +56,23 @@
 	import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";  
     import validation from "../components/Validation.vue";
-	var axios = require("axios");
+	const axios = require("axios");
 	
-	export default {
-		name: "setup",
-		components: {
+    export default {
+        name: "setup",
+        components: {
             navigation,
             sidebar
         },
-		data() {
-			return {
+        data() {
+            return {
                 username: this.$store.getters.getUser,
                 authenticationEnabled: false,
                 authenticationEnablingTokenError: false,
                 authenticationEnablingToken: "",
                 authenticationEnablingTokenSent: false
-			}
-		},
+            }
+        },
         methods: {
             getAuthentication() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getAuthentication/" + this.username).then(response => {
@@ -95,10 +95,11 @@
                     if(response.data.valid) {
                         this.authenticationEnabled = response.data.authenticationEnabled;
                         this.authenticationEnablingToken = "";
-                        this.authenticationEnablingTokenError = false, this.authenticationEnablingTokenSent = false;
+                        this.authenticationEnablingTokenError = false;
+                        this.authenticationEnablingTokenSent = false;
                     } else {
                         var errorFields = response.data.errorFields;
-                        if(errorFields.includes("authenticationEnablingToken")) this.authenticationEnablingTokenError = true;
+                        if(errorFields.includes("authenticationEnablingToken")) this.authenticationEnablingTokenError = true;               
                     }
                 }).catch(error => console.log(error));
             },
@@ -121,19 +122,19 @@
 </script>
 
 <style scoped>
-	.setupDialog {
-		margin: auto;
-		max-width: 450px;
-	}
-	.setupTitle {
-		margin-top: 20px;
-	}
+    .setupDialog {
+        margin: auto;
+        max-width: 450px;
+    }
+    .setupTitle {
+        margin-top: 20px;
+    }
     .badge {
         float: right;
     }
     .authenticationEnablingTokenSent {
-		color: #008000;
-	}
+        color: #008000;
+    }
     .errorField {
         border: 1px solid #ff0000;
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;

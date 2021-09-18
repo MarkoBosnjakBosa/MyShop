@@ -1,13 +1,13 @@
-module.exports = function(app, models, smsEvent) {
+module.exports = function(app, models, smsEvent, validation) {
     const User = models.User;
     app.get("/getAuthentication/:username", (request, response) => {
         var username = request.params.username;
         var query = {"account.username": username};
         User.findOne(query).then(user => {
             response.status(200).json({authenticationEnabled: user.confirmation.authenticationEnabled}).end();
-        }).catch(error => console.log(error));
+    }).catch(error => console.log(error));
     });
-    app.put("/setAuthentication", (request, response) => {
+    app.put("/setAuthentication", validation.validateAuthenticationEnabling, (request, response) => {
         var username = request.body.username;
         var authenticationEnabled = request.body.authenticationEnabled;
         var query = {"account.username": username};
@@ -38,7 +38,7 @@ module.exports = function(app, models, smsEvent) {
         var authenticationEnablingToken = Math.floor(100000 + Math.random() * 900000);
         var update = {"confirmation.authenticationEnablingToken": authenticationEnablingToken};
         User.findOneAndUpdate(query, update, {new: true}).then(user => {
-            //smsEvent.emit("sendAuthenticationEnablingToken", user.account.mobileNumber, user.account.firstName, user.confirmation.authenticationEnablingToken);
+            smsEvent.emit("sendAuthenticationEnablingToken", user.account.mobileNumber, user.account.firstName, user.confirmation.authenticationEnablingToken);
             setTimeout(function() {
 				deleteAuthenticationToken(user.account.username);    
 			}, 5 * 60 * 1000);

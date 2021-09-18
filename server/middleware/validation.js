@@ -73,6 +73,17 @@ function validateAuthentication(request, response, next) {
     else response.status(200).json({authenticated: false}).end();
 }
 
+function validateAuthenticationEnabling(request, response, next) {
+    var authenticationEnabled = request.body.authenticationEnabled;
+    if(authenticationEnabled) {
+        var authenticationEnablingToken = request.body.authenticationEnablingToken;
+        if(!validation.invalidAuthenticationToken(authenticationEnablingToken)) next();
+        else response.status(200).json({authenticated: false}).end();
+    } else {
+        next();
+    }
+}
+
 function validateForgotCredentials(request, response, next) {
     var email = request.body.email;
     var option = request.body.option;
@@ -389,6 +400,7 @@ module.exports = {
     validateRegistration: validateRegistration,
     validateLogin: validateLogin,
     validateAuthentication: validateAuthentication,
+    validateAuthenticationEnabling: validateAuthenticationEnabling,
     validateForgotCredentials: validateForgotCredentials,
     validatePasswordResetting: validatePasswordResetting,
     validateAccountEdit: validateAccountEdit,
