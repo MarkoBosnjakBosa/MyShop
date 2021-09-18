@@ -5,7 +5,7 @@ module.exports = function(app, models, smsEvent, validation) {
         var query = {"account.username": username};
         User.findOne(query).then(user => {
             response.status(200).json({authenticationEnabled: user.confirmation.authenticationEnabled}).end();
-    }).catch(error => console.log(error));
+        }).catch(error => console.log(error));
     });
     app.put("/setAuthentication", validation.validateAuthenticationEnabling, (request, response) => {
         var username = request.body.username;
