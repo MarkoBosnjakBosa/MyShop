@@ -1,6 +1,6 @@
 module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, checkStatus) {
-    const User = models.User;
-    app.post("/checkUsername", (request, response) => {
+	const User = models.User;
+	app.post("/checkUsername", (request, response) => {
 		var username = request.body.username;
 		if(username) {
 			var query = {"account.username": username};
@@ -30,7 +30,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, chec
 									var authenticationToken = Math.floor(100000 + Math.random() * 900000);
 									var update = {"confirmation.authenticationToken": authenticationToken};
 									User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-										//smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
+										smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
 										setTimeout(function() {
 											deleteAuthenticationToken(updatedUser.account.username);    
 										}, 5 * 60 * 1000);
@@ -88,7 +88,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, chec
 					var authenticationToken = Math.floor(100000 + Math.random() * 900000);
 					var update = {"confirmation.authenticationToken": authenticationToken};
 					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-						//smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
+						smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
 						setTimeout(function() {
 							deleteAuthenticationToken(updatedUser.account.username);    
 						}, 5 * 60 * 1000);
@@ -103,8 +103,8 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, chec
 	});
 
 	function deleteAuthenticationToken(username) {
-        var query = {"account.username": username};
-        var update = {"confirmation.authenticationToken": ""};
-        User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
-    }
+		var query = {"account.username": username};
+		var update = {"confirmation.authenticationToken": ""};
+		User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
+	}
 }

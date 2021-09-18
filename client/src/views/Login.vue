@@ -45,8 +45,8 @@
 	export default {
 		name: "login",
 		components: {
-            navigation
-        },
+			navigation
+		},
 		data() {
 			return {
 				submitting: false,
@@ -98,7 +98,7 @@
 					allowSubmit = false;
 				}
 				if(!allowSubmit) {
-					this.errors.passwordMatch = false, this.errors.isConfirmed = false;
+					this.errors.noPasswordMatch = false, this.errors.notConfirmed = false;
 					return;
 				}
 				var body = {username: this.user.username, password: this.user.password};
@@ -152,8 +152,8 @@
 			invalidUsername() { return validation.methods.invalidUsername(this.user.username); },
 			invalidPassword() { return validation.methods.invalidPassword(this.user.password); }
 		},
-		mounted() {
-            this.checkLogin();
+		created() {
+			this.checkLogin();
 		}
 	}
 </script>
@@ -166,7 +166,7 @@
 	.loginTitle {
 		margin-top: 20px;
 	}
-    .forgotCredentials {
+	.forgotCredentials {
 		text-align: right;
 	}
 	.submitButton {
@@ -175,7 +175,7 @@
 	.submit, .register {
 		text-align: center;
 	}
-    .loginFailed {
+	.loginFailed {
 		color: #ff0000;
 		margin-bottom: 10px;
 	}
