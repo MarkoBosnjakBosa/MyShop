@@ -67,6 +67,12 @@ function validateLogin(request, response, next) {
     else response.status(200).json({authentication: false, valid: false, allowed: false, errorFields: ["username"]}).end();
 }
 
+function validateAuthentication(request, response, next) {
+    var authenticationToken = request.headers["authentication"];
+    if(!validation.invalidAuthenticationToken(authenticationToken)) next();
+    else response.status(200).json({authenticated: false}).end();
+}
+
 function validateForgotCredentials(request, response, next) {
     var email = request.body.email;
     var option = request.body.option;
@@ -382,6 +388,7 @@ function isEmpty(object) {
 module.exports = {
     validateRegistration: validateRegistration,
     validateLogin: validateLogin,
+    validateAuthentication: validateAuthentication,
     validateForgotCredentials: validateForgotCredentials,
     validatePasswordResetting: validatePasswordResetting,
     validateAccountEdit: validateAccountEdit,

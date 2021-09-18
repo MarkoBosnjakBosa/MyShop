@@ -55,6 +55,11 @@ function invalidReCaptchaToken(reCaptchaSecretKey, reCaptchaToken, remoteIp) {
         });
     }
 }
+function invalidAuthenticationToken(authenticationToken) {
+    var authenticationTokenFormat = /^\d{6}$/;
+    if(authenticationToken != "" && authenticationTokenFormat.test(authenticationToken)) return false;
+    else return true;
+}
 function invalidTitle(title) {
     return title == "";
 }
@@ -115,6 +120,7 @@ module.exports = {
     invalidZipCode: invalidZipCode,
     invalidCountry: invalidCountry,
     invalidReCaptchaToken: invalidReCaptchaToken,
+    invalidAuthenticationToken: invalidAuthenticationToken,
     invalidTitle: invalidTitle,
     invalidIcon: invalidIcon,
     invalidDescription: invalidDescription,

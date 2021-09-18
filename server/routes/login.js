@@ -38,7 +38,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, chec
 									}).catch(error => console.log(error));
 								} else {
 									var token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey");
-									response.status(200).json({authentication: false, valid: true, token: token, username: user.account.username, isAdmin: user.account.isAdmin}).end();
+									response.status(200).json({authentication: false, valid: true, token: token, user: user.account.username, isAdmin: user.account.isAdmin}).end();
 								}
 							} else {
 								response.status(200).json({authentication: false, valid: false, found: true, error: "noPasswordMatch"}).end();
@@ -57,7 +57,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, chec
 			}
 		}).catch(error => console.log(error));
 	});
-	app.post("/authenticate", (request, response) => {
+	app.post("/authenticate", validation.validateAuthentication, (request, response) => {
 		var username = request.body.username;
 		var query = {"account.username": username};
 		User.findOne(query).then(user => {

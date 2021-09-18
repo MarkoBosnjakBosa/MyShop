@@ -4,10 +4,10 @@
         <div class="authenticationForm">
             <form autocomplete="off" @submit.prevent="authenticateUser()">
                 <div class="authenticationTitle">
-					<h1>Authenticate</h1>
-					<p>Please insert the authentication token to log in.</p>
-					<hr>
-				</div>
+                    <h1>Authenticate</h1>
+                    <p>Please insert the authentication token to log in.</p>
+                    <hr>
+                </div>
                 <div class="mb-3">
                     <input type="text" id="authenticationToken" class="form-control" :class="{'errorField' : authenticationTokenError}" placeholder="Authentication token" v-model="authenticationToken" @focus="clearAuthenticationTokenStatus()" @keypress="clearAuthenticationTokenStatus()"/>
                     <small v-if="authenticationTokenError" class="errorInput">Please provide a valid authentication token!</small>
@@ -77,16 +77,16 @@
                 }).catch(error => console.log(error));
             },
             openHome() { 
-				var isAdmin = this.$store.getters.isAdmin;
-				if(isAdmin) route.methods.openProducts();
-				else route.methods.openHome();
-			},
+                var isAdmin = this.$store.getters.isAdmin;
+                if(isAdmin) route.methods.openProducts();
+                else route.methods.openHome();
+            },
             clearAuthenticationTokenStatus() { this.authenticationTokenError = false, this.authenticationTokenSent = false; }
         },
         computed: {
             invalidAuthenticationToken() { return validation.methods.invalidAuthenticationToken(this.authenticationToken); }
         },
-        mounted() {
+        created() {
             this.checkLogin();
         }
     }
@@ -94,7 +94,7 @@
 
 <style scoped>
     .authenticationForm {
-        margin: 0 auto;
+        margin: auto;
         max-width: 500px;
     }
     .authenticationTitle {

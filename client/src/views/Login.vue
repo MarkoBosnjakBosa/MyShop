@@ -116,7 +116,7 @@
 							this.errors = {usernameError: false, passwordError: false, noPasswordMatch: false, notConfirmed: false};
 							this.submitting = false;
 							var token = response.data.token;
-							var user = response.data.username;
+							var user = response.data.user;
 							var isAdmin = response.data.isAdmin;
 							this.$store.dispatch("login", {token, user, isAdmin});
 							this.openHome();
