@@ -53,10 +53,10 @@
 
 <script>
     import checkLogin from "../components/CheckLogin.vue";
-	import navigation from "../components/Navigation.vue";
+    import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";  
     import validation from "../components/Validation.vue";
-	const axios = require("axios");
+    const axios = require("axios");
 	
     export default {
         name: "setup",
