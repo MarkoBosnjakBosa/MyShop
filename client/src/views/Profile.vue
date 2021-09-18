@@ -348,7 +348,7 @@
 						break;
 				}
 			}
-        },
+		},
 		computed: {
 			invalidEmail() { return validation.methods.invalidEmail(this.user.account.email); },
 			invalidFirstName() { return validation.methods.invalidFirstName(this.user.account.firstName); },
