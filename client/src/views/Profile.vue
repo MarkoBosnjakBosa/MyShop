@@ -201,13 +201,13 @@
 				}
 			}
 		},
-        methods: {
-            getUser() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUser/" + this.username).then(response => {
-                    this.user.account = response.data.account;
-                    this.user.address = response.data.address;
-                }).catch(error => console.log(error));
-            },
+		methods: {
+			getUser() {
+				axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUser/" + this.username).then(response => {
+					this.user.account = response.data.account;
+					this.user.address = response.data.address;
+				}).catch(error => console.log(error));
+			},
 			editAccount() {
 				this.submittings.accountSubmitting = true;
 				this.clearEmailStatus();
