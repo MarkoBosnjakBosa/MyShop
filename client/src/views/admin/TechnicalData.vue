@@ -1,18 +1,18 @@
 <template>
     <div id="technicalData" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
-			<sidebar></sidebar>
-			<div id="pageDiv">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <div id="technicalDataForm">
                     <form autocomplete="off" @submit.prevent="createTechnicalInformation()">
                         <h1>Technical Data</h1>
-                        <div class="form-row">
-                            <div class="form-group col-md-11">
-                                <input type="text" id="title" class="form-control" :class="{'errorField' : titleError && submitting}" placeholder="Title" v-model="technicalInformation.title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
-                                <small v-if="titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
+                        <div class="row">
+                            <div class="mb-3 col-md-11">
+                                <input type="text" id="title" class="form-control" :class="{'errorField' : titleError}" placeholder="Title" v-model="title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
+                                <small v-if="titleError" class="form-text errorInput">Please provide a valid title!</small>
                             </div>
-                            <div class="form-group col-md-1">
+                            <div class="mb-3 col-md-1">
                                 <button type="submit" class="btn btn-primary">Create</button>
                             </div>
                         </div>
@@ -52,31 +52,26 @@
 </template>
 
 <script>
-    import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
-	import validation from "../../components/Validation.vue";
-	var axios = require("axios");
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
+    import validation from "../../components/Validation.vue";
+    const axios = require("axios");
 	
-	export default {
-		name: "categories",
-		components: {
+    export default {
+        name: "technicalData",
+        components: {
             navigation,
-			sidebar
+            sidebar
         },
         data() {
-			return {
+            return {
                 technicalData: [],
-                submitting: false,
+                title: "",
                 titleError: false,
-                technicalInformation: {
-                    title: ""
-                },
                 technicalInformationCreated: false,
                 editing: null
-			}
+            }
 		},
         methods: {
             getTechnicalData() {
@@ -85,25 +80,20 @@
                 }).catch(error => console.log(error));
             },
             createTechnicalInformation() {
-                this.submitting = true;
                 this.clearTitleStatus();
-                var allowSubmit = true;
                 if(this.invalidTitle) {
                     this.titleError = true;
-                    allowSubmit = false;
-                }
-                if(!allowSubmit) {
                     this.technicalInformationCreated = false;
                     return;
                 }
-                var body = {title: this.technicalInformation.title};
+                var body = {title: this.title};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createTechnicalInformation", body).then(response => {
                     if(response.data.created) {
                         var newTechnicalInformation = response.data.technicalInformation;
                         this.technicalData = [...this.technicalData, newTechnicalInformation];
+                        this.title = "";
+                        this.titleError = false;
                         this.technicalInformationCreated = true;
-                        this.technicalInformation = {title: ""};
-                        this.titleError = false, this.submitting = false;
                     } else {
                         var errorFields = response.data.errorFields;
                         if(errorFields.includes("title")) this.titleError = true;
@@ -143,10 +133,11 @@
             clearTitleStatus() { this.titleError = false, this.technicalInformationCreated = false; }
         },
         computed: {
-            invalidTitle() { return validation.methods.invalidTitle(this.technicalInformation.title); }
+            invalidTitle() { return validation.methods.invalidTitle(this.title); }
         },
         created() {
-			checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isAdmin();
             this.getTechnicalData();
         }
     }
@@ -154,7 +145,7 @@
 
 <style scoped>
     #technicalDataForm, #technicalDataTable {
-        margin: 0 auto;
+        margin: auto;
         max-width: 900px;
     }
     h1 {
@@ -163,16 +154,16 @@
         margin-bottom: 20px;
     }
     .noTechnicalData {
-		font-weight: bold;
-		text-align: center;
-		margin-top: 20px;
-	}
+        font-weight: bold;
+        text-align: center;
+        margin-top: 20px;
+    }
     tbody .fas, tbody .far {
         cursor: pointer;
         margin-right: 5px;
     }
     .padded {
-        padding-top: 20px;
+        padding-top: 15px;
     }
     .editTechnicalInformation {
         color: #008000;

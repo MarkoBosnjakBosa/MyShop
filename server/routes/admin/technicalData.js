@@ -14,6 +14,8 @@ module.exports = function(app, models, validation) {
         }).catch(error => console.log(error));
     });
     app.put("/editTechnicalInformation", validation.validateTechnicalInformationEdit, (request, response) => {
+        var technicalInformationId = request.body.technicalInformationId;
+        var title = request.body.title;
         var query = {_id: technicalInformationId};
         var update = {title: title};
         TechnicalInformation.findOneAndUpdate(query, update, {new: true}).then(technicalInformation => {
