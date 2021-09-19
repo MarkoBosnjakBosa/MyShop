@@ -100,16 +100,16 @@
                 this.submitting = true;
                 this.clearTitleStatus();
                 this.clearIconStatus();
-                var allowSubmit = true;
+                var allowCreation = true;
                 if(this.invalidTitle) {
                     this.errors.titleError = true;
-                    allowSubmit = false;
+                    allowCreation = false;
                 }
                 if(this.invalidIcon) {
                     this.errors.iconError = true;
-                    allowSubmit = false;
+                    allowCreation = false;
                 }
-                if(!allowSubmit) {
+                if(!allowCreation) {
                     this.categoryCreated = false;
                     return;
                 }

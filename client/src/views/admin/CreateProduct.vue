@@ -91,6 +91,15 @@
                                 <button type="button" class="btn btn-dark previousButton" @click="toggleTab('main')"><i class="fas fa-angle-double-left"></i> Previous</button>
                                 <button type="button" class="btn btn-dark nextButton" @click="toggleTab('images')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>
+                            <div v-if="technicalInformationSelected" class="position-fixed bottom-0 end-0 technicalInformationSelected" style="z-index: 5">
+                                <div class="toast show" role="alert">
+                                    <div class="toast-header">
+                                        <strong class="me-auto">Error</strong>
+                                        <button type="button" class="btn-close" @click="hideNotification()"></button>
+                                    </div>
+                                    <div class="toast-body">You have already selected the technical information!</div>
+                                </div>
+                            </div>
                         </div>
                         <div id="imagesTab" class="tab-pane fade" role="tabpanel">
                             <div v-if="errors.titleError || errors.descriptionError || errors.priceError || errors.quantityError || errors.categoryError || errors.primaryImageError" class="alert alert-danger" role="alert">Please insert missing data!</div>
@@ -171,6 +180,7 @@
                     primaryImageError: false,
                     imagesError: false
                 },
+                technicalInformationSelected: false,
                 productCreated: false
             }
         },
@@ -198,36 +208,36 @@
                 this.clearQuantityStatus();
                 this.clearCategoryStatus();
                 this.clearPrimaryImageStatus();
-                var allowSubmit = true;
+                var allowCreation = true;
                 if(this.invalidTitle) {
                     this.errors.titleError = true;
-                    allowSubmit = false;
+                    allowCreation = false;
                 }
                 if(this.invalidDescription) {
                     this.errors.descriptionError = true;
-                    allowSubmit = false;
+                    allowCreation = false;
                 }
                 if(this.invalidPrice) {
                     this.errors.priceError = true;
-                    allowSubmit = false;
+                    allowCreation = false;
                 }
                 if(this.invalidQuantity) {
                     this.errors.quantityError = true;
-                    allowSubmit = false;
+                    allowCreation = false;
                 }
                 if(this.invalidCategory) {
                     this.errors.categoryError = true;
-                    allowSubmit = false;
+                    allowCreation = false;
                 }
                 if(this.invalidPrimaryImage) {
                     this.errors.primaryImageError = true;
-                    allowSubmit = false;
+                    allowCreation = false;
                 }
                 if(this.invalidImages) {
                     this.errors.imagesError = true;
-                    allowSubmit = false;
+                    allowCreation = false;
                 }
-                if(!allowSubmit) {
+                if(!allowCreation) {
                     this.productCreated = false;
                     return;
                 }
@@ -281,6 +291,15 @@
             selectTechnicalInformation() {
                 var technicalInformationTitle = document.getElementById("technicalData").value;
                 if(technicalInformationTitle != "") {
+                    if(document.getElementsByTagName("tbody")[0]) {
+                        var rows = document.getElementsByTagName("tbody")[0].rows;
+                        for(var row = 0; row < rows.length; row++) {
+                            if(rows[row].cells[1].innerText == technicalInformationTitle) {
+                                this.technicalInformationSelected = true;
+                                return;
+                            }
+                        }
+                    }
                     var newTechnicalInformation = {title: technicalInformationTitle, value: ""};
                     this.product.technicalData = [...this.product.technicalData, newTechnicalInformation];
                     document.getElementById("technicalData").value = "";
@@ -296,18 +315,20 @@
                     if(type == "primaryImage") {
                         temp.errors.primaryImageError = false;
                         var file = files[0];
-                        var fileReader = new FileReader();
-                        fileReader.onload = function(e) {
-                            var previewPrimaryImage = document.getElementById("previewPrimaryImage");
-                            previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "' style='height: 150px; weight: 150px;'/>";
+                        if(file.type.match("image.*")) {
+                            var fileReader = new FileReader();
+                            fileReader.onload = function(e) {
+                                var previewPrimaryImage = document.getElementById("previewPrimaryImage");
+                                previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "' style='height: 150px; weight: 150px;'/>";
+                            }
+                            this.product.primaryImage = file;
+                            this.clearPrimaryImageStatus();
+                            fileReader.readAsDataURL(file);
                         }
-                        this.product.primaryImage = file;
-                        this.clearPrimaryImageStatus();
-                        fileReader.readAsDataURL(file);
                     } else {
                         temp.errors.imagesError = false;
                         for (var i = 0, file; file = files[i]; i++) {
-                            if (!file.type.match("image.*")) {
+                            if(!file.type.match("image.*")) {
                                 continue;
                             }
                             var fileReader = new FileReader();
@@ -334,6 +355,9 @@
             },
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
+            },
+            hideNotification() {
+                this.technicalInformationSelected = false;
             },
             closeCreationAlert() {
                 this.productCreated = false;
@@ -371,6 +395,12 @@
     }
     .padding {
         padding-top: 12px;
+    }
+    .technicalInformationSelected {
+        margin-bottom: 80px;
+    }
+    .toast-body {
+        color: #ff0000;
     }
     #previewPrimaryImage {
         text-align: center;
