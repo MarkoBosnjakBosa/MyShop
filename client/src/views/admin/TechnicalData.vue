@@ -29,7 +29,7 @@
                     </thead>
                     <tbody>
                         <tr v-if="!technicalData.length">
-                            <td colspan="6" class="noTechnicalData">No technical data found!</td>
+                            <td colspan="3" class="noTechnicalData">No technical data found!</td>
                         </tr>
                         <tr v-for="(technicalInformation, index) in technicalData" :key="technicalInformation._id">
                             <th scope="row">{{++index}}</th>

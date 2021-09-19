@@ -1,9 +1,9 @@
 <template>
     <div id="categories" class="container-fluid">
-		<div class="d-flex" id="barsStyle">
-			<sidebar></sidebar>
-			<div id="pageStyle">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Products</h1>
                 <form autocomplete="off" class="productsForm" @submit.prevent="getProducts()">
                     <div class="row">
@@ -26,6 +26,8 @@
                                 <option value="titleDesc">Title &#129047;</option>
                                 <option value="priceAsc">Price &#129045;</option>
                                 <option value="priceDesc">Price &#129047;</option>
+                                <option value="ratingAsc">Rating &#129045;</option>
+                                <option value="ratingDesc">Rating &#129047;</option>
                             </select>
                         </div>
                         <div class="mb-3 col-md-1">
@@ -36,7 +38,7 @@
                         </div>
                     </div>
                 </form>
-                <table v-if="products.length" class="table">
+                <table class="table">
                     <thead class="thead-light">
                         <tr>
                             <th>#</th>
@@ -48,10 +50,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="!products.length">
+                            <td colspan="6" class="noProducts">No products found!</td>
+                        </tr>
                         <tr v-for="(product, index) in products" :key="product._id">
                             <th class="padding">{{++index}}</th>
                             <td class="padding">{{product.title}}</td>
-                            <td class="padding">{{product.price}}</td>
+                            <td class="padding">{{product.price}} €</td>
                             <td class="padding">{{product.quantity}}</td>
                             <td><img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image" @click="openModal($event)"></td>
                             <td class="padding">
@@ -73,34 +78,34 @@
 </template>
 
 <script>
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
     import helper from "../../components/Helper.vue"; 
     import route from "../../components/Route.vue";
     import modal from "../../components/Modal.vue";
-	var axios = require("axios");
+    const axios = require("axios");
 	
-	export default {
-		name: "products",
-		components: {
+    export default {
+        name: "products",
+        components: {
             navigation,
-			sidebar,
+            sidebar,
             modal
         },
         data() {
-			return {
+            return {
                 products: [],
                 categories: [],
                 search: "",
                 category: "",
                 page: 1,
-                limit: 12,
+                limit: 10,
                 orderBy: "",
                 total: 0,
                 pagesNumber: 1
-			}
-		},
+            }
+        },
         methods: {
             getProducts() {
                 var body = {search: this.search, category: this.category, page: this.page, limit: this.limit, orderBy: this.orderBy};
@@ -120,6 +125,7 @@
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteProduct/" + productId).then(response => {
                         this.products = this.products.filter(product => product._id != productId);
+                        this.total = this.total - 1; 
                     }).catch(error => console.log(error));
                 }
             },
@@ -139,8 +145,9 @@
                 modal.methods.openModal(event);
             }
         },
-        mounted() {
-			checkLogin.methods.isLoggedIn();
+        created() {
+            checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isAdmin();
             this.getProducts();
             this.getCategories();
         }
@@ -155,14 +162,19 @@
     }
     .productsForm {
         margin: auto;
-		max-width: 1000px;
+        max-width: 1000px;
+    }
+    .noProducts {
+        font-weight: bold;
+        text-align: center;
+        margin-top: 20px;
     }
     .padding {
         padding-top: 20px;
     }
     tbody .fas {
-        cursor: pointer;
         margin-right: 5px;
+        cursor: pointer;
     }
     .image {
         height: 50px;

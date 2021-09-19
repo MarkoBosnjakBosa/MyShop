@@ -37,7 +37,7 @@
                     </thead>
                     <tbody>
                         <tr v-if="!categories.length">
-                            <td colspan="6" class="noCategories">No categories found!</td>
+                            <td colspan="4" class="noCategories">No categories found!</td>
                         </tr>
                         <tr v-for="(category, index) in categories" :key="category._id">
                             <th scope="row">{{++index}}</th>

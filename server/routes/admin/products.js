@@ -22,6 +22,12 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 			case "priceDesc":
 				sort = {"price": -1};
 				break;
+			case "ratingAsc":
+				sort = {"rating.averageRating": 1};
+				break;
+			case "ratingDesc":
+				sort = {"rating.averageRating": -1};
+				break;
 			default:
 			  	sort = {};
 		}
@@ -64,8 +70,6 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 				var imageObject = {name: images[image].filename, contentType: images[image].mimetype, image: Buffer.from(encodedImage, "base64")};
 				imagesObjects.push(imageObject);
 			}
-		} else {
-			response.status(200).json({created: false, errorFields: ["images"]}).end();
 		}
 		var rating = {votes: 0, totalRating: 0, averageRating: 0, usersRatings: []};
 		var newProduct = getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, rating);
