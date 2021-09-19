@@ -29,7 +29,7 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 				sort = {"rating.averageRating": -1};
 				break;
 			default:
-			  	sort = {};
+				sort = {};
 		}
 		var categoryQuery = category != "" ? {category: category} : {};
 		var query = search != "" ? {$and: [categoryQuery, {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]}]} : categoryQuery;
@@ -42,13 +42,13 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 			if(total >= limit) pagesNumber = Math.ceil(total / limit);
 			response.status(200).json({products: results[0], total: total, pagesNumber: pagesNumber}).end();
 		});
-    });
+	});
 	app.get("/getProduct/:productId", (request, response) => {
 		var productId = request.params.productId;
 		var query = {_id: productId};
-        Product.findOne(query).then(product => {
-            response.status(200).json({product: product}).end();
-        }).catch(error => console.log(error));
+		Product.findOne(query).then(product => {
+			response.status(200).json({product: product}).end();
+		}).catch(error => console.log(error));
 	});
 	app.post("/createProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validation.validateProductCreation, (request, response) => {
 		var title = request.body.title;
@@ -105,9 +105,9 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 			var update = {primaryImage: primaryImageObject};
 			Product.findOneAndUpdate(query, update).then(product => {
 				fs.unlink(path.join(__dirname, "../../images/products/", product.primaryImage.name), function(error) {});
-                response.status(200).json({edited: true, primaryImage: primaryImageObject}).end();
-            }).catch(error => console.log(error));
-		} else if(type == "images"){
+				response.status(200).json({edited: true, primaryImage: primaryImageObject}).end();
+			}).catch(error => console.log(error));
+		} else if(type == "images") {
 			var images = request.files["images"];
 			var imagesObjects = [];
 			if(images != null && images != "" && images.length > 0 && images.length < 5) {
@@ -140,7 +140,7 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 	app.put("/deleteProductImage", (request, response) => {
 		var productId = request.body.productId;
 		var imageId = request.body.imageId;
-        var imageName = request.body.imageName;
+		var imageName = request.body.imageName;
 		if(productId && imageId && imageName) {
 			var query = {_id: productId};
 			var update = {$pull: {images: {_id: imageId}}};
