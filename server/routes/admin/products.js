@@ -77,7 +77,7 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 			response.status(200).json({created: true}).end();
 		}).catch(error => console.log(error));
 	});
-	app.put("/editProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), validation.validateProductEdit, (request, response) => {
+	app.put("/editProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validation.validateProductEdit, (request, response) => {
 		var productId = request.body.productId;
 		var query = {_id: productId};
 		var type = request.body.type;
@@ -110,24 +110,28 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 		} else if(type == "images"){
 			var images = request.files["images"];
 			var imagesObjects = [];
-			for(var image = 0; image < images.length; image++) {
-				var imageRead = fs.readFileSync(images[image].path);
-				var encodedImage = imageRead.toString("base64");
-				var imageObject = {name: images[image].filename, contentType: images[image].mimetype, image: Buffer.from(encodedImage, "base64")};
-				imagesObjects.push(imageObject);
+			if(images != null && images != "" && images.length > 0 && images.length < 5) {
+				for(var image = 0; image < images.length; image++) {
+					var imageRead = fs.readFileSync(images[image].path);
+					var encodedImage = imageRead.toString("base64");
+					var imageObject = {name: images[image].filename, contentType: images[image].mimetype, image: Buffer.from(encodedImage, "base64")};
+					imagesObjects.push(imageObject);
+				}
 			}
 			Product.findOne(query).then(product => {
 				if(!validation.isEmpty(product)) {
 					var foundImagesLength = product.images.length;
-					if((foundImagesLength + images.length) < 10) {
+					if((foundImagesLength + images.length) < 5) {
 						var update = {$push: {images: imagesObjects}};
 						Product.findOneAndUpdate(query, update, {new: true}).then(savedProduct => {
 							if(!validation.isEmpty(savedProduct)) {
-								response.status(200).json({edited: true, images: imagesObjects}).end();
+								response.status(200).json({edited: true, images: savedProduct.images}).end();
 							} else {
 								response.status(200).json({edited: false}).end(); 
 							}
 						}).catch(error => console.log(error));
+					} else {
+						response.status(200).json({edited: false}).end();
 					}
 				}
 			});

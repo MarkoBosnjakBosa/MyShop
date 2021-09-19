@@ -1,9 +1,9 @@
 <template>
-    <div id="createProduct" class="container-fluid">
-		<div class="d-flex" id="barsStyle">
-			<sidebar></sidebar>
-			<div id="pageStyle">
-				<navigation></navigation>
+    <div id="editProduct" class="container-fluid">
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Edit product: {{product.title}}</h1>
                 <div class="nav nav-tabs justify-content-center" role="tablist">
                     <button type="button" id="mainNavTab" data-bs-toggle="tab" data-bs-target="#mainTab" class="nav-link active" role="tab">Main</button>
@@ -38,7 +38,7 @@
                                     <input type="text" id="price" class="form-control" :class="{'errorField' : errors.priceError && submittings.mainSubmitting}" v-model="product.price" @focus="clearPriceStatus()" @keypress="clearPriceStatus()"/>
                                     <span class="input-group-text">0.00 €</span>
                                 </div>
-                                <small v-if="errors.priceError && submittings.mainSubmitting" class="form-text errorInput">Please provide a valid price!</small>
+                            <small v-if="errors.priceError && submittings.mainSubmitting" class="form-text errorInput">Please provide a valid price!</small>
                             </div>
                             <div class="mb-3">
                                 <div class="input-group">
@@ -101,6 +101,15 @@
                                 <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
                             </div>
                         </form>
+                        <div v-if="technicalInformationSelected" class="position-fixed bottom-0 end-0 p-3 technicalInformationSelected" style="z-index: 5">
+                            <div class="toast show" role="alert">
+                                <div class="toast-header">
+                                    <strong class="me-auto">Error</strong>
+                                    <button type="button" class="btn-close" @click="closeNotification()"></button>
+                                </div>
+                                <div class="toast-body">You have already selected the technical information!</div>
+                            </div>
+                        </div>
                     </div>
                     <div id="imagesTab" class="tab-pane fade" role="tabpanel">
                         <form autocomplete="off" enctype="multipart/form-data">
@@ -123,7 +132,7 @@
                                     </div>
                                     <input type="file" id="images" name="images[]" class="images" multiple/>
                                 </div>
-                                <small v-if="errors.imagesError" class="form-text errorInput">Please provide less than 10 valid images!</small>
+                                <small v-if="errors.imagesError" class="form-text errorInput">Please provide less than 5 valid images!</small>
                             </div>
                             <div class="mb-3">
                                 <div class="row">
@@ -154,22 +163,22 @@
 </template>
 
 <script>
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
     import route from "../../components/Route.vue";
-	import validation from "../../components/Validation.vue";
+    import validation from "../../components/Validation.vue";
     import helper from "../../components/Helper.vue"; 
-	var axios = require("axios");
+    const axios = require("axios");
 	
-	export default {
-		name: "editProduct",
-		components: {
+    export default {
+        name: "editProduct",
+        components: {
             navigation,
-			sidebar
+            sidebar
         },
         data() {
-			return {
+            return {
                 productId: "",
                 categories: [],
                 technicalData: [],
@@ -199,9 +208,10 @@
                 edits: {
                     mainEdited: false,
                     technicalDataEdited: false
-                }
-			}
-		},
+                },
+                technicalInformationSelected: false
+            }
+        },
         methods: {
             getProduct() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProduct/" + this.productId).then(response => {
@@ -219,7 +229,7 @@
                 }).catch(error => console.log(error));
             },
             editProduct(type) {
-                var allowSubmit = true;
+                var allowEdit = true;
                 if(type == "main") {
                     this.submittings.mainSubmitting = true;
                     this.clearTitleStatus();
@@ -229,33 +239,34 @@
                     this.clearCategoryStatus();
                     if(this.invalidTitle) {
                         this.errors.titleError = true;
-                        allowSubmit = false;
+                        allowEdit = false;
                     }
                     if(this.invalidDescription) {
                         this.errors.descriptionError = true;
-                        allowSubmit = false;
+                        allowEdit = false;
                     }
                     if(this.invalidPrice) {
                         this.errors.priceError = true;
-                        allowSubmit = false;
+                        allowEdit = false;
                     }
                     if(this.invalidQuantity) {
                         this.errors.quantityError = true;
-                        allowSubmit = false;
+                        allowEdit = false;
                     }
                     if(this.invalidCategory) {
                         this.errors.categoryError = true;
-                        allowSubmit = false;
+                        allowEdit = false;
                     }
-                    if(!allowSubmit) {
+                    if(!allowEdit) {
                         this.edits.mainEdited = false;
                         return;
                     }
                     var body = {productId: this.productId, type: "main", title: this.product.title, description: this.product.description, price: this.product.price, quantity: this.product.quantity, category: this.product.category};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editProduct", body).then(response => {
                         if(response.data.edited) {
+                            this.errors = {titleError: false, descriptionError: false, priceError: false, quantityError: false, categoryError: false};
+                            this.submittings.mainSubmitting = false;
                             this.edits.mainEdited = true;
-                            this.errors.titleError = false, this.errors.descriptionError = false, this.errors.priceError = false, this.errors.quantityError = false, this.errors.categoryError = false, this.submittings.mainSubmitting = false;
                         } else {
                             var errorFields = response.data.errorFields;
                             if(errorFields.includes("title")) this.errors.titleError = true;
@@ -284,10 +295,10 @@
                 }
             },
             uploadImages(event, type) {
-				var files = event.target.files;
+                var files = event.target.files;
                 if(files && files.length > 0) {
                     if(type == "primaryImage") {
-                        this.clearPrimaryImageStatus();
+                        this.errors.primaryImageError = false;
                         var file = files[0];
                         if(file.type.match("image.*")) {
                             var formData = new FormData();
@@ -305,8 +316,8 @@
                             this.errors.primaryImageError = true;
                         }
                     } else {
-                        this.clearImagesStatus();
-                        if((files.length + this.product.images.length) < 10) {
+                        this.errors.imagesError = false;
+                        if((files.length + this.product.images.length) < 5) {
                             var images = [];
                             for(var i = 0, file; file = files[i]; i++) {
                                 if (!file.type.match("image.*")) {
@@ -318,11 +329,12 @@
                                 var formData = new FormData();
                                 formData.append("productId", this.productId);
                                 formData.append("type", "images");
-                                images.forEach(image => {
-                                    formData.append("images", image);
-                                })
+                                for(var image = 0; image < images.length; image++) {
+                                    formData.append("images", images[image]);
+                                }
                                 axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editProduct", formData).then(response => {
                                     if(response.data.edited) {
+                                        this.product.images = [];
                                         for(var image = 0; image < response.data.images.length; image++) {
                                             this.product.images = [...this.product.images, response.data.images[image]];
                                         }
@@ -338,17 +350,20 @@
                         }
                     }
                 }
-			},
+            },
             deleteImage(imageId, imageName) {
-                var body = {productId: this.productId, imageId: imageId, imageName: imageName};
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteProductImage", body).then(response => {
-                    if(response.data.deleted) {
-                        this.product.images = this.product.images.filter(image => image._id != imageId);
-                        this.errors.imagesError = false;
-                    } else {
-                        this.errors.imagesError = true;
-                    }
-                }).catch(error => console.log(error));
+                var confirmed = confirm("Delete this image?");
+                if(confirmed) {
+                    var body = {productId: this.productId, imageId: imageId, imageName: imageName};
+                    axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteProductImage", body).then(response => {
+                        if(response.data.deleted) {
+                            this.product.images = this.product.images.filter(image => image._id != imageId);
+                            this.errors.imagesError = false;
+                        } else {
+                            this.errors.imagesError = true;
+                        }
+                    }).catch(error => console.log(error));
+                }
             },
             renderImage(image) {
                 return helper.methods.renderImage(image);
@@ -356,6 +371,15 @@
             selectTechnicalInformation() {
                 var technicalInformationTitle = document.getElementById("technicalData").value;
                 if(technicalInformationTitle != "") {
+                    if(document.getElementsByTagName("tbody")[0]) {
+                        var rows = document.getElementsByTagName("tbody")[0].rows;
+                        for(var row = 0; row < rows.length; row++) {
+                            if(rows[row].cells[1].innerText == technicalInformationTitle) {
+                                this.technicalInformationSelected = true;
+                                return;
+                            }
+                        }
+                    }
                     var newTechnicalInformation = {title: technicalInformationTitle, value: ""};
                     this.product.technicalData = [...this.product.technicalData, newTechnicalInformation];
                     document.getElementById("technicalData").value = "";
@@ -372,18 +396,19 @@
             },
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
-			},
+            },
+            closeNotification() {
+                this.technicalInformationSelected = false;
+            },
+            closeEditAlert(type) { 
+                if(type == "main") this.edits.mainEdited = false;
+                else this.edits.technicalDataEdited = false;
+            },
             clearTitleStatus() { this.errors.titleError = false },
             clearDescriptionStatus() { this.errors.descriptionError = false },
             clearPriceStatus() { this.errors.priceError = false },
             clearQuantityStatus() { this.errors.quantityError = false },
-            clearCategoryStatus() { this.errors.categoryError = false },
-            clearPrimaryImageStatus() { this.errors.primaryImageError = false },
-            clearImagesStatus() { this.errors.imagesError = false },
-            closeEditAlert(type) { 
-                if(type == "main") this.edits.mainEdited = false;
-                else this.edits.technicalDataEdited = false;
-            }
+            clearCategoryStatus() { this.errors.categoryError = false }
         },
         computed: {
             invalidTitle() { return validation.methods.invalidTitle(this.product.title); },
@@ -394,8 +419,9 @@
             invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); },
             invalidImages() { return validation.methods.invalidImages(this.product.images.length); }
         },
-        mounted() {
+        created() {
             checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isAdmin();
             this.productId = this.$route.params.productId;
             this.getProduct();
             this.getCategories();
@@ -418,20 +444,23 @@
     .padding {
         padding-top: 12px;
     }
+    .toast-body {
+        color: #ff0000;
+    }
     #deleteTab {
         text-align: center;
     }
     #previewPrimaryImage {
-		text-align: center;
-		margin-bottom: 10px;
-	}
+        text-align: center;
+        margin-bottom: 10px;
+    }
     .previousButton {
-		float: left;
-	}
-	.nextButton {
-		float: right;
+        float: left;
+    }
+    .nextButton {
+        float: right;
         margin-left: 5px;
-	}
+    }
     .submitButton {
         float: right;
     }

@@ -254,7 +254,7 @@
                             formData.append("technicalData", JSON.stringify(temp.product.technicalData));
                             formData.append("type", "images");
                             formData.append("primaryImage", temp.product.primaryImage);
-                            for(var image = 0 ; image < temp.product.images.length; image++) {
+                            for(var image = 0; image < temp.product.images.length; image++) {
                                 formData.append("images", temp.product.images[image].file);
                             }
                             formData.append("reCaptchaToken", reCaptchaToken);
@@ -282,12 +282,6 @@
                     });
                 });
             },
-            clearTitleStatus() { this.errors.titleError = false },
-            clearDescriptionStatus() { this.errors.descriptionError = false },
-            clearPriceStatus() { this.errors.priceError = false },
-            clearQuantityStatus() { this.errors.quantityError = false },
-            clearCategoryStatus() { this.errors.categoryError = false },
-            clearPrimaryImageStatus() { this.errors.primaryImageError = false },
             selectTechnicalInformation() {
                 var technicalInformationTitle = document.getElementById("technicalData").value;
                 if(technicalInformationTitle != "") {
@@ -322,7 +316,6 @@
                                 previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "' style='height: 150px; weight: 150px;'/>";
                             }
                             this.product.primaryImage = file;
-                            this.clearPrimaryImageStatus();
                             fileReader.readAsDataURL(file);
                         }
                     } else {
@@ -361,7 +354,13 @@
             },
             closeCreationAlert() {
                 this.productCreated = false;
-            }
+            },
+            clearTitleStatus() { this.errors.titleError = false },
+            clearDescriptionStatus() { this.errors.descriptionError = false },
+            clearPriceStatus() { this.errors.priceError = false },
+            clearQuantityStatus() { this.errors.quantityError = false },
+            clearCategoryStatus() { this.errors.categoryError = false },
+            clearPrimaryImageStatus() { this.errors.primaryImageError = false }
         },
         computed: {
             invalidTitle() { return validation.methods.invalidTitle(this.product.title); },
