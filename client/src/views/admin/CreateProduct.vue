@@ -95,7 +95,7 @@
                                 <div class="toast show" role="alert">
                                     <div class="toast-header">
                                         <strong class="me-auto">Error</strong>
-                                        <button type="button" class="btn-close" @click="hideNotification()"></button>
+                                        <button type="button" class="btn-close" @click="closeNotification()"></button>
                                     </div>
                                     <div class="toast-body">You have already selected the technical information!</div>
                                 </div>
@@ -356,7 +356,7 @@
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
             },
-            hideNotification() {
+            closeNotification() {
                 this.technicalInformationSelected = false;
             },
             closeCreationAlert() {
