@@ -44,7 +44,7 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
             response.status(200).json({product: product}).end();
         }).catch(error => console.log(error));
 	});
-    app.post("/createProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 9}]), validation.validateProductCreation, (request, response) => {
+	app.post("/createProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validation.validateProductCreation, (request, response) => {
 		var title = request.body.title;
 		var description = request.body.description;
 		var price = request.body.price;
@@ -57,7 +57,7 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 		var primaryImageObject = {name: primaryImage.filename, contentType: primaryImage.mimetype, image: Buffer.from(encodedPrimaryImage, "base64")};
 		var images = request.files["images"];
 		var imagesObjects = [];
-		if(images != null && images != "" && images.length > 0 && images.length < 10) {
+		if(images != null && images != "" && images.length > 0 && images.length < 5) {
 			for(var image = 0; image < images.length; image++) {
 				var imageRead = fs.readFileSync(images[image].path);
 				var encodedImage = imageRead.toString("base64");

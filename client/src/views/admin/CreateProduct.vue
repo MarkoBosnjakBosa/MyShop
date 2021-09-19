@@ -1,9 +1,9 @@
 <template>
     <div id="createProduct" class="container-fluid">
-		<div class="d-flex" id="barsStyle">
-			<sidebar></sidebar>
-			<div id="pageStyle">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Create Product</h1>
                 <form autocomplete="off" enctype="multipart/form-data" @submit.prevent="createProduct()">
                     <div class="nav nav-tabs justify-content-center" role="tablist">
@@ -105,13 +105,13 @@
                             <h3>Images</h3>
                             <div class="mb-3">
                                 <div id="dropzone" @dragover.prevent="addDragOver()" @dragleave.prevent="removeDragOver()" @drop="removeDragOver()" @change="selectImages($event, 'images')">
-                                <div id="dropzoneDescription">
-                                    <i class="fas fa-upload fa-2x"></i>
-                                    <p>Choose more images or drag them here.</p>
-                                </div>
+                                    <div id="dropzoneDescription">
+                                        <i class="fas fa-upload fa-2x"></i>
+                                        <p>Choose more images or drag them here.</p>
+                                    </div>
                                     <input type="file" id="images" class="images" multiple/>
                                 </div>
-                                <small v-if="errors.imagesError && submitting" class="form-text errorInput">Please provide less than 10 valid images!</small>
+                                <small v-if="errors.imagesError && submitting" class="form-text errorInput">Please provide less than 5 valid images!</small>
                             </div>
                             <div class="mb-3">
                                 <div class="row">
@@ -123,7 +123,7 @@
                             </div>
                             <div>
                                 <button type="button" class="btn btn-dark previousButton" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
-						        <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+                                <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
                             </div>
                         </div>
                     </div>
@@ -134,21 +134,21 @@
 </template>
 
 <script>
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
-	import validation from "../../components/Validation.vue";
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
+    import validation from "../../components/Validation.vue";
     import helper from "../../components/Helper.vue"; 
-	var axios = require("axios");
+    const axios = require("axios");
 	
-	export default {
-		name: "createProduct",
-		components: {
+    export default {
+        name: "createProduct",
+        components: {
             navigation,
-			sidebar
+            sidebar
         },
         data() {
-			return {
+            return {
                 categories: [],
                 technicalData: [],
                 submitting: false,
@@ -172,8 +172,8 @@
                     imagesError: false
                 },
                 productCreated: false
-			}
-		},
+            }
+        },
         methods: {
             getCategories() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategories").then(response => {
@@ -250,12 +250,12 @@
                             formData.append("reCaptchaToken", reCaptchaToken);
                             axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createProduct", formData).then(response => {
                                 if(response.data.created) {
-                                    temp.productCreated = true;
                                     temp.product = {title: "", description: "", price: "", quantity: "", category: "", technicalData: [], primaryImage: "", images: []};
                                     document.getElementById("primaryImage").value = "";
                                     document.getElementById("previewPrimaryImage").innerText = "";
                                     document.getElementById("images").value = "";
                                     temp.errors = {titleError: false, descriptionError: false, priceError: false, quantityError: false, categoryError: false, primaryImageError: false};
+                                    temp.productCreated = true;
                                     temp.toggleTab("main");
                                 } else {
                                     var errorFields = response.data.errorFields;
@@ -290,7 +290,7 @@
                 this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index != currentIndex);
             },
             selectImages(event, type) {
-				var files = event.target.files;
+                var files = event.target.files;
                 var temp = this;
                 if(files && files.length > 0) {
                     if(type == "primaryImage") {
@@ -302,7 +302,7 @@
                             previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "' style='height: 150px; weight: 150px;'/>";
                         }
                         this.product.primaryImage = file;
-					    this.clearPrimaryImageStatus();
+                        this.clearPrimaryImageStatus();
                         fileReader.readAsDataURL(file);
                     } else {
                         temp.errors.imagesError = false;
@@ -321,7 +321,7 @@
                         }
                     }
                 }
-			},
+            },
             removeImage(currentIndex) {
                 this.product.images = this.product.images.filter((image, index) => index != currentIndex);
                 this.errors.imagesError = false;
@@ -334,10 +334,10 @@
             },
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
-			},
+            },
             closeCreationAlert() {
-				this.productCreated = false;
-			}
+                this.productCreated = false;
+            }
         },
         computed: {
             invalidTitle() { return validation.methods.invalidTitle(this.product.title); },
@@ -348,8 +348,9 @@
             invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); },
             invalidImages() { return validation.methods.invalidImages(this.product.images.length); }
         },
-        mounted() {
+        created() {
             checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isAdmin();
             this.getCategories();
             this.getTechnicalData();
             this.loadReCaptcha();
@@ -372,15 +373,15 @@
         padding-top: 12px;
     }
     #previewPrimaryImage {
-		text-align: center;
-		margin-bottom: 10px;
-	}
+        text-align: center;
+        margin-bottom: 10px;
+    }
     .previousButton {
-		float: left;
-	}
-	.nextButton, .submitButton {
-		float: right;
-	}
+        float: left;
+    }
+    .nextButton, .submitButton {
+        float: right;
+    }
     tbody .fas {
         cursor: pointer;
         color: #ff0000;
