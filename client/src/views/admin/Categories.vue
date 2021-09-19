@@ -1,26 +1,29 @@
 <template>
     <div id="categories" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
-			<sidebar></sidebar>
-			<div id="pageDiv">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <div id="categoriesForm">
                     <form autocomplete="off" @submit.prevent="createCategory()">
                         <h1>Categories</h1>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <input type="text" id="title" class="form-control" :class="{'errorField' : titleError && submitting}" placeholder="Title" v-model="category.title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
-                                <small v-if="titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <input type="text" id="title" class="form-control" :class="{'errorField' : errors.titleError && submitting}" placeholder="Title" v-model="category.title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
+                                <small v-if="errors.titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
                             </div>
-                            <div class="form-group col-md-5">
-                                <input type="text" id="icon" class="form-control" :class="{'errorField' : iconError && submitting}" placeholder="Icon" v-model="category.icon" @focus="clearIconStatus()" @keyPress="clearIconStatus()"/>
-                                <small v-if="iconError && submitting" class="form-text errorInput">Please provide a valid icon!</small>
+                            <div class="mb-3 col-md-4">
+                                <input type="text" id="icon" class="form-control" :class="{'errorField' : errors.iconError && submitting}" placeholder="Icon" v-model="category.icon" @focus="clearIconStatus()" @keyPress="clearIconStatus()"/>
+                                <small v-if="errors.iconError && submitting" class="form-text errorInput">Please provide a valid icon!</small>
                             </div>
-                            <div class="form-group col-md-1">
+                            <div class="mb-3 col-md-1 suggestion">
+                                <i class="far fa-question-circle" data-toggle="tooltip" title="Use only classes from Font Awesome icons."></i>
+                            </div>
+                            <div class="mb-3 col-md-1">
                                 <button type="submit" class="btn btn-primary">Create</button>
                             </div>
                         </div>
-                        <div v-if="categoryCreated" class="form-group creationSuccessful">Category has been successfully created!</div>
+                        <div v-if="categoryCreated" class="mb-3 creationSuccessful">Category has been successfully created!</div>
                     </form>
                 </div>
                 <table id="categoriesTable" class="table">
@@ -59,34 +62,34 @@
 </template>
 
 <script>
-    import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
-	import validation from "../../components/Validation.vue";
-	var axios = require("axios");
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
+    import validation from "../../components/Validation.vue";
+    const axios = require("axios");
 	
-	export default {
-		name: "categories",
-		components: {
+    export default {
+        name: "categories",
+        components: {
             navigation,
-			sidebar
+            sidebar
         },
         data() {
-			return {
+            return {
                 categories: [],
                 submitting: false,
-                titleError: false,
-                iconError: false,
                 category: {
                     title: "",
                     icon: ""
                 },
+                errors: {
+                    titleError: false,
+                    iconError: false,
+                },
                 categoryCreated: false,
                 editing: null
-			}
-		},
+            }
+        },
         methods: {
             getCategories() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategories").then(response => {
@@ -99,11 +102,11 @@
                 this.clearIconStatus();
                 var allowSubmit = true;
                 if(this.invalidTitle) {
-                    this.titleError = true;
+                    this.errors.titleError = true;
                     allowSubmit = false;
                 }
                 if(this.invalidIcon) {
-                    this.iconError = true;
+                    this.errors.iconError = true;
                     allowSubmit = false;
                 }
                 if(!allowSubmit) {
@@ -115,13 +118,14 @@
                     if(response.data.created) {
                         var newCategory = response.data.category;
                         this.categories = [...this.categories, newCategory];
-                        this.categoryCreated = true;
                         this.category = {title: "", icon: ""};
-                        this.titleError = false, this.iconError = false, this.submitting = false;
+                        this.errors = {titleError: false, iconError: false};
+                        this.submitting = false;
+                        this.categoryCreated = true;
                     } else {
                         var errorFields = response.data.errorFields;
-                        if(errorFields.includes("title")) this.titleError = true;
-                        if(errorFields.includes("icon")) this.iconError = true;
+                        if(errorFields.includes("title")) this.errors.titleError = true;
+                        if(errorFields.includes("icon")) this.errors.iconError = true;
                         this.categoryCreated = false;
                     }
                 }).catch(error => console.log(error));
@@ -155,15 +159,16 @@
                     }).catch(error => console.log(error));
                 }
             },
-            clearTitleStatus() { this.titleError = false, this.categoryCreated = false; },
-            clearIconStatus() { this.iconError = false, this.categoryCreated = false; },
+            clearTitleStatus() { this.errors.titleError = false, this.categoryCreated = false; },
+            clearIconStatus() { this.errors.iconError = false, this.categoryCreated = false; },
         },
         computed: {
             invalidTitle() { return validation.methods.invalidTitle(this.category.title); },
             invalidIcon() { return validation.methods.invalidIcon(this.category.icon); }
         },
         created() {
-			checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isAdmin();
             this.getCategories();
         }
     }
@@ -171,7 +176,7 @@
 
 <style scoped>
     #categoriesForm, #categoriesTable {
-        margin: 0 auto;
+        margin: auto;
         max-width: 900px;
     }
     h1 {
@@ -179,17 +184,23 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
+    .suggestion {
+        padding-top: 5px;
+    }
+    .fa-question-circle {
+        cursor: pointer;
+    }
     .noCategories {
-		font-weight: bold;
-		text-align: center;
-		margin-top: 20px;
-	}
+        font-weight: bold;
+        text-align: center;
+        margin-top: 20px;
+    }
     tbody .fas, tbody .far {
         cursor: pointer;
         margin-right: 5px;
     }
     .padded {
-        padding-top: 20px;
+        padding-top: 15px;
     }
     .editCategory {
         color: #008000;

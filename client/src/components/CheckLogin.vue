@@ -15,6 +15,15 @@
                     }).catch(error => console.log(error));
                 }
             },
+            isAdmin() {
+                if(store.getters.isLoggedIn) {
+                    if(!store.getters.isAdmin) {
+                        router.push("/home");
+                    }
+                } else {
+                    router.push("/login");
+                }
+            },
             getUserData() {
                 if(store.getters.isLoggedIn) {
                     return {userLoggedIn: true, username: store.getters.getUser, isAdmin: store.getters.isAdmin};
