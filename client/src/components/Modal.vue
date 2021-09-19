@@ -7,7 +7,7 @@
 
 <script>
     export default {
-		name: "modal",
+        name: "modal",
         methods: {
             openModal(event) {
                 var modal = document.getElementById("modal");
@@ -29,6 +29,7 @@
         position: fixed;
         z-index: 1;
         padding-top: 100px;
+        padding-bottom: 100px;
         left: 0px;
         top: 0px;
         width: 100%;
