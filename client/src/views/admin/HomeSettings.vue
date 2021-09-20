@@ -1,60 +1,55 @@
 <template>
-     <div id="homeSettings" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
-			<sidebar></sidebar>
-			<div id="pageDiv">
-				<navigation></navigation>
+    <div id="homeSettings" class="container-fluid">
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Home Settings</h1>
-                <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item"><a id="imagesNavTab" data-toggle="tab" href="#imagesTab" class="nav-link active">Images</a></li>
-                    <li class="nav-item"><a id="messageNavTab" data-toggle="tab" href="#messageTab" class="nav-link">Message</a></li>
-                </ul>
+                <div class="nav nav-tabs justify-content-center" role="tablist">
+                    <button type="button" id="imagesNavTab" data-bs-toggle="tab" data-bs-target="#imagesTab" class="nav-link active" role="tab">Images</button>
+                    <button type="button" id="messageNavTab" data-bs-toggle="tab" data-bs-target="#messageTab" class="nav-link" role="tab">Message</button>
+                </div>
                 <div class="tab-content">
-                    <div id="imagesTab" class="tab-pane fade active show">
+                    <div id="imagesTab" class="tab-pane fade active show" role="tabpanel">
                         <h3>Images</h3>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div id="dropzone" @dragover.prevent="addDragOver()" @dragleave.prevent="removeDragOver()" @drop="removeDragOver()" @change="uploadImages($event)">
-                            <div id="dropzoneDescription">
-                                <i class="fas fa-upload fa-2x"></i>
-                                <p>Choose more images or drag them here.</p>
-                            </div>
+                                <div id="dropzoneDescription">
+                                    <i class="fas fa-upload fa-2x"></i>
+                                    <p>Choose more images or drag them here.</p>
+                                </div>
                                 <input type="file" id="images" name="images[]" class="images" multiple/>
                             </div>
-                            <small v-if="errors.imagesError" class="form-text errorInput">Please provide less than 11 images!</small>
+                            <small v-if="errors.imagesError" class="form-text errorInput">Please provide less than 5 images!</small>
                         </div>
-                        <div v-if="homeSettings.images.length" class="form-group">
+                        <div v-if="homeSettings.images.length" class="mb-3">
                             <div class="row">
-                                <div v-for="image in homeSettings.images" :key="image._id" class="col-md-3">
+                                <div v-for="image in homeSettings.images" :key="image._id" class="col-md-3 position">
                                     <img :src="renderImage(image)" :alt="image.name" class="img-fluid rounded image"/>
                                     <i class="fas fa-times-circle removeImage" @click="deleteImage(image._id, image.name)"></i>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <button type="button" class="btn btn-info nextButton" @click="toggleTab('message')">Next <i class="fas fa-angle-double-right"></i></button>
+                        <div>
+                            <button type="button" class="btn btn-dark nextButton" @click="toggleTab('message')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
-                    <div id="messageTab" class="tab-pane fade">
+                    <div id="messageTab" class="tab-pane fade" role="tabpanel">
                         <h3>Message</h3>
                         <form autocomplete="off" @submit.prevent="saveMessage()">
-                            <div class="form-group">
-                                <tinymce
-                                    :api-key="tinyMceEditorApiKey"
-                                    :init="{
-                                        height: 500,
-                                        menubar: 'file edit view insert format tools table help',
-                                        plugins: ['advlist autolink lists link image charmap print preview anchor', 'searchreplace visualblocks code fullscreen', 'insertdatetime media table paste code help wordcount'],
-                                        toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
-                                    }"
-                                    v-model="homeSettings.message"
-                                    @focus="clearMessageStatus()"
-                                    @keypress="clearMessageStatus()"
-                                />
+                            <div class="mb-3">
+                                <tinymce :api-key="tinyMceEditorApiKey" :init="{
+                                    height: 500,
+                                    menubar: 'file edit view insert format tools table help',
+                                    plugins: ['advlist autolink lists link image charmap print preview anchor', 'searchreplace visualblocks code fullscreen', 'insertdatetime media table paste code help wordcount'],
+                                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+                                }"
+                                v-model="homeSettings.message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"/>
                                 <small v-if="errors.messageError" class="form-text errorInput">Please provide a valid message!</small>
-                                <small v-if="homeSettingsSaved" class="form-text homeSettingsSaved">Message has been successfully saved!</small>
+                                <small v-if="messageSaved" class="form-text messageSaved">Message has been successfully saved!</small>
                             </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-info previousButton" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                            <div>
+                                <button type="button" class="btn btn-dark previousButton" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
                                 <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
                             </div>
                         </form>
@@ -66,21 +61,19 @@
 </template>
 
 <script>
-    import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
     import validation from "../../components/Validation.vue";
     import helper from "../../components/Helper.vue";
     import tinymce from "@tinymce/tinymce-vue";
-	var axios = require("axios");
+    const axios = require("axios");
 
     export default {
         name: "homeSettings",
         components: {
             navigation,
-			sidebar,
+            sidebar,
             tinymce
         },
         data() {
@@ -91,11 +84,11 @@
                     message: "",
                     images: []
                 },
-                homeSettingsSaved: false,
                 errors: {
                     messageError: false,
                     imagesError: false
-                }
+                },
+                messageSaved: false
             }
         },
         methods: {
@@ -112,21 +105,22 @@
                     this.errors.messageError = true;
                     return;
                 }
-                var body = {id: this.homeSettings.id, message: this.homeSettings.message};
+                var body = {homeSettingsId: this.homeSettings.id, message: this.homeSettings.message};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/saveHomeSettingsMessage", body).then(response => {
                     if(response.data.saved) {
+                        this.homeSettings.id = response.data.homeSettingsId;
                         this.errors.messageError = false;
-                        this.homeSettingsSaved = true;
+                        this.messageSaved = true;
                     } else {
                         this.errors.messageError = true;
-                        this.homeSettingsSaved = false;
+                        this.messageSaved = false;
                     }
                 }).catch(error => console.log(error));
             },
             uploadImages(event) {
-                this.clearImagesStatus();
-				var files = event.target.files;
-                if(files && files.length > 0 && ((files.length + this.homeSettings.images.length) < 11)) {
+                this.errors.imagesError = false;
+                var files = event.target.files;
+                if(files && files.length > 0 && ((files.length + this.homeSettings.images.length) < 5)) {
                     var images = [];
                     for (var i = 0, file; file = files[i]; i++) {
                         if (!file.type.match("image.*")) {
@@ -150,20 +144,6 @@
                 } else {
                     this.errors.imagesError = true;
                 }
-			},
-            clearMessageStatus() { 
-                this.homeSettingsSaved = false;
-                this.errors.messageError = false;
-            },
-            clearImagesStatus() {
-                this.errors.imagesError = false;
-            },
-            renderImage(image) {
-                if(image && !(image instanceof File)) {
-                    return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
-                } else {
-                    return "";
-                }
             },
             deleteImage(imageId, imageName) {
                 var confirmed = confirm("Delete selected image?");
@@ -183,15 +163,24 @@
             removeDragOver() {
                 document.getElementById("dropzone").classList.remove("onDragOver");
             },
+            renderImage(image) {
+                return helper.methods.renderImage(image);
+            },
             toggleTab(tab) {
+                console.log(tab);
                 helper.methods.toggleTab(tab);
-			}
+            },
+            clearMessageStatus() {
+                this.errors.messageError = false;
+                this.messageSaved = false;
+            }
         },
         computed: {
             invalidMessage() { return validation.methods.invalidMessage(this.homeSettings.message); }
         },
         created() {
-			checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isAdmin();
             this.getHomeSettings();
         }
     }
@@ -204,16 +193,16 @@
         margin-bottom: 20px;
     }
     #imagesTab, #messageTab {
-        margin: 0 auto;
+        margin: auto;
         max-width: 800px;
         margin-top: 20px;
     }
     .previousButton {
-		float: left;
-	}
+        float: left;
+    }
     .nextButton, .submitButton  {
-		float: right;
-	}
+        float: right;
+    }
     #dropzone {
         border: 2px dashed #91b0b3;
         color: #92b0b3;
@@ -247,7 +236,7 @@
     .removeImage {
         position: absolute;
         top: 0px;
-        right: 0px;
+        right: -5px;
         color: #ff0000;
         background-color: #fff;
         cursor: pointer;
@@ -255,7 +244,10 @@
     #dropzone:hover, #dropzone.onDragOver {
         background: #ecf0f5;
     }
-    .homeSettingsSaved {
+    .position {
+        position: relative;
+    }
+    .messageSaved {
         color: #008000;
     }
     .errorInput {

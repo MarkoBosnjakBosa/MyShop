@@ -1,4 +1,4 @@
-module.exports = function(app, models, uploadImages, fs, path, validation) {
+module.exports = function(app, models, fs, path, uploadImages, validation) {
     const HomeSettings = models.HomeSettings;
     app.get("/getHomeSettings", (request, response) => {
         var query = {};
@@ -10,24 +10,27 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
             }
         }).catch(error => console.log(error));
     });
-    app.post("/saveHomeSettingsMessage", (request, response) => {
+    app.post("/saveHomeSettingsMessage", validation.validateHomeSettingsMessage, (request, response) => {
+        var homeSettingsId = request.body.homeSettingsId;
         var message = request.body.message;
-        if(validation.invalidMessage(message)) {
-            response.status(200).json({saved: false}).end();
-        } else {
-            var id = request.body.id;
-            var query = {_id: id};
+        if(homeSettingsId) {
+            var query = {_id: homeSettingsId};
             var update = {message: message};
-            var options = {upsert: true, new: true, setDefaultsOnInsert: true};
-            HomeSettings.findOneAndUpdate(query, update, options).then(savedMessage => {
-                response.status(200).json({saved: true}).end();
+            HomeSettings.findOneAndUpdate(query, update).then(savedMessage => {
+                response.status(200).json({saved: true, homeSettingsId: savedMessage._id}).end();
+            }).catch(error => console.log(error));
+        } else {
+            var imagesObjects = [];
+            var newHomeSettings = getHomeSettingsScheme(HomeSettings, message, imagesObjects);
+            newHomeSettings.save().then(savedHomeSettings => {
+                response.status(200).json({saved: true, homeSettingsId: savedHomeSettings._id}).end();
             }).catch(error => console.log(error));
         }
     });
-    app.post("/saveHomeSettingsImages",  uploadImages.array("images"), (request, response) => {
+    app.post("/saveHomeSettingsImages",  uploadImages.array("images", 4), (request, response) => {
         var homeSettingsId = request.body.homeSettingsId;
         var images = request.files;
-        if(images != null && images != "" && images.length > 0 && !request.extensionValidationError) {
+        if(images && images.length < 5) {
             var imagesObjects = [];
             for(var image = 0; image < images.length; image++) {
                 var imageRead = fs.readFileSync(images[image].path);
@@ -35,15 +38,15 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
                 var imageObject = {name: images[image].filename, contentType: images[image].mimetype, image: Buffer.from(encodedImage, "base64")};
                 imagesObjects.push(imageObject);
             }
-            if(homeSettingsId != "") {
+            if(homeSettingsId) {
                 var query = {_id: homeSettingsId};
                 HomeSettings.findOne(query).then(homeSettings => {
                     if(!validation.isEmpty(homeSettings)) {
-                        if((homeSettings.images.length + imagesObjects.length) < 11) {
+                        if((homeSettings.images.length + imagesObjects.length) < 5) {
                             var update = {$push: {images: imagesObjects}};
                             HomeSettings.findOneAndUpdate(query, update, {new: true}).then(savedHomeSettings => {
                                 if(!validation.isEmpty(savedHomeSettings)) {
-                                    response.status(200).json({saved: true}).end();
+                                    response.status(200).json({saved: true, homeSettingsId: savedHomeSettings._id}).end();
                                 } else {
                                     response.status(200).json({saved: false}).end(); 
                                 }
@@ -59,7 +62,7 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
                 var message = "";
                 var newHomeSettings = getHomeSettingsScheme(HomeSettings, message, imagesObjects);
                 newHomeSettings.save().then(savedHomeSettings => {
-                    response.status(200).json({saved: true}).end();
+                    response.status(200).json({saved: true, homeSettingsId: savedHomeSettings._id}).end();
                 }).catch(error => console.log(error));
             }
         } else {
@@ -87,6 +90,6 @@ module.exports = function(app, models, uploadImages, fs, path, validation) {
     });
 
     function getHomeSettingsScheme(HomeSettings, message, images) {
-		return new HomeSettings({message: message, images: images});
-	}
+        return new HomeSettings({message: message, images: images});
+    }
 }

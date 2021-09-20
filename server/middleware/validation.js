@@ -381,9 +381,10 @@ function validateContact(request, response, next) {
     else response.status(200).json({submitted: false, errorFields: errorFields}).end();
 }
 
-function validateMessage(message) {
-    if(message) return true;
-    else return false;
+function validateHomeSettingsMessage(request, response, next) {
+    var message = request.body.message;
+    if(!validation.invalidMessage(message)) next();
+    else response.status(200).json({saved: false}).end();
 }
 
 function validPassword(password) {
@@ -416,7 +417,7 @@ module.exports = {
     validateReviewEdit: validateReviewEdit,
     validateContactSettings: validateContactSettings,
     validateContact: validateContact,
-    validateMessage: validateMessage,
+    validateHomeSettingsMessage: validateHomeSettingsMessage,
     validPassword: validPassword,
     isEmpty: isEmpty
 };

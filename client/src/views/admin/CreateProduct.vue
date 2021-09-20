@@ -122,7 +122,7 @@
                                 </div>
                                 <small v-if="errors.imagesError && submitting" class="form-text errorInput">Please provide less than 5 valid images!</small>
                             </div>
-                            <div class="mb-3">
+                            <div v-if="product.images.length" class="mb-3">
                                 <div class="row">
                                     <div v-for="(image, index) in product.images" :key="image.name" class="col-md-3 position">
                                         <img :src="image.src" :alt="image.name" class="img-fluid rounded image"/>

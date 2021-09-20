@@ -121,7 +121,7 @@
                                 <small v-if="errors.primaryImageError" class="form-text errorInput">Please provide a valid primary image!</small>
                             </div>
                             <div id="previewPrimaryImage" class="mb-3">
-                                <img :src="renderImage(product.primaryImage, 'primaryImage')" :alt="product.primaryImage.name" class="img-fluid rounded" style="height: 150px; weight: 150px;"/>
+                                <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="img-fluid rounded" style="height: 150px; weight: 150px;"/>
                             </div>
                             <h3>Images</h3>
                             <div class="mb-3">
@@ -137,7 +137,7 @@
                             <div class="mb-3">
                                 <div class="row">
                                     <div v-for="image in product.images" :key="image._id" class="col-md-3 position">
-                                        <img :src="renderImage(image, 'images')" :alt="image.name" class="img-fluid rounded image"/>
+                                        <img :src="renderImage(image)" :alt="image.name" class="img-fluid rounded image"/>
                                         <i class="fas fa-times-circle removeImage" @click="deleteImage(image._id, image.name)"></i>
                                     </div>
                                 </div>

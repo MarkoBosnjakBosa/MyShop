@@ -41,7 +41,7 @@ const invoices = require("./routes/invoices.js")(app, models, path);
 const products = require("./routes/admin/products.js")(app, models, uploadImages, fs, path, moment, validation)
 const categories = require("./routes/admin/categories.js")(app, models, validation);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
-const homeSettings = require("./routes/admin/homeSettings.js")(app, models, uploadImages, fs, path, validation);
+const homeSettings = require("./routes/admin/homeSettings.js")(app, models, fs, path, uploadImages, validation);
 const contact = require("./routes/admin/contact.js")(app, models, emailEvent, moment, validation);
 const chat = require("./chat/chat.js")(io, app, models, moment, validation);
 const backup = require("./database/backup.js")(spawn, cron, fs, path, moment);
@@ -69,7 +69,7 @@ function createAdmin() {
         bcryptjs.hash(password, salt, (error, hashedPassword) => {
             var query = {"account.username": "admin"};
             var update = {$setOnInsert: {account: {username: "admin", email: "default", password: hashedPassword, firstName: "default", lastName: "default", mobileNumber: 0, isAdmin: true}, address: {street: "default", houseNumber: 0, city: "default", zipCode: 0, country: "default"}, confirmation: {confirmed: true, confirmationToken: "", authenticationEnabled: false, authenticationToken: "", authenticationEnablingToken: "", resetPasswordToken: ""}}};
-            var options = {upsert: true};
+            var options = {upsert: true, new: true};
             User.findOneAndUpdate(query, update, options).then().catch(error => console.log(error));
         });
     });
