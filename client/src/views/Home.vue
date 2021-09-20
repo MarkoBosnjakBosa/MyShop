@@ -1,16 +1,21 @@
 <template>
     <div id="home" class="container-fluid">
-        <div class="d-flex" id="barsStyle">
+        <div class="d-flex" id="pageContent">
             <sidebar></sidebar>
-			<div id="pageStyle">
-				<navigation></navigation>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <div id="imagesCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
                         <button v-for="(image, index) in homeSettings.images" :key="image._id" type="button" data-bs-target="#imagesCarousel" :data-bs-slide-to="index" :class="{'active' : index == 0}" data-bs-interval="2000"></button>
                     </div>
-                    <div class="carousel-inner">
+                    <div v-if="homeSettings.images.length" class="carousel-inner">
                         <div v-for="(image, index) in homeSettings.images" :key="image._id" class="carousel-item" :class="{'active' : index == 0}">
                             <img :src="renderImage(image)" :alt="image.name" class="d-block w-100">
+                        </div>
+                    </div>
+                    <div v-else class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img :src="require('../assets/images/OnlineShop.jpg')" alt="Online Shop" class="d-block w-100">
                         </div>
                     </div>
                     <button type="button" class="carousel-control-prev" data-bs-target="#imagesCarousel" data-bs-slide="prev">
@@ -22,7 +27,8 @@
                 </div>
                 <div class="container-fluid introductionText">
                     <h1>MyShop</h1>
-                    <h3 v-html="homeSettings.message"></h3>
+                    <h3 v-if="homeSettings.message" v-html="homeSettings.message"></h3>
+                    <h3 v-else>Welcome to the best online shop in the world!</h3>
                 </div>
             </div>
         </div>
@@ -32,7 +38,8 @@
 <script>
     import navigation from "../components/Navigation.vue"; 
     import sidebar from "../components/Sidebar.vue";
-    var axios = require("axios");
+    import helper from "../components/Helper.vue";
+    const axios = require("axios");
 
     export default {
         name: "home",
@@ -56,11 +63,7 @@
                 }).catch(error => console.log(error));
             },
             renderImage(image) {
-                if(image && !(image instanceof File)) {
-                    return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
-                } else {
-                    return "";
-                }
+                return helper.methods.renderImage(image);
             }
         },
         created() {

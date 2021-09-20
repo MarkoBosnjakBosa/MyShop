@@ -167,7 +167,6 @@
                 return helper.methods.renderImage(image);
             },
             toggleTab(tab) {
-                console.log(tab);
                 helper.methods.toggleTab(tab);
             },
             clearMessageStatus() {
