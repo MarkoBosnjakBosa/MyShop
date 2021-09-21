@@ -1,9 +1,9 @@
 <template>
     <div id="contact" class="container-fluid">
-		<div class="d-flex" id="barsStyle">
+        <div class="d-flex" id="pageContent">
             <sidebar></sidebar>
-			<div id="pageStyle">
-				<navigation></navigation>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Contact</h1>
                 <div class="nav nav-tabs justify-content-center" role="tablist">
                     <button type="button" id="messageNavTab" data-bs-toggle="tab" data-bs-target="#messageTab" class="nav-link active" role="tab">Message</button>
@@ -35,12 +35,13 @@
                                 <small v-if="errors.messageError && submitting" class="form-text errorInput">Please provide a valid message!</small>
                             </div>
                             <div v-if="messageSubmitted" class="mb-3 submissionSuccessful">Your message has been successfully submitted!</div>
-                            <div class="mb-3">
+                            <div>
                                 <button type="button" class="btn btn-danger" @click="resetMessage()">Reset</button>
+                                <button type="button" class="btn btn-dark nextButton" @click="toggleTab('map')">Next <i class="fas fa-angle-double-right"></i></button>               
                                 <button type="button" class="btn btn-primary submitButton" @click="submitMessage()">Submit</button>
                             </div>
                         </form>
-                        <div>
+                        <div class="contact">
                             <h3>My Shop</h3>
                             <div>
                                 {{contactSettings.street}} {{contactSettings.houseNumber}}<br/>
@@ -50,7 +51,10 @@
                         </div>
                     </div>
                     <div id="mapTab" class="tab-pane fade" role="tabpanel">
-                        <div id="map"></div>
+                        <div id="map" class="mb-3"></div>
+                        <div>
+                            <button type="button" class="btn btn-dark" @click="toggleTab('message')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -59,19 +63,33 @@
 </template>
 
 <script>
-	import navigation from "../components/Navigation.vue";
+    import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";
-    import validation from "../components/Validation.vue"; 
-	const axios = require("axios");
+    import validation from "../components/Validation.vue";
+    import helper from "../components/Helper.vue";  
+    const axios = require("axios");
 	
-	export default {
-		name: "contact",
-		components: {
+    export default {
+        name: "contact",
+        components: {
             navigation,
             sidebar
         },
         data() {
-			return {
+            return {
+                map: null,
+                contactSettings: {
+                    _id: "",
+                    coordinates: {
+                        lat: "",
+                        lng: ""
+                    },
+                    street: "",
+                    houseNumber: "",
+                    city: "",
+                    zipCode: "",
+                    country: ""
+                },
                 submitting: false,
                 contact: {
                     firstName: "",
@@ -85,26 +103,13 @@
                     emailError: false,
                     messageError: false
                 },
-                messageSubmitted: false,
-                map: null,
-                coordinates: {
-                    lat: 0,
-                    lng: 0
-                },
-                contactSettings: {
-                    street: "",
-                    houseNumber: "",
-                    city: "",
-                    zipCode: "",
-                    country: ""
-                }
-			}
-		},
+                messageSubmitted: false
+            }
+        },
         methods: {
             getContactSettings() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getContactSettings").then(response => {
-                    this.contactSettings = {street: response.data.contactSettings.street, houseNumber: response.data.contactSettings.houseNumber, city: response.data.contactSettings.city, zipCode: response.data.contactSettings.zipCode, country: response.data.contactSettings.country};
-                    this.coordinates = response.data.contactSettings.coordinates;
+                    this.contactSettings = response.data.contactSettings;
                     this.loadGoogleMaps();
                 }).catch(error => console.log(error));
             },
@@ -138,9 +143,10 @@
                 var body = {contact: this.contact};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/newContact", body).then(response => {
                     if(response.data.submitted) {
-                        this.messageSubmitted = true;
                         this.contact = {firstName: "", lastName: "", email: "", message: ""};
                         this.errors = {firstNameError: false, lastNameError: false, emailError: false, messageError: false};
+                        this.submitting = false;
+                        this.messageSubmitted = true;
                     } else {
                         var errorFields = response.data.errorFields;
                         if(errorFields.includes("firstName")) this.errors.firstNameError = true;
@@ -164,7 +170,7 @@
                 document.head.appendChild(googleMapsScript);
             },
             initializeMap() {
-                this.map = new google.maps.Map(document.getElementById("map"), {center: this.coordinates, zoom: 10});
+                this.map = new google.maps.Map(document.getElementById("map"), {center: this.contactSettings.coordinates, zoom: 10});
                 this.map.addListener("tilesloaded", function() {
                     var removableElements = document.querySelectorAll("#map div[style*='background-color: white']");
                     removableElements.forEach(removableElement => removableElement.remove());
@@ -172,7 +178,7 @@
             },
             setLocation() {
                 var icon = {url: require("../assets/images/GoogleMapsIcon.png"), scaledSize: new google.maps.Size(50, 50)};
-                var location = new google.maps.Marker({position: this.coordinates, map: this.map, icon: icon});
+                var location = new google.maps.Marker({position: this.contactSettings.coordinates, map: this.map, icon: icon});
                 var infoWindow = new google.maps.InfoWindow({content: "<h3 style='text-align: center'>MyShop</h3><div>" + this.contactSettings.street + " " + this.contactSettings.houseNumber + ", " + this.contactSettings.zipCode + " " + this.contactSettings.city + ", " + this.contactSettings.country + "</div>"});
                 location.addListener("mouseover", function() {
                     infoWindow.open(this.map, location);
@@ -180,6 +186,9 @@
                 location.addListener("mouseout", function() {
                     infoWindow.close();
                 });
+            },
+            toggleTab(tab) {
+                helper.methods.toggleTab(tab);
             },
             clearFirstNameStatus() { this.errors.firstNameError = false, this.messageSubmitted = false },
             clearLastNameStatus() { this.errors.lastNameError = false, this.messageSubmitted = false },
@@ -210,11 +219,18 @@
         margin-top: 20px;
     }
     #map {
-        height: 700px;
+        height: 500px;
         margin-bottom: 20px;
+    }
+    .nextButton {
+        float: right;
+        margin-left: 5px;
     }
     .submitButton {
         float: right;
+    }
+    .contact {
+        margin-top: 10px;
     }
     .submissionSuccessful {
         color: #008000;
