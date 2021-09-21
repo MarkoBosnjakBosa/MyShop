@@ -75,11 +75,12 @@ module.exports = function(mongoose) {
 		email: {type: String, required: true}
 	});
 	const contactScheme = new mongoose.Schema({
-		firstName: {type: String},
-		lastName: {type: String},
-		email: {type: String},
-		message: {type: String},
-		date: {type: String}
+		firstName: {type: String, required: true},
+		lastName: {type: String, required: true},
+		email: {type: String, required: true},
+		mobileNumber: {type: Number, required: true},
+		message: {type: String, required: true},
+		date: {type: String, required: true}
 	});
 	const messageScheme = new mongoose.Schema({
 		chatId: {type: String},

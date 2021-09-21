@@ -29,6 +29,15 @@
                             </div>
                             <div class="mb-3">
                                 <div class="input-group">
+                                    <label for="mobileNumber" class="input-group-text">Mobile number:</label>
+                                    <span class="input-group-text countryCodePrefix">+</span>
+                                    <input type="text" id="mobileNumber" class="form-control" :class="{'errorField' : errors.mobileNumberError && submitting}" v-model="contact.mobileNumber" @focus="clearMobileNumberStatus()" @keypress="clearMobileNumberStatus()"/>
+                                </div>
+                                <small class="form-text text-muted">Please insert your mobile number with the country calling code.</small><br>
+                                <small v-if="errors.mobileNumberError && submitting" class="form-text errorInput">Please provide a valid mobile number!</small>
+                            </div>
+                            <div class="mb-3">
+                                <div class="input-group">
                                     <label for="message" class="input-group-text">Message</label>
                                     <textarea id="message" class="form-control" :class="{'errorField' : errors.messageError && submitting}" v-model="contact.message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"></textarea>
                                 </div>
@@ -101,12 +110,14 @@
                     firstName: "",
                     lastName: "",
                     email: "",
+                    mobileNumber: "",
                     message: "",
                 },
                 errors: {
                     firstNameError: false,
                     lastNameError: false,
                     emailError: false,
+                    mobileNumberError: false,
                     messageError: false
                 },
                 messageSubmitted: false
@@ -124,6 +135,7 @@
                 this.clearFirstNameStatus();
                 this.clearLastNameStatus();
                 this.clearEmailStatus();
+                this.clearMobileNumberStatus();
                 this.clearMessageStatus();
                 var allowSubmission = true;
                 if(this.invalidFirstName) {
@@ -138,6 +150,10 @@
                     this.errors.emailError = true;
                     allowSubmission = false;
                 }
+                if(this.invalidMobileNumber) {
+                    this.errors.mobileNumberError = true;
+                    allowSubmission = false;
+                }
                 if(this.invalidMessage) {
                     this.errors.messageError = true;
                     allowSubmission = false;
@@ -149,8 +165,8 @@
                 var body = {contact: this.contact};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/newContact", body).then(response => {
                     if(response.data.submitted) {
-                        this.contact = {firstName: "", lastName: "", email: "", message: ""};
-                        this.errors = {firstNameError: false, lastNameError: false, emailError: false, messageError: false};
+                        this.contact = {firstName: "", lastName: "", email: "", mobileNumber: "", message: ""};
+                        this.errors = {firstNameError: false, lastNameError: false, emailError: false, mobileNumberError: false, messageError: false};
                         this.submitting = false;
                         this.messageSubmitted = true;
                     } else {
@@ -158,14 +174,15 @@
                         if(errorFields.includes("firstName")) this.errors.firstNameError = true;
                         if(errorFields.includes("lastName")) this.errors.lastNameError = true;
                         if(errorFields.includes("email")) this.errors.emailError = true;
+                        if(errorFields.includes("mobileNumber")) this.errors.mobileNumberError = true;
                         if(errorFields.includes("message")) this.errors.messageError = true;
                         this.messageSubmitted = false;
                     }
                 }).catch(error => console.log(error));
             },
             resetMessage() {
-                this.contact = {firstName: "", lastName: "", email: "", message: ""};
-                this.errors = {firstNameError: false, lastNameError: false, emailError: false, messageError: false};
+                this.contact = {firstName: "", lastName: "", email: "", mobileNumber: "", message: ""};
+                this.errors = {firstNameError: false, lastNameError: false, emailError: false, mobileNumberError: false, messageError: false};
                 this.messageSubmitted = false;
             },
             loadGoogleMaps() {
@@ -199,12 +216,14 @@
             clearFirstNameStatus() { this.errors.firstNameError = false, this.messageSubmitted = false },
             clearLastNameStatus() { this.errors.lastNameError = false, this.messageSubmitted = false },
             clearEmailStatus() { this.errors.emailError = false, this.messageSubmitted = false },
+            clearMobileNumberStatus() { this.errors.mobileNumberError = false, this.messageSubmitted = false },
             clearMessageStatus() { this.errors.messageError = false, this.messageSubmitted = false }
         },
         computed: {
             invalidFirstName() { return validation.methods.invalidFirstName(this.contact.firstName); },
             invalidLastName() { return validation.methods.invalidLastName(this.contact.lastName); },
             invalidEmail() { return validation.methods.invalidEmail(this.contact.email); },
+            invalidMobileNumber() { return validation.methods.invalidMobileNumber(this.contact.mobileNumber); },
             invalidMessage() { return validation.methods.invalidMessage(this.contact.message); }
         },
         created() {
@@ -224,9 +243,8 @@
         max-width: 700px;
         margin-top: 20px;
     }
-    #map {
-        height: 500px;
-        margin-bottom: 20px;
+    .countryCodePrefix {
+        background-color: #fff;
     }
     .nextButton {
         float: right;
@@ -240,6 +258,10 @@
     }
     .information {
         margin-bottom: 5px;
+    }
+    #map {
+        height: 500px;
+        margin-bottom: 20px;
     }
     .submissionSuccessful {
         color: #008000;

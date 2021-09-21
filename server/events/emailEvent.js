@@ -63,7 +63,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 	}
 	function sendContactEmail(contact) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/contact.html"), "utf-8"));
-		var html = compiledHtml({firstName: contact.firstName, lastName: contact.lastName});
+		var html = compiledHtml({firstName: contact.firstName});
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: contact.email,

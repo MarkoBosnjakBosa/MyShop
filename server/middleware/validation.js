@@ -377,6 +377,11 @@ function validateContact(request, response, next) {
         errorFields = [...errorFields, "email"];
         allowSubmission = false;
     }
+    var mobileNumber = contact.mobileNumber;
+    if(validation.invalidMobileNumber(mobileNumber)) {
+        errorFields = [...errorFields, "mobileNumber"];
+        allowSubmission = false;
+    }
     var message = contact.message;
     if(validation.invalidMessage(message)) {
         errorFields = [...errorFields, "message"];

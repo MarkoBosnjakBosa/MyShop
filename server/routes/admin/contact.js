@@ -68,10 +68,11 @@ module.exports = function(app, models, emailEvent, moment, validation) {
         var firstName = contact.firstName;
         var lastName = contact.lastName;
         var email = contact.email;
+        var mobileNumber = contact.mobileNumber;
         var message = contact.message;
         var dateFormat = "DD.MM.YYYY HH:mm";
 	    var date = moment().format(dateFormat);
-        var newContact = getContactScheme(Contact, firstName, lastName, email, message, date);
+        var newContact = getContactScheme(Contact, firstName, lastName, email, mobileNumber, message, date);
         newContact.save().then(contact => {
             emailEvent.emit("sendContactEmail", contact);
             response.status(200).json({submitted: true}).end();
@@ -96,7 +97,7 @@ module.exports = function(app, models, emailEvent, moment, validation) {
     function getContactSettingsScheme(ContactSettings, coordinates, street, houseNumber, city, zipCode, country, mobileNumber, email) {
 		return new ContactSettings({coordinates: coordinates, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, mobileNumber: mobileNumber, email: email});
 	}
-    function getContactScheme(Contact, firstName, lastName, email, message, date) {
-		return new Contact({firstName: firstName, lastName: lastName, email: email, message: message, date: date});
+    function getContactScheme(Contact, firstName, lastName, email, mobileNumber, message, date) {
+		return new Contact({firstName: firstName, lastName: lastName, email: email, mobileNumber: mobileNumber, message: message, date: date});
 	}
 }
