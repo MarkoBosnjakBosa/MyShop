@@ -1,9 +1,9 @@
 <template>
     <div id="viewProduct" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
-			<sidebar></sidebar>
-			<div id="pageDiv">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>{{product.title}}</h1>
                 <div id="imagesCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
@@ -25,7 +25,7 @@
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     </button>
                 </div>
-                <div id="productData">
+                <div class="productData">
                     <div class="nav nav-tabs justify-content-center" role="tablist">
                         <button type="button" id="mainNavTab" data-bs-toggle="tab" data-bs-target="#mainTab" class="nav-link active" role="tab">Main</button>
                         <button type="button" id="reviewsNavTab" data-bs-toggle="tab" data-bs-target="#reviewsTab" class="nav-link" role="tab">Reviews</button>
@@ -36,7 +36,7 @@
                                 <div class="col-md-6 price"><b>Price: {{product.price}} €</b></div>
                                 <div class="col-md-6">
                                     <div class="mb-3 input-group">
-                                        <input type="number" id="selectedQuantity" min="1" :max="product.quantity" class="form-control" value="1"/>
+                                        <input type="number" id="selectedQuantity" step="1" min="1" :max="product.quantity" class="form-control" v-model="product.selectedQuantity"/>
                                         <div class="input-group-append">
                                             <button type="button" class="btn btn-primary" @click="addToShoppingCart()">Add to cart</button>
                                         </div>
@@ -75,7 +75,7 @@
                                     <div :id="'collapse_' + review._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + review._id" data-bs-parent="#reviews">
                                         <div v-if="editing == review._id" class="accordion-body">
                                             <div class="row">
-                                                <div class="col-md editMessage">
+                                                <div class="editMessage">
                                                     <textarea class="form-control" rows="5" v-model="reviews[index].review"></textarea>
                                                 </div>
                                             </div>
@@ -108,59 +108,50 @@
 </template>
 
 <script>
-	import checkLogin from "../components/CheckLogin.vue";
-	import navigation from "../components/Navigation.vue";
-	import sidebar from "../components/Sidebar.vue";
+    import checkLogin from "../components/CheckLogin.vue";
+    import navigation from "../components/Navigation.vue";
+    import sidebar from "../components/Sidebar.vue";
     import helper from "../components/Helper.vue";
-    import notification from "../components/Notification.vue";
     import validation from "../components/Validation.vue"; 
-	const axios = require("axios");
+    import notification from "../components/Notification.vue";
+    const axios = require("axios");
 	
-	export default {
-		name: "viewProduct",
-		components: {
+    export default {
+        name: "viewProduct",
+        components: {
             navigation,
-			sidebar,
+            sidebar,
             notification
         },
         data() {
-			return {
-                productId: "",
-                username: this.$store.getters.getUser,
-                product: {
-                    _id: "",
-                    title: "",
-                    description: "",
-                    price: "",
-                    quantity: "",
-                    category: "",
-                    technicalData: [],
-                    primaryImage: "",
-                    images: [],
-                    rating: {},
-                    selectedQuantity: 1
-                },
-                reviews: [],
+            return {
+            productId: "",
+            username: this.$store.getters.getUser,
+            product: {
+                _id: "",
+                title: "",
+                description: "",
+                price: "",
+                quantity: 0,
+                category: "",
+                technicalData: [],
+                primaryImage: "",
+                images: [],
+                rating: {},
+                selectedQuantity: 1
+            },
+            reviews: [],
                 page: 1,
                 pagesNumber: 1,
                 review: "",
                 editing: null,
                 message: ""
-			}
-		},
+            }
+        },
         methods: {
             getProduct() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProduct/" + this.productId).then(response => {
-                    this.product._id = response.data.product._id;
-                    this.product.title = response.data.product.title;
-                    this.product.description = response.data.product.description;
-                    this.product.price = helper.methods.formatNumber(response.data.product.price.toString());
-                    this.product.quantity = response.data.product.quantity;
-                    this.product.category = response.data.product.category;
-                    this.product.technicalData = response.data.product.technicalData;
-                    this.product.primaryImage = response.data.product.primaryImage;
-                    this.product.images = response.data.product.images;
-                    this.product.rating = response.data.product.rating;
+                    this.product = response.data.product;
                     this.product.selectedQuantity = 1;
                     this.getUserRating(this.product.rating.usersRatings);
                 }).catch(error => console.log(error));
@@ -172,21 +163,17 @@
                     this.pagesNumber = response.data.pagesNumber;  
                 }).catch(error => console.log(error));
             },
-            renderImage(image) {
-                return helper.methods.renderImage(image);
-            },
             addToShoppingCart() {
-                var selectedQuantity = document.getElementById("selectedQuantity").value;
-                if(selectedQuantity > 0 && selectedQuantity <= this.product.quantity) {
+                if(this.product.selectedQuantity > 0 && this.product.selectedQuantity <= this.product.quantity && Number.isInteger(Number(this.product.selectedQuantity))) {
                     var product = {};
                     product._id = this.product._id;
                     product.title = this.product.title;
                     product.price = this.product.price;
-                    product.selectedQuantity = selectedQuantity;
+                    product.selectedQuantity = this.product.selectedQuantity;
                     product.primaryImage = this.product.primaryImage;
                     product.rating = this.product.rating;
                     this.$store.dispatch("addToShoppingCart", product);
-                    document.getElementById("selectedQuantity").value = "1";
+                    this.product.selectedQuantity = 1;
                     this.message = "This product has been successfully added to your cart!";
                 }
             },
@@ -282,6 +269,9 @@
                 Object.assign(review, this.cachedReview);
                 this.editing = null;
             },
+            renderImage(image) {
+                return helper.methods.renderImage(image);
+            },
             loadPage(page) {
                 if(page > 0 && page <= this.pagesNumber) {
                     this.page = page;
@@ -292,7 +282,7 @@
                 this.message = "";
             }
         },
-        mounted() {
+        created() {
             checkLogin.methods.isLoggedIn();
             this.productId = this.$route.params.productId;
             this.getProduct();
@@ -306,16 +296,18 @@
         text-align: center;
         margin-top: 20px;
         margin-bottom: 20px;
+        overflow: hidden;
+        white-space: nowrap;
     }
     #imagesCarousel {
-        margin: 0 auto;
+        margin: auto;
         max-width: 800px;
     }
     .d-block {
         height: 400px;
     }
-    #productData {
-        margin: 0 auto;
+    .productData {
+        margin: auto;
         max-width: 600px;
         margin-top: 20px;
     }

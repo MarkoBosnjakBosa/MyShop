@@ -3,7 +3,7 @@
         <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
             <div class="toast" :class="message != '' ? 'show' : 'hide'" role="alert">
                 <div class="toast-header">
-                    <strong class="me-auto">{{product.title}}</strong>
+                    <strong class="me-auto title">{{product.title}}</strong>
                     <button type="button" class="btn-close" @click="hideNotification()"></button>
                 </div>
                 <div class="toast-body">{{message}}</div>
@@ -14,14 +14,14 @@
 
 <script>
     export default {
-		name: "notification",
+        name: "notification",
         props: {
-			product: {
+            product: {
                 _id: "",
                 title: "",
                 description: "",
                 price: "",
-                quantity: "",
+                quantity: 0,
                 category: "",
                 technicalData: [],
                 primaryImage: "",
@@ -30,7 +30,7 @@
                 selectedQuantity: 1
             },
             message: ""
-		},
+        },
         methods: {
             hideNotification() { this.$emit("hide"); }
         }
@@ -40,5 +40,9 @@
 <style scoped>
     .toast-body {
         color: #008000;
+    }
+    .title {
+        overflow: hidden;
+        white-space: nowrap;
     }
 </style>

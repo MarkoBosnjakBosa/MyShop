@@ -6,20 +6,19 @@
                 <div class="col-md-4">
                     <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="rounded img-fluid" @click="openProduct(product._id)">
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-7">
                     <h3 @click="openProduct(product._id)">{{product.title}}</h3>
-                    <b>{{product.selectedQuantity}} x {{formatNumber(product.price)}} = {{formatNumber(Number(product.selectedQuantity) * Number(product.price))}} €</b>
-                    <br>
+                    <b>{{product.selectedQuantity}} x {{product.price}} = {{formatNumber(Number(product.selectedQuantity) * Number(product.price))}} €</b><br>
                     <i class="fas fa-external-link-alt" @click="openViewProduct(product._id)"></i>
                 </div>
                 <i class="fas fa-times productRemoval" :class="index == 0 ? 'firstRemoval' : 'otherRemovals'" @click="removeFromShoppingCart(product._id)"></i>
             </li>
             <li v-if="products.length" class="container product lowerProduct">
                 <div class="totalCost">
-                    <b>Total: {{formatNumber(totalCost)}} €</b>
+                    <b>Total: {{totalCost}} €</b>
                     <i class="fas fa-times totalRemoval" @click="clearShoppingCart()"></i>
                 </div>
-                <button type="button" class="btn btn-primary checkoutButton" @click="openShoppingCart()">Go to shopping cart</button>
+                <button type="button" class="btn btn-primary checkout" @click="openShoppingCart()">Go to shopping cart</button>
             </li>
             <li v-else class="container">
                 Your shopping cart is empty!
@@ -44,6 +43,9 @@
             clearShoppingCart() {
                 this.$store.dispatch("clearShoppingCart");
             },
+            formatNumber(number) {
+                return number.toFixed(2);
+            },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
             },
@@ -52,9 +54,6 @@
             },
             renderImage(image) {
                 return helper.methods.renderImage(image);
-            },
-            formatNumber(number) {
-                return helper.methods.formatNumber(number.toString());
             }
         },
         computed: {
@@ -73,7 +72,7 @@
                 this.products.forEach(function(product) {
                     totalCost += Number(product.price) * Number(product.selectedQuantity);
                 });
-                return totalCost;
+                return this.formatNumber(totalCost);
             }
         }
     }
@@ -91,6 +90,13 @@
         margin: 0px;
         cursor: default;
     }
+    .img-fluid {
+        height: 85px;
+    }
+    h3 {
+        overflow: hidden;
+        white-space: nowrap;
+    }
     .product {
         position: relative;
     }
@@ -101,9 +107,6 @@
     .dropdownDivider { 
         padding-bottom: 10px;
         border-bottom: 1px #000 solid;
-    }
-    .img-fluid {
-        height: 85px;
     }
     .fas.fa-times {
         position: absolute;
@@ -132,7 +135,7 @@
     .totalCost {
         width: 100%;
     }
-    .checkoutButton {
+    .checkout {
         width: 100%;
         margin-top: 10px;
     }
