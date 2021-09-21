@@ -179,7 +179,7 @@
                 var body = {contactSettings: this.contactSettings};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/saveContactSettings", body).then(response => {
                     if(response.data.saved) {
-                        this.contactSettings._id = response.data.id;
+                        this.contactSettings._id = response.data.contactSettingsId;
                         this.errors = {latitudeError: false, longitudeError: false, geolocationError: false, streetError: false, houseNumberError: false, cityError: false, zipCodeError: false, countryError: false, mobileNumberError: false, emailError: false};
                         this.submitting = false;
                         this.contactSettingsSaved = true;

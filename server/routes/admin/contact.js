@@ -13,7 +13,7 @@ module.exports = function(app, models, emailEvent, moment, validation) {
     });
     app.post("/saveContactSettings", validation.validateContactSettings, (request, response) => {
         var contactSettings = request.body.contactSettings;
-        var id = contactSettings._id;
+        var contactSettingsId = contactSettings._id;
         var coordinates = contactSettings.coordinates;
         var street = contactSettings.street;
         var houseNumber = contactSettings.houseNumber;
@@ -22,16 +22,16 @@ module.exports = function(app, models, emailEvent, moment, validation) {
         var country = contactSettings.country;
         var mobileNumber = contactSettings.mobileNumber;
         var email = contactSettings.email;
-        if(id) {
-            var query = {_id: id};
+        if(contactSettingsId) {
+            var query = {_id: contactSettingsId};
             var update = {coordinates: coordinates, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, mobileNumber: mobileNumber, email: email};
             ContactSettings.findOneAndUpdate(query, update).then(savedContactSettings => {
-                response.status(200).json({saved: true, id: savedContactSettings._id}).end();
+                response.status(200).json({saved: true, contactSettingsId: savedContactSettings._id}).end();
             }).catch(error => console.log(error));
         } else {
             var newContactSettings = getContactSettingsScheme(ContactSettings, coordinates, street, houseNumber, city, zipCode, country, mobileNumber, email);
             newContactSettings.save().then(savedContactSettings => {
-                response.status(200).json({saved: true, id: savedContactSettings._id}).end();
+                response.status(200).json({saved: true, contactSettingsId: savedContactSettings._id}).end();
             }).catch(error => console.log(error));
         }
     });
