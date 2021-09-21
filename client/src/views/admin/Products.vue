@@ -34,7 +34,7 @@
                             <button type="submit" class="btn btn-primary md-1">Search</button>
                         </div>
                         <div class="mb-3 col-md-1">
-                            <button type="button" class="btn btn-dark" data-toggle="tooltip" title="Total">{{total}}</button>
+                            <button type="button" class="btn btn-dark" data-toggle="tooltip" :title="'Total: ' + total">{{total}}</button>
                         </div>
                     </div>
                 </form>
