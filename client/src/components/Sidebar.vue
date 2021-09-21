@@ -10,8 +10,8 @@
             <li class="list-group-item list-group-item-action bg-light" @click="openCategories()">Categories</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openTechnicalData()">Technical Data</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openHomeSettings()">Home Settings</li>
-            <li class="list-group-item list-group-item-action bg-light" @click="openContacts()">Contacts</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openContactSettings()">Contact Settings</li>
+            <li class="list-group-item list-group-item-action bg-light" @click="openContacts()">Contacts</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openChats()">Chats</li>
         </ul>
         <ul v-else class="list list-group-flush">
@@ -62,11 +62,11 @@
             openHomeSettings() {
                 route.methods.openHomeSettings();
             },
-            openContacts() {
-                route.methods.openContacts();
-            },
             openContactSettings() {
                 route.methods.openContactSettings();
+            },
+            openContacts() {
+                route.methods.openContacts();
             },
             openChats() {
                 route.methods.openChats();

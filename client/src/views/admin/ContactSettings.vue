@@ -210,8 +210,8 @@
                     this.errors.geolocationError = true;
                 }
             },
-            clearLatitudeStatus() { this.errors.latitudeError = false, this.contactSettingsSaved = false; },
-            clearLongitudeStatus() { this.errors.longitudeError = false, this.contactSettingsSaved = false; },
+            clearLatitudeStatus() { this.errors.latitudeError = false, this.errors.geolocationError = false, this.contactSettingsSaved = false; },
+            clearLongitudeStatus() { this.errors.longitudeError = false, this.errors.geolocationError = false, this.contactSettingsSaved = false; },
             clearStreetStatus() { this.errors.streetError = false, this.contactSettingsSaved = false; },
             clearHouseNumberStatus() { this.errors.houseNumberError = false, this.contactSettingsSaved = false; },
             clearCityStatus() { this.errors.cityError = false; this.contactSettingsSaved = false; },
