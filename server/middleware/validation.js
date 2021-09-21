@@ -344,9 +344,14 @@ function validateContactSettings(request, response, next) {
         errorFields = [...errorFields, "zipCode"];
         allowSubmission = false;
     }
-    var country = contactSettings.country;
-    if(validation.invalidCountry(country)) {
-        errorFields = [...errorFields, "country"];
+    var mobileNumber = contactSettings.mobileNumber;
+    if(validation.invalidMobileNumber(mobileNumber)) {
+        errorFields = [...errorFields, "mobileNumber"];
+        allowSubmission = false;
+    }
+    var email = contactSettings.email;
+    if(validation.invalidEmail(email)) {
+        errorFields = [...errorFields, "email"];
         allowSubmission = false;
     }
     if(allowSubmission) next();

@@ -7,7 +7,7 @@ module.exports = function(app, models, emailEvent, moment, validation) {
             if(!validation.isEmpty(contactSettings) && contactSettings.length > 0) {
                 response.status(200).json({contactSettings: contactSettings[0]}).end();
             } else {
-                response.status(200).json({contactSettings: {_id: "", coordinates: {lat: "", lng: ""}, street: "", houseNumber: "", city: "", zipCode: "", country: ""}}).end();
+                response.status(200).json({contactSettings: {_id: "", coordinates: {lat: "", lng: ""}, street: "", houseNumber: "", city: "", zipCode: "", country: "", mobileNumber: "", email: ""}}).end();
             }
         }).catch(error => console.log(error));
     });
@@ -20,14 +20,16 @@ module.exports = function(app, models, emailEvent, moment, validation) {
         var city = contactSettings.city;
         var zipCode = contactSettings.zipCode;
         var country = contactSettings.country;
+        var mobileNumber = contactSettings.mobileNumber;
+        var email = contactSettings.email;
         if(id) {
             var query = {_id: id};
-            var update = {coordinates: coordinates, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country};
+            var update = {coordinates: coordinates, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, mobileNumber: mobileNumber, email: email};
             ContactSettings.findOneAndUpdate(query, update).then(savedContactSettings => {
                 response.status(200).json({saved: true, id: savedContactSettings._id}).end();
             }).catch(error => console.log(error));
         } else {
-            var newContactSettings = getContactSettingsScheme(ContactSettings, coordinates, street, houseNumber, city, zipCode, country);
+            var newContactSettings = getContactSettingsScheme(ContactSettings, coordinates, street, houseNumber, city, zipCode, country, mobileNumber, email);
             newContactSettings.save().then(savedContactSettings => {
                 response.status(200).json({saved: true, id: savedContactSettings._id}).end();
             }).catch(error => console.log(error));
@@ -91,8 +93,8 @@ module.exports = function(app, models, emailEvent, moment, validation) {
 		}
 	});
 
-    function getContactSettingsScheme(ContactSettings, coordinates, street, houseNumber, city, zipCode, country) {
-		return new ContactSettings({coordinates: coordinates, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country});
+    function getContactSettingsScheme(ContactSettings, coordinates, street, houseNumber, city, zipCode, country, mobileNumber, email) {
+		return new ContactSettings({coordinates: coordinates, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, mobileNumber: mobileNumber, email: email});
 	}
     function getContactScheme(Contact, firstName, lastName, email, message, date) {
 		return new Contact({firstName: firstName, lastName: lastName, email: email, message: message, date: date});

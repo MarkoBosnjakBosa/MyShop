@@ -43,10 +43,14 @@
                         </form>
                         <div class="contact">
                             <h3>My Shop</h3>
-                            <div>
-                                {{contactSettings.street}} {{contactSettings.houseNumber}}<br/>
-                                {{contactSettings.zipCode}} {{contactSettings.city}}<br/>
-                                {{contactSettings.country}}
+                            <div v-if="contactSettings.street && contactSettings.houseNumber && contactSettings.zipCode && contactSettings.city && contactSettings.country" class="information">
+                                <i class="fas fa-address-book"></i> {{contactSettings.street}} {{contactSettings.houseNumber}}, {{contactSettings.zipCode}} {{contactSettings.city}}, {{contactSettings.country}}
+                            </div>
+                            <div v-if="contactSettings.mobileNumber" class="information">
+                                <i class="fas fa-mobile-alt"></i> +{{contactSettings.mobileNumber}}
+                            </div>
+                            <div v-if="contactSettings.email">
+                                <i class="fas fa-envelope"></i> {{contactSettings.email}}
                             </div>
                         </div>
                     </div>
@@ -88,7 +92,9 @@
                     houseNumber: "",
                     city: "",
                     zipCode: "",
-                    country: ""
+                    country: "",
+                    mobileNumber: "",
+                    email: ""
                 },
                 submitting: false,
                 contact: {
@@ -119,24 +125,24 @@
                 this.clearLastNameStatus();
                 this.clearEmailStatus();
                 this.clearMessageStatus();
-                var allowSubmit = true;
+                var allowSubmission = true;
                 if(this.invalidFirstName) {
                     this.errors.firstNameError = true;
-                    allowSubmit = false;
+                    allowSubmission = false;
                 }
                 if(this.invalidLastName) {
                     this.errors.lastNameError = true;
-                    allowSubmit = false;
+                    allowSubmission = false;
                 }
                 if(this.invalidEmail) {
                     this.errors.emailError = true;
-                    allowSubmit = false;
+                    allowSubmission = false;
                 }
                 if(this.invalidMessage) {
                     this.errors.messageError = true;
-                    allowSubmit = false;
+                    allowSubmission = false;
                 }
-                if(!allowSubmit) {
+                if(!allowSubmission) {
                     this.messageSubmitted = false;
                     return;
                 }
@@ -231,6 +237,9 @@
     }
     .contact {
         margin-top: 10px;
+    }
+    .information {
+        margin-bottom: 5px;
     }
     .submissionSuccessful {
         color: #008000;
