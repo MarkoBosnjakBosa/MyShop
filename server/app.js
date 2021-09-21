@@ -42,7 +42,7 @@ const products = require("./routes/admin/products.js")(app, models, uploadImages
 const categories = require("./routes/admin/categories.js")(app, models, validation);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
 const homeSettings = require("./routes/admin/homeSettings.js")(app, models, fs, path, uploadImages, validation);
-const contact = require("./routes/admin/contact.js")(app, models, emailEvent, moment, validation);
+const contact = require("./routes/admin/contact.js")(app, models, moment, emailEvent, validation);
 const chat = require("./chat/chat.js")(io, app, models, moment, validation);
 const backup = require("./database/backup.js")(spawn, cron, fs, path, moment);
 

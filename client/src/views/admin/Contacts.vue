@@ -1,9 +1,9 @@
 <template>
     <div id="contacts" class="container-fluid">
-		<div class="d-flex" id="barsStyle">
-			<sidebar></sidebar>
-			<div id="pageStyle">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Contacts</h1>
                 <form autocomplete="off" class="contactsForm" @submit.prevent="getContacts()">
                     <div class="row">
@@ -40,8 +40,9 @@
                         <div class="card-footer">
                             <div class="email">{{contact.email}}</div> 
                             <div class="action">
-                                <a :href="'mailto:' + contact.email" class="btn btn-primary">Answer</a>
-                                <button type="button" class="btn btn-danger delete" @click="deleteContact(contact._id)">Delete</button>
+                                <button type="button" class="btn btn-success"><i class="fas fa-phone"></i> +{{contact.mobileNumber}}</button>
+                                <a :href="'mailto:' + contact.email" class="btn btn-primary answer">Answer</a>
+                                <button type="button" class="btn btn-danger delete" @click="deleteContact(contact._id, contact.firstName + ' ' + contact.lastName)">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -57,19 +58,19 @@
 </template>
 
 <script>
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
-	var axios = require("axios");
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
+    const axios = require("axios");
 
     export default {
-		name: "contacts",
-		components: {
+        name: "contacts",
+        components: {
             navigation,
-			sidebar
+            sidebar
         },
         data() {
-			return {
+            return {
                 contacts: [],
                 search: "",
                 page: 1,
@@ -88,8 +89,8 @@
                     this.pagesNumber = response.data.pagesNumber;
                 }).catch(error => console.log(error));
             },
-            deleteContact(contactId) {
-                var confirmed = confirm("Delete contact?");
+            deleteContact(contactId, fullName) {
+                var confirmed = confirm("Delete contact: " + fullName + "?");
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteContact/" + contactId).then(response => {
                         this.contacts = this.contacts.filter(contact => contact._id != contactId);
@@ -102,10 +103,11 @@
                     this.page = page;
                     this.getContacts();
                 }
-            },
+            }
         },
         created() {
             checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isAdmin();
             this.getContacts();
         }
     }
@@ -131,7 +133,7 @@
         float: left;
         padding-top: 5px;
     }
-    .delete {
+    .answer, .delete {
         margin-left: 5px;
     }
     .noContacts {

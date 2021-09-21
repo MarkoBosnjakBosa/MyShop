@@ -56,7 +56,7 @@
                                 <i class="fas fa-address-book"></i> {{contactSettings.street}} {{contactSettings.houseNumber}}, {{contactSettings.zipCode}} {{contactSettings.city}}, {{contactSettings.country}}
                             </div>
                             <div v-if="contactSettings.mobileNumber" class="information">
-                                <i class="fas fa-mobile-alt"></i> +{{contactSettings.mobileNumber}}
+                                <i class="fas fa-phone"></i> +{{contactSettings.mobileNumber}}
                             </div>
                             <div v-if="contactSettings.email">
                                 <i class="fas fa-envelope"></i> {{contactSettings.email}}
