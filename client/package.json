@@ -7,17 +7,17 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "@popperjs/core": "^2.9.2",
-    "@tinymce/tinymce-vue": "^4.0.2",
-    "axios": "^0.21.1",
-    "bootstrap": "^5.0.1",
+    "@popperjs/core": "^2.10.1",
+    "@tinymce/tinymce-vue": "^4.0.4",
+    "axios": "^0.21.4",
+    "bootstrap": "^5.1.1",
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
-    "socket.io-client": "^4.1.2",
+    "socket.io-client": "^4.2.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0",
-    "vuex-persistedstate": "^4.0.0-beta.3"
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
