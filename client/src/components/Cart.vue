@@ -8,7 +8,7 @@
                 </div>
                 <div class="col-md-7">
                     <h3 @click="openProduct(product._id)">{{product.title}}</h3>
-                    <b>{{product.selectedQuantity}} x {{product.price}} = {{formatNumber(Number(product.selectedQuantity) * Number(product.price))}} €</b><br>
+                    <b>{{product.selectedQuantity}} x {{formatNumber(product.price)}} = {{formatNumber(Number(product.selectedQuantity) * Number(product.price))}} €</b><br>
                     <i class="fas fa-external-link-alt" @click="openViewProduct(product._id)"></i>
                 </div>
                 <i class="fas fa-times productRemoval" :class="index == 0 ? 'firstRemoval' : 'otherRemovals'" @click="removeFromShoppingCart(product._id)"></i>
@@ -44,16 +44,16 @@
                 this.$store.dispatch("clearShoppingCart");
             },
             formatNumber(number) {
-                return number.toFixed(2);
+                return helper.methods.formatNumber(number);
+            },
+            renderImage(image) {
+                return helper.methods.renderImage(image);
             },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
             },
             openShoppingCart() {
                 route.methods.openShoppingCart();
-            },
-            renderImage(image) {
-                return helper.methods.renderImage(image);
             }
         },
         computed: {
@@ -83,7 +83,7 @@
         margin-left: 5px;
     }
     .dropdown-menu {
-        margin-top: 8px;
+        margin-top: 8px !important;
         width: 400px;
     }
     .row {

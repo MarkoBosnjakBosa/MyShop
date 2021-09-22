@@ -1,9 +1,9 @@
 <template>
     <div id="shopCategory" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
-			<sidebar></sidebar>
-			<div id="pageDiv">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Shop By Category: {{category.title}}</h1>
                 <form autocomplete="off" class="row productsForm" @submit.prevent="getProducts()">
                     <div class="mb-3 col-md-6">
@@ -19,13 +19,15 @@
                             <option value="titleDesc">Title &#129047;</option>
                             <option value="priceAsc">Price &#129045;</option>
                             <option value="priceDesc">Price &#129047;</option>
+                            <option value="ratingAsc">Rating &#129045;</option>
+                            <option value="ratingDesc">Rating &#129047;</option>
                         </select>
                     </div>
                     <div class="mb-3 col-md-1">
                         <button type="submit" class="btn btn-primary md-1">Search</button>
                     </div>
                     <div class="mb-3 col-md-1">
-                        <button type="button" class="btn btn-info">{{total}}</button>
+                        <button type="button" class="btn btn-dark" data-toggle="tooltip" :title="'Total: ' + total">{{total}}</button>
                     </div>
                 </form>
                 <div class="mb-3 row products">
@@ -34,13 +36,13 @@
                             <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)">
                             <div class="card-body">
                                 <h5 class="card-title">{{product.title}}</h5>
-                                <p class="card-text">Price: {{product.price}} €</p>
+                                <p class="card-text">Price: {{formatNumber(product.price)}} €</p>
                                 <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="mb-3 pages">
+                <div class="pages">
                     <button v-if="page - 1 > 0" type="button" class="btn btn-dark page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="btn btn-dark page">{{page}}</button>
                     <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
@@ -52,23 +54,22 @@
 </template>
 
 <script>
-    import "bootstrap";
-	import "bootstrap/dist/css/bootstrap.min.css";
-	import navigation from "../components/Navigation.vue";
-	import sidebar from "../components/Sidebar.vue";
+    import navigation from "../components/Navigation.vue";
+    import sidebar from "../components/Sidebar.vue";
+    import helper from "../components/Helper.vue";
     import route from "../components/Route.vue";
     import modal from "../components/Modal.vue";
-	const axios = require("axios");
+    const axios = require("axios");
 	
-	export default {
-		name: "shop",
-		components: {
+    export default {
+        name: "shopCategory",
+        components: {
             navigation,
-			sidebar,
+            sidebar,
             modal
         },
         data() {
-			return {
+            return {
                 category: {
                     _id: "",
                     title: "",
@@ -81,8 +82,8 @@
                 orderBy: "",
                 total: 0,
                 pagesNumber: 1
-			}
-		},
+            }
+        },
         methods: {
             getCategory() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategory/" + this.category._id).then(response => {
@@ -97,18 +98,17 @@
                     this.pagesNumber = response.data.pagesNumber;
                 }).catch(error => console.log(error));
             },
-            renderImage(image) {
-                if(image && !(image instanceof File)) {
-                    return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
-                } else {
-                    return "";
-                }
-            },
             loadPage(page) {
                 if(page > 0 && page <= this.pagesNumber) {
                     this.page = page;
                     this.getProducts();
                 }
+            },
+            formatNumber(number) {
+                return helper.methods.formatNumber(number);
+            },
+            renderImage(image) {
+                return helper.methods.renderImage(image);
             },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
@@ -117,7 +117,7 @@
                 modal.methods.openModal(event);
             }
         },
-        mounted() {
+        created() {
             this.category._id = this.$route.params.categoryId;
             this.getCategory();
             this.getProducts();
@@ -130,10 +130,12 @@
         text-align: center;
         margin-top: 20px;
         margin-bottom: 20px;
+        overflow: hidden;
+        white-space: nowrap;
     }
     .productsForm, .products {
-        margin: 0 auto;
-		max-width: 1000px;
+        margin: auto;
+        max-width: 1000px;
     }
     .card {
         margin-bottom: 10px;
@@ -143,8 +145,8 @@
         cursor: pointer;
     }
     .pages {
+        margin: auto;
         text-align: center;
-        margin: 0 auto;
     }
     .page {
         margin-left: 10px;

@@ -63,14 +63,12 @@
                 if(pageContent.classList.contains("toggled")) toggleSidebar.innerHTML = "<i class='fas fa-angle-double-right'></i>";
                 else toggleSidebar.innerHTML = "<i class='fas fa-angle-double-left'></i>";
             },
+            formatNumber(number) {
+                return number.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            },
             renderImage(image) {
                 if(image && !(image instanceof File)) return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");
                 else return "";
-            },
-            removeDate(imageName) {
-                var index = imageName.lastIndexOf("_");
-                if(index != -1) imageName = imageName.substr(0, index) + imageName.substr(imageName.lastIndexOf("."));
-                return imageName;
             }
         }
     }

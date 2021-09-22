@@ -33,7 +33,7 @@
                     <div class="tab-content">
                         <div id="mainTab" class="tab-pane fade active show" role="tabpanel">
                             <div class="row">
-                                <div class="col-md-6 price"><b>Price: {{product.price}} €</b></div>
+                                <div class="col-md-6 price"><b>Price: {{formatNumber(product.price)}} €</b></div>
                                 <div class="col-md-6">
                                     <div class="mb-3 input-group">
                                         <input type="number" id="selectedQuantity" step="1" min="1" :max="product.quantity" class="form-control" v-model="product.selectedQuantity"/>
@@ -269,9 +269,6 @@
                 Object.assign(review, this.cachedReview);
                 this.editing = null;
             },
-            renderImage(image) {
-                return helper.methods.renderImage(image);
-            },
             loadPage(page) {
                 if(page > 0 && page <= this.pagesNumber) {
                     this.page = page;
@@ -280,6 +277,12 @@
             },
             hideNotification() {
                 this.message = "";
+            },
+            formatNumber(number) {
+                return helper.methods.formatNumber(number);
+            },
+            renderImage(image) {
+                return helper.methods.renderImage(image);
             }
         },
         created() {

@@ -44,7 +44,7 @@
                             <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)">
                             <div class="card-body">
                                 <h5 class="card-title" data-toggle="tooltip" :title="product.title">{{product.title}}</h5>
-                                <p class="card-text">Price: {{product.price}} €</p>
+                                <p class="card-text">Price: {{formatNumber(product.price)}} €</p>
                                 <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
                             </div>
                         </div>
@@ -66,8 +66,8 @@
     import checkLogin from "../components/CheckLogin.vue";
     import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";
-    import route from "../components/Route.vue";
     import helper from "../components/Helper.vue"; 
+    import route from "../components/Route.vue";
     import chat from "../components/Chat.vue";
     import modal from "../components/Modal.vue";
     const axios = require("axios");
@@ -115,14 +115,17 @@
                     this.categories = response.data.categories;
                 }).catch(error => console.log(error));
             },
-            renderImage(image) {
-                return helper.methods.renderImage(image);
-            },
             loadPage(page) {
                 if(page > 0 && page <= this.pagesNumber) {
                     this.page = page;
                     this.getProducts();
                 }
+            },
+            formatNumber(number) {
+                return helper.methods.formatNumber(number);
+            },
+            renderImage(image) {
+                return helper.methods.renderImage(image);
             },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
@@ -162,7 +165,7 @@
         cursor: pointer;
     }
     .pages {
-        margin: 0 auto;
+        margin: auto;
         text-align: center;
     }
     .page {
