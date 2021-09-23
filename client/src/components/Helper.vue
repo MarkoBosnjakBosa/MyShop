@@ -64,7 +64,7 @@
                 else toggleSidebar.innerHTML = "<i class='fas fa-angle-double-left'></i>";
             },
             formatNumber(number) {
-                return number.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                return number.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
             },
             renderImage(image) {
                 if(image && !(image instanceof File)) return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");

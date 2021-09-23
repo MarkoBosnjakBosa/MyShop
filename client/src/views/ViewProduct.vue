@@ -33,7 +33,7 @@
                     <div class="tab-content">
                         <div id="mainTab" class="tab-pane fade active show" role="tabpanel">
                             <div class="row">
-                                <div class="col-md-6 price"><b>Price: {{formatNumber(product.price)}} €</b></div>
+                                <div class="col-md-6 price"><b>Price: {{formatNumber(product.price)}}</b></div>
                                 <div class="col-md-6">
                                     <div class="mb-3 input-group">
                                         <input type="number" id="selectedQuantity" step="1" min="1" :max="product.quantity" class="form-control" v-model="product.selectedQuantity"/>
@@ -169,6 +169,7 @@
                     product._id = this.product._id;
                     product.title = this.product.title;
                     product.price = this.product.price;
+                    product.quantity = this.product.quantity;
                     product.selectedQuantity = this.product.selectedQuantity;
                     product.primaryImage = this.product.primaryImage;
                     product.rating = this.product.rating;

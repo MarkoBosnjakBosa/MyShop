@@ -8,7 +8,7 @@
                 </div>
                 <div class="col-md-7">
                     <h3 @click="openProduct(product._id)">{{product.title}}</h3>
-                    <b>{{product.selectedQuantity}} x {{formatNumber(product.price)}} = {{formatNumber(Number(product.selectedQuantity) * Number(product.price))}} €</b><br>
+                    <b>{{product.selectedQuantity}} x {{formatNumber(product.price)}} = {{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</b><br>
                     <i class="fas fa-external-link-alt" @click="openViewProduct(product._id)"></i>
                 </div>
                 <i class="fas fa-times productRemoval" :class="index == 0 ? 'firstRemoval' : 'otherRemovals'" @click="removeFromShoppingCart(product._id)"></i>

@@ -1,9 +1,9 @@
 <template>
     <div id="shoppingCart" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
-			<sidebar></sidebar>
-			<div id="pageDiv">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Shopping Cart</h1>
                 <div class="row shoppingCart">
                     <div class="col-md-8">
@@ -23,12 +23,12 @@
                                 <div class="row margin">
                                     <label class="col-md-3 col-form-label">Quantity:</label>
                                     <div class="col-md-9">
-                                        <input type="number" min="1" class="form-control quantity" :value="product.selectedQuantity" @change="updateSelectedQuantity($event, product._id)"/>
+                                        <input type="number" step="1" min="1" :max="product.quantity" class="form-control quantity" data-toggle="tooltip" :title="'Value must be less than or equal to ' + product.quantity + '.'" :value="product.selectedQuantity" @change="updateSelectedQuantity($event, product._id)"/>
                                     </div>
                                 </div>
                                 <div class="row margin">
                                     <div class="col-md-3">Price:</div>
-                                    <div class="col-md-9"><b>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}} €</b></div>
+                                    <div class="col-md-9"><b>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</b></div>
                                 </div>
                                 <div class="margin">
                                     <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
@@ -54,38 +54,38 @@
 </template>
 
 <script>
-	import checkLogin from "../components/CheckLogin.vue";
-	import navigation from "../components/Navigation.vue";
-	import sidebar from "../components/Sidebar.vue";
+    import checkLogin from "../components/CheckLogin.vue";
+    import navigation from "../components/Navigation.vue";
+    import sidebar from "../components/Sidebar.vue";
     import helper from "../components/Helper.vue";
     import route from "../components/Route.vue";
-	const axios = require("axios");
+    const axios = require("axios");
 	
-	export default {
-		name: "shoppingCart",
-		components: {
+    export default {
+        name: "shoppingCart",
+        components: {
             navigation,
-			sidebar
+            sidebar
         },
         methods: {
-            renderImage(image) {
-                return helper.methods.renderImage(image);
-            },
-            formatNumber(number) {
-                return helper.methods.formatNumber(number.toString());
-            },
             updateSelectedQuantity(event, productId) {
                 var selectedQuantity = event.target.value;
                 this.$store.dispatch("updateSelectedQuantity", {productId, selectedQuantity});
-            },
-            openViewProduct(productId) {
-                route.methods.openViewProduct(productId);
             },
             removeFromShoppingCart(product) {
                 var confirmed = confirm("Remove product " + product.title + "?");
                 if(confirmed) {
                     this.$store.dispatch("removeFromShoppingCart", product._id);
                 }
+            },
+            renderImage(image) {
+                return helper.methods.renderImage(image);
+            },
+            formatNumber(number) {
+                return helper.methods.formatNumber(number);
+            },
+            openViewProduct(productId) {
+                route.methods.openViewProduct(productId);
             },
             openCheckout(){
                 route.methods.openCheckout();
@@ -98,12 +98,14 @@
             totalCost() {
                 var totalCost = 0;
                 this.products.forEach(function(product) {
+                    if(product.selectedQuantity < 1) product.selectedQuantity = 1;
+                    if(product.selectedQuantity > product.quantity) product.selectedQuantity = product.quantity;
                     totalCost += Number(product.price) * Number(product.selectedQuantity);
                 });
-                return this.formatNumber(totalCost) + " €";
+                return this.formatNumber(totalCost);
             }
         },
-        mounted() {
+        created() {
             checkLogin.methods.isLoggedIn();
         }
     }
@@ -116,8 +118,12 @@
         margin-bottom: 20px;
     }
     .shoppingCart {
-        margin: 0 auto;
+        margin: auto;
         max-width: 1200px;
+    }
+    h3 {
+        overflow: hidden;
+        white-space: nowrap;
     }
     .checkout {
         height: 200px;

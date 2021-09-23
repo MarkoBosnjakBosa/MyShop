@@ -56,7 +56,7 @@
                         <tr v-for="(product, index) in products" :key="product._id">
                             <th class="padding">{{++index}}</th>
                             <td class="padding">{{product.title}}</td>
-                            <td class="padding">{{product.price}} €</td>
+                            <td class="padding">{{product.price}}</td>
                             <td class="padding">{{product.quantity}}</td>
                             <td><img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image" @click="openModal($event)"></td>
                             <td class="padding">

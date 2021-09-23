@@ -44,7 +44,7 @@
                             <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)">
                             <div class="card-body">
                                 <h5 class="card-title" data-toggle="tooltip" :title="product.title">{{product.title}}</h5>
-                                <p class="card-text">Price: {{formatNumber(product.price)}} €</p>
+                                <p class="card-text">Price: {{formatNumber(product.price)}}</p>
                                 <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
                             </div>
                         </div>
