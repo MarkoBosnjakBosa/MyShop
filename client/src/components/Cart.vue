@@ -15,7 +15,7 @@
             </li>
             <li v-if="products.length" class="container product lowerProduct">
                 <div class="totalCost">
-                    <b>Total: {{totalCost}} €</b>
+                    <b>Total: {{totalCost}}</b>
                     <i class="fas fa-times totalRemoval" @click="clearShoppingCart()"></i>
                 </div>
                 <button type="button" class="btn btn-primary checkout" @click="openShoppingCart()">Go to shopping cart</button>

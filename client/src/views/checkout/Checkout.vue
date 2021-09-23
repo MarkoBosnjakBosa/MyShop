@@ -57,7 +57,7 @@
                             If your address has changed, please update it.<br>
                             If everything fits, you can proceed with your payment.
                         </div>
-                        <div class="mb-3">
+                        <div>
                             <button type="button" class="btn btn-secondary" @click="openProfile()">Update <i class="fas fa-pencil-alt"></i> </button>
                             <button type="button" class="btn btn-secondary paymentButton" @click="toggleTab('payment')">Payment <i class="fas fa-cart-arrow-down"></i></button>
                         </div>
@@ -99,21 +99,21 @@
         },
         data() {
             return {
-            username: this.$store.getters.getUser,
-            products: this.$store.getters.getShoppingCart,
-            stripePublishableKey: process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY,
-            payPalClientId: process.env.VUE_APP_PAYPAL_CLIENT_ID,
-            address: {
-                street: "",
-                houseNumber: 0,
-                city: "",
-                zipCode: 0,
-                country: "",
-                mobileNumber: "",
-                email: ""
-            },
-            totalCost: "0.00 €",
-            stripe: ""
+                username: this.$store.getters.getUser,
+                products: this.$store.getters.getShoppingCart,
+                stripePublishableKey: process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY,
+                payPalClientId: process.env.VUE_APP_PAYPAL_CLIENT_ID,
+                address: {
+                    street: "",
+                    houseNumber: 0,
+                    city: "",
+                    zipCode: 0,
+                    country: "",
+                    mobileNumber: "",
+                    email: ""
+                },
+                totalCost: "0.00 €",
+                stripe: ""
             }
         },
         methods: {
@@ -170,7 +170,7 @@
                     var purchase_unit = {};
                     purchase_unit.description = product.title;
                     var amount = {};
-                    amount.value = product.price * product.selectedQuantity;
+                    amount.value = (product.price * product.selectedQuantity).toFixed(2);
                     purchase_unit.amount = amount;
                     return purchase_unit;
                 });
@@ -188,14 +188,14 @@
                     }
                 }).render(this.$refs.paypal);
             },
+            formatNumber(number) {
+                return helper.methods.formatNumber(number);
+            },
             openProfile() {
                 route.methods.openProfile();
             },
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
-            },
-            formatNumber(number) {
-                return helper.methods.formatNumber(number);
             },
             openCheckoutSuccess() {
                 route.methods.openCheckoutSuccess();
