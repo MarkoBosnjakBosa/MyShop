@@ -1,6 +1,6 @@
 <template>
     <div id="cart">
-        <a id="cartProducts" href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-shopping-cart"></i><span class="badge bg-dark">{{totalQuantity}}</span></a>
+        <a id="cartProducts" href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"><i class="fas fa-shopping-cart"></i><span class="badge bg-dark">{{totalQuantity}}</span></a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cartProducts">
             <li v-for="(product, index) in products" :key="product._id" class="row product dropdownDivider" :class="{'lowerProduct' : index > 0}">
                 <div class="col-md-4">
@@ -20,7 +20,7 @@
                 </div>
                 <button type="button" class="btn btn-primary checkout" @click="openShoppingCart()">Go to shopping cart</button>
             </li>
-            <li v-else class="container">
+            <li v-else class="container noProducts">
                 Your shopping cart is empty!
             </li>
         </ul>
@@ -138,5 +138,9 @@
     .checkout {
         width: 100%;
         margin-top: 10px;
+    }
+    .noProducts {
+        font-weight: bold;
+        text-align: center;
     }
 </style>
