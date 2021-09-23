@@ -1,9 +1,9 @@
 <template>
     <div id="checkoutSuccess" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
-			<sidebar></sidebar>
-			<div id="pageDiv">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <div v-if="paymentType" class="alert alert-success" role="alert">
                     Your payment has been successfully processed.<br>
                     Thank you for buying at MyShop.
@@ -30,7 +30,7 @@
                         </tr>
                         <tr>
                             <th colspan="4">Total</th>
-                            <th>{{getTotalCost()}} €</th>
+                            <th>{{getTotalCost()}}</th>
                             <td><i class="fas fa-file-download" @click="downloadInvoice()"></i></td>
                         </tr>
                     </tbody>
@@ -44,28 +44,28 @@
 </template>
 
 <script>
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
     import helper from "../../components/Helper.vue";
     import route from "../../components/Route.vue";
     const axios = require("axios");
 
     export default {
-		name: "checkoutSuccess",
-		components: {
+        name: "checkoutSuccess",
+        components: {
             navigation,
-			sidebar
+            sidebar
         },
         data() {
-			return {
-                invoiceNumber: "",
+            return {
                 username: this.$store.getters.getUser,
+                invoiceNumber: "",
                 paymentType: "",
                 products: [],
                 paymentType: ""
-			}
-		},
+            }
+        },
         methods: {
             finalizePayment() {
                 this.paymentType = this.$store.getters.getCheckout;
@@ -84,6 +84,7 @@
                         if(response.data.finalized) {
                             this.invoiceNumber = response.data.invoiceNumber;
                             this.$store.dispatch("setCheckout", "");
+                            this.$store.dispatch("clearShoppingCart");
                         }
                     }).catch(error => console.log(error));
                 }
@@ -95,11 +96,11 @@
                 });
                 return this.formatNumber(totalCost);
             },
+            formatNumber(number) {
+                return helper.methods.formatNumber(number);
+            },
             downloadInvoice() {
                 route.methods.downloadInvoice(this.invoiceNumber);
-            },
-            formatNumber(number) {
-                return helper.methods.formatNumber(number.toString());
             },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
@@ -108,7 +109,7 @@
                 route.methods.openHome();
             }
         },
-        mounted() {
+        created() {
             checkLogin.methods.isLoggedIn();
             this.finalizePayment();
         }

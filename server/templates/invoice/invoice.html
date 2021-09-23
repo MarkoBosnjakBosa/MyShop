@@ -63,14 +63,14 @@
 			<table>
 				<tr>
 					<td class="address">
-						<%= user.street %> <%= user.houseNumber %><br>
-						<%= user.city %> <%= user.zipCode %><br>
-						<%= user.country %>
+						<%= user.address.street %> <%= user.address.houseNumber %><br>
+						<%= user.address.city %> <%= user.address.zipCode %><br>
+						<%= user.address.country %>
 					</td>
 					<td class="information">
-						<%= user.firstName %> <%= user.lastName %><br>
-						<%= user.mobileNumber %><br>
-						<%= user.email %>
+						<%= user.account.firstName %> <%= user.account.lastName %><br>
+						+<%= user.account.mobileNumber %><br>
+						<%= user.account.email %>
 					</td>
 				</tr>
 			</table>

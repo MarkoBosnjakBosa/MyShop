@@ -47,6 +47,10 @@
                                 <div class="col-md-6 titleColumn"><b>Description</b></div>
                                 <div class="col-md-6 valueColumn">{{product.description}}</div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-6 titleColumn"><b>Quantity</b></div>
+                                <div class="col-md-6 valueColumn">{{product.quantity}}</div>
+                            </div>
                             <div v-for="technicalInformation in product.technicalData" :key="technicalInformation._id" class="row">
                                 <div class="col-md-6 titleColumn"><b>{{technicalInformation.title}}</b></div>
                                 <div class="col-md-6 valueColumn">{{technicalInformation.value}}</div>

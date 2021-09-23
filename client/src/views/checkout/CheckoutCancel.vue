@@ -1,9 +1,9 @@
 <template>
     <div id="checkoutCancel" class="container-fluid">
-		<div class="d-flex" id="barsStyle">
-			<sidebar></sidebar>
-			<div id="pageStyle">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <div class="checkoutCancel">
                     <div class="alert alert-danger" role="alert">
                         Something went wrong. Please contact the admin team.
@@ -16,16 +16,16 @@
 </template>
 
 <script>
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
     import route from "../../components/Route.vue";
 
     export default {
-		name: "checkoutCancel",
-		components: {
+        name: "checkoutCancel",
+        components: {
             navigation,
-			sidebar
+            sidebar
         },
         methods: {
             openContact() {
