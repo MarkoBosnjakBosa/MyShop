@@ -38,7 +38,7 @@
                                     <div class="mb-3 input-group">
                                         <input type="number" id="selectedQuantity" step="1" min="1" :max="product.quantity" class="form-control" v-model="product.selectedQuantity"/>
                                         <div class="input-group-append">
-                                            <button type="button" class="btn btn-primary" @click="addToShoppingCart()">Add to cart</button>
+                                            <button type="button" class="btn btn-primary" data-toggle="tooltip" :title="'Value must be less than or equal to ' + product.quantity + '.'" @click="addToShoppingCart()">Add to cart</button>
                                         </div>
                                     </div>
                                 </div>
