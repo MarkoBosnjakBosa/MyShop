@@ -1,9 +1,9 @@
 <template>
     <div id="checkout" class="container-fluid">
-		<div class="d-flex" id="barsDiv">
-			<sidebar></sidebar>
-			<div id="pageDiv">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Checkout</h1>
                 <div class="nav nav-tabs justify-content-center" role="tablist">
                     <button type="button" id="addressNavTab" data-bs-toggle="tab" data-bs-target="#addressTab" class="nav-link active" role="tab">Address</button>
@@ -14,31 +14,43 @@
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">Street:</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" v-model="address.street" disabled>
+                                <input type="text" id="street" class="form-control" v-model="address.street" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">House number:</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" v-model="address.houseNumber" disabled>
+                                <input type="text" id="houseNumber" class="form-control" v-model="address.houseNumber" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">City:</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" v-model="address.city" disabled>
+                                <input type="text" id="city" class="form-control" v-model="address.city" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">ZIP code:</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" v-model="address.zipCode" disabled>
+                                <input type="text" id="zipCode" class="form-control" v-model="address.zipCode" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">Country:</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" v-model="address.country" disabled>
+                                <input type="text" id="country" class="form-control" v-model="address.country" disabled>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-3 col-form-label">Mobile number:</label>
+                            <div class="col-md-9">
+                                <input type="text" id="mobileNumber" class="form-control" v-model="address.mobileNumber" disabled>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-3 col-form-label">Email:</label>
+                            <div class="col-md-9">
+                                <input type="text" id="email" class="form-control" v-model="address.email" disabled>
                             </div>
                         </div>
                         <div class="mb-3 alert alert-dark" role="alert">
@@ -52,16 +64,16 @@
                     </div>
                     <div id="paymentTab" class="tab-pane fade" role="tabpanel">
                         <div class="mb-3 row">
-                            <div class="col stripe">
+                            <div class="col-md stripe">
                                 <h3>Credit card <i class="fab fa-cc-stripe"></i></h3>
                                 <button id="stripeCheckout" class="btn btn-primary" @click="openStripeCheckout()">Pay {{totalCost}}</button>
                             </div>
-                            <div class="col payPal">
+                            <div class="col-md payPal">
                                 <h3>PayPal <i class="fab fa-cc-paypal"></i></h3>
                                 <div ref="paypal"></div>
                             </div>
                         </div>
-                        <div class="mb-3">
+                        <div>
                             <button type="button" class="btn btn-secondary" @click="toggleTab('address')">Address <i class="fas fa-address-book"></i></button>
                         </div>
                     </div>
@@ -72,41 +84,45 @@
 </template>
 
 <script>
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
     import helper from "../../components/Helper.vue";
     import route from "../../components/Route.vue";
-	const axios = require("axios");
+    const axios = require("axios");
 	
-	export default {
-		name: "checkout",
-		components: {
+    export default {
+        name: "checkout",
+        components: {
             navigation,
-			sidebar
+            sidebar
         },
         data() {
-			return {
-                username: this.$store.getters.getUser,
-                products: this.$store.getters.getShoppingCart,
-                address: {
-                    street: "",
-					houseNumber: "",
-					city: "",
-					zipCode: "",
-					country: ""
-                },
-                totalCost: "0.00 €",
-                stripe: "",
-                stripePublishableKey: process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY,
-                payPalClientId: process.env.VUE_APP_PAYPAL_CLIENT_ID
-			}
-		},
+            return {
+            username: this.$store.getters.getUser,
+            products: this.$store.getters.getShoppingCart,
+            stripePublishableKey: process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY,
+            payPalClientId: process.env.VUE_APP_PAYPAL_CLIENT_ID,
+            address: {
+                street: "",
+                houseNumber: 0,
+                city: "",
+                zipCode: 0,
+                country: "",
+                mobileNumber: "",
+                email: ""
+            },
+            totalCost: "0.00 €",
+            stripe: ""
+            }
+        },
         methods: {
             getUser() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUser/" + this.username).then(response => {
-					this.address = response.data.address;
-				}).catch(error => console.log(error));
+                    this.address = response.data.address;
+                    this.address.mobileNumber = response.data.account.mobileNumber;
+                    this.address.email = response.data.account.email;
+                }).catch(error => console.log(error));
             },
             getTotalCost() {
                 var products = this.$store.getters.getShoppingCart;
@@ -114,7 +130,7 @@
                 products.forEach(function(product) {
                     totalCost += Number(product.price) * Number(product.selectedQuantity);
                 });
-                this.totalCost = this.formatNumber(totalCost) + " €";
+                this.totalCost = this.formatNumber(totalCost);
             },
             openStripeCheckout() {
                 document.getElementById("stripeCheckout").innerHTML = "<i class='fas fa-spinner fa-spin'></i>";
@@ -177,7 +193,7 @@
             },
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
-			},
+            },
             formatNumber(number) {
                 return helper.methods.formatNumber(number);
             },
@@ -188,7 +204,7 @@
                 route.methods.openCheckoutCancel();
             }
         },
-        mounted() {
+        created() {
             checkLogin.methods.isLoggedIn();
             this.getUser();
             this.getTotalCost();
@@ -203,8 +219,8 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #addressTab, #paymentTab {
-        margin: 0 auto;
+    #addressTab, #paymentTab, .nav-tabs {
+        margin: auto;
         margin-top: 20px;
         max-width: 600px;
     }

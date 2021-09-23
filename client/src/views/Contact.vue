@@ -98,9 +98,9 @@
                         lng: ""
                     },
                     street: "",
-                    houseNumber: "",
+                    houseNumber: 0,
                     city: "",
-                    zipCode: "",
+                    zipCode: 0,
                     country: "",
                     mobileNumber: "",
                     email: ""
