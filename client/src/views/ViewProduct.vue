@@ -34,13 +34,16 @@
                         <div id="mainTab" class="tab-pane fade active show" role="tabpanel">
                             <div class="row">
                                 <div class="col-md-6 price"><b>Price: {{formatNumber(product.price)}}</b></div>
-                                <div class="col-md-6">
+                                <div v-if="product.quantity" class="col-md-6">
                                     <div class="mb-3 input-group">
                                         <input type="number" id="selectedQuantity" step="1" min="1" :max="product.quantity" class="form-control" v-model="product.selectedQuantity"/>
                                         <div class="input-group-append">
                                             <button type="button" class="btn btn-primary" data-toggle="tooltip" :title="'Value must be less than or equal to ' + product.quantity + '.'" @click="addToShoppingCart()">Add to cart</button>
                                         </div>
                                     </div>
+                                </div>
+                                <div v-else class="col-md-6">
+                                    <div class="mb-3 soldOut">Sold out</div>
                                 </div>
                             </div>
                             <div class="row">
@@ -156,6 +159,7 @@
             getProduct() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProduct/" + this.productId).then(response => {
                     this.product = response.data.product;
+                    if(this.product.quantity < 1) this.product.quantity = 0;
                     this.product.selectedQuantity = 1;
                     this.getUserRating(this.product.rating.usersRatings);
                 }).catch(error => console.log(error));
@@ -329,6 +333,9 @@
     .price {
         padding-top: 7px;
         text-align: right;
+    }
+    .soldOut {
+        padding-top: 7px;
     }
     .titleColumn {
         border: 1px #808080 solid;
