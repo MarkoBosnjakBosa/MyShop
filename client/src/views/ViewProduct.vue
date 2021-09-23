@@ -80,14 +80,14 @@
                                                 </div>
                                             </div>
                                             <div class="action">
-                                                <i class="fas fa-check fa-2x actionButton editReview" @click="editReview(review)"></i>
-                                                <i class="fas fa-times fa-2x actionButton disableEditing" @click="disableEditing(review)"></i>
+                                                <i class="fas fa-check actionButton editReview" @click="editReview(review)"></i>
+                                                <i class="fas fa-times actionButton disableEditing" @click="disableEditing(review)"></i>
                                             </div>
                                         </div>
                                         <div v-else class="accordion-body">{{review.review}}
                                             <div v-if="review.username == username && editing != review._id" class="action">
-                                                <i class="fas fa-edit fa-2x actionButton" @click="enableEditing(review)"></i>
-                                                <i class="fas fa-trash fa-2x actionButton" @click="deleteReview(review._id)"></i>
+                                                <i class="fas fa-edit actionButton" @click="enableEditing(review)"></i>
+                                                <i class="fas fa-trash actionButton" @click="deleteReview(review._id)"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -141,11 +141,11 @@
                 selectedQuantity: 1
             },
             reviews: [],
-                page: 1,
-                pagesNumber: 1,
-                review: "",
-                editing: null,
-                message: ""
+            page: 1,
+            pagesNumber: 1,
+            review: "",
+            editing: null,
+            message: ""
             }
         },
         methods: {
@@ -233,6 +233,7 @@
                             this.review = "";
                             this.reviews = [...this.reviews, response.data.review];
                             this.toggleReview();
+                            this.getReviews();
                             this.message = "You have successfully written a review for this product!";
                         }
                     }).catch(error => console.log(error));
@@ -256,6 +257,8 @@
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteReview/" + reviewId + "/" + this.username).then(response => {
                         if(response.data.deleted) {
                             this.reviews = this.reviews.filter(review => review._id != reviewId);
+                            this.page = 1;
+                            this.getReviews();
                             this.message = "You have successfully deleted a review for this product!";
                         }
                     }).catch(error => console.log(error));
@@ -313,6 +316,7 @@
         margin: auto;
         max-width: 600px;
         margin-top: 20px;
+        margin-bottom: 20px;
     }
     .tab-content {
         margin-top: 20px;

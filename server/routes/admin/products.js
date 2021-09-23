@@ -191,7 +191,7 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 				if(foundIndex > -1) {
 					totalRating = totalRating - usersRatings[foundIndex].rating + rating;
 					usersRatings[foundIndex].rating = rating;
-				} else{
+				} else {
 					votes = votes + 1;
 					totalRating = totalRating + rating;
 					usersRatings = [...usersRatings, {username: username, rating: rating}]; 
@@ -201,7 +201,7 @@ module.exports = function(app, models, uploadImages, fs, path, moment, validatio
 				Product.findOneAndUpdate(query, update, {new: true}).then(updatedProduct => {
 					response.status(200).json({rated: true}).end();
 				});
-			} else{
+			} else {
 				response.status(200).json({rated: false}).end();
 			}
 		});
