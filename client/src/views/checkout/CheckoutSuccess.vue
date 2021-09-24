@@ -68,7 +68,6 @@
         },
         methods: {
             finalizePayment() {
-                this.$store.dispatch("clearShoppingCart");
                 this.paymentType = this.$store.getters.getCheckout;
                 if(this.paymentType != "") {
                     this.products = this.$store.getters.getShoppingCart;
@@ -80,6 +79,7 @@
                         productObject.selectedQuantity = product.selectedQuantity;
                         return productObject;
                     });
+                    this.$store.dispatch("clearShoppingCart");
                     var body = {username: this.username, paymentType: this.paymentType, products: products, totalPrice: this.getTotalCost()};
                     axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/finalizePayment", body).then(response => {
                         if(response.data.finalized) {
