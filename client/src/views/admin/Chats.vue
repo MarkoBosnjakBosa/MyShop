@@ -1,9 +1,9 @@
 <template>
     <div id="chats" class="container-fluid">
-		<div class="d-flex" id="barsStyle">
-			<sidebar></sidebar>
-			<div id="pageStyle">
-				<navigation></navigation>
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Chats</h1>
                 <chat></chat>
             </div>
@@ -12,20 +12,20 @@
 </template>
 
 <script>
-	import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
     import chat from "../../components/Chat.vue";
 
     export default {
-		name: "chats",
-		components: {
+        name: "chats",
+        components: {
             navigation,
-			sidebar,
+            sidebar,
             chat
         },
-        mounted() {
-			checkLogin.methods.isLoggedIn();
+        created() {
+            checkLogin.methods.isLoggedIn();
         }
     }
 </script>
