@@ -100,7 +100,7 @@
     import validation from "../components/Validation.vue"; 
     import io from "socket.io-client";
     import moment from "moment";
-    var axios = require("axios");
+    const axios = require("axios");
 
     export default {
         name: "chat",
@@ -227,7 +227,7 @@
                     }
                 });
                 this.socket.on("messageRead", (data) => {
-                     if(this.userData.isAdmin) {
+                    if(this.userData.isAdmin) {
                         if(this.chatId == data.user) {
                             this.toggleMessageStatus("read", data.user);
                         }
@@ -359,7 +359,7 @@
                         }
                     }
                 }
-			},
+            },
             scrollDown(type) {
                 document.getElementById(type).scrollTop = document.getElementById(type).scrollHeight;
             },
@@ -448,7 +448,7 @@
     }
     #adminMessages {
         width: 100%;
-        height: 650px;
+        height: 550px;
         overflow-y: scroll;
         overflow-x: hidden;
         border: 1px solid #000;
