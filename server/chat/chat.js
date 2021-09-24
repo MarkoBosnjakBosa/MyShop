@@ -1,4 +1,4 @@
-module.exports = function(io, app, models, moment, validation) {
+module.exports = function(app, io, models, moment, validations) {
     const User = models.User;
     const Message = models.Message;
     var admin = {};
@@ -37,7 +37,7 @@ module.exports = function(io, app, models, moment, validation) {
             }
         });
         socket.on("sendMessage", (chatId, isAdmin, user, message) => {
-            if(chatId && validation.validateMessage(message)) {
+            if(chatId && validations.validateMessage(message)) {
                 var newMessage;
                 var dateFormat = "DD.MM.YYYY HH:mm";
                 var date = moment().format(dateFormat);
@@ -60,11 +60,11 @@ module.exports = function(io, app, models, moment, validation) {
             }
         });
         socket.on("editMessage", (chatId, message) => {
-            if(message._id && validation.validateMessage(message.message)) {
+            if(message._id && validations.validateMessage(message.message)) {
                 var query = {_id: message._id};
                 var update = {message: message.message};
                 Message.findOneAndUpdate(query, update, {new: true}).then(foundMessage => {
-                    if(!validation.isEmpty(foundMessage)) {
+                    if(!validations.isEmpty(foundMessage)) {
                         var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
                         if(foundIndex > -1) {
                             users[foundIndex].messages = users[foundIndex].messages.map(message => String(message._id) == String(foundMessage._id) ? foundMessage : message);
@@ -79,7 +79,7 @@ module.exports = function(io, app, models, moment, validation) {
             if(messageId) {
                 var query = {_id: messageId};
                 Message.findOneAndRemove(query).then(message => {
-                    if(!validation.isEmpty(message)) {
+                    if(!validations.isEmpty(message)) {
                         var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
                         if(foundIndex > -1) {
                             users[foundIndex].messages = users[foundIndex].messages.filter(message => message._id != messageId);
@@ -146,7 +146,7 @@ module.exports = function(io, app, models, moment, validation) {
         var username = request.params.username;
         var userQuery = {"account.username": username};
         User.findOne(userQuery).then(user => {
-            if(!validation.isEmpty(user)) {
+            if(!validations.isEmpty(user)) {
                 var messageQuery = {chatId: user.account.username};
                 Message.find(messageQuery).then(messages => {
                     users = [...users, {socketId: "socketId_" + user.account.username, user: user.account.username, messages: messages, isOnline: false}];

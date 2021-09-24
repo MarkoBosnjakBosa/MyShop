@@ -408,6 +408,11 @@ function validateHomeSettingsMessage(request, response, next) {
     else response.status(200).json({saved: false}).end();
 }
 
+function validateMessage(message) {
+    if(!validations.invalidMessage(message)) return true;
+    else return false;
+}
+
 function isEmpty(object) {
     return !object || Object.keys(object).length === 0;
 }
@@ -433,5 +438,6 @@ module.exports = {
     validateContactSettings: validateContactSettings,
     validateContact: validateContact,
     validateHomeSettingsMessage: validateHomeSettingsMessage,
+    validateMessage: validateMessage,
     isEmpty: isEmpty
 };

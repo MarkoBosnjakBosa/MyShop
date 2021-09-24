@@ -1,6 +1,6 @@
 <template>
     <div id="chat" class="container-fluid">
-        <div v-if="userData.isAdmin">
+        <div v-if="userData.isAdmin" class="adminArea">
             <div class="row">
                 <div class="col-md-4">
                     <h3 v-if="onlineUsers.length" class="onlineUsers">Online</h3>
@@ -443,6 +443,9 @@
 </script>
 
 <style scoped>
+    .adminArea {
+        margin-bottom: 20px;
+    }
     #adminMessages {
         width: 100%;
         height: 650px;
