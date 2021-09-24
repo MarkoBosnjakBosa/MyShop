@@ -101,15 +101,7 @@
                                 <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
                             </div>
                         </form>
-                        <div v-if="technicalInformationSelected" class="position-fixed bottom-0 end-0 p-3 technicalInformationSelected" style="z-index: 5">
-                            <div class="toast show" role="alert">
-                                <div class="toast-header">
-                                    <strong class="me-auto">Error</strong>
-                                    <button type="button" class="btn-close" @click="closeNotification()"></button>
-                                </div>
-                                <div class="toast-body">You have already selected the technical information!</div>
-                            </div>
-                        </div>
+                        <notification :product="product" :message="message" :type="'error'" @hide="hideNotification()"></notification>
                     </div>
                     <div id="imagesTab" class="tab-pane fade" role="tabpanel">
                         <form autocomplete="off" enctype="multipart/form-data">
@@ -166,16 +158,18 @@
     import checkLogin from "../../components/CheckLogin.vue";
     import navigation from "../../components/Navigation.vue";
     import sidebar from "../../components/Sidebar.vue";
+    import helper from "../../components/Helper.vue"; 
     import route from "../../components/Route.vue";
     import validation from "../../components/Validation.vue";
-    import helper from "../../components/Helper.vue"; 
+    import notification from "../../components/Notification.vue";
     const axios = require("axios");
 	
     export default {
         name: "editProduct",
         components: {
             navigation,
-            sidebar
+            sidebar,
+            notification
         },
         data() {
             return {
@@ -209,7 +203,7 @@
                     mainEdited: false,
                     technicalDataEdited: false
                 },
-                technicalInformationSelected: false
+                message: ""
             }
         },
         methods: {
@@ -375,7 +369,7 @@
                         var rows = document.getElementsByTagName("tbody")[0].rows;
                         for(var row = 0; row < rows.length; row++) {
                             if(rows[row].cells[1].innerText == technicalInformationTitle) {
-                                this.technicalInformationSelected = true;
+                                this.message = "You have already selected the technical information!";
                                 return;
                             }
                         }
@@ -394,15 +388,15 @@
             removeDragOver() {
                 document.getElementById("dropzone").classList.remove("onDragOver");
             },
-            toggleTab(tab) {
-                helper.methods.toggleTab(tab);
-            },
-            closeNotification() {
-                this.technicalInformationSelected = false;
+            hideNotification() {
+                this.message = "";
             },
             closeEditAlert(type) { 
                 if(type == "main") this.edits.mainEdited = false;
                 else this.edits.technicalDataEdited = false;
+            },
+            toggleTab(tab) {
+                helper.methods.toggleTab(tab);
             },
             clearTitleStatus() { this.errors.titleError = false },
             clearDescriptionStatus() { this.errors.descriptionError = false },
@@ -443,9 +437,6 @@
     }
     .padding {
         padding-top: 12px;
-    }
-    .toast-body {
-        color: #ff0000;
     }
     #deleteTab {
         text-align: center;

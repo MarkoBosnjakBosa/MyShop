@@ -46,21 +46,12 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 	}
 	function updateQuantities(products) {
 		products.forEach(product => {
-			var query = {_id: product._id};
+			var query = {_id: product._id, quantity: {$gte: product.selectedQuantity}};
 			var options = {$inc: {quantity: -product.selectedQuantity}};
 			Product.findOneAndUpdate(query, options).then().catch(error => console.log(error));
 		});
 	}
 	function formatNumber(number) {
-		number = number.toString();
-		if(number.includes(".")) {
-			var decimalPart = number.substr(number.lastIndexOf(".") + 1);
-			if(decimalPart.length == 1){
-				number = number + "0";
-			}
-		} else {
-			number = number + ".00";
-		}
 		return Number(number).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
 	}
 	function getInvoiceScheme(Invoice, invoiceNumber, username, paymentType, products, totalPrice, created) {

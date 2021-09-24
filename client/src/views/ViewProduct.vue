@@ -38,7 +38,7 @@
                                     <div class="mb-3 input-group">
                                         <input type="number" id="selectedQuantity" step="1" min="1" :max="product.quantity" class="form-control" v-model="product.selectedQuantity"/>
                                         <div class="input-group-append">
-                                            <button type="button" class="btn btn-primary" data-toggle="tooltip" :title="'Value must be less than or equal to ' + product.quantity + '.'" @click="addToShoppingCart()">Add to cart</button>
+                                            <button type="button" class="btn btn-primary" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'" @click="addToShoppingCart()">Add to cart</button>
                                         </div>
                                     </div>
                                 </div>
@@ -106,7 +106,7 @@
                                 <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </div>
-                        <notification :product="product" :message="message" @hide="hideNotification()"></notification>
+                        <notification :product="product" :message="message" :type="'success'" @hide="hideNotification()"></notification>
                     </div>
                 </div>
             </div>
@@ -119,7 +119,7 @@
     import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";
     import helper from "../components/Helper.vue";
-    import validation from "../components/Validation.vue"; 
+    import validation from "../components/Validation.vue";
     import notification from "../components/Notification.vue";
     const axios = require("axios");
 	
