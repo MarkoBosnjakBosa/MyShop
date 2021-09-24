@@ -140,7 +140,7 @@
                     }
                     totalCost += Number(product.price) * Number(product.selectedQuantity);
                 });
-                if(updatedQuantities.length) this.message = "Quantity for following product(s) has been changed: " + updatedQuantities.join(", ") + ".";
+                if(updatedQuantities.length) this.message = "Quantity for following product(s) has been adjusted: " + updatedQuantities.join(", ") + ".";
                 return this.formatNumber(totalCost);
             }
         },

@@ -36,7 +36,7 @@
                                 <div class="col-md-6 price"><b>Price: {{formatNumber(product.price)}}</b></div>
                                 <div v-if="product.quantity" class="col-md-6">
                                     <div class="mb-3 input-group">
-                                        <input type="number" id="selectedQuantity" step="1" min="1" :max="product.quantity" class="form-control" v-model="product.selectedQuantity"/>
+                                        <input type="number" id="selectedQuantity" step="1" min="1" :max="product.quantity" class="form-control" :class="{'errorField' : product.selectedQuantity < 1 || product.selectedQuantity > product.quantity}" v-model="product.selectedQuantity"/>
                                         <div class="input-group-append">
                                             <button type="button" class="btn btn-primary" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'" @click="addToShoppingCart()">Add to cart</button>
                                         </div>
@@ -408,4 +408,8 @@
     .page {
         margin-left: 10px;
     }
+	.errorField {
+		border: 1px solid #ff0000;
+		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;
+	}
 </style>

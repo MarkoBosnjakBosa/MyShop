@@ -68,6 +68,7 @@
         },
         methods: {
             finalizePayment() {
+                this.$store.dispatch("clearShoppingCart");
                 this.paymentType = this.$store.getters.getCheckout;
                 if(this.paymentType != "") {
                     this.products = this.$store.getters.getShoppingCart;
@@ -84,7 +85,6 @@
                         if(response.data.finalized) {
                             this.invoiceNumber = response.data.invoiceNumber;
                             this.$store.dispatch("setCheckout", "");
-                            this.$store.dispatch("clearShoppingCart");
                         }
                     }).catch(error => console.log(error));
                 }
