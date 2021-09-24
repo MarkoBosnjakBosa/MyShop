@@ -48,6 +48,7 @@
                         </div>
                     </div>
                 </div>
+                <notification :product="{}" :message="message" :type="'success'" @hide="hideNotification()"></notification>
             </div>
         </div>
     </div>
@@ -59,13 +60,20 @@
     import sidebar from "../components/Sidebar.vue";
     import helper from "../components/Helper.vue";
     import route from "../components/Route.vue";
+    import notification from "../components/Notification.vue";
     const axios = require("axios");
 	
     export default {
         name: "shoppingCart",
         components: {
             navigation,
-            sidebar
+            sidebar,
+            notification
+        },
+        data() {
+            return {
+                message: ""
+            }
         },
         methods: {
             updateSelectedQuantity(event, productId) {
@@ -77,6 +85,9 @@
                 if(confirmed) {
                     this.$store.dispatch("removeFromShoppingCart", product._id);
                 }
+            },
+            hideNotification() {
+                this.message = "";
             },
             renderImage(image) {
                 return helper.methods.renderImage(image);

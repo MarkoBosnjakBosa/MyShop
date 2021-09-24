@@ -132,27 +132,27 @@
         },
         data() {
             return {
-            productId: "",
-            username: this.$store.getters.getUser,
-            product: {
-                _id: "",
-                title: "",
-                description: "",
-                price: "",
-                quantity: 0,
-                category: "",
-                technicalData: [],
-                primaryImage: "",
-                images: [],
-                rating: {},
-                selectedQuantity: 1
-            },
-            reviews: [],
-            page: 1,
-            pagesNumber: 1,
-            review: "",
-            editing: null,
-            message: ""
+                productId: "",
+                username: this.$store.getters.getUser,
+                product: {
+                    _id: "",
+                    title: "",
+                    description: "",
+                    price: "",
+                    quantity: 0,
+                    category: "",
+                    technicalData: [],
+                    primaryImage: "",
+                    images: [],
+                    rating: {},
+                    selectedQuantity: 1
+                },
+                reviews: [],
+                page: 1,
+                pagesNumber: 1,
+                review: "",
+                editing: null,
+                message: ""
             }
         },
         methods: {
