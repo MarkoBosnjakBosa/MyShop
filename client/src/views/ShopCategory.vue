@@ -35,7 +35,7 @@
                         <div class="card">
                             <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)">
                             <div class="card-body">
-                                <h5 class="card-title">{{product.title}}</h5>
+                                <h5 class="card-title" data-toggle="tooltip" :title="product.title">{{product.title}}</h5>
                                 <p class="card-text">Price: {{formatNumber(product.price)}}</p>
                                 <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
                             </div>
@@ -139,6 +139,11 @@
     }
     .card {
         margin-bottom: 10px;
+    }
+    .card-title {
+        overflow: hidden;
+        white-space: nowrap;
+        cursor: pointer;
     }
     .card-img-top {
         height: 200px;

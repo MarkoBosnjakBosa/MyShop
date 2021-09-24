@@ -7,7 +7,7 @@
                     <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="rounded img-fluid" @click="openProduct(product._id)">
                 </div>
                 <div class="col-md-7">
-                    <h3 @click="openProduct(product._id)">{{product.title}}</h3>
+                    <h3 data-toggle="tooltip" :title="product.title" @click="openProduct(product._id)">{{product.title}}</h3>
                     <b>{{product.selectedQuantity}} x {{formatNumber(product.price)}} = {{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</b><br>
                     <i class="fas fa-external-link-alt" @click="openViewProduct(product._id)"></i>
                 </div>
@@ -96,6 +96,7 @@
     h3 {
         overflow: hidden;
         white-space: nowrap;
+        cursor: pointer;
     }
     .product {
         position: relative;

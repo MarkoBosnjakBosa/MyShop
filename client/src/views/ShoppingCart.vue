@@ -12,7 +12,7 @@
                                 <img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image"/>
                             </div>
                             <div class="col-md-7">
-                                <h3>{{product.title}}</h3>
+                                <h3 data-toggle="tooltip" :title="product.title">{{product.title}}</h3>
                                 <div class="ratings">
                                     <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 0}"></i>
                                     <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 1}"></i>
@@ -163,6 +163,7 @@
     h3 {
         overflow: hidden;
         white-space: nowrap;
+        cursor: pointer;
     }
     .checkout {
         height: 200px;

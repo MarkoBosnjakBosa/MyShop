@@ -37,7 +37,7 @@
                                     <tbody>
                                         <tr v-for="(product, index) in invoice.products" :key="product._id">
                                             <th>{{++index}}</th>
-                                            <td class="title">{{product.title}}</td>
+                                            <td class="title" data-toggle="tooltip" :title="product.title">{{product.title}}</td>
                                             <td>{{formatNumber(product.price)}}</td>
                                             <td>{{product.selectedQuantity}}</td>
                                             <td>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</td>
@@ -142,6 +142,7 @@
     .title {
         overflow: hidden;
         white-space: nowrap;
+        cursor: pointer;
     }
     .total {
         border-bottom: 0px;

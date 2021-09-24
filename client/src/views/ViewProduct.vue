@@ -4,7 +4,7 @@
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <h1>{{product.title}}</h1>
+                <h1 data-toggle="tooltip" :title="product.title">{{product.title}}</h1>
                 <div id="imagesCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
                         <button type="button" data-bs-target="#imagesCarousel" data-bs-slide-to="0" class="active" data-bs-interval="2000"></button>
@@ -313,6 +313,7 @@
         margin-bottom: 20px;
         overflow: hidden;
         white-space: nowrap;
+        cursor: pointer;
     }
     #imagesCarousel {
         margin: auto;
