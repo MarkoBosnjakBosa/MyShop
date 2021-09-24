@@ -62,9 +62,20 @@ function validateRegistration(request, response, next) {
 }
 
 function validateLogin(request, response, next) {
+    var allowLogin = true;
+    var errorFields = [];
     var username = request.body.username;
-    if(!validation.invalidUsername(username)) next();
-    else response.status(200).json({authentication: false, valid: false, allowed: false, errorFields: ["username"]}).end();
+    var password = request.body.password;
+    if(validation.invalidUsername(username)) {
+        errorFields = [...errorFields, "username"];
+        allowLogin = false;
+    }
+    if(validation.invalidPassword(password)) {
+        errorFields = [...errorFields, "password"];
+        allowLogin = false;
+    }
+    if(allowLogin) next();
+    else response.status(200).json({authentication: false, valid: false, allowed: false, errorFields: errorFields}).end();
 }
 
 function validateAuthentication(request, response, next) {
@@ -397,12 +408,6 @@ function validateHomeSettingsMessage(request, response, next) {
     else response.status(200).json({saved: false}).end();
 }
 
-function validPassword(password) {
-    var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    if(password != "" && passwordFormat.test(password)) return true;
-    else return false;
-}
-
 function isEmpty(object) {
     return !object || Object.keys(object).length === 0;
 }
@@ -428,6 +433,5 @@ module.exports = {
     validateContactSettings: validateContactSettings,
     validateContact: validateContact,
     validateHomeSettingsMessage: validateHomeSettingsMessage,
-    validPassword: validPassword,
     isEmpty: isEmpty
 };

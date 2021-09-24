@@ -18,36 +18,31 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, chec
 	app.post("/login", validation.validateLogin, (request, response) => {
 		var errorFields = [];
 		var username = request.body.username;
+		var password = request.body.password;
 		var query = {"account.username": username};
 		User.findOne(query).then(user => {
 			if(!validation.isEmpty(user)) {
 				if(user.confirmation.confirmed) {
-					var password = request.body.password;
-					if(validation.validPassword(password)) {
-						bcryptjs.compare(password, user.account.password, function(error, foundPassword) {
-							if(foundPassword) {
-								if(user.confirmation.authenticationEnabled) {
-									var authenticationToken = Math.floor(100000 + Math.random() * 900000);
-									var update = {"confirmation.authenticationToken": authenticationToken};
-									User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
-										smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
-										setTimeout(function() {
-											deleteAuthenticationToken(updatedUser.account.username);    
-										}, 5 * 60 * 1000);
-										response.status(200).json({authentication: true, username: updatedUser.account.username}).end();
-									}).catch(error => console.log(error));
-								} else {
-									var token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey");
-									response.status(200).json({authentication: false, valid: true, token: token, user: user.account.username, isAdmin: user.account.isAdmin}).end();
-								}
+					bcryptjs.compare(password, user.account.password, function(error, foundPassword) {
+						if(foundPassword) {
+							if(user.confirmation.authenticationEnabled) {
+								var authenticationToken = Math.floor(100000 + Math.random() * 900000);
+								var update = {"confirmation.authenticationToken": authenticationToken};
+								User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
+									smsEvent.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
+									setTimeout(function() {
+										deleteAuthenticationToken(updatedUser.account.username);    
+									}, 5 * 60 * 1000);
+									response.status(200).json({authentication: true, username: updatedUser.account.username}).end();
+								}).catch(error => console.log(error));
 							} else {
-								response.status(200).json({authentication: false, valid: false, found: true, error: "noPasswordMatch"}).end();
+								var token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey");
+								response.status(200).json({authentication: false, valid: true, token: token, user: user.account.username, isAdmin: user.account.isAdmin}).end();
 							}
-						});
-					} else {
-						errorFields = [...errorFields, "password"];
-						response.status(200).json({authentication: false, valid: false, found: false, errorFields: errorFields}).end();
-					}
+						} else {
+							response.status(200).json({authentication: false, valid: false, found: true, error: "noPasswordMatch"}).end();
+						}
+					});
 				} else {
 					response.status(200).json({authentication: false, valid: false, found: true, error: "notConfirmed"}).end();	
 				}
