@@ -44,7 +44,7 @@ const technicalData = require("./routes/admin/technicalData.js")(app, models, va
 const homeSettings = require("./routes/admin/homeSettings.js")(app, models, fs, path, uploadImages, validations);
 const contact = require("./routes/admin/contact.js")(app, models, moment, emailEvents, validations);
 const chat = require("./chat/chat.js")(app, io, models, moment, validations);
-const backup = require("./database/backup.js")(spawn, cron, fs, path, moment);
+const backup = require("./database/backup.js")(spawn, cron, moment, fs, path);
 
 mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set("useCreateIndex", true);

@@ -1,4 +1,4 @@
-module.exports = function(spawn, cron, fs, path, moment) {
+module.exports = function(spawn, cron, moment, fs, path) {
 	var dateFormat = "DD.MM.YYYY";
 	var currentDate = moment().format(dateFormat);
 	var oldDate = moment().subtract(7, "days").format(dateFormat);
