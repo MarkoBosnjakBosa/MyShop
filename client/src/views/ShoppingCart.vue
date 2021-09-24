@@ -48,7 +48,7 @@
                         </div>
                     </div>
                 </div>
-                <notification :product="{}" :message="message" :type="'success'" @hide="hideNotification()"></notification>
+                <notification :product="{title: 'Quantity change(s)'}" :message="message" :type="'success'" @hide="hideNotification()"></notification>
             </div>
         </div>
     </div>
@@ -108,11 +108,19 @@
             },
             totalCost() {
                 var totalCost = 0;
+                var updatedQuantities = [];
                 this.products.forEach(function(product) {
-                    if(product.selectedQuantity < 1) product.selectedQuantity = 1;
-                    if(product.selectedQuantity > product.quantity) product.selectedQuantity = product.quantity;
+                    if(product.selectedQuantity < 1) {
+                        product.selectedQuantity = 1;
+                        updatedQuantities = [...updatedQuantities, product.title];
+                    }
+                    if(product.selectedQuantity > product.quantity) {
+                        product.selectedQuantity = product.quantity;
+                        updatedQuantities = [...updatedQuantities, product.title];
+                    }
                     totalCost += Number(product.price) * Number(product.selectedQuantity);
                 });
+                if(updatedQuantities.length) this.message = "Quantity for following product(s) has been changed: " + updatedQuantities.join(", ") + ".";
                 return this.formatNumber(totalCost);
             }
         },
