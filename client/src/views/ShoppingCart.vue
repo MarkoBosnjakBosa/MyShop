@@ -61,7 +61,6 @@
     import helper from "../components/Helper.vue";
     import route from "../components/Route.vue";
     import notification from "../components/Notification.vue";
-    const axios = require("axios");
 	
     export default {
         name: "shoppingCart",
