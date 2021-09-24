@@ -54,6 +54,9 @@
                     case "map":
                         document.getElementById("mapNavTab").click();
                         break;
+                    case "invoice":
+                        document.getElementById("invoiceNavTab").click();
+                        break;
                 }
             },
             toggleSidebar() {

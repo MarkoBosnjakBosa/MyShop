@@ -17,6 +17,7 @@
 				color: #555;
 			}
 			table {
+        		table-layout: fixed;
 				width: 100%;
 				line-height: inherit;
 				text-align: left;
@@ -35,6 +36,10 @@
 			}
 			.information {
 				text-align: right;
+			}
+			.productTitle {
+				overflow: hidden;
+        		white-space: nowrap;
 			}
 			.products {
 				margin-top: 20px;
@@ -88,7 +93,7 @@
 					<% products.forEach(function(product, index) { %>
 						<tr>
 							<td><%= ++index %></td>
-							<td><%= product.title %></td>
+							<td class="productTitle"><%= product.title %></td>
 							<td><%= product.price %></td>
 							<td><%= product.selectedQuantity %></td>
 							<td><%= product.totalPrice %></td>

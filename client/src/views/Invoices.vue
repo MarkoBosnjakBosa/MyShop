@@ -24,7 +24,7 @@
                                         <i class="fas fa-file-download icon" @click="downloadInvoice(invoice.invoiceNumber)"></i>
                                     </div>
                                 </div>
-                                <table class="table table-success">
+                                <table class="table table-secondary">
                                     <thead>
                                         <tr>
                                             <th>#</th>

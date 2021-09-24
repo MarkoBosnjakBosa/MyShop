@@ -8,7 +8,7 @@
                     Your payment has been successfully processed.<br>
                     Thank you for buying at MyShop.
                 </div>
-                <table v-if="paymentType" class="table table-success table-striped">
+                <table v-if="paymentType" class="table table-secondary">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
