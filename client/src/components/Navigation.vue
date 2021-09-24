@@ -10,13 +10,13 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" @click="openHome()">Home</a>
                     </li>
-                    <li v-if="!userData.isAdmin" class="nav-item">
+                    <li v-if="!userData.isAdmin && !userData.isLoggedIn" class="nav-item">
                         <a class="nav-link" href="#" @click="openContact()">Contact</a>
                     </li>
-                    <li v-if="!userData.userLoggedIn" class="nav-item">
+                    <li v-if="!userData.isLoggedIn" class="nav-item">
                         <a class="nav-link" href="#" @click="openRegistration()">Registration</a>
                     </li>
-                    <li v-if="userData.userLoggedIn" class="nav-item dropdown">
+                    <li v-if="userData.isLoggedIn" class="nav-item dropdown">
                         <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="far fa-user-circle"></i></a>
                         <ul class="dropdown-menu" :class="userData.isAdmin ? 'adminDropdownMenu' : 'userDropdownMenu'" aria-labelledby="userOptions">
                             <li><a class="dropdown-item" href="#" @click="openProfile()">Profile</a></li>
@@ -28,7 +28,7 @@
                     <li v-else class="nav-item">
                         <a class="nav-link" href="#" @click="openLogin()">Login</a>
                     </li>
-                    <li v-if="userData.userLoggedIn && !userData.isAdmin" class="nav-item dropdown">
+                    <li v-if="userData.isLoggedIn && !userData.isAdmin" class="nav-item dropdown">
                         <cart></cart>
                     </li>
                 </ul>
@@ -51,7 +51,7 @@
         data() {
 			return {
                 userData: {
-                    userLoggedIn: false,
+                    isLoggedIn: false,
                     username: "",
                     isAdmin: false
                 },

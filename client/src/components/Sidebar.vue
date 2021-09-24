@@ -31,7 +31,7 @@
         data() {
 			return {
                 userData: {
-                    userLoggedIn: false,
+                    isLoggedIn: false,
                     username: "",
                     isAdmin: false
                 },

@@ -38,14 +38,20 @@
                                 <i class="fas fa-times fa-2x" @click="removeFromShoppingCart(product)"></i>
                             </div>
                         </div>
+                        <div v-if="products.length" class="row product">
+                            <button type="button" class="btn btn-danger" @click="clearShoppingCart()">Remove all</button>
+                        </div>
                     </div>
-                    <div class="col-md-4">
+                    <div v-if="checkTotal()" class="col-md-4">
                         <div class="checkout">
                             <div class="checkoutInfo">
                                 <h3>Total: {{totalCost}}</h3>
                                 <button type="button" class="btn btn-primary btn-lg checkoutButton" @click="openCheckout()">Checkout</button>
                             </div>
                         </div>
+                    </div>
+                    <div v-if="!products.length && !checkTotal()" class="mb-3 alert alert-dark" role="alert">
+                        There are no products in the shopping cart!
                     </div>
                 </div>
                 <notification :product="{title: 'Quantity change(s)'}" :message="message" :type="'success'" @hide="hideNotification()"></notification>
@@ -85,6 +91,19 @@
                     this.$store.dispatch("removeFromShoppingCart", product._id);
                 }
             },
+            clearShoppingCart() {
+                var confirmed = confirm("Remove all products?");
+                if(confirmed) {
+                    this.$store.dispatch("clearShoppingCart");
+                }
+            },
+            checkTotal() {
+                if(Number(this.totalCost.replaceAll(",", "").substring(0, this.totalCost.length - 2)) > 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
             hideNotification() {
                 this.message = "";
             },
@@ -97,8 +116,10 @@
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
             },
-            openCheckout(){
-                route.methods.openCheckout();
+            openCheckout() {
+                if(this.checkTotal()) {
+                    route.methods.openCheckout();
+                }
             }
         },
         computed: {
@@ -180,5 +201,11 @@
     }
     .margin {
         margin-top: 10px;
+    }
+    .alert {
+        margin: auto;
+        width: 500px;
+        font-weight: bold;
+        text-align: center;
     }
 </style>

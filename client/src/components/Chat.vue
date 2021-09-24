@@ -108,7 +108,7 @@
             return {
                 socket: io(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT, {transports: ["websocket", "polling", "flashsocket"]}),
                 userData: {
-                    userLoggedIn: false,
+                    isLoggedIn: false,
                     username: "",
                     isAdmin: false
                 },

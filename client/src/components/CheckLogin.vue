@@ -26,9 +26,9 @@
             },
             getUserData() {
                 if(store.getters.isLoggedIn) {
-                    return {userLoggedIn: true, username: store.getters.getUser, isAdmin: store.getters.isAdmin};
+                    return {isLoggedIn: true, username: store.getters.getUser, isAdmin: store.getters.isAdmin};
                 } else {
-                    return {userLoggedIn: false, username: "", isAdmin: false};
+                    return {isLoggedIn: false, username: "", isAdmin: false};
                 }
             }
         }
