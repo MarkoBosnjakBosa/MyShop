@@ -1,4 +1,4 @@
-module.exports = function(app, models, stripe, moment, fs, path, ejs, pdf, emailEvent) {
+module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, emailEvent) {
 	const Invoice = models.Invoice;
 	const User = models.User;
 	const Product = models.Product;

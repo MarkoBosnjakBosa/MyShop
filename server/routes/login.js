@@ -1,4 +1,4 @@
-module.exports = function(app, models, jwt, bcryptjs, smsEvent, validation, checkStatus) {
+module.exports = function(app, models, jwt, bcryptjs, smsEvent, checkStatus, validation) {
 	const User = models.User;
 	app.post("/checkUsername", (request, response) => {
 		var username = request.body.username;

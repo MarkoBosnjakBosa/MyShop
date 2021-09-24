@@ -1,4 +1,4 @@
-module.exports = function(app, models, uploadImages, fs, path, moment, validation) {
+module.exports = function(app, models, moment, fs, path, uploadImages, validation) {
 	const Product = models.Product;
 	const Review = models.Review;
 	app.post("/getProducts", (request, response) => {

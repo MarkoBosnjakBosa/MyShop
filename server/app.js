@@ -18,32 +18,32 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Vonage = require("@vonage/server-sdk");
 const vonage = new Vonage({apiKey: process.env.VONAGE_API_KEY, apiSecret: process.env.VONAGE_API_SECRET});
 const models = require("./models/models.js")(mongoose);
-const validation = require("./middleware/validation.js");
+const validations = require("./middleware/validations.js");
 const uploadImages = require("./middleware/uploadImages.js");
 const checkStatus = require("./middleware/checkStatus.js");
 const mailer = require("nodemailer");
 const emailTransporter = mailer.createTransport({service: "gmail", auth: {user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASSWORD}});
 const EventEmitter = require("events").EventEmitter;
-const emailEvent = require("./events/emailEvent.js")(EventEmitter, ejs, fs, path, emailTransporter);
-const smsEvent = require("./events/smsEvent.js")(EventEmitter, vonage);
+const emailEvents = require("./events/emailEvents.js")(EventEmitter, ejs, fs, path, emailTransporter);
+const smsEvents = require("./events/smsEvents.js")(EventEmitter, vonage);
 
 app.use(cors({origin: "*"}));
 app.use(express.json());
 app.use(express.static(__dirname + "/images/products"));
 
-const registration = require("./routes/registration.js")(app, models, bcryptjs, emailEvent, validation);
-const login = require("./routes/login.js")(app, models, jwt, bcryptjs, smsEvent, validation, checkStatus);
-const forgotCredentials = require("./routes/forgotCredentials.js")(app, models, bcryptjs, emailEvent, validation);
-const profile = require("./routes/profile.js")(app, models, validation);
-const setup = require("./routes/setup.js")(app, models, smsEvent, validation);
-const checkout = require("./routes/checkout.js")(app, models, stripe, moment, fs, path, ejs, pdf, emailEvent);
+const registration = require("./routes/registration.js")(app, models, bcryptjs, emailEvents, validations);
+const login = require("./routes/login.js")(app, models, jwt, bcryptjs, smsEvents, checkStatus, validations);
+const forgotCredentials = require("./routes/forgotCredentials.js")(app, models, bcryptjs, emailEvents, validations);
+const profile = require("./routes/profile.js")(app, models, validations);
+const setup = require("./routes/setup.js")(app, models, smsEvents, validations);
+const checkout = require("./routes/checkout.js")(app, models, stripe, moment, ejs, pdf, fs, path, emailEvents);
 const invoices = require("./routes/invoices.js")(app, models, path);
-const products = require("./routes/admin/products.js")(app, models, uploadImages, fs, path, moment, validation)
-const categories = require("./routes/admin/categories.js")(app, models, validation);
-const technicalData = require("./routes/admin/technicalData.js")(app, models, validation);
-const homeSettings = require("./routes/admin/homeSettings.js")(app, models, fs, path, uploadImages, validation);
-const contact = require("./routes/admin/contact.js")(app, models, moment, emailEvent, validation);
-const chat = require("./chat/chat.js")(io, app, models, moment, validation);
+const products = require("./routes/admin/products.js")(app, models, moment, fs, path, uploadImages, validations);
+const categories = require("./routes/admin/categories.js")(app, models, validations);
+const technicalData = require("./routes/admin/technicalData.js")(app, models, validations);
+const homeSettings = require("./routes/admin/homeSettings.js")(app, models, fs, path, uploadImages, validations);
+const contact = require("./routes/admin/contact.js")(app, models, moment, emailEvents, validations);
+const chat = require("./chat/chat.js")(io, app, models, moment, validations);
 const backup = require("./database/backup.js")(spawn, cron, fs, path, moment);
 
 mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
@@ -68,7 +68,7 @@ function createAdmin() {
     bcryptjs.genSalt(10, (error, salt) => {
         bcryptjs.hash(password, salt, (error, hashedPassword) => {
             var query = {"account.username": "admin"};
-            var update = {$setOnInsert: {account: {username: "admin", email: "default", password: hashedPassword, firstName: "default", lastName: "default", mobileNumber: 0, isAdmin: true}, address: {street: "default", houseNumber: 0, city: "default", zipCode: 0, country: "default"}, confirmation: {confirmed: true, confirmationToken: "", authenticationEnabled: false, authenticationToken: "", authenticationEnablingToken: "", resetPasswordToken: ""}}};
+            var update = {$setOnInsert: {account: {username: "admin", email: "default", password: hashedPassword, firstName: "default", lastName: "default", mobileNumber: "", isAdmin: true}, address: {street: "default", houseNumber: 0, city: "default", zipCode: 0, country: "default"}, confirmation: {confirmed: true, confirmationToken: "", authenticationEnabled: false, authenticationToken: "", authenticationEnablingToken: "", resetPasswordToken: ""}}};
             var options = {upsert: true, new: true};
             User.findOneAndUpdate(query, update, options).then().catch(error => console.log(error));
         });
