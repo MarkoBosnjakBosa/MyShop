@@ -4,13 +4,13 @@
             <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarOptions" aria-controls="navbarOptions" aria-expanded="false">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <button v-if="checkRoutePath()" id="toggleSidebar" type="button" class="btn btn-dark" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
+            <button id="toggleSidebar" type="button" class="btn btn-dark" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
             <div id="navbarOptions" class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="#" @click="openHome()">Home</a>
                     </li>
-                    <li v-if="!userData.isAdmin && !userData.isLoggedIn" class="nav-item">
+                    <li v-if="!userData.isLoggedIn && !userData.isAdmin" class="nav-item">
                         <a class="nav-link" href="#" @click="openContact()">Contact</a>
                     </li>
                     <li v-if="!userData.isLoggedIn" class="nav-item">
@@ -54,17 +54,12 @@
                     isLoggedIn: false,
                     username: "",
                     isAdmin: false
-                },
-                routePath: ""
+                }
 			}
 		},
         methods: {
             getUserData() {
                 this.userData = checkLogin.methods.getUserData();
-            },
-            checkRoutePath() {
-                if(this.routePath != "/login" && this.routePath != "/authentication" && this.routePath != "/registration" && this.routePath != "/confirm/registration" && this.routePath != "/forgot/credentials" && this.routePath != "/reset/password") return true;
-                else return false;
             },
             openHome() {
                 route.methods.openHome();
@@ -96,7 +91,6 @@
         },
         mounted() {
             this.getUserData();
-            this.routePath = this.$route.path;
         }
     }
 </script>
