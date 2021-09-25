@@ -62,6 +62,12 @@
             openChats() {
                 router.push("/admin/chats");
             },
+            openUsers() {
+                router.push("/admin/users");
+            },
+            openViewProfile(userId) {
+                router.push("/admin/view/profile/" + userId);
+            },
             openShop() {
                 router.push("/shop");
             },

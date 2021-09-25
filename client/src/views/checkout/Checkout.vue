@@ -221,8 +221,8 @@
     }
     #addressTab, #paymentTab, .nav-tabs {
         margin: auto;
-        margin-top: 20px;
         max-width: 600px;
+        margin-top: 20px;
     }
     .stripe, .payPal {
         background-color: #f4f4f2;

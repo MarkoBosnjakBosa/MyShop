@@ -6,7 +6,7 @@ module.exports = function(mongoose) {
 			password: {type: String, required: true},
 			firstName: {type: String, required: true},
 			lastName: {type: String, required: true},
-			mobileNumber: {type: Number, required: true, index: {unique: true}},
+			mobileNumber: {type: String, required: true, index: {unique: true}},
 			isAdmin: {type: Boolean, required: true}
 		},
 		address: {
@@ -71,14 +71,14 @@ module.exports = function(mongoose) {
 		city: {type: String, required: true},
 		zipCode: {type: String, required: true},
 		country: {type: String, required: true},
-		mobileNumber: {type: Number, required: true},
+		mobileNumber: {type: String, required: true},
 		email: {type: String, required: true}
 	});
 	const contactScheme = new mongoose.Schema({
 		firstName: {type: String, required: true},
 		lastName: {type: String, required: true},
 		email: {type: String, required: true},
-		mobileNumber: {type: Number, required: true},
+		mobileNumber: {type: String, required: true},
 		message: {type: String, required: true},
 		date: {type: String, required: true}
 	});

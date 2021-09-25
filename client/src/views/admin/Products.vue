@@ -39,7 +39,7 @@
                     </div>
                 </form>
                 <table class="table">
-                    <thead class="thead-light">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th>Title</th>

@@ -27,6 +27,8 @@ import CheckoutCancel from "../views/checkout/CheckoutCancel.vue";
 import Invoices from "../views/Invoices.vue";
 import Invoice from "../views/Invoice.vue";
 import Contact from "../views/Contact.vue";
+import Users from "../views/admin/Users.vue";
+import ViewProfile from "../views/admin/ViewProfile.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 
 const routes = [
@@ -58,6 +60,8 @@ const routes = [
 	{path: "/invoices", name: "Invoices", component: Invoices},
 	{path: "/invoice/:invoiceId", name: "Invoice", component: Invoice},
 	{path: "/contact", name: "Contact", component: Contact},
+	{path: "/admin/users", name: "Users", component: Users},
+	{path: "/admin/view/profile/:userId", name: "ViewProfile", component: ViewProfile},
 	{path: "/:catchAll(.*)", name: "PageNotFound", component: PageNotFound}
 ]
 

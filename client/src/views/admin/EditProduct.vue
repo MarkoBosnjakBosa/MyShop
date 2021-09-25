@@ -142,7 +142,7 @@
                     </div>
                     <div id="deleteTab" class="tab-pane fade" role="tabpanel">
                         <div class="mb-3">
-                            <button type="submit" class="btn btn-danger" @click="deleteProduct()">Delete <i class="fas fa-trash"></i></button>
+                            <button type="button" class="btn btn-danger" @click="deleteProduct()">Delete <i class="fas fa-trash"></i></button>
                         </div>
                         <div>
                             <button type="button" class="btn btn-dark previousButton" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>

@@ -23,7 +23,7 @@
                                 <div class="row margin">
                                     <label class="col-md-3 col-form-label">Quantity:</label>
                                     <div class="col-md-9">
-                                        <input type="number" step="1" min="1" :max="product.quantity" class="form-control quantity" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'" :value="product.selectedQuantity" @change="updateSelectedQuantity($event, product._id)"/>
+                                        <input type="number" min="1" :max="product.quantity" class="form-control quantity" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'" :value="product.selectedQuantity" @change="updateSelectedQuantity($event, product._id)"/>
                                     </div>
                                 </div>
                                 <div class="row margin">

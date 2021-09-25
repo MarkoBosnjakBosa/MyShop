@@ -13,6 +13,7 @@
             <li class="list-group-item list-group-item-action bg-light" @click="openContactSettings()">Contact Settings</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openContacts()">Contacts</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openChats()">Chats</li>
+            <li class="list-group-item list-group-item-action bg-light" @click="openUsers()">Users</li>
         </ul>
         <ul v-else class="list list-group-flush">
             <li class="list-group-item list-group-item-action bg-light" @click="openShop()"><div class="categoryIcon"><i class="fas fa-search"></i></div>Shop</li>
@@ -70,6 +71,9 @@
             },
             openChats() {
                 route.methods.openChats();
+            },
+            openUsers() {
+                route.methods.openUsers();
             },
             openShop() {
                 route.methods.openShop();
