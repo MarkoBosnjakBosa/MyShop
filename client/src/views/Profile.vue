@@ -4,12 +4,10 @@
 			<sidebar></sidebar>
 			<div id="pageStyle">
 				<navigation></navigation>
-				<div class="profileForm">
-					<div class="profileTitle">
-						<h1>Profile</h1>
-						<p>Here you can edit your account's information.</p>
-						<hr>
-					</div>
+				<div class="profileForms">
+					<h1>Profile</h1>
+					<p>Here you can edit your account's information.</p>
+					<hr>
 					<div class="nav nav-tabs justify-content-center" role="tablist">
 						<button type="button" id="accountNavTab" data-bs-toggle="tab" data-bs-target="#accountTab" class="nav-link active" role="tab">Account</button>
 						<button type="button" id="addressNavTab" data-bs-toggle="tab" data-bs-target="#addressTab" class="nav-link" role="tab">Address</button>
@@ -78,23 +76,23 @@
 								<div class="row">
 									<div class="mb-3 col-md-8">
 										<label for="street">Street:</label>
-										<input type="text" id="street" class="form-control" :class="{'errorField' : errors.address.streetError && submittings.addressSubmitting}" v-model="user.address.street" @focus="clearStreetAndHouseNumberStatus()" @keypress="clearStreetAndHouseNumberStatus()"/>
+										<input type="text" id="street" class="form-control" :class="{'errorField' : errors.address.streetError && submittings.addressSubmitting}" v-model="user.address.street" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
 										<small v-if="(errors.address.streetError || errors.address.houseNumberError) && submittings.addressSubmitting" class="form-text errorInput">Please provide a valid street / house number!</small>
 									</div>
 									<div class="mb-3 col-md-4">
 										<label for="houseNumber">House number:</label>
-										<input type="number" id="houseNumber" min="0" class="form-control" :class="{'errorField' : errors.address.houseNumberError && submittings.addressSubmitting}" v-model="user.address.houseNumber" @focus="clearStreetAndHouseNumberStatus()" @keypress="clearStreetAndHouseNumberStatus()"/>
+										<input type="number" id="houseNumber" min="0" class="form-control" :class="{'errorField' : errors.address.houseNumberError && submittings.addressSubmitting}" v-model="user.address.houseNumber" @focus="clearHouseNumberStatus()" @keypress="clearHouseNumberStatus()"/>
 									</div>
 								</div>
 								<div class="row">
 									<div class="mb-3 col-md-8">
 										<label for="city">City:</label>
-										<input type="text" id="city" class="form-control" :class="{'errorField' : errors.address.cityError && submittings.addressSubmitting}" v-model="user.address.city" @focus="clearCityAndZipCodeStatus()" @keypress="clearCityAndZipCodeStatus()"/>
+										<input type="text" id="city" class="form-control" :class="{'errorField' : errors.address.cityError && submittings.addressSubmitting}" v-model="user.address.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
 										<small v-if="(errors.address.cityError || errors.address.zipCodeError) && submittings.addressSubmitting" class="form-text errorInput">Please provide a valid city / zip code!</small>
 									</div>
 									<div class="mb-3 col-md-4">
 										<label for="zipCode">Zip code:</label>
-										<input type="number" id="zipCode" min="0" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submittings.addressSubmitting}" v-model="user.address.zipCode" @focus="clearCityAndZipCodeStatus()" @keypress="clearCityAndZipCodeStatus()"/>
+										<input type="number" id="zipCode" min="0" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submittings.addressSubmitting}" v-model="user.address.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
 									</div>
 								</div>
 								<div class="mb-3">
@@ -143,8 +141,8 @@
 	import checkLogin from "../components/CheckLogin.vue";
 	import navigation from "../components/Navigation.vue";
 	import sidebar from "../components/Sidebar.vue";
-	import validation from "../components/Validation.vue";
 	import helper from "../components/Helper.vue";
+	import validation from "../components/Validation.vue";
 	const axios = require("axios");
 	
 	export default {
@@ -253,8 +251,10 @@
 			},
 			editAddress() {
 				this.submittings.addressSubmitting = true;
-				this.clearStreetAndHouseNumberStatus();
-				this.clearCityAndZipCodeStatus();
+				this.clearStreetStatus();
+				this.clearHouseNumberStatus();
+				this.clearCityStatus();
+				this.clearZipCodeStatus();
 				this.clearCountryStatus();
 				var allowSubmit = true;
 				if(this.invalidStreet) {
@@ -317,24 +317,6 @@
 					}
 				}).catch(error => console.log(error));
 			},
-			clearEmailStatus() { this.errors.account.emailError = false; },
-			clearFirstNameStatus() { this.errors.account.firstNameError = false; },
-			clearLastNameStatus() { this.errors.account.lastNameError = false; },
-			clearMobileNumberStatus() { this.errors.account.mobileNumberError = false; },
-			clearStreetAndHouseNumberStatus() { 
-				this.errors.address.streetError = false; 
-				this.errors.address.houseNumberError = false;
-			},
-			clearCityAndZipCodeStatus() { 
-				this.errors.address.cityError = false; 
-				this.errors.address.zipCodeError = false;
-			},
-			clearCountryStatus() {
-				this.errors.address.countryError = false;
-			},
-			clearPasswordStatus() { this.errors.passwordError = false; },
-			togglePassword() { helper.methods.togglePassword(); },
-			toggleTab(tab) { helper.methods.toggleTab(tab); },
 			closeAlert(type) {
 				switch(type) {
 					case "account":
@@ -347,7 +329,19 @@
 						this.edits.passwordReset = false;
 						break;
 				}
-			}
+			},
+			toggleTab(tab) { helper.methods.toggleTab(tab); },
+			togglePassword() { helper.methods.togglePassword(); },
+			clearEmailStatus() { this.errors.account.emailError = false; },
+			clearFirstNameStatus() { this.errors.account.firstNameError = false; },
+			clearLastNameStatus() { this.errors.account.lastNameError = false; },
+			clearMobileNumberStatus() { this.errors.account.mobileNumberError = false; },
+			clearStreetStatus() { this.errors.address.streetError = false; },
+			clearHouseNumberStatus() { this.errors.address.houseNumberError = false; },
+			clearCityStatus() { this.errors.address.cityError = false; },
+			clearZipCodeStatus() { this.errors.address.zipCodeError = false; },
+			clearCountryStatus() { this.errors.address.countryError = false; },
+			clearPasswordStatus() { this.errors.passwordError = false; }
 		},
 		computed: {
 			invalidEmail() { return validation.methods.invalidEmail(this.user.account.email); },
@@ -369,11 +363,9 @@
 </script>
 
 <style scoped>
-	.profileForm {
+	.profileForms {
 		margin: auto;
 		max-width: 500px;
-	}
-	.profileTitle {
 		margin-top: 20px;
 	}
 	.tab-content {

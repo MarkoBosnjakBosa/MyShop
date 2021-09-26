@@ -81,23 +81,23 @@
 							<div class="row">
 								<div class="mb-3 col-md-8">
 									<label for="street">Street:</label>
-									<input type="text" id="street" class="form-control" :class="{'errorField' : errors.address.streetError && submitting}" v-model="user.address.street" @focus="clearStreetAndHouseNumberStatus()" @keypress="clearStreetAndHouseNumberStatus()"/>
+									<input type="text" id="street" class="form-control" :class="{'errorField' : errors.address.streetError && submitting}" v-model="user.address.street" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
 									<small v-if="(errors.address.streetError || errors.address.houseNumberError) && submitting" class="form-text errorInput">Please provide a valid street / house number!</small>
 								</div>
 								<div class="mb-3 col-md-4">
 									<label for="houseNumber">House number:</label>
-									<input type="number" id="houseNumber" min="0" class="form-control" :class="{'errorField' : errors.address.houseNumberError && submitting}" v-model="user.address.houseNumber" @focus="clearStreetAndHouseNumberStatus()" @keypress="clearStreetAndHouseNumberStatus()"/>
+									<input type="number" id="houseNumber" min="0" class="form-control" :class="{'errorField' : errors.address.houseNumberError && submitting}" v-model="user.address.houseNumber" @focus="clearHouseNumberStatus()" @keypress="clearHouseNumberStatus()"/>
 								</div>
 							</div>
 							<div class="row">
 								<div class="mb-3 col-md-8">
 									<label for="city">City:</label>
-									<input type="text" id="city" class="form-control" :class="{'errorField' : errors.address.cityError && submitting}" v-model="user.address.city" @focus="clearCityAndZipCodeStatus()" @keypress="clearCityAndZipCodeStatus()"/>
+									<input type="text" id="city" class="form-control" :class="{'errorField' : errors.address.cityError && submitting}" v-model="user.address.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
 									<small v-if="(errors.address.cityError || errors.address.zipCodeError) && submitting" class="form-text errorInput">Please provide a valid city / zip code!</small>
 								</div>
 								<div class="mb-3 col-md-4">
 									<label for="zipCode">Zip code:</label>
-									<input type="number" id="zipCode" min="0" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submitting}" v-model="user.address.zipCode" @focus="clearCityAndZipCodeStatus()" @keypress="clearCityAndZipCodeStatus()"/>
+									<input type="number" id="zipCode" min="0" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submitting}" v-model="user.address.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
 								</div>
 							</div>
 							<div class="mb-3">
@@ -194,8 +194,10 @@
 				this.clearFirstNameStatus();
 				this.clearLastNameStatus();
 				this.clearMobileNumberStatus();
-				this.clearStreetAndHouseNumberStatus();
-				this.clearCityAndZipCodeStatus();
+				this.clearStreetStatus();
+				this.clearHouseNumberStatus();
+				this.clearCityStatus();
+				this.clearZipCodeStatus();
 				this.clearCountryStatus();
 				this.clearReCaptchaTokenStatus();
 				var allowSubmit = true;
@@ -300,14 +302,10 @@
 			clearFirstNameStatus() { this.errors.account.firstNameError = false; },
 			clearLastNameStatus() { this.errors.account.lastNameError = false; },
 			clearMobileNumberStatus() { this.errors.account.mobileNumberError = false; },
-			clearStreetAndHouseNumberStatus() { 
-				this.errors.address.streetError = false; 
-				this.errors.address.houseNumberError = false;
-			},
-			clearCityAndZipCodeStatus() { 
-				this.errors.address.cityError = false; 
-				this.errors.address.zipCodeError = false;
-			},
+			clearStreetStatus() { this.errors.address.streetError = false; },
+			clearHouseNumberStatus() { this.errors.address.houseNumberError = false; },
+			clearCityStatus() { this.errors.address.cityError = false; },
+			clearZipCodeStatus() { this.errors.address.zipCodeError = false; },
 			clearCountryStatus() { this.errors.address.countryError = false; },
 			clearReCaptchaTokenStatus() { this.errors.reCaptchaTokenError = false; }
 		},
