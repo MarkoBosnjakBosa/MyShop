@@ -1,5 +1,5 @@
 <template>
-    <div id="sidebarStyle" class="bg-light border-right">
+    <div id="sidebarStyle" class="bg-light border-right scrollable">
         <div class="heading">
             <span v-if="userData.isAdmin">MyShop Admin</span>
             <span v-else>MyShop</span>    
@@ -30,15 +30,15 @@
     export default {
         name: "sidebar",
         data() {
-			return {
+            return {
                 userData: {
                     isLoggedIn: false,
                     username: "",
                     isAdmin: false
                 },
                 categories:[]
-			}
-		},
+            }
+        },
         methods: {
             getUserData() {
                 this.userData = checkLogin.methods.getUserData();
@@ -120,6 +120,9 @@
     .list-group-item {
         display: inline-block;
     }
+    .scrollable {
+        overflow-y: scroll;
+    }
     li {
         cursor: pointer;
     }
@@ -129,10 +132,10 @@
     }
     @media (min-width: 768px) {
         #sidebarStyle {
-            margin-left: 0;
+            margin-left: 0px;
         }
         #pageStyle {
-            min-width: 0;
+            min-width: 0px;
             width: 100%;
         }
         #pageContent.toggled #sidebarStyle {
