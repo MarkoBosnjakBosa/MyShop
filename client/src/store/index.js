@@ -51,7 +51,7 @@ export default new Vuex.Store({
 		},
 		REMOVE_FROM_SHOPPING_CART: (state, productId) => { state.products = state.products.filter(product => product._id != productId); },
 		CLEAR_SHOPPING_CART: state => { state.products = []; },
-		SET_CHECKOUT: (state, checkout) => {state.checkout = checkout; },
+		SET_CHECKOUT: (state, checkout) => { state.checkout = checkout; },
 		RESET: state => { Object.assign(state, getDefaultState()); }
 	},
 	actions: {
