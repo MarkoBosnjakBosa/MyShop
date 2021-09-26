@@ -1,58 +1,61 @@
 <template>
     <div id="forgotCredentials" class="container-fluid">
-        <navigation></navigation>
-        <div class="forgotCredentialsForm">
-            <form autocomplete="off" @submit.prevent="sendEmail()">
-                <div class="forgotCredentialsTitle">
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
+                <form autocomplete="off" @submit.prevent="sendEmail()">
                     <h1>Forgot credentials</h1>
                     <p>Please check an option.</p>
                     <hr>
-                </div>
-                <fieldset class="mb-3 options">
-                    <div class="row">
-                        <legend class="col-form-label col-md-2 pt-0">Forgot:</legend>
-                        <div class="col-md-10">
-                            <div class="form-check">
-                                <input type="radio" name="option" id="password" class="form-check-input" value="password" v-model="option" checked/>
-                                <label for="password" class="form-check-label">Password</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="radio" name="option" id="username" class="form-check-input" value="username" v-model="option"/>
-                                <label for="username" class="form-check-label">Username</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="radio" name="option" id="confirmation" class="form-check-input" value="confirmation" v-model="option"/>
-                                <label for="confirmation" class="form-check-label">Confirmation email</label>
+                    <fieldset class="mb-3 options">
+                        <div class="row">
+                            <legend class="col-form-label col-md-2 pt-0">Forgot:</legend>
+                            <div class="col-md-10">
+                                <div class="form-check">
+                                    <input type="radio" name="option" id="password" class="form-check-input" value="password" v-model="option" checked/>
+                                    <label for="password" class="form-check-label">Password</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="option" id="username" class="form-check-input" value="username" v-model="option"/>
+                                    <label for="username" class="form-check-label">Username</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="option" id="confirmation" class="form-check-input" value="confirmation" v-model="option"/>
+                                    <label for="confirmation" class="form-check-label">Confirmation email</label>
+                                </div>
                             </div>
                         </div>
+                    </fieldset>
+                    <div class="mb-3 email">
+                        <input type="text" id="email" class="form-control" :class="{'errorField' : emailError}" placeholder="Email" v-model="email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
+                        <small v-if="emailError" class="form-text errorInput">Please provide a valid email!</small>
                     </div>
-                </fieldset>
-                <div class="mb-3 email">
-                    <input type="text" id="email" class="form-control" placeholder="Email" v-model="email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
-                    <small v-if="emailError" class="form-text errorInput">Please provide a valid email!</small>
-                </div>
-                <div v-if="emailSent" class="form-group emailSentSuccessful">Please visit your inbox and follow suggested steps!</div>
-                <div class="mb-3 submit">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-                <div class="mb-3 login">
-                    <button type="button" class="btn btn-dark" @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
-                </div>
-            </form>
+                    <div v-if="emailSent" class="form-group emailSentSuccessful">Please visit your inbox and follow suggested steps!</div>
+                    <div class="mb-3 submit">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                    <div class="mb-3 login">
+                        <button type="button" class="btn btn-dark" @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-    import navigation from "../components/Navigation.vue"; 
-    import validation from "../components/Validation.vue";
+    import navigation from "../components/Navigation.vue";
+    import sidebar from "../components/Sidebar.vue";
     import route from "../components/Route.vue";
+    import validation from "../components/Validation.vue";
     const axios = require("axios");
 
     export default {
         name: "forgotCredentials",
         components: {
-            navigation
+            navigation,
+            sidebar
         },
         data() {
             return {
@@ -98,14 +101,11 @@
 </script>
 
 <style scoped>
-    .forgotCredentialsForm {
+    form {
         margin: auto;
         max-width: 400px;
         text-align: center;
-    }
-    .forgotCredentialsTitle {
         margin-top: 20px;
-        text-align: left;
     }
     .options {
         text-align: left;

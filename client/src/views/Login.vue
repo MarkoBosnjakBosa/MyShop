@@ -1,51 +1,54 @@
 <template>
 	<div id="login" class="container-fluid">
-		<navigation></navigation>
-		<div class="loginForm">
-			<form autocomplete="off" @submit.prevent="loginUser()">
-				<div class="loginTitle">
+		<div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+				<navigation></navigation>
+				<form autocomplete="off" @submit.prevent="loginUser()">
 					<h1>Login</h1>
 					<p>Please fill in this form to log in.</p>
 					<hr>
-				</div>
-				<div class="mb-3">
-					<input type="text" id="username" class="form-control" :class="{'errorField' : errors.usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
-					<small v-if="errors.usernameError" class="errorInput">Please provide a valid username!</small>
-				</div>
-				<div class="mb-3">
-					<div class="input-group">
-						<input type="password" id="password" class="form-control" :class="{'errorField' : errors.passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
-						<div class="input-group-append">
-							<button type="button" class="btn btn-light" :class="{'errorIcon' : errors.passwordError && submitting}" @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
-						</div>
+					<div class="mb-3">
+						<input type="text" id="username" class="form-control" :class="{'errorField' : errors.usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
+						<small v-if="errors.usernameError" class="errorInput">Please provide a valid username!</small>
 					</div>
-					<small v-if="errors.passwordError && submitting" class="errorInput">Please provide a valid password!</small>
-				</div>
-				<div v-if="errors.notConfirmed" class="mb-3 loginFailed">You have to confirm your registration!</div>
-				<div v-if="errors.noPasswordMatch" class="mb-3 loginFailed">Password does not match!</div>
-				<div class="mb-3 forgotCredentials">
-					<a href="#" @click="openForgotCredentials()">Forgot credentials?</a>
-				</div>
-				<div class="mb-3 submit">
-					<button type="submit" class="btn btn-primary submitButton">Log in</button>
-				</div>
-				<div class="mb-3 register">Not a member? <a href="#" @click="openRegistration()">Register</a></div>
-			</form>
+					<div class="mb-3">
+						<div class="input-group">
+							<input type="password" id="password" class="form-control" :class="{'errorField' : errors.passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
+							<div class="input-group-append">
+								<button type="button" class="btn btn-light" :class="{'errorIcon' : errors.passwordError && submitting}" @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+							</div>
+						</div>
+						<small v-if="errors.passwordError && submitting" class="errorInput">Please provide a valid password!</small>
+					</div>
+					<div v-if="errors.notConfirmed" class="mb-3 loginFailed">You have to confirm your registration!</div>
+					<div v-if="errors.noPasswordMatch" class="mb-3 loginFailed">Password does not match!</div>
+					<div class="mb-3 forgotCredentials">
+						<a href="#" @click="openForgotCredentials()">Forgot credentials?</a>
+					</div>
+					<div class="mb-3 submit">
+						<button type="submit" class="btn btn-primary submitButton">Log in</button>
+					</div>
+					<div class="mb-3 register">Not a member? <a href="#" @click="openRegistration()">Register</a></div>
+				</form>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
 	import navigation from "../components/Navigation.vue"; 
-	import validation from "../components/Validation.vue";
+	import sidebar from "../components/Sidebar.vue";
 	import helper from "../components/Helper.vue"; 
-	import route from "../components/Route.vue"; 
+	import route from "../components/Route.vue";
+	import validation from "../components/Validation.vue"; 
 	const axios = require("axios");
 	
 	export default {
 		name: "login",
 		components: {
-			navigation
+			navigation,
+			sidebar
 		},
 		data() {
 			return {
@@ -137,16 +140,16 @@
 					}
 				}).catch(error => console.log(error));
 			},
-			openForgotCredentials() { route.methods.openForgotCredentials(); },
-			openRegistration() { route.methods.openRegistration(); },
+			togglePassword() { helper.methods.togglePassword(); },
 			openHome() { 
 				var isAdmin = this.$store.getters.isAdmin;
 				if(isAdmin) route.methods.openProducts();
 				else route.methods.openHome();
 			},
+			openForgotCredentials() { route.methods.openForgotCredentials(); },
+			openRegistration() { route.methods.openRegistration(); },
 			clearUsernameStatus() { this.errors.usernameError = false; },
-			clearPasswordStatus() { this.errors.passwordError = false; },
-			togglePassword() { helper.methods.togglePassword(); }
+			clearPasswordStatus() { this.errors.passwordError = false; }
 		},
 		computed: {
 			invalidUsername() { return validation.methods.invalidUsername(this.user.username); },
@@ -159,11 +162,9 @@
 </script>
 
 <style scoped>
-	.loginForm {
+	form {
 		margin: auto;
 		max-width: 400px;
-	}
-	.loginTitle {
 		margin-top: 20px;
 	}
 	.forgotCredentials {

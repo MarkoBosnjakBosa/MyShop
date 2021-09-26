@@ -1,45 +1,48 @@
 <template>
 	<div id="resetPassword" class="container-fluid">
-		<navigation></navigation>
-		<div class="resetPasswordForm">
-			<form autocomplete="off" @submit.prevent="resetPassword()">
-					<div class="resetPasswordTitle">
+		<div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+				<navigation></navigation>
+				<form autocomplete="off" @submit.prevent="resetPassword()">
 					<h1>Reset password</h1>
 					<p>Please insert your new password.</p>
 					<hr>
-				</div>
-				<div class="mb-3">
-					<div class="input-group">
-						<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
-						<div class="input-group-append">
-							<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, including uppercase and lowercase letters, digits and special characters." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+					<div class="mb-3">
+						<div class="input-group">
+							<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
+							<div class="input-group-append">
+								<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, including uppercase and lowercase letters, digits and special characters." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+							</div>
 						</div>
+						<small v-if="passwordError" class="form-text errorInput">Please provide a valid password!</small>
 					</div>
-					<small v-if="passwordError" class="form-text errorInput">Please provide a valid password!</small>
-				</div>
-				<div v-if="passwordReset" class="passwordResetSuccessful">Your password has been successfully reset!</div>
-				<div class="mb-3">
-					<button type="submit" class="btn btn-primary">Submit</button>
-				</div>
-				<div>
-					<button type="button" class="btn btn-dark" @click.prevent="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
-				</div>
-			</form>
+					<div v-if="passwordReset" class="passwordResetSuccessful">Your password has been successfully reset!</div>
+					<div class="mb-3">
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+					<div>
+						<button type="button" class="btn btn-dark" @click.prevent="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
 	import navigation from "../components/Navigation.vue";
-	import validation from "../components/Validation.vue";
+	import sidebar from "../components/Sidebar.vue";
 	import helper from "../components/Helper.vue";
-	import route from "../components/Route.vue"; 
+	import route from "../components/Route.vue";
+	import validation from "../components/Validation.vue"; 
 	const axios = require("axios");
 
 	export default {
 		name: "resetPassword",
 		components: {
-			navigation
+			navigation,
+			sidebar
 		},
 		data() {
 			return {
@@ -72,12 +75,12 @@
 					}
 				}).catch(error => console.log(error));
 			},
+			togglePassword() { helper.methods.togglePassword(); },
 			openLogin() { route.methods.openLogin(); },
 			clearPasswordStatus() { 
 				this.passwordError = false;
 				this.passwordReset = false;
-			},
-			togglePassword() { helper.methods.togglePassword(); }
+			}
 		},
 		computed: {
 			invalidPassword() { return validation.methods.invalidPassword(this.user.password); }
@@ -90,14 +93,11 @@
 </script>
 
 <style scoped>
-	.resetPasswordForm {
+	form {
 		margin: auto;
 		max-width: 400px;
 		text-align: center;
-	}
-	.resetPasswordTitle {
 		margin-top: 20px;
-		text-align: left;
 	}
 	.passwordResetSuccessful {
 		color: #008000;
