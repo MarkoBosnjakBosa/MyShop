@@ -36,7 +36,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, checkStatus, val
 									response.status(200).json({authentication: true, username: updatedUser.account.username}).end();
 								}).catch(error => console.log(error));
 							} else {
-								var token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey");
+								var token = jwt.sign({userId: user._id, username: user.account.username}, process.env.JWT_SECRET_KEY);
 								response.status(200).json({authentication: false, valid: true, token: token, user: user.account.username, isAdmin: user.account.isAdmin}).end();
 							}
 						} else {
@@ -60,7 +60,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvent, checkStatus, val
 				if(request.headers["authentication"]) {
 					var authenticationToken = request.headers["authentication"];
 					if(authenticationToken == user.confirmation.authenticationToken) {
-						var token = jwt.sign({userId: user._id, username: user.account.username}, "newSecretKey");
+						var token = jwt.sign({userId: user._id, username: user.account.username}, process.env.JWT_SECRET_KEY);
 						var update = {"confirmation.authenticationToken": ""};
 						User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
 							response.status(200).json({authenticated: true, token: token, user: updatedUser.account.username, isAdmin: updatedUser.account.isAdmin}).end();

@@ -1,37 +1,40 @@
 <template>
     <div id="authentication" class="container-fluid">
-        <navigation></navigation>
-        <div class="authenticationForm">
-            <form autocomplete="off" @submit.prevent="authenticateUser()">
-                <div class="authenticationTitle">
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
+                <form autocomplete="off" @submit.prevent="authenticateUser()">
                     <h1>Authenticate</h1>
                     <p>Please insert the authentication token to log in.</p>
                     <hr>
-                </div>
-                <div class="mb-3">
-                    <input type="text" id="authenticationToken" class="form-control" :class="{'errorField' : authenticationTokenError}" placeholder="Authentication token" v-model="authenticationToken" @focus="clearAuthenticationTokenStatus()" @keypress="clearAuthenticationTokenStatus()"/>
-                    <small v-if="authenticationTokenError" class="errorInput">Please provide a valid authentication token!</small>
-                </div>
-                <div class="mb-3">
-                    <button type="button" class="btn btn-dark" @click="sendAuthenticationToken()">Send token</button>
-                    <button type="submit" class="btn btn-primary submit">Submit</button>
-                </div>
-                <div v-if="authenticationTokenSent" class="authenticationTokenSent">The authentication token has been sccessfully sent.</div>
-            </form>
+                    <div class="mb-3">
+                        <input type="text" id="authenticationToken" class="form-control" :class="{'errorField' : authenticationTokenError}" placeholder="Authentication token" v-model="authenticationToken" @focus="clearAuthenticationTokenStatus()" @keypress="clearAuthenticationTokenStatus()"/>
+                        <small v-if="authenticationTokenError" class="errorInput">Please provide a valid authentication token!</small>
+                    </div>
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-dark" @click="sendAuthenticationToken()">Send token</button>
+                        <button type="submit" class="btn btn-primary submit">Submit</button>
+                    </div>
+                    <div v-if="authenticationTokenSent" class="authenticationTokenSent">The authentication token has been sccessfully sent.</div>
+                </form>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
     import navigation from "../components/Navigation.vue";
-    import validation from "../components/Validation.vue";
+    import sidebar from "../components/Sidebar.vue";
     import route from "../components/Route.vue";
+    import validation from "../components/Validation.vue";
     const axios = require("axios");
 	
     export default {
         name: "authentication",
         components: {
-            navigation
+            navigation,
+            sidebar
         },
         data() {
             return {
@@ -93,11 +96,9 @@
 </script>
 
 <style scoped>
-    .authenticationForm {
+    form {
         margin: auto;
         max-width: 500px;
-    }
-    .authenticationTitle {
         margin-top: 20px;
     }
     .submit {

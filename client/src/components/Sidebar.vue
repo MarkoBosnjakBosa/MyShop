@@ -1,5 +1,5 @@
 <template>
-    <div id="sidebarStyle" class="bg-light border-right scrollable">
+    <div id="sidebarStyle" class="bg-light border-right" :class="{'scrollable' : !userData.isAdmin}">
         <div class="heading">
             <span v-if="userData.isAdmin">MyShop Admin</span>
             <span v-else>MyShop</span>    
@@ -116,6 +116,9 @@
     }
     #pageContent.toggled #sidebarDiv {
         margin-left: 0;
+    }
+    .scrollable.toggled {
+        overflow-y: hidden;
     }
     .list-group-item {
         display: inline-block;

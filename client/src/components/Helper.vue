@@ -62,9 +62,11 @@
             toggleSidebar() {
                 var pageContent = document.getElementById("pageContent");
                 var toggleSidebar = document.getElementById("toggleSidebar");
+                var sidebarStyle = document.getElementById("sidebarStyle");
                 pageContent.classList.toggle("toggled");
                 if(pageContent.classList.contains("toggled")) toggleSidebar.innerHTML = "<i class='fas fa-angle-double-right'></i>";
                 else toggleSidebar.innerHTML = "<i class='fas fa-angle-double-left'></i>";
+                sidebarStyle.classList.toggle("toggled"); 
             },
             formatNumber(number) {
                 return number.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
