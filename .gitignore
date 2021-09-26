@@ -6,5 +6,6 @@ server/invoices/*
 server/database/backups/*
 !server/images/home/.gitkeep
 !server/images/products/.gitkeep
-!server/invoices/template/
+!server/invoices/.gitkeep
 !server/database/backups/.gitkeep
+!server/invoices/template/
