@@ -8,15 +8,6 @@ import ForgotCredentials from "../views/ForgotCredentials.vue";
 import ResetPassword from "../views/ResetPassword.vue";
 import Profile from "../views/Profile.vue";
 import Setup from "../views/Setup.vue";
-import HomeSettings from "../views/admin/HomeSettings.vue";
-import Categories from "../views/admin/Categories.vue";
-import TechnicalData from "../views/admin/TechnicalData.vue";
-import Products from "../views/admin/Products.vue";
-import CreateProduct from "../views/admin/CreateProduct.vue";
-import EditProduct from "../views/admin/EditProduct.vue";
-import Contacts from "../views/admin/Contacts.vue";
-import ContactSettings from "../views/admin/ContactSettings.vue";
-import Chats from "../views/admin/Chats.vue";
 import Shop from "../views/Shop.vue";
 import ShopCategory from "../views/ShopCategory.vue";
 import ViewProduct from "../views/ViewProduct.vue";
@@ -27,6 +18,15 @@ import CheckoutCancel from "../views/checkout/CheckoutCancel.vue";
 import Invoices from "../views/Invoices.vue";
 import Invoice from "../views/Invoice.vue";
 import Contact from "../views/Contact.vue";
+import HomeSettings from "../views/admin/HomeSettings.vue";
+import Categories from "../views/admin/Categories.vue";
+import TechnicalData from "../views/admin/TechnicalData.vue";
+import Products from "../views/admin/Products.vue";
+import CreateProduct from "../views/admin/CreateProduct.vue";
+import EditProduct from "../views/admin/EditProduct.vue";
+import Contacts from "../views/admin/Contacts.vue";
+import ContactSettings from "../views/admin/ContactSettings.vue";
+import Chats from "../views/admin/Chats.vue";
 import Users from "../views/admin/Users.vue";
 import ViewProfile from "../views/admin/ViewProfile.vue";
 import PageNotFound from "../views/PageNotFound.vue";
@@ -41,15 +41,6 @@ const routes = [
 	{path: "/reset/password", name: "ResetPassword", component: ResetPassword},
 	{path: "/profile", name: "Profile", component: Profile},
 	{path: "/setup", name: "Setup", component: Setup},
-	{path: "/admin/home/settings", name: "HomeSettings", component: HomeSettings},
-	{path: "/admin/categories", name: "Categories", component: Categories},
-	{path: "/admin/technical/data", name: "TechnicalData", component: TechnicalData},
-	{path: "/admin/products", name: "Products", component: Products},
-	{path: "/admin/create/product", name: "CreateProduct", component: CreateProduct},
-	{path: "/admin/edit/product/:productId", name: "EditProduct", component: EditProduct},
-	{path: "/admin/contacts", name: "Contacts", component: Contacts},
-	{path: "/admin/contact/settings", name: "ContactSettings", component: ContactSettings},
-	{path: "/admin/chats", name: "Chats", component: Chats},
 	{path: "/shop", name: "Shop", component: Shop},
 	{path: "/shop/category/:categoryId", name: "ShopCategory", component: ShopCategory},
 	{path: "/view/product/:productId", name: "ViewProduct", component: ViewProduct},
@@ -60,6 +51,15 @@ const routes = [
 	{path: "/invoices", name: "Invoices", component: Invoices},
 	{path: "/invoice/:invoiceId", name: "Invoice", component: Invoice},
 	{path: "/contact", name: "Contact", component: Contact},
+	{path: "/admin/home/settings", name: "HomeSettings", component: HomeSettings},
+	{path: "/admin/categories", name: "Categories", component: Categories},
+	{path: "/admin/technical/data", name: "TechnicalData", component: TechnicalData},
+	{path: "/admin/products", name: "Products", component: Products},
+	{path: "/admin/create/product", name: "CreateProduct", component: CreateProduct},
+	{path: "/admin/edit/product/:productId", name: "EditProduct", component: EditProduct},
+	{path: "/admin/contacts", name: "Contacts", component: Contacts},
+	{path: "/admin/contact/settings", name: "ContactSettings", component: ContactSettings},
+	{path: "/admin/chats", name: "Chats", component: Chats},
 	{path: "/admin/users", name: "Users", component: Users},
 	{path: "/admin/view/profile/:userId", name: "ViewProfile", component: ViewProfile},
 	{path: "/:catchAll(.*)", name: "PageNotFound", component: PageNotFound}
