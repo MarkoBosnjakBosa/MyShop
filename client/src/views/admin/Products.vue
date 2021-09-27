@@ -30,11 +30,10 @@
                                 <option value="ratingDesc">Rating &#129047;</option>
                             </select>
                         </div>
-                        <div class="mb-3 col-md-1">
+                        <div class="btn-group mb-3 col-md-2">
                             <button type="submit" class="btn btn-primary md-1">Search</button>
-                        </div>
-                        <div class="mb-3 col-md-1">
                             <button type="button" class="btn btn-dark" data-toggle="tooltip" :title="'Total: ' + total">{{total}}</button>
+                            <button type="button" class="btn btn-secondary" @click="downloadProducts()"><i class="fas fa-file-csv"></i></button>
                         </div>
                     </div>
                 </form>
@@ -128,6 +127,14 @@
                         this.total = this.total - 1; 
                     }).catch(error => console.log(error));
                 }
+            },
+            downloadProducts() {
+                var body = {search: this.search, category: this.category, page: this.page, limit: this.limit, orderBy: this.orderBy};
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadProducts", body).then(response => {
+                    if(response.data.downloaded) {
+                        route.methods.downloadProducts(response.data.fileName);
+                    }
+                }).catch(error => console.log(error));
             },
             renderImage(image) {
                 return helper.methods.renderImage(image);

@@ -95,6 +95,9 @@
             downloadInvoice(invoiceNumber) {
                 window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + invoiceNumber, "_blank");
             },
+            downloadProducts(fileName) {
+                window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/exports/" + fileName, "_blank");
+            },
             logout() {
                 store.dispatch("logout");
                 router.push("/login");

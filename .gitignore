@@ -3,9 +3,11 @@ node_modules/
 server/images/home/*
 server/images/products/*
 server/invoices/*
+server/exports/*
 server/database/backups/*
 !server/images/home/.gitkeep
 !server/images/products/.gitkeep
 !server/invoices/.gitkeep
+!server/exports/.gitkeep
 !server/database/backups/.gitkeep
 !server/invoices/template/

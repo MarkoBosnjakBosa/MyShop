@@ -10,6 +10,7 @@ const bcryptjs = require("bcryptjs");
 const cron = require("node-cron");
 const ejs = require("ejs");
 const pdf = require("html-pdf");
+const json2csv = require("json2csv").parse;
 const spawn = require("child_process").spawn;
 const moment = require("moment");
 const fs = require("fs");
@@ -29,7 +30,8 @@ const smsEvents = require("./events/smsEvents.js")(EventEmitter, vonage);
 
 app.use(cors({origin: "*"}));
 app.use(express.json());
-app.use(express.static(__dirname + "/images/products"));
+app.use("/exports", express.static(__dirname + "/exports"));
+app.use("/images/products", express.static(__dirname + "/images/products"));
 
 const registration = require("./routes/registration.js")(app, models, bcryptjs, emailEvents, validations);
 const login = require("./routes/login.js")(app, models, jwt, bcryptjs, smsEvents, checkStatus, validations);
@@ -38,7 +40,7 @@ const profile = require("./routes/profile.js")(app, models, validations);
 const setup = require("./routes/setup.js")(app, models, smsEvents, validations);
 const checkout = require("./routes/checkout.js")(app, models, stripe, moment, ejs, pdf, fs, path, emailEvents);
 const invoices = require("./routes/invoices.js")(app, models, path);
-const products = require("./routes/admin/products.js")(app, models, moment, fs, path, uploadImages, validations);
+const products = require("./routes/admin/products.js")(app, models, moment, json2csv, fs, path, uploadImages, validations);
 const categories = require("./routes/admin/categories.js")(app, models, validations);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validations);
 const homeSettings = require("./routes/admin/homeSettings.js")(app, models, fs, path, uploadImages, validations);

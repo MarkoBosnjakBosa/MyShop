@@ -40,7 +40,7 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 		});
 		var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/invoice/invoice.html"), "utf-8"));
 		var html = htmlCompiled({invoiceNumber: invoiceNumber, created: created, paymentType: paymentType, user: user, products: products, totalPrice: totalPrice});
-		pdf.create(html).toFile(path.join(__dirname, "../invoices/invoice_" + invoiceNumber + ".pdf"), function(error, response) {
+		pdf.create(html).toFile(path.join(__dirname, "../invoices/Invoice_" + invoiceNumber + ".pdf"), function(error, response) {
 			emailEvent.emit("sendInvoiceEmail", user.account, invoiceNumber);
 		});
 	}

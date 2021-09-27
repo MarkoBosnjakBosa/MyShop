@@ -31,7 +31,7 @@ module.exports = function(app, models, path) {
     app.get("/downloadInvoice/:invoiceNumber", (request, response) => {
         var invoiceNumber = request.params.invoiceNumber;
         if(invoiceNumber) {
-            var invoice = path.join(__dirname, "../invoices/invoice_" + invoiceNumber + ".pdf");
+            var invoice = path.join(__dirname, "../invoices/Invoice_" + invoiceNumber + ".pdf");
             response.download(invoice);
         } else {
             response.status(200).json({downloaded: false}).end();
