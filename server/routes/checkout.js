@@ -19,7 +19,7 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 		User.findOne(query).then(user => {
 			Invoice.countDocuments().then(count => {
 				var invoiceNumber = ++count;
-				var newInvoice = getInvoiceScheme(Invoice, invoiceNumber, username, paymentType, products, totalPrice, created);
+				var newInvoice = getInvoiceScheme(Invoice, invoiceNumber, user._id, paymentType, products, totalPrice, created);
 				newInvoice.save().then(invoice => {
 					createInvoicePdf(invoiceNumber, created, paymentType, user, products, totalPrice);
 					updateQuantities(products);
@@ -54,7 +54,7 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 	function formatNumber(number) {
 		return Number(number).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
 	}
-	function getInvoiceScheme(Invoice, invoiceNumber, username, paymentType, products, totalPrice, created) {
-		return new Invoice({invoiceNumber: invoiceNumber, username: username, paymentType: paymentType, products: products, totalPrice: totalPrice, created: created});
+	function getInvoiceScheme(Invoice, invoiceNumber, userId, paymentType, products, totalPrice, created) {
+		return new Invoice({invoiceNumber: invoiceNumber, userId: userId, paymentType: paymentType, products: products, totalPrice: totalPrice, created: created});
 	}
 }

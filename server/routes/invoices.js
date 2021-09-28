@@ -3,19 +3,22 @@ module.exports = function(app, models, path) {
     const User = models.User;
     app.post("/getInvoices", (request, response) => {
         var username = request.body.username;
-        var page = Number(request.body.page) - 1;
-        var limit = 10;
-        var skip = page * limit;
-        var query = {username: username};
-        var invoicesQuery = Invoice.find(query).skip(skip).limit(limit);
-        var totalQuery = Invoice.find(query).countDocuments();
-        var queries = [invoicesQuery, totalQuery];
-        Promise.all(queries).then(results => {
-            var total = results[1];
-            var pagesNumber = 1;
-            if(total >= limit) pagesNumber = Math.ceil(total / limit);
-            response.status(200).json({invoices: results[0], total: total, pagesNumber: pagesNumber}).end();
-        });
+        var userQuery = {"account.username": username};
+        User.findOne(userQuery).then(user => {
+            var query = {userId: user._id};
+            var page = Number(request.body.page) - 1;
+            var limit = 10;
+            var skip = page * limit;
+            var invoicesQuery = Invoice.find(query).skip(skip).limit(limit);
+            var totalQuery = Invoice.find(query).countDocuments();
+            var queries = [invoicesQuery, totalQuery];
+            Promise.all(queries).then(results => {
+                var total = results[1];
+                var pagesNumber = 1;
+                if(total >= limit) pagesNumber = Math.ceil(total / limit);
+                response.status(200).json({invoices: results[0], total: total, pagesNumber: pagesNumber}).end();
+            });
+        }).catch(error => console.log(error));
     });
     app.get("/getInvoice/:invoiceId/:username", (request, response) => {
         var invoiceId = request.params.invoiceId;
