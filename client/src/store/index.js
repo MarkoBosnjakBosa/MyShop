@@ -4,7 +4,7 @@ import createPersistedState from "vuex-persistedstate";
 
 const getDefaultState = () => {
 	return {
-		jwtData: {
+		login: {
 			token: "",
 			user: "",
 			isAdmin: false
@@ -22,17 +22,17 @@ export default new Vuex.Store({
 	plugins: [createPersistedState()],
 	state: getDefaultState(),
 	getters: {
-		isLoggedIn: state => { return state.jwtData.token; },
-		getUser: state => { return state.jwtData.user; },
-		isAdmin: state => { return state.jwtData.isAdmin; },
+		isLoggedIn: state => { return state.login.token; },
+		getUser: state => { return state.login.user; },
+		isAdmin: state => { return state.login.isAdmin; },
 		isAuthenticated: state => { return state.authenticationData.username; },
 		getShoppingCart: state => { return state.products; },
 		getCheckout: state => { return state.checkout; }
 	},
 	mutations: {
-		SET_TOKEN: (state, token) => { state.jwtData.token = token; },
-		SET_USER: (state, user) => { state.jwtData.user = user; },
-		SET_ADMIN: (state, isAdmin) => { state.jwtData.isAdmin = isAdmin; },
+		SET_TOKEN: (state, token) => { state.login.token = token; },
+		SET_USER: (state, user) => { state.login.user = user; },
+		SET_ADMIN: (state, isAdmin) => { state.login.isAdmin = isAdmin; },
 		SET_USERNAME: (state, username) => { state.authenticationData.username = username; },
 		CLEAR_USERNAME: state => { state.authenticationData.username = ""; },
 		ADD_TO_SHOPPING_CART: (state, product) => {
@@ -84,7 +84,7 @@ export default new Vuex.Store({
 		},
 		logout: ({commit}) => {
 			commit("RESET");
-			location.reload();
+			location.href = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT + "/login";
 		}
 	}
 });

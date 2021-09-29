@@ -109,7 +109,6 @@
             },
             logout() {
                 store.dispatch("logout");
-                router.push("/login");
             }
         }
     }
