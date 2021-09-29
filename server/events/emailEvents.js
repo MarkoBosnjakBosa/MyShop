@@ -1,23 +1,23 @@
 module.exports = function(EventEmitter, ejs, fs, path, transporter) {
-    const emailEvent = new EventEmitter();
-    emailEvent.on("sendResetPasswordEmail", (account, resetPasswordToken) => {
-        sendResetPasswordEmail(account, resetPasswordToken); 
-    });
+	const emailEvent = new EventEmitter();
+	emailEvent.on("sendResetPasswordEmail", (account, resetPasswordToken) => {
+		sendResetPasswordEmail(account, resetPasswordToken); 
+	});
 	emailEvent.on("sendForgotUsernameEmail", (account) => {
-        sendForgotUsernameEmail(account); 
-    });
+		sendForgotUsernameEmail(account); 
+	});
 	emailEvent.on("sendConfirmationEmail", (account, confirmationToken) => {
-        sendConfirmationEmail(account, confirmationToken); 
-    });
+		sendConfirmationEmail(account, confirmationToken); 
+	});
 	emailEvent.on("sendInvoiceEmail", (account, orderNumber) => {
-        sendInvoiceEmail(account, orderNumber); 
-    });
+		sendInvoiceEmail(account, orderNumber); 
+	});
 	emailEvent.on("sendOrderDispatchedEmail", (account, orderNumber, orderId) => {
-        sendOrderDispatchedEmail(account, orderNumber, orderId); 
-    });
+		sendOrderDispatchedEmail(account, orderNumber, orderId); 
+	});
 	emailEvent.on("sendContactEmail", (contact) => {
-        sendContactEmail(contact); 
-    });
+		sendContactEmail(contact); 
+	});
 
 	function sendResetPasswordEmail(account, resetPasswordToken) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/resetPassword.html"), "utf-8"));
@@ -41,7 +41,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
 	}
-    function sendConfirmationEmail(account, confirmationToken) {
+	function sendConfirmationEmail(account, confirmationToken) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/confirmation.html"), "utf-8"));
 		var html = compiledHtml({firstName: account.firstName, username: account.username, confirmationToken: confirmationToken, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
 		var mailOptions = {
@@ -86,5 +86,5 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
 	}
-    return emailEvent;
+	return emailEvent;
 }
