@@ -172,7 +172,7 @@
                 }).catch(error => console.log(error));
             },
             dispatchOrder() {
-                var confirmed = confirm("Dispatch this order?");
+                var confirmed = confirm("Dispatch order #" + this.order.orderNumber + "?");
                 if(confirmed) {
                     var body = {orderId: this.orderId};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/dispatchOrder", body).then(response => {
