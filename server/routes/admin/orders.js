@@ -1,4 +1,4 @@
-module.exports = function(app, models, path) {
+module.exports = function(app, models, moment, json2csv, fs, path, validations) {
     const Order = models.Order;
     const User = models.User;
     app.post("/getOrders", (request, response) => {
@@ -27,10 +27,16 @@ module.exports = function(app, models, path) {
 			case "createdDesc":
 				sort = {"created": -1};
 				break;
+            case "dispatchedAsc":
+                sort = {"dispatched": 1};
+                break;
+            case "dispatchedDesc":
+                sort = {"dispatched": -1};
+                break;
 			default:
 				sort = {};
 		}
-		var query = search ? {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]} : {};
+        var query = search ? {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]} : {};
 		var ordersQuery = Order.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = Order.find(query).countDocuments();
 		var queries = [ordersQuery, totalQuery];
@@ -86,13 +92,19 @@ module.exports = function(app, models, path) {
 			case "createdDesc":
 				sort = {"created": -1};
 				break;
+            case "dispatchedAsc":
+                sort = {"dispatched": 1};
+                break;
+            case "dispatchedDesc":
+                sort = {"dispatched": -1};
+                break;
 			default:
 				sort = {};
 		}
-		var query = search ? {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]} : {};
+        var query = search ? {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]} : {};
 		Order.find(query).sort(sort).skip(skip).limit(limit).then(orders => {
 			if(!validations.isEmpty(orders)) {
-				var fields = ["_id", "orderNumber", "userId", "paymentType", "totalPrice", "created"];
+				var fields = ["_id", "orderNumber", "userId", "paymentType", "totalPrice", "created", "isDispatched", "dispatched"];
 				var csv;
 				try {
 					csv = json2csv(orders, {fields});
@@ -103,6 +115,7 @@ module.exports = function(app, models, path) {
 						response.status(200).json({downloaded: true, fileName: "Orders_" + timestamp + ".csv"});
 					}).catch(error => console.log(error));
 				} catch(error) {
+                    console.log(error);
 					response.status(200).json({downloaded: false}).end(); 
 				}
 			} else {

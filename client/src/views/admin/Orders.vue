@@ -104,6 +104,12 @@
                     this.pagesNumber = response.data.pagesNumber;
                 }).catch(error => console.log(error));
             },
+            loadPage(page) {
+                if(page > 0 && page <= this.pagesNumber) {
+                    this.page = page;
+                    this.getOrders();
+                }
+            },
             downloadOrders() {
                 var body = {search: this.search, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadOrders", body).then(response => {
@@ -111,12 +117,6 @@
                         route.methods.downloadOrders(response.data.fileName);
                     }
                 }).catch(error => console.log(error));
-            },
-            loadPage(page) {
-                if(page > 0 && page <= this.pagesNumber) {
-                    this.page = page;
-                    this.getProducts();
-                }
             },
             downloadInvoice(orderNumber) {
                 route.methods.downloadInvoice(orderNumber);
