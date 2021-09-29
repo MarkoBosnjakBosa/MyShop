@@ -75,6 +75,7 @@
                             <td>
                                 <i class="fas fa-external-link-square-alt icon" @click="openOrder(order._id)"></i>
                                 <i class="fas fa-file-download icon" @click="downloadInvoice(order.orderNumber)"></i>
+                                <i v-if="!order.isDispatched" class="fas fa-truck icon" @click="dispatchOrder(order._id, order.orderNumber)"></i>
                             </td>
                         </tr>
                     </tbody>
@@ -122,6 +123,25 @@
                     this.total = response.data.total;
                     this.pagesNumber = response.data.pagesNumber;
                 }).catch(error => console.log(error));
+            },
+            dispatchOrder(orderId, orderNumber) {
+                var confirmed = confirm("Dispatch order #" + orderNumber + "?");
+                if(confirmed) {
+                    var body = {orderId: orderId};
+                    axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/dispatchOrder", body).then(response => {
+                        if(response.data.isDispatched) {
+                            this.orders = this.orders.map(order => {
+                                if(order._id == orderId) {
+                                    order.isDispatched = response.data.isDispatched;
+                                    order.dispatched = response.data.dispatched;
+                                    return order;
+                                } else {
+                                    return order;
+                                }
+                            });
+                        }
+                    }).catch(error => console.log(error));
+                }
             },
             loadPage(page) {
                 if(page > 0 && page <= this.pagesNumber) {
