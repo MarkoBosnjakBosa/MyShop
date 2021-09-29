@@ -9,8 +9,11 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 	emailEvent.on("sendConfirmationEmail", (account, confirmationToken) => {
         sendConfirmationEmail(account, confirmationToken); 
     });
-	emailEvent.on("sendInvoiceEmail", (account, confirmationToken) => {
-        sendInvoiceEmail(account, confirmationToken); 
+	emailEvent.on("sendInvoiceEmail", (account, orderNumber) => {
+        sendInvoiceEmail(account, orderNumber); 
+    });
+	emailEvent.on("sendOrderDispatchedEmail", (account, orderNumber, orderId) => {
+        sendOrderDispatchedEmail(account, orderNumber, orderId); 
     });
 	emailEvent.on("sendContactEmail", (contact) => {
         sendContactEmail(contact); 
@@ -49,14 +52,25 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
 	}
-	function sendInvoiceEmail(account, invoiceNumber) {
+	function sendInvoiceEmail(account, orderNumber) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/invoice.html"), "utf-8"));
 		var html = compiledHtml({firstName: account.firstName});
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: account.email,
-			subject: "Invoice " + invoiceNumber,
-			attachments: [{filename: "Invoice_" + invoiceNumber, path: path.join(__dirname, "../invoices/Invoice_" + invoiceNumber + ".pdf"), contentType: "application/pdf"}],
+			subject: "Invoice " + orderNumber,
+			attachments: [{filename: "Invoice_" + orderNumber, path: path.join(__dirname, "../invoices/Invoice_" + orderNumber + ".pdf"), contentType: "application/pdf"}],
+			html: html
+		};
+		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
+	}
+	function sendOrderDispatchedEmail(account, orderNumber, orderId) {
+		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/orderDispatched.html"), "utf-8"));
+		var html = compiledHtml({firstName: account.firstName, orderNumber: orderNumber, orderId: orderId, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
+		var mailOptions = {
+			from: process.env.EMAIL_USER,
+			to: account.email,
+			subject: "Order #" + orderNumber + " dispatched",
 			html: html
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));

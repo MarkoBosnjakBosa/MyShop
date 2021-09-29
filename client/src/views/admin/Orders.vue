@@ -7,8 +7,17 @@
                 <h1>Orders</h1>
                 <form autocomplete="off" @submit.prevent="getOrders()">
                     <div class="row">
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-4">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
+                        </div>
+                        <div class="mb-3 col-md-2">
+                            <select id="type" class="form-control" v-model="type">
+                                <option value="" selected>Type</option>
+                                <option value="dispatched">Dispatched</option>
+                                <option value="notDispatched">Not dispatched</option>
+                                <option value="creditCard">Credit card</option>
+                                <option value="payPal">PayPal</option>
+                            </select>
                         </div>
                         <div class="mb-3 col-md-2">
                             <input type="number" id="limit" min="1" class="form-control" v-model="limit"/>
@@ -22,6 +31,8 @@
                                 <option value="paymentTypeDesc">Payment type &#129047;</option>
                                 <option value="createdAsc">Created &#129045;</option>
                                 <option value="createdDesc">Created &#129047;</option>
+                                <option value="dispatchedAsc">Dispatched &#129045;</option>
+                                <option value="dispatchedDesc">Dispatched &#129047;</option>
                             </select>
                         </div>
                         <div class="btn-group mb-3 col-md-2">
@@ -37,7 +48,8 @@
                             <th>#</th>
                             <th>Order number</th>
                             <th>Name</th>
-                            <th>Email</th>
+                            <th>Username</th>
+                            <th>Payment type</th>
                             <th>Total</th>
                             <th>Created</th>
                             <th>Dispatched</th>
@@ -50,9 +62,10 @@
                         </tr>
                         <tr v-for="(order, index) in orders" :key="order._id">
                             <th>{{++index}}</th>
-                            <td>{{order.orderNumber}}</td>
+                            <th>#{{order.orderNumber}}</th>
                             <td>{{order.user.account.firstName}} {{order.user.account.lastName}}</td>
-                            <td>{{order.user.account.email}}</td>
+                            <td>{{order.user.account.username}} <i class="fas fa-external-link-square-alt icon" @click="openViewProfile(order.userId)"></i></td>
+                            <td>{{order.paymentType}}</td>
                             <td>{{order.totalPrice}}</td>
                             <td>{{order.created}}</td>
                             <td>
@@ -93,6 +106,7 @@
             return {
                 orders: [],
                 search: "",
+                type: "",
                 page: 1,
                 limit: 10,
                 orderBy: "",
@@ -102,7 +116,7 @@
         },
         methods: {
             getOrders() {
-                var body = {search: this.search, page: this.page, limit: this.limit, orderBy: this.orderBy};
+                var body = {search: this.search, type: this.type, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getOrders", body).then(response => {
                     this.orders = response.data.orders;
                     this.total = response.data.total;
@@ -128,6 +142,9 @@
             },
             openOrder(orderId) {
                 route.methods.openOrder(orderId);
+            },
+            openViewProfile(userId) {
+                route.methods.openViewProfile(userId);
             }
         },
         created() {

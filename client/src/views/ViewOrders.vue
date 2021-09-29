@@ -9,7 +9,7 @@
                     <div v-for="order in orders" :key="order._id" class="accordion-item">
                         <h2 class="accordion-header" :id="'heading_' + order._id">
                             <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + order._id" aria-expanded="false">
-                                Order #: {{order.orderNumber}}
+                                Order #<b>{{order.orderNumber}}</b>
                                 <span v-if="order.isDispatched" class="badge bg-success text-light dispatchButton">Dispatched: {{order.dispatched}}</span>
                                 <span v-else class="badge bg-danger text-light dispatchButton">Not dispatched</span>
                             </button>

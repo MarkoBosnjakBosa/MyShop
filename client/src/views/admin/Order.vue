@@ -4,7 +4,7 @@
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <h1>Order #: {{order.orderNumber}}</h1>
+                <h1>Order #{{order.orderNumber}}</h1>
                 <div class="nav nav-tabs justify-content-center" role="tablist">
                     <button type="button" id="orderNavTab" data-bs-toggle="tab" data-bs-target="#orderTab" class="nav-link active" role="tab">Order</button>
                     <button type="button" id="accountNavTab" data-bs-toggle="tab" data-bs-target="#accountTab" class="nav-link" role="tab">Account</button>

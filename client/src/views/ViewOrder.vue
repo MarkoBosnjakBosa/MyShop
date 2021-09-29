@@ -4,7 +4,7 @@
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <h1>Order #: {{order.orderNumber}}</h1>
+                <h1>Order #{{order.orderNumber}}</h1>
                 <div class="nav nav-tabs justify-content-center" role="tablist">
                     <button type="button" id="orderNavTab" data-bs-toggle="tab" data-bs-target="#orderTab" class="nav-link active" role="tab">Order</button>
                     <button type="button" id="addressNavTab" data-bs-toggle="tab" data-bs-target="#addressTab" class="nav-link" role="tab">Address</button>
@@ -36,7 +36,7 @@
                             </tbody>
                         </table>
                         <div>
-                            <button v-if="isDispatched" type="button" class="btn btn-success">Dispatched</button>
+                            <button v-if="order.isDispatched" type="button" class="btn btn-success">Dispatched {{order.dispatched}}</button>
                             <button v-else type="button" class="btn btn-danger">Not dispatched</button>
                             <button type="button" class="btn btn-dark download" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
                             <button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>

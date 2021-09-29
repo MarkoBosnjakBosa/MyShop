@@ -1,8 +1,9 @@
-module.exports = function(app, models, moment, json2csv, fs, path, validations) {
+module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, validations) {
     const Order = models.Order;
     const User = models.User;
     app.post("/getOrders", (request, response) => {
         var search = request.body.search;
+		var type = request.body.type;
 		var page = Number(request.body.page) - 1; 
 		var limit = Number(request.body.limit);
 		var skip = page * limit;
@@ -36,7 +37,24 @@ module.exports = function(app, models, moment, json2csv, fs, path, validations) 
 			default:
 				sort = {};
 		}
-        var query = search ? {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]} : {};
+		var typeQuery = {};
+		switch(type) {
+			case "dispatched":
+				typeQuery = {isDispatched: true};
+				break;
+			case "notDispatched":
+				typeQuery = {isDispatched: false};
+				break;
+			case "creditCard":
+				typeQuery = {paymentType: "Credit card"};
+				break;
+			case "payPal":
+				typeQuery = {paymentType: "PayPal"};
+				break;
+			default:
+				typeQuery = {};
+		}
+        var query = search ? {$and: [typeQuery, {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
 		var ordersQuery = Order.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = Order.find(query).countDocuments();
 		var queries = [ordersQuery, totalQuery];
@@ -68,6 +86,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, validations) 
     });
     app.post("/downloadOrders", (request, response) => {
 		var search = request.body.search;
+		var type = request.body.type;
 		var page = Number(request.body.page) - 1; 
 		var limit = Number(request.body.limit);
 		var skip = page * limit;
@@ -101,7 +120,24 @@ module.exports = function(app, models, moment, json2csv, fs, path, validations) 
 			default:
 				sort = {};
 		}
-        var query = search ? {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]} : {};
+		var typeQuery = {};
+		switch(type) {
+			case "dispatched":
+				typeQuery = {isDispatched: true};
+				break;
+			case "notDispatched":
+				typeQuery = {isDispatched: false};
+				break;
+			case "creditCard":
+				typeQuery = {paymentType: "Credit card"};
+				break;
+			case "payPal":
+				typeQuery = {paymentType: "PayPal"};
+				break;
+			default:
+				typeQuery = {};
+		}
+        var query = search ? {$and: [typeQuery, {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
 		Order.find(query).sort(sort).skip(skip).limit(limit).then(orders => {
 			if(!validations.isEmpty(orders)) {
 				var fields = ["_id", "orderNumber", "userId", "paymentType", "totalPrice", "created", "isDispatched", "dispatched"];
@@ -115,7 +151,6 @@ module.exports = function(app, models, moment, json2csv, fs, path, validations) 
 						response.status(200).json({downloaded: true, fileName: "Orders_" + timestamp + ".csv"});
 					}).catch(error => console.log(error));
 				} catch(error) {
-                    console.log(error);
 					response.status(200).json({downloaded: false}).end(); 
 				}
 			} else {
@@ -134,11 +169,19 @@ module.exports = function(app, models, moment, json2csv, fs, path, validations) 
 		var orderId = request.body.orderId;
 		var dateAndTimeFormat = "DD.MM.YYYY HH:mm";
 		var dispatched = moment().format(dateAndTimeFormat);
-		var query = {_id: orderId};
+		var orderQuery = {_id: orderId};
 		var update = {isDispatched: true, dispatched: dispatched};
-		Order.findOneAndUpdate(query, update).then(order => {
+		Order.findOneAndUpdate(orderQuery, update).then(order => {
 			if(!validations.isEmpty(order)) {
-            	response.status(200).json({isDispatched: true, dispatched: dispatched}).end();
+				var userQuery = {_id: order.userId};
+				User.findOne(userQuery).then(user => {
+					if(!validations.isEmpty(user)) {
+						emailEvents.emit("sendOrderDispatchedEmail", user.account, order.orderNumber, order._id);
+						response.status(200).json({isDispatched: true, dispatched: dispatched}).end();
+					} else {
+						response.status(200).json({isDispatched: false}).end();
+					}
+				}).catch(error => console.log(error));
 			} else {
 				response.status(200).json({isDispatched: false}).end();
 			}

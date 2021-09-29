@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <p>Dear <b><%= firstName %></b>,</p>
+        <p>thank you for using MyShop. The order #<b><%= orderNumber %></b> has been successfully dispatched.</p>
+        <p>You can check the order at any time by going to your orders and selecting the order with the number #<b><%= orderNumber %></b>.</p>
+        <p>You can use the following link: <a href="<%= baseUrl %><%= clientPort %>/view/order/<%= orderId %>" target="blank"><%= baseUrl %><%= clientPort %>/view/order/<%= orderId %></a></p>
+        <p>Kind regards,<br/> your Admin Team</p>
+    </body>
+</html>
