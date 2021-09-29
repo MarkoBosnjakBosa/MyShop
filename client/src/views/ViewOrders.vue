@@ -1,27 +1,27 @@
 <template>
-    <div id="invoices" class="container-fluid">
+    <div id="viewOrders" class="container-fluid">
         <div class="d-flex" id="pageContent">
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <h1>Invoices</h1>
-                <div class="invoices">
-                    <div v-for="invoice in invoices" :key="invoice._id" class="accordion-item">
-                        <h2 class="accordion-header" :id="'heading_' + invoice._id">
-                            <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + invoice._id" aria-expanded="false">
-                                Invoice #: {{invoice.invoiceNumber}}
+                <h1>Orders</h1>
+                <div class="orders">
+                    <div v-for="order in orders" :key="order._id" class="accordion-item">
+                        <h2 class="accordion-header" :id="'heading_' + order._id">
+                            <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + order._id" aria-expanded="false">
+                                Order #: {{order.orderNumber}}
                             </button>
                         </h2>
-                        <div id="invoices" class="accordion">
-                            <div :id="'collapse_' + invoice._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + invoice._id" data-bs-parent="#invoices">
+                        <div id="orders" class="accordion">
+                            <div :id="'collapse_' + order._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + order._id" data-bs-parent="#orders">
                                 <div class="row">
                                     <div class="col-md-8">
-                                        Created: <b>{{invoice.created}}</b><br>
-                                        Payment type: <b>{{invoice.paymentType}}</b>
+                                        Created: <b>{{order.created}}</b><br>
+                                        Payment type: <b>{{order.paymentType}}</b>
                                     </div>
                                     <div class="col-md-4">
-                                        <i class="fas fa-external-link-square-alt icon" @click="openInvoice(invoice._id)"></i>
-                                        <i class="fas fa-file-download icon" @click="downloadInvoice(invoice.invoiceNumber)"></i>
+                                        <i class="fas fa-external-link-square-alt icon" @click="openViewOrder(order._id)"></i>
+                                        <i class="fas fa-file-download icon" @click="downloadInvoice(order.orderNumber)"></i>
                                     </div>
                                 </div>
                                 <table class="table table-secondary">
@@ -35,7 +35,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(product, index) in invoice.products" :key="product._id">
+                                        <tr v-for="(product, index) in order.products" :key="product._id">
                                             <th>{{++index}}</th>
                                             <td class="title" data-toggle="tooltip" :title="product.title">{{product.title}}</td>
                                             <td>{{formatNumber(product.price)}}</td>
@@ -44,7 +44,7 @@
                                         </tr>
                                         <tr>
                                             <th colspan="4" class="total">Total</th>
-                                            <th class="total">{{invoice.totalPrice}}</th>
+                                            <th class="total">{{order.totalPrice}}</th>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -71,7 +71,7 @@
     const axios = require("axios");
 	
     export default {
-        name: "invoices",
+        name: "viewOrders",
         components: {
             navigation,
             sidebar
@@ -79,38 +79,38 @@
         data() {
             return {
                 username: this.$store.getters.getUser,
-                invoices: [],
+                orders: [],
                 page: 1,
                 pagesNumber: 1
             }
         },
         methods: {
-            getInvoices() {
+            getOrders() {
                 var body = {username: this.username, page: this.page};
-                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getInvoices", body).then(response => {
-                    this.invoices = response.data.invoices;
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUserOrders", body).then(response => {
+                    this.orders = response.data.orders;
                     this.pagesNumber = response.data.pagesNumber;
                 }).catch(error => console.log(error));
             },
             loadPage(page) {
                 if(page > 0 && page <= this.pagesNumber) {
                     this.page = page;
-                    this.getInvoices();
+                    this.getOrders();
                 }
             },
             formatNumber(number) {
                 return helper.methods.formatNumber(number);
             },
-            downloadInvoice(invoiceNumber) {
-                route.methods.downloadInvoice(invoiceNumber);
+            downloadInvoice(orderNumber) {
+                route.methods.downloadInvoice(orderNumber);
             },
-            openInvoice(invoiceId) {
-                route.methods.openInvoice(invoiceId);
+            openViewOrder(orderNumber) {
+                route.methods.openViewOrder(orderNumber);
             }
         },
         created() {
             checkLogin.methods.isLoggedIn();
-            this.getInvoices();
+            this.getOrders();
         }
     }
 </script>
@@ -121,7 +121,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    .invoices {
+    .orders {
         margin: auto;
         max-width: 800px;
         margin-top: 20px;

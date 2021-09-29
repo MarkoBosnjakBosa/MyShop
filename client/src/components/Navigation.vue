@@ -24,7 +24,7 @@
                         <ul class="dropdown-menu" :class="userData.isAdmin ? 'adminDropdownMenu' : 'userDropdownMenu'" aria-labelledby="userOptions">
                             <li><a href="#" class="dropdown-item" @click="openProfile()">Profile</a></li>
                             <li><a href="#" class="dropdown-item" @click="openSetup()">Authentication</a></li>
-                            <li><a v-if="!userData.isAdmin" href="#" class="dropdown-item" @click="openInvoices()">Invoices</a></li>
+                            <li><a v-if="!userData.isAdmin" href="#" class="dropdown-item" @click="openViewOrders()">Orders</a></li>
                             <li><a href="#" class="dropdown-item" @click="logout()">Log out</a></li>
                         </ul>
                     </li>
@@ -79,8 +79,8 @@
             openSetup() {
                 route.methods.openSetup();
             },
-            openInvoices() {
-                route.methods.openInvoices();
+            openViewOrders() {
+                route.methods.openViewOrders();
             },
             openLogin() {
                 route.methods.openLogin();

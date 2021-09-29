@@ -23,11 +23,11 @@
             openSetup() {
                 router.push("/setup");
             },
-            openInvoices() {
-                router.push("/invoices");
+            openViewOrders() {
+                router.push("/view/orders");
             },
-            openInvoice(invoiceId) {
-                router.push("/invoice/" + invoiceId);
+            openViewOrder(orderId) {
+                router.push("/view/order/" + orderId);
             },
             openLogin() {
                 router.push("/login");
@@ -92,8 +92,8 @@
             openPageNotFound() {
                 router.push("/pageNotFound");
             },
-            downloadInvoice(invoiceNumber) {
-                window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + invoiceNumber, "_blank");
+            downloadInvoice(orderNumber) {
+                window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + orderNumber, "_blank");
             },
             downloadProducts(fileName) {
                 window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/exports/" + fileName, "_blank");

@@ -15,8 +15,8 @@ import ShoppingCart from "../views/ShoppingCart.vue";
 import Checkout from "../views/checkout/Checkout.vue";
 import CheckoutSuccess from "../views/checkout/CheckoutSuccess.vue";
 import CheckoutCancel from "../views/checkout/CheckoutCancel.vue";
-import Invoices from "../views/Invoices.vue";
-import Invoice from "../views/Invoice.vue";
+import ViewOrders from "../views/ViewOrders.vue";
+import ViewOrder from "../views/ViewOrder.vue";
 import Contact from "../views/Contact.vue";
 import HomeSettings from "../views/admin/HomeSettings.vue";
 import Categories from "../views/admin/Categories.vue";
@@ -48,8 +48,8 @@ const routes = [
 	{path: "/checkout", name: "Checkout", component: Checkout},
 	{path: "/checkout/success", name: "CheckoutSuccess", component: CheckoutSuccess},
 	{path: "/checkout/cancel", name: "CheckoutCancel", component: CheckoutCancel},
-	{path: "/invoices", name: "Invoices", component: Invoices},
-	{path: "/invoice/:invoiceId", name: "Invoice", component: Invoice},
+	{path: "/view/orders", name: "ViewOrders", component: ViewOrders},
+	{path: "/view/order/:orderId", name: "ViewOrder", component: ViewOrder},
 	{path: "/contact", name: "Contact", component: Contact},
 	{path: "/admin/home/settings", name: "HomeSettings", component: HomeSettings},
 	{path: "/admin/categories", name: "Categories", component: Categories},

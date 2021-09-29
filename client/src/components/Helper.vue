@@ -54,8 +54,8 @@
                     case "map":
                         document.getElementById("mapNavTab").click();
                         break;
-                    case "invoice":
-                        document.getElementById("invoiceNavTab").click();
+                    case "order":
+                        document.getElementById("orderNavTab").click();
                         break;
                 }
             },

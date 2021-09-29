@@ -11,9 +11,9 @@ module.exports = function(mongoose) {
 		},
 		address: {
 			street: {type: String, required: true},
-			houseNumber: {type: Number, required: true},
+			houseNumber: {type: Number, required: true, min: 0},
 			city: {type: String, required: true},
-			zipCode: {type: Number, required: true},
+			zipCode: {type: Number, required: true, min: 0},
 			country: {type: String, required: true}
 		},
 		confirmation: {
@@ -49,13 +49,29 @@ module.exports = function(mongoose) {
 		title: {type: String, required: true},
 		icon: {type: String, required: true}
 	});
-	const invoiceScheme = new mongoose.Schema({
-		invoiceNumber: {type: Number, required: true, index: {unique: true}},
+	const orderScheme = new mongoose.Schema({
+		orderNumber: {type: String, required: true, index: {unique: true}},
 		userId: {type: String, required: true},
 		paymentType: {type: String, required: true},
-		products: {type: Array},
+		products: {type: Array, required: true},
 		totalPrice: {type: String, required: true},
-		created: {type: String, required: true}
+		created: {type: String, required: true},
+		user: {
+			account: {
+				username: {type: String, required: true},
+				email: {type: String, required: true},
+				firstName: {type: String, required: true},
+				lastName: {type: String, required: true},
+				mobileNumber: {type: String, required: true}
+			},
+			address: {
+				street: {type: String, required: true},
+				houseNumber: {type: Number, required: true, min: 0},
+				city: {type: String, required: true},
+				zipCode: {type: Number, required: true, min: 0},
+				country: {type: String, required: true}
+			}
+		}
 	});
 	const homeSettingsScheme = new mongoose.Schema({
 		message: {type: String},
@@ -67,9 +83,9 @@ module.exports = function(mongoose) {
 			lng: {type: Number, required: true}
 		},
 		street: {type: String, required: true},
-		houseNumber: {type: String, required: true},
+		houseNumber: {type: Number, required: true, min: 0},
 		city: {type: String, required: true},
-		zipCode: {type: String, required: true},
+		zipCode: {type: Number, required: true, min: 0},
 		country: {type: String, required: true},
 		mobileNumber: {type: String, required: true},
 		email: {type: String, required: true}
@@ -94,7 +110,7 @@ module.exports = function(mongoose) {
 		Review: mongoose.model("Review", reviewScheme),
 		TechnicalInformation: mongoose.model("TechnicalInformation", technicalInformationScheme),
 		Category: mongoose.model("Category", categoryScheme),
-		Invoice: mongoose.model("Invoice", invoiceScheme),
+		Order: mongoose.model("Order", orderScheme),
 		HomeSettings: mongoose.model("HomeSettings", homeSettingsScheme),
 		ContactSettings: mongoose.model("ContactSettings", contactSettingsScheme),
 		Contact: mongoose.model("Contact", contactScheme),

@@ -60,7 +60,7 @@
         data() {
             return {
                 username: this.$store.getters.getUser,
-                invoiceNumber: "",
+                orderNumber: "",
                 paymentType: "",
                 products: [],
                 paymentType: ""
@@ -83,7 +83,7 @@
                     var body = {username: this.username, paymentType: this.paymentType, products: products, totalPrice: this.getTotalCost()};
                     axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/finalizePayment", body).then(response => {
                         if(response.data.finalized) {
-                            this.invoiceNumber = response.data.invoiceNumber;
+                            this.orderNumber = response.data.orderNumber;
                             this.$store.dispatch("setCheckout", "");
                         }
                     }).catch(error => console.log(error));
@@ -100,7 +100,7 @@
                 return helper.methods.formatNumber(number);
             },
             downloadInvoice() {
-                route.methods.downloadInvoice(this.invoiceNumber);
+                route.methods.downloadInvoice(this.orderNumber);
             },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
