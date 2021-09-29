@@ -40,6 +40,7 @@
                             <th>Email</th>
                             <th>Total</th>
                             <th>Created</th>
+                            <th>Dispatched</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -54,6 +55,10 @@
                             <td>{{order.user.account.email}}</td>
                             <td>{{order.totalPrice}}</td>
                             <td>{{order.created}}</td>
+                            <td>
+                                <span v-if="order.isDispatched" class="badge bg-success text-light">Dispatched: {{order.dispatched}}</span>
+                                <span v-else class="badge bg-danger text-light">Not dispatched</span>
+                            </td>
                             <td>
                                 <i class="fas fa-external-link-square-alt icon" @click="openOrder(order._id)"></i>
                                 <i class="fas fa-file-download icon" @click="downloadInvoice(order.orderNumber)"></i>

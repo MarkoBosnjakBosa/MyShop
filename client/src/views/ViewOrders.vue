@@ -10,7 +10,7 @@
                         <h2 class="accordion-header" :id="'heading_' + order._id">
                             <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + order._id" aria-expanded="false">
                                 Order #: {{order.orderNumber}}
-                                <span v-if="isDispatched" class="badge bg-success text-light dispatchButton">Dispatched</span>
+                                <span v-if="order.isDispatched" class="badge bg-success text-light dispatchButton">Dispatched: {{order.dispatched}}</span>
                                 <span v-else class="badge bg-danger text-light dispatchButton">Not dispatched</span>
                             </button>
                         </h2>
@@ -24,7 +24,7 @@
                                     <div class="col-md-4">
                                         <i class="fas fa-external-link-square-alt icon" @click="openViewOrder(order._id)"></i>
                                         <i class="fas fa-file-download icon" @click="downloadInvoice(order.orderNumber)"></i><br>
-                                        <span v-if="isDispatched" class="badge bg-success text-light dispatchAccordion">Dispatched</span>
+                                        <span v-if="order.isDispatched" class="badge bg-success text-light dispatchAccordion">Dispatched: {{order.dispatched}}</span>
                                         <span v-else class="badge bg-danger text-light dispatchAccordion">Not dispatched</span>
                                     </div>
                                 </div>

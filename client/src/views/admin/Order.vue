@@ -37,7 +37,9 @@
                             </tbody>
                         </table>
                         <div>
-                            <button type="button" class="btn btn-dark" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
+                            <button v-if="!order.isDispatched" type="button" class="btn btn-primary" @click="dispatchOrder()">Dispatch</button>
+                            <button v-else type="button" class="btn btn-success">Dispatched: {{order.dispatched}}</button>
+                            <button type="button" class="btn btn-dark download" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
                             <button type="button" class="btn btn-dark nextButton" @click="toggleTab('account')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
@@ -127,7 +129,7 @@
     const axios = require("axios");
 	
     export default {
-        name: "oder",
+        name: "order",
         components: {
             navigation,
             sidebar
@@ -142,6 +144,8 @@
                     products: [],
                     totalPrice: "",
                     created: "",
+                    isDispatched: false,
+                    dispatched: "",
                     user: {
                         account: {
                             username: "",
@@ -166,6 +170,18 @@
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getOrder/" + this.orderId).then(response => {
                     this.order = response.data.order;
                 }).catch(error => console.log(error));
+            },
+            dispatchOrder() {
+                var confirmed = confirm("Dispatch this order?");
+                if(confirmed) {
+                    var body = {orderId: this.orderId};
+                    axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/dispatchOrder", body).then(response => {
+                        if(response.data.isDispatched) {
+                            this.order.isDispatched = response.data.isDispatched;
+                            this.order.dispatched = response.data.dispatched;
+                        }
+                    }).catch(error => console.log(error));
+                }
             },
             formatNumber(number) {
                 return helper.methods.formatNumber(number);
@@ -205,6 +221,9 @@
         overflow: hidden;
         white-space: nowrap;
         cursor: pointer;
+    }
+    .download {
+        margin-left: 5px;
     }
     .nextButton {
         float: right;

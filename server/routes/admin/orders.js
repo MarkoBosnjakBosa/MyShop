@@ -130,10 +130,24 @@ module.exports = function(app, models, moment, json2csv, fs, path, validations) 
             response.status(200).json({order: order}).end();
         }).catch(error => console.log(error));
     });
+	app.put("/dispatchOrder",(request, response) => {
+		var orderId = request.body.orderId;
+		var dateAndTimeFormat = "DD.MM.YYYY HH:mm";
+		var dispatched = moment().format(dateAndTimeFormat);
+		var query = {_id: orderId};
+		var update = {isDispatched: true, dispatched: dispatched};
+		Order.findOneAndUpdate(query, update).then(order => {
+			if(!validations.isEmpty(order)) {
+            	response.status(200).json({isDispatched: true, dispatched: dispatched}).end();
+			} else {
+				response.status(200).json({isDispatched: false}).end();
+			}
+        }).catch(error => console.log(error));
+	});
     app.get("/downloadInvoice/:orderNumber", (request, response) => {
         var orderNumber = request.params.orderNumber;
         if(orderNumber) {
-            var invoice = path.join(__dirname, "../invoices/Invoice_" + orderNumber + ".pdf");
+            var invoice = path.join(__dirname, "../../invoices/Invoice_" + orderNumber + ".pdf");
             response.download(invoice);
         } else {
             response.status(200).json({downloaded: false}).end();
