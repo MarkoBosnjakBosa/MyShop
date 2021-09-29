@@ -10,10 +10,12 @@
                         <h2 class="accordion-header" :id="'heading_' + order._id">
                             <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + order._id" aria-expanded="false">
                                 Order #: {{order.orderNumber}}
+                                <span v-if="isDispatched" class="badge bg-success text-light dispatchButton">Dispatched</span>
+                                <span v-else class="badge bg-danger text-light dispatchButton">Not dispatched</span>
                             </button>
                         </h2>
-                        <div id="orders" class="accordion">
-                            <div :id="'collapse_' + order._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + order._id" data-bs-parent="#orders">
+                        <div :id="'order_' + order._id" class="accordion">
+                            <div :id="'collapse_' + order._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + order._id" :data-bs-parent="'#order_' + order._id">
                                 <div class="row">
                                     <div class="col-md-8">
                                         Created: <b>{{order.created}}</b><br>
@@ -21,7 +23,9 @@
                                     </div>
                                     <div class="col-md-4">
                                         <i class="fas fa-external-link-square-alt icon" @click="openViewOrder(order._id)"></i>
-                                        <i class="fas fa-file-download icon" @click="downloadInvoice(order.orderNumber)"></i>
+                                        <i class="fas fa-file-download icon" @click="downloadInvoice(order.orderNumber)"></i><br>
+                                        <span v-if="isDispatched" class="badge bg-success text-light dispatchAccordion">Dispatched</span>
+                                        <span v-else class="badge bg-danger text-light dispatchAccordion">Not dispatched</span>
                                     </div>
                                 </div>
                                 <table class="table table-secondary">
@@ -104,8 +108,8 @@
             downloadInvoice(orderNumber) {
                 route.methods.downloadInvoice(orderNumber);
             },
-            openViewOrder(orderNumber) {
-                route.methods.openViewOrder(orderNumber);
+            openViewOrder(orderId) {
+                route.methods.openViewOrder(orderId);
             }
         },
         created() {
@@ -125,6 +129,12 @@
         margin: auto;
         max-width: 800px;
         margin-top: 20px;
+    }
+    .dispatchButton {
+        margin-left: 10px;
+    }
+    .dispatchAccordion {
+        float: right;
     }
     .accordion-collapse {
         padding: 20px;

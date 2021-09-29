@@ -56,6 +56,8 @@ module.exports = function(mongoose) {
 		products: {type: Array, required: true},
 		totalPrice: {type: String, required: true},
 		created: {type: String, required: true},
+		isDispatched: {type: Boolean, required: true},
+		dispatched: {type: String},
 		user: {
 			account: {
 				username: {type: String, required: true},

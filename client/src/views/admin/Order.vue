@@ -1,5 +1,5 @@
 <template>
-    <div id="viewOrder" class="container-fluid">
+    <div id="order" class="container-fluid">
         <div class="d-flex" id="pageContent">
             <sidebar></sidebar>
             <div id="pageStyle">
@@ -7,6 +7,7 @@
                 <h1>Order #: {{order.orderNumber}}</h1>
                 <div class="nav nav-tabs justify-content-center" role="tablist">
                     <button type="button" id="orderNavTab" data-bs-toggle="tab" data-bs-target="#orderTab" class="nav-link active" role="tab">Order</button>
+                    <button type="button" id="accountNavTab" data-bs-toggle="tab" data-bs-target="#accountTab" class="nav-link" role="tab">Account</button>
                     <button type="button" id="addressNavTab" data-bs-toggle="tab" data-bs-target="#addressTab" class="nav-link" role="tab">Address</button>
                 </div>
                 <div class="tab-content">
@@ -36,9 +37,43 @@
                             </tbody>
                         </table>
                         <div>
-                            <button v-if="isDispatched" type="button" class="btn btn-success">Dispatched</button>
-                            <button v-else type="button" class="btn btn-danger">Not dispatched</button>
-                            <button type="button" class="btn btn-dark download" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
+                            <button type="button" class="btn btn-dark" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
+                            <button type="button" class="btn btn-dark nextButton" @click="toggleTab('account')">Next <i class="fas fa-angle-double-right"></i></button>
+                        </div>
+                    </div>
+                    <div id="accountTab" class="tab-pane fade" role="tabpanel">
+                        <div class="mb-3 row">
+                            <label class="col-md-3 col-form-label">Username:</label>
+                            <div class="col-md-9">
+                                <input type="text" id="street" class="form-control" v-model="order.user.account.username" disabled>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-3 col-form-label">Email:</label>
+                            <div class="col-md-9">
+                                <input type="text" id="houseNumber" class="form-control" v-model="order.user.account.email" disabled>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-3 col-form-label">First name:</label>
+                            <div class="col-md-9">
+                                <input type="text" id="city" class="form-control" v-model="order.user.account.firstName" disabled>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-3 col-form-label">Last name:</label>
+                            <div class="col-md-9">
+                                <input type="text" id="zipCode" class="form-control" v-model="order.user.account.lastName" disabled>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-3 col-form-label">Mobile number:</label>
+                            <div class="col-md-9">
+                                <input type="text" id="country" class="form-control" v-model="order.user.account.mobileNumber" disabled>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-dark" @click="toggleTab('order')"><i class="fas fa-angle-double-left"></i> Previous</button>
                             <button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
@@ -74,7 +109,7 @@
                             </div>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-dark" @click="toggleTab('order')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                            <button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
                         </div>
                     </div>
                 </div>
@@ -84,15 +119,15 @@
 </template>
 
 <script>
-    import checkLogin from "../components/CheckLogin.vue";
-    import navigation from "../components/Navigation.vue";
-    import sidebar from "../components/Sidebar.vue";
-    import helper from "../components/Helper.vue";
-    import route from "../components/Route.vue";
+    import checkLogin from "../../components/CheckLogin.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
+    import helper from "../../components/Helper.vue";
+    import route from "../../components/Route.vue";
     const axios = require("axios");
 	
     export default {
-        name: "viewOrder",
+        name: "oder",
         components: {
             navigation,
             sidebar
@@ -107,8 +142,6 @@
                     products: [],
                     totalPrice: "",
                     created: "",
-                    isDispatched: false,
-                    dispatched: "",
                     user: {
                         account: {
                             username: "",
@@ -146,6 +179,7 @@
         },
         created() {
             checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isAdmin();
             this.orderId = this.$route.params.orderId;
             this.getOrder();
         }
@@ -158,7 +192,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #orderTab, #addressTab {
+    #orderTab, #accountTab, #addressTab {
         margin: auto;
         max-width: 800px;
         margin-top: 20px;
@@ -171,9 +205,6 @@
         overflow: hidden;
         white-space: nowrap;
         cursor: pointer;
-    }
-    .download {
-        margin-left: 5px;
     }
     .nextButton {
         float: right;

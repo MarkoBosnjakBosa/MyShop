@@ -50,6 +50,12 @@
             openTechnicalData() {
                 router.push("/admin/technical/data");
             },
+            openOrders() {
+                router.push("/admin/orders");
+            },
+            openOrder(orderId) {
+                router.push("/admin/order/" + orderId);
+            },
             openHomeSettings() {
                 router.push("/admin/home/settings");
             },

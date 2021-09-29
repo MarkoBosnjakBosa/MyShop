@@ -9,6 +9,7 @@
             <li class="list-group-item list-group-item-action bg-light" @click="openCreateProduct()">Create Product</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openCategories()">Categories</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openTechnicalData()">Technical Data</li>
+            <li class="list-group-item list-group-item-action bg-light" @click="openOrders()">Orders</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openHomeSettings()">Home Settings</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openContactSettings()">Contact Settings</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openContacts()">Contacts</li>
@@ -59,6 +60,9 @@
             },
             openTechnicalData() {
                 route.methods.openTechnicalData();
+            },
+            openOrders() {
+                route.methods.openOrders();
             },
             openHomeSettings() {
                 route.methods.openHomeSettings();
