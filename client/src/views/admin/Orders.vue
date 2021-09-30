@@ -161,10 +161,10 @@
                 }
             },
             downloadOrders() {
-                var body = {search: this.search, page: this.page, limit: this.limit, orderBy: this.orderBy};
+                var body = {search: this.search, type: this.type, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadOrders", body).then(response => {
                     if(response.data.downloaded) {
-                        route.methods.downloadOrders(response.data.fileName);
+                        route.methods.downloadCsvFile(response.data.fileName);
                     }
                 }).catch(error => console.log(error));
             },

@@ -34,7 +34,7 @@
                                     <th>{{order.totalPrice}}</th>
                                 </tr>
                                 <tr>
-                                    <th colspan="4">Created</th>
+                                    <th colspan="4">Created at</th>
                                     <th>{{order.createdAt}}</th>
                                 </tr>
                             </tbody>

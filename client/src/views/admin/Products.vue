@@ -132,7 +132,7 @@
                 var body = {search: this.search, category: this.category, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadProducts", body).then(response => {
                     if(response.data.downloaded) {
-                        route.methods.downloadProducts(response.data.fileName);
+                        route.methods.downloadCsvFile(response.data.fileName);
                     }
                 }).catch(error => console.log(error));
             },

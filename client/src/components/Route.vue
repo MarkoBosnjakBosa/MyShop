@@ -101,10 +101,7 @@
             downloadInvoice(orderNumber) {
                 window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + orderNumber, "_blank");
             },
-            downloadProducts(fileName) {
-                window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/exports/" + fileName, "_blank");
-            },
-            downloadOrders(fileName) {
+            downloadCsvFile(fileName) {
                 window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/exports/" + fileName, "_blank");
             },
             logout() {
