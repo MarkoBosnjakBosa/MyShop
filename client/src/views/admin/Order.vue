@@ -31,14 +31,18 @@
                                     <td>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</td>
                                 </tr>
                                 <tr>
-                                    <th colspan="4" class="total">Total</th>
-                                    <th class="total">{{order.totalPrice}}</th>
+                                    <th colspan="4">Total</th>
+                                    <th>{{order.totalPrice}}</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="4">Created at</th>
+                                    <th>{{order.createdAt}}</th>
                                 </tr>
                             </tbody>
                         </table>
                         <div>
                             <button v-if="!order.isDispatched" type="button" class="btn btn-primary" @click="dispatchOrder()">Dispatch</button>
-                            <button v-else type="button" class="btn btn-success">Dispatched: {{order.dispatched}}</button>
+                            <button v-else type="button" class="btn btn-success">Dispatched: {{order.dispatchedAt}}</button>
                             <button type="button" class="btn btn-dark download" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
                             <button type="button" class="btn btn-dark nextButton" @click="toggleTab('account')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
@@ -143,9 +147,9 @@
                     paymentType: "",
                     products: [],
                     totalPrice: "",
-                    created: "",
+                    createdAt: "",
                     isDispatched: false,
-                    dispatched: "",
+                    dispatchedAt: "",
                     user: {
                         account: {
                             username: "",
@@ -178,7 +182,7 @@
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/dispatchOrder", body).then(response => {
                         if(response.data.isDispatched) {
                             this.order.isDispatched = response.data.isDispatched;
-                            this.order.dispatched = response.data.dispatched;
+                            this.order.dispatchedAt = response.data.dispatchedAt;
                         }
                     }).catch(error => console.log(error));
                 }

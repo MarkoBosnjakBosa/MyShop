@@ -22,17 +22,17 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 			case "paymentTypeDesc":
 				sort = {"paymentType": -1};
 				break;
-			case "createdAsc":
-				sort = {"created": 1};
+			case "createdAtAsc":
+				sort = {"createdAt": 1};
 				break;
-			case "createdDesc":
-				sort = {"created": -1};
+			case "createdAtDesc":
+				sort = {"createdAt": -1};
 				break;
-            case "dispatchedAsc":
-                sort = {"dispatched": 1};
+            case "dispatchedAtAsc":
+                sort = {"dispatchedAt": 1};
                 break;
             case "dispatchedDesc":
-                sort = {"dispatched": -1};
+                sort = {"dispatchedAt": -1};
                 break;
 			default:
 				sort = {};
@@ -105,17 +105,17 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 			case "paymentTypeDesc":
 				sort = {"paymentType": -1};
 				break;
-			case "createdAsc":
-				sort = {"created": 1};
+			case "createdAtAsc":
+				sort = {"createdAt": 1};
 				break;
-			case "createdDesc":
-				sort = {"created": -1};
+			case "createdAtDesc":
+				sort = {"createdAt": -1};
 				break;
-            case "dispatchedAsc":
-                sort = {"dispatched": 1};
+            case "dispatchedAtAsc":
+                sort = {"dispatchedAt": 1};
                 break;
-            case "dispatchedDesc":
-                sort = {"dispatched": -1};
+            case "dispatchedAtDesc":
+                sort = {"dispatchedAt": -1};
                 break;
 			default:
 				sort = {};
@@ -140,7 +140,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
         var query = search ? {$and: [typeQuery, {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
 		Order.find(query).sort(sort).skip(skip).limit(limit).then(orders => {
 			if(!validations.isEmpty(orders)) {
-				var fields = ["_id", "orderNumber", "userId", "paymentType", "totalPrice", "created", "isDispatched", "dispatched"];
+				var fields = ["_id", "orderNumber", "userId", "paymentType", "totalPrice", "createdAt", "isDispatched", "dispatchedAt"];
 				var csv;
 				try {
 					csv = json2csv(orders, {fields});
@@ -168,16 +168,16 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 	app.put("/dispatchOrder",(request, response) => {
 		var orderId = request.body.orderId;
 		var dateAndTimeFormat = "DD.MM.YYYY HH:mm";
-		var dispatched = moment().format(dateAndTimeFormat);
+		var dispatchedAt = moment().format(dateAndTimeFormat);
 		var orderQuery = {_id: orderId};
-		var update = {isDispatched: true, dispatched: dispatched};
+		var update = {isDispatched: true, dispatchedAt: dispatchedAt};
 		Order.findOneAndUpdate(orderQuery, update).then(order => {
 			if(!validations.isEmpty(order)) {
 				var userQuery = {_id: order.userId};
 				User.findOne(userQuery).then(user => {
 					if(!validations.isEmpty(user)) {
 						emailEvents.emit("sendOrderDispatchedEmail", user.account, order.orderNumber, order._id);
-						response.status(200).json({isDispatched: true, dispatched: dispatched}).end();
+						response.status(200).json({isDispatched: true, dispatchedAt: dispatchedAt}).end();
 					} else {
 						response.status(200).json({isDispatched: false}).end();
 					}
@@ -187,11 +187,32 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 			}
         }).catch(error => console.log(error));
 	});
+	app.delete("/deleteOrder/:orderId", (request, response) => {
+		var orderId = request.params.orderId;
+		if(orderId) {
+			var query = {_id: orderId};
+			var options = {new: true};
+			Order.findOneAndRemove(query, options).then(order => {
+				if(!validations.isEmpty(order)) {
+					fs.unlink(path.join(__dirname, "../../invoices/Invoice_" + order.orderNumber + ".pdf"), function(error) {});
+					response.status(200).json({deleted: true}).end();
+				} else {
+					response.status(200).json({deleted: false}).end(); 
+				}
+			}).catch(error => console.log(error));
+		} else {
+			response.status(200).json({deleted: false}).end();
+		}
+	});
     app.get("/downloadInvoice/:orderNumber", (request, response) => {
         var orderNumber = request.params.orderNumber;
         if(orderNumber) {
-            var invoice = path.join(__dirname, "../../invoices/Invoice_" + orderNumber + ".pdf");
-            response.download(invoice);
+			var invoice = path.join(__dirname, "../../invoices/Invoice_" + orderNumber + ".pdf");
+			if(fs.existsSync(invoice)) {
+            	response.download(invoice);
+			} else {
+				response.status(200).json({downloaded: false}).end();
+			}
         } else {
             response.status(200).json({downloaded: false}).end();
         }

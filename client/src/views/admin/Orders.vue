@@ -29,10 +29,10 @@
                                 <option value="orderNumberDesc">Order number &#129047;</option>
                                 <option value="paymentTypeAsc">Payment type &#129045;</option>
                                 <option value="paymentTypeDesc">Payment type &#129047;</option>
-                                <option value="createdAsc">Created &#129045;</option>
-                                <option value="createdDesc">Created &#129047;</option>
-                                <option value="dispatchedAsc">Dispatched &#129045;</option>
-                                <option value="dispatchedDesc">Dispatched &#129047;</option>
+                                <option value="createdAtAsc">Created at &#129045;</option>
+                                <option value="createdAtDesc">Created at &#129047;</option>
+                                <option value="dispatchedAtAsc">Dispatched at &#129045;</option>
+                                <option value="dispatchedAtDesc">Dispatched at &#129047;</option>
                             </select>
                         </div>
                         <div class="btn-group mb-3 col-md-2">
@@ -58,7 +58,7 @@
                     </thead>
                     <tbody>
                         <tr v-if="!orders.length">
-                            <td colspan="7" class="noOrders">No orders found!</td>
+                            <td colspan="9" class="noOrders">No orders found!</td>
                         </tr>
                         <tr v-for="(order, index) in orders" :key="order._id">
                             <th>{{++index}}</th>
@@ -67,15 +67,16 @@
                             <td>{{order.user.account.username}} <i class="fas fa-external-link-square-alt icon" @click="openViewProfile(order.userId)"></i></td>
                             <td>{{order.paymentType}}</td>
                             <td>{{order.totalPrice}}</td>
-                            <td>{{order.created}}</td>
+                            <td>{{order.createdAt}}</td>
                             <td>
-                                <span v-if="order.isDispatched" class="badge bg-success text-light">Dispatched: {{order.dispatched}}</span>
+                                <span v-if="order.isDispatched" class="badge bg-success text-light">Dispatched: {{order.dispatchedAt}}</span>
                                 <span v-else class="badge bg-danger text-light">Not dispatched</span>
                             </td>
                             <td>
                                 <i class="fas fa-external-link-square-alt icon" @click="openOrder(order._id)"></i>
                                 <i class="fas fa-file-download icon" @click="downloadInvoice(order.orderNumber)"></i>
                                 <i v-if="!order.isDispatched" class="fas fa-truck icon" @click="dispatchOrder(order._id, order.orderNumber)"></i>
+                                <i class="fas fa-trash icon" @click="deleteOrder(order._id, order.orderNumber)"></i>
                             </td>
                         </tr>
                     </tbody>
@@ -133,12 +134,22 @@
                             this.orders = this.orders.map(order => {
                                 if(order._id == orderId) {
                                     order.isDispatched = response.data.isDispatched;
-                                    order.dispatched = response.data.dispatched;
+                                    order.dispatchedAt = response.data.dispatchedAt;
                                     return order;
                                 } else {
                                     return order;
                                 }
                             });
+                        }
+                    }).catch(error => console.log(error));
+                }
+            },
+            deleteOrder(orderId, orderNumber) {
+                var confirmed = confirm("Delete order #" + orderNumber + "?");
+                if(confirmed) {
+                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteOrder/" + orderId).then(response => {
+                        if(response.data.deleted) {
+                            this.orders = this.orders.filter(order => order._id != orderId);
                         }
                     }).catch(error => console.log(error));
                 }

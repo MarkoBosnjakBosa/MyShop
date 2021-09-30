@@ -14,16 +14,16 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 		var paymentType = request.body.paymentType;
 		var products = request.body.products;
 		var totalPrice = request.body.totalPrice;
-		var created = moment(new Date()).format("DD.MM.YYYY HH:mm");
+		var createdAt = moment(new Date()).format("DD.MM.YYYY HH:mm");
 		var query = {"account.username": username};
 		User.findOne(query).then(user => {
 			user.account.password = null;
 			user.account.isAdmin = null;
 			Order.countDocuments().then(count => {
 				var orderNumber = ++count;
-				var newOrder = getOrderScheme(Order, orderNumber, user._id, paymentType, products, totalPrice, created, false, "", {account: user.account, address: user.address});
+				var newOrder = getOrderScheme(Order, orderNumber, user._id, paymentType, products, totalPrice, createdAt, false, "", {account: user.account, address: user.address});
 				newOrder.save().then(order => {
-					createInvoice(orderNumber, created, paymentType, user, products, totalPrice);
+					createInvoice(orderNumber, createdAt, paymentType, user, products, totalPrice);
 					updateQuantities(products);
 					response.status(200).json({finalized: true, orderNumber: orderNumber}).end();
 				}).catch(error => console.error(error));
@@ -31,7 +31,7 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 		}).catch(error => console.error(error));
 	});
 
-	function createInvoice(orderNumber, created, paymentType, user, products, totalPrice) {
+	function createInvoice(orderNumber, createdAt, paymentType, user, products, totalPrice) {
 		products = products.map(product => {
 			var updatedProduct = {};
 			updatedProduct.title = product.title;
@@ -41,7 +41,7 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 			return updatedProduct;
 		});
 		var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/invoice/invoice.html"), "utf-8"));
-		var html = htmlCompiled({orderNumber: orderNumber, created: created, paymentType: paymentType, user: user, products: products, totalPrice: totalPrice});
+		var html = htmlCompiled({orderNumber: orderNumber, createdAt: createdAt, paymentType: paymentType, user: user, products: products, totalPrice: totalPrice});
 		pdf.create(html).toFile(path.join(__dirname, "../invoices/Invoice_" + orderNumber + ".pdf"), function(error, response) {
 			emailEvent.emit("sendInvoiceEmail", user.account, orderNumber);
 		});
@@ -56,7 +56,7 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 	function formatNumber(number) {
 		return Number(number).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
 	}
-	function getOrderScheme(Order, orderNumber, userId, paymentType, products, totalPrice, created, isDispatched, dispatched, user) {
-		return new Order({orderNumber: orderNumber, userId: userId, paymentType: paymentType, products: products, totalPrice: totalPrice, created: created, isDispatched: isDispatched, dispatched: dispatched, user: user});
+	function getOrderScheme(Order, orderNumber, userId, paymentType, products, totalPrice, createdAt, isDispatched, dispatchedAt, user) {
+		return new Order({orderNumber: orderNumber, userId: userId, paymentType: paymentType, products: products, totalPrice: totalPrice, createdAt: createdAt, isDispatched: isDispatched, dispatchedAt: dispatchedAt, user: user});
 	}
 }

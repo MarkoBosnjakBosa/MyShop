@@ -10,7 +10,7 @@
                         <h2 class="accordion-header" :id="'heading_' + order._id">
                             <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + order._id" aria-expanded="false">
                                 Order #<b>{{order.orderNumber}}</b>
-                                <span v-if="order.isDispatched" class="badge bg-success text-light dispatchButton">Dispatched: {{order.dispatched}}</span>
+                                <span v-if="order.isDispatched" class="badge bg-success text-light dispatchButton">Dispatched: {{order.dispatchedAt}}</span>
                                 <span v-else class="badge bg-danger text-light dispatchButton">Not dispatched</span>
                             </button>
                         </h2>
@@ -18,13 +18,13 @@
                             <div :id="'collapse_' + order._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + order._id" :data-bs-parent="'#order_' + order._id">
                                 <div class="row">
                                     <div class="col-md-8">
-                                        Created: <b>{{order.created}}</b><br>
+                                        Created at: <b>{{order.createdAt}}</b><br>
                                         Payment type: <b>{{order.paymentType}}</b>
                                     </div>
                                     <div class="col-md-4">
                                         <i class="fas fa-external-link-square-alt icon" @click="openViewOrder(order._id)"></i>
                                         <i class="fas fa-file-download icon" @click="downloadInvoice(order.orderNumber)"></i><br>
-                                        <span v-if="order.isDispatched" class="badge bg-success text-light dispatchAccordion">Dispatched: {{order.dispatched}}</span>
+                                        <span v-if="order.isDispatched" class="badge bg-success text-light dispatchAccordion">Dispatched: {{order.dispatchedAt}}</span>
                                         <span v-else class="badge bg-danger text-light dispatchAccordion">Not dispatched</span>
                                     </div>
                                 </div>
