@@ -9,6 +9,7 @@
                     <button type="button" id="orderNavTab" data-bs-toggle="tab" data-bs-target="#orderTab" class="nav-link active" role="tab">Order</button>
                     <button type="button" id="accountNavTab" data-bs-toggle="tab" data-bs-target="#accountTab" class="nav-link" role="tab">Account</button>
                     <button type="button" id="addressNavTab" data-bs-toggle="tab" data-bs-target="#addressTab" class="nav-link" role="tab">Address</button>
+                    <button type="button" id="deleteNavTab" data-bs-toggle="tab" data-bs-target="#deleteTab" class="nav-link" role="tab">Delete</button>
                 </div>
                 <div class="tab-content">
                     <div id="orderTab" class="tab-pane fade active show" role="tabpanel">
@@ -51,31 +52,34 @@
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">Username:</label>
                             <div class="col-md-9">
-                                <input type="text" id="street" class="form-control" v-model="order.user.account.username" disabled>
+                                <input type="text" id="username" class="form-control" v-model="order.user.account.username" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">Email:</label>
                             <div class="col-md-9">
-                                <input type="text" id="houseNumber" class="form-control" v-model="order.user.account.email" disabled>
+                                <input type="text" id="email" class="form-control" v-model="order.user.account.email" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">First name:</label>
                             <div class="col-md-9">
-                                <input type="text" id="city" class="form-control" v-model="order.user.account.firstName" disabled>
+                                <input type="text" id="firstName" class="form-control" v-model="order.user.account.firstName" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">Last name:</label>
                             <div class="col-md-9">
-                                <input type="text" id="zipCode" class="form-control" v-model="order.user.account.lastName" disabled>
+                                <input type="text" id="lastName" class="form-control" v-model="order.user.account.lastName" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">Mobile number:</label>
                             <div class="col-md-9">
-                                <input type="text" id="country" class="form-control" v-model="order.user.account.mobileNumber" disabled>
+                                <div class="input-group">
+                                    <div class="input-group-text countryCodePrefix">+</div>
+                                    <input type="text" id="mobileNumber" class="form-control" v-model="order.user.account.mobileNumber" disabled>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -116,6 +120,15 @@
                         </div>
                         <div>
                             <button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                            <button type="button" class="btn btn-dark nextButton" @click="toggleTab('delete')">Next <i class="fas fa-angle-double-right"></i></button>
+                        </div>
+                    </div>
+                    <div id="deleteTab" class="tab-pane fade" role="tabpanel">
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-danger" @click="deleteOrder()">Delete <i class="fas fa-trash"></i></button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-dark previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
                         </div>
                     </div>
                 </div>
@@ -187,6 +200,16 @@
                     }).catch(error => console.log(error));
                 }
             },
+            deleteOrder() {
+                var confirmed = confirm("Delete order #" + this.order.orderNumber + "?");
+                if(confirmed) {
+                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteOrder/" + this.orderId).then(response => {
+                        if(response.data.deleted) {
+                            route.methods.openOrders();
+                        }
+                    }).catch(error => console.log(error));
+                }
+            },
             formatNumber(number) {
                 return helper.methods.formatNumber(number);
             },
@@ -212,10 +235,13 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #orderTab, #accountTab, #addressTab {
+    #orderTab, #accountTab, #addressTab, #deleteTab {
         margin: auto;
         max-width: 800px;
         margin-top: 20px;
+    }
+    #deleteTab {
+        text-align: center;
     }
     table {
         table-layout: fixed;
@@ -229,8 +255,13 @@
     .download {
         margin-left: 5px;
     }
+    .previousButton {
+        float: left;
+    }
     .nextButton {
         float: right;
-        margin-left: 5px;
+    }
+    .countryCodePrefix {
+        background-color: #fff;
     }
 </style>

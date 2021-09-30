@@ -44,7 +44,10 @@
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">Mobile number:</label>
                             <div class="col-md-9">
-                                <input type="text" id="mobileNumber" class="form-control" v-model="address.mobileNumber" disabled>
+                                <div class="input-group">
+                                    <div class="input-group-text countryCodePrefix">+</div>
+                                    <input type="text" id="mobileNumber" class="form-control" v-model="address.mobileNumber" disabled>
+                                </div>
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -223,6 +226,9 @@
         margin: auto;
         max-width: 600px;
         margin-top: 20px;
+    }
+    .countryCodePrefix {
+        background-color: #fff;
     }
     .stripe, .payPal {
         background-color: #f4f4f2;
