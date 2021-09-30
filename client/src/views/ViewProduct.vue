@@ -36,7 +36,7 @@
                                 <div class="col-md-6 price"><b>Price: {{formatNumber(product.price)}}</b></div>
                                 <div v-if="product.quantity" class="col-md-6">
                                     <div class="mb-3 input-group">
-                                        <input type="number" id="selectedQuantity" min="1" :max="product.quantity" class="form-control" :class="{'errorField' : product.selectedQuantity < 1 || product.selectedQuantity > product.quantity || !Number.isInteger(product.selectedQuantity)}" v-model="product.selectedQuantity"/>
+                                        <input type="number" id="selectedQuantity" min="1" :max="product.quantity" class="form-control" :class="{'errorField' : !Number.isInteger(product.selectedQuantity) || product.selectedQuantity < 1 || product.selectedQuantity > product.quantity}" v-model="product.selectedQuantity"/>
                                         <div class="input-group-append">
                                             <button type="button" class="btn btn-primary" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'" @click="addToShoppingCart()">Add to cart</button>
                                         </div>
@@ -172,7 +172,7 @@
                 }).catch(error => console.log(error));
             },
             addToShoppingCart() {
-                if(this.product.selectedQuantity > 0 && this.product.selectedQuantity <= this.product.quantity && Number.isInteger(this.product.selectedQuantity)) {
+                if(Number.isInteger(this.product.selectedQuantity) && this.product.selectedQuantity > 0 && this.product.selectedQuantity <= this.product.quantity) {
                     var product = {};
                     product._id = this.product._id;
                     product.title = this.product.title;

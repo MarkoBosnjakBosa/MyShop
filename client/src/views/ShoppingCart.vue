@@ -130,7 +130,7 @@
                 var totalCost = 0;
                 var updatedQuantities = [];
                 this.products.forEach(function(product) {
-                    if(product.selectedQuantity < 1) {
+                    if(!Number.isInteger(Number(product.selectedQuantity)) || product.selectedQuantity < 1) {
                         product.selectedQuantity = 1;
                         updatedQuantities = [...updatedQuantities, product.title];
                     }
