@@ -125,7 +125,7 @@
 									<small v-if="errors.passwordError" class="form-text errorInput">Please provide a valid password!</small>
 								</div>
 								<div>
-									<button type="button" class="btn btn-dark previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
+									<button type="button" class="btn btn-dark" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
 									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
 								</div>
 							</form>
