@@ -1,4 +1,4 @@
-module.exports = function(app, models, validation) {
+module.exports = function(app, models, validations) {
     const User = models.User;
     app.get("/getUser/:username", (request, response) => {
         var username = request.params.username;
@@ -9,7 +9,7 @@ module.exports = function(app, models, validation) {
             response.status(200).json({account: user.account, address: user.address}).end();
         }).catch(error => console.log(error));
     });
-    app.put("/editAccount", validation.validateAccountEdit, (request, response) => {
+    app.put("/editAccount", validations.validateAccountEdit, (request, response) => {
         var account = request.body.account;
         var username = account.username;
         var email = account.email;
@@ -23,7 +23,7 @@ module.exports = function(app, models, validation) {
             response.status(200).json({edited: true}).end();
         }).catch(error => console.log(error));
     });
-    app.put("/editAddress", validation.validateAddressEdit, (request, response) => {
+    app.put("/editAddress", validations.validateAddressEdit, (request, response) => {
         var username = request.body.username;
         var address = request.body.address;
         var street = address.street;
