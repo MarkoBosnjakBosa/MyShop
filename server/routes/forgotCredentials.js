@@ -1,6 +1,6 @@
 module.exports = function(app, models, bcryptjs, emailEvents, validations) {
-    const User = models.User;
-    app.post("/forgotCredentials", validations.validateForgotCredentials, (request, response) => {
+	const User = models.User;
+	app.post("/forgotCredentials", validations.validateForgotCredentials, (request, response) => {
 		var email = request.body.email;
 		var option = request.body.option;
 		var query = {"account.email": email}; 
@@ -31,13 +31,13 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 			}
 		}).catch(error => console.log(error));
 	});
-    app.post("/sendConfirmationEmail", (request, response) => {
-        var username = request.body.username;
-        var query = {"account.username": username};
-        var confirmationToken = Math.floor(100000 + Math.random() * 900000);
-        var update = {"confirmation.confirmationToken": confirmationToken};
+	app.post("/sendConfirmationEmail", (request, response) => {
+		var username = request.body.username;
+		var query = {"account.username": username};
+		var confirmationToken = Math.floor(100000 + Math.random() * 900000);
+		var update = {"confirmation.confirmationToken": confirmationToken};
 		var options = {new: true};
-        User.findOneAndUpdate(query, update, options).then(user => {
+		User.findOneAndUpdate(query, update, options).then(user => {
 			if(!validations.isEmpty(user)) {
 				emailEvents.emit("sendConfirmationEmail", user.account, user.confirmation.confirmationToken);
 				setTimeout(function() { deleteToken("confirmationToken", user.account.username); }, 5 * 60 * 1000);
@@ -45,8 +45,8 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 			} else {
 				response.status(200).json({emailSent: false}).end();
 			}
-        })
-    });
+		}).catch(error => console.log(error));
+	});
 	app.put("/resetPassword", validations.validatePasswordResetting, (request, response) => {
 		var username = request.body.username;
 		var password = request.body.password;
@@ -81,6 +81,6 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 		} else {
 			update = {"confirmation.confirmationToken": ""};
 		}
-        User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
+		User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
     }
 }
