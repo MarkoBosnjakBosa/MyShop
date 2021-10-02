@@ -4,9 +4,9 @@
 			<sidebar></sidebar>
 			<div id="pageStyle">
 				<navigation></navigation>
-				<div class="profileForms">
+				<div class="profileInformation">
 					<h1>Profile</h1>
-					<p>Here you can edit your account's information.</p>
+					<p>Here you can edit your profile's information.</p>
 					<hr>
 					<div class="nav nav-tabs justify-content-center" role="tablist">
 						<button type="button" id="accountNavTab" data-bs-toggle="tab" data-bs-target="#accountTab" class="nav-link active" role="tab">Account</button>
@@ -101,7 +101,7 @@
 									<small v-if="errors.address.countryError && submittings.addressSubmitting" class="form-text errorInput">Please provide a valid country!</small>
 								</div>
 								<div>
-									<button type="button" class="btn btn-dark previousButton" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
+									<button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
 									<button type="button" class="btn btn-dark nextButton" @click="toggleTab('resetPassword')">Next <i class="fas fa-angle-double-right"></i></button>
 									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
 								</div>
@@ -212,24 +212,24 @@
 				this.clearFirstNameStatus();
 				this.clearLastNameStatus();
 				this.clearMobileNumberStatus();
-				var allowSubmit = true;
+				var allowEdit = true;
 				if(this.invalidEmail) {
 					this.errors.account.emailError = true;
-					allowSubmit = false;
+					allowEdit = false;
 				}
 				if(this.invalidFirstName) {
 					this.errors.account.firstNameError = true;
-					allowSubmit = false;
+					allowEdit = false;
 				}
 				if(this.invalidLastName) {
 					this.errors.account.lastNameError = true;
-					allowSubmit = false;
+					allowEdit = false;
 				}
 				if(this.invalidMobileNumber) {
 					this.errors.account.mobileNumberError = true;
-					allowSubmit = false;
+					allowEdit = false;
 				}
-				if(!allowSubmit) {
+				if(!allowEdit) {
 					this.edits.accountEdited = false;
 					return;
 				}
@@ -256,28 +256,28 @@
 				this.clearCityStatus();
 				this.clearZipCodeStatus();
 				this.clearCountryStatus();
-				var allowSubmit = true;
+				var allowEdit = true;
 				if(this.invalidStreet) {
 					this.errors.address.streetError = true;
-					allowSubmit = false;
+					allowEdit = false;
 				}
 				if(this.invalidHouseNumber) {
 					this.errors.address.houseNumberError = true;
-					allowSubmit = false;
+					allowEdit = false;
 				}
 				if(this.invalidCity) {
 					this.errors.address.cityError = true;
-					allowSubmit = false;
+					allowEdit = false;
 				}
 				if(this.invalidZipCode) {
 					this.errors.address.zipCodeError = true;
-					allowSubmit = false;
+					allowEdit = false;
 				}
 				if(this.invalidCountry) {
 					this.errors.address.countryError = true;
-					allowSubmit = false;
+					allowEdit = false;
 				}
-				if(!allowSubmit) {
+				if(!allowEdit) {
 					this.edits.addressEdited = false;
 					return;
 				}
@@ -363,7 +363,7 @@
 </script>
 
 <style scoped>
-	.profileForms {
+	.profileInformation {
 		margin: auto;
 		max-width: 500px;
 		margin-top: 20px;
@@ -374,9 +374,6 @@
 	.countryCodePrefix {
 		background-color: #fff;
 	}
-	.previousButton {
-		float: left;
-	} 
 	.nextButton {
 		float: right;
 		margin-left: 5px;
