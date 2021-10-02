@@ -1,8 +1,8 @@
 <template>
 	<div id="resetPassword" class="container-fluid">
 		<div class="d-flex" id="pageContent">
-            <sidebar></sidebar>
-            <div id="pageStyle">
+			<sidebar></sidebar>
+			<div id="pageStyle">
 				<navigation></navigation>
 				<form autocomplete="off" @submit.prevent="resetPassword()">
 					<h1>Reset password</h1>
