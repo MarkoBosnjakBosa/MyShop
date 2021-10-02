@@ -1,8 +1,8 @@
 <template>
 	<div id="login" class="container-fluid">
 		<div class="d-flex" id="pageContent">
-            <sidebar></sidebar>
-            <div id="pageStyle">
+			<sidebar></sidebar>
+			<div id="pageStyle">
 				<navigation></navigation>
 				<form autocomplete="off" @submit.prevent="loginUser()">
 					<h1>Login</h1>
@@ -16,12 +16,12 @@
 						<div class="input-group">
 							<input type="password" id="password" class="form-control" :class="{'errorField' : errors.passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
 							<div class="input-group-append">
-								<button type="button" class="btn btn-light" :class="{'errorIcon' : errors.passwordError && submitting}" @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+								<button type="button" class="btn btn-light" :class="{'errorIcon' : errors.passwordError && submitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, including uppercase and lowercase letters, digits and special characters." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
 							</div>
 						</div>
 						<small v-if="errors.passwordError && submitting" class="errorInput">Please provide a valid password!</small>
 					</div>
-					<div v-if="errors.notConfirmed" class="mb-3 loginFailed">You have to confirm your registration!</div>
+					<div v-if="errors.notConfirmed" class="mb-3 loginFailed">You have to confirm the registration!</div>
 					<div v-if="errors.noPasswordMatch" class="mb-3 loginFailed">Password does not match!</div>
 					<div class="mb-3 forgotCredentials">
 						<a href="#" @click="openForgotCredentials()">Forgot credentials?</a>
@@ -29,7 +29,7 @@
 					<div class="mb-3 submit">
 						<button type="submit" class="btn btn-primary submitButton">Log in</button>
 					</div>
-					<div class="mb-3 register">Not a member? <a href="#" @click="openRegistration()">Register</a></div>
+					<div class="register">Not a member? <a href="#" @click="openRegistration()">Register</a></div>
 				</form>
 			</div>
 		</div>
@@ -91,17 +91,18 @@
 				this.submitting = true;
 				this.clearUsernameStatus();
 				this.clearPasswordStatus();
-				var allowSubmit = true;
+				var allowLogin = true;
 				if(this.invalidUsername) {
 					this.errors.usernameError = true;
-					allowSubmit = false;
+					allowLogin = false;
 				}
 				if(this.invalidPassword) {
 					this.errors.passwordError = true;
-					allowSubmit = false;
+					allowLogin = false;
 				}
-				if(!allowSubmit) {
-					this.errors.noPasswordMatch = false, this.errors.notConfirmed = false;
+				if(!allowLogin) {
+					this.errors.noPasswordMatch = false;
+					this.errors.notConfirmed = false;
 					return;
 				}
 				var body = {username: this.user.username, password: this.user.password};
@@ -140,12 +141,12 @@
 					}
 				}).catch(error => console.log(error));
 			},
-			togglePassword() { helper.methods.togglePassword(); },
 			openHome() { 
 				var isAdmin = this.$store.getters.isAdmin;
 				if(isAdmin) route.methods.openProducts();
 				else route.methods.openHome();
 			},
+			togglePassword() { helper.methods.togglePassword(); },
 			openForgotCredentials() { route.methods.openForgotCredentials(); },
 			openRegistration() { route.methods.openRegistration(); },
 			clearUsernameStatus() { this.errors.usernameError = false; },
