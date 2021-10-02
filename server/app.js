@@ -67,7 +67,7 @@ http.listen(process.env.SERVER_PORT, function() {
 
 function createAdmin() {
     const User = models.User;
-    var password = "Admin10!";
+    var password = process.env.ADMIN_DEFAULT_PASSWORD;
     bcryptjs.genSalt(10, (error, salt) => {
         bcryptjs.hash(password, salt, (error, hashedPassword) => {
             var query = {"account.username": "admin"};

@@ -1,10 +1,10 @@
 <template>
 	<div id="registration" class="container-fluid">
 		<div class="d-flex" id="pageContent">
-            <sidebar></sidebar>
-            <div id="pageStyle">
+			<sidebar></sidebar>
+			<div id="pageStyle">
 				<navigation></navigation>
-				<form autocomplete="off" @submit.prevent="registerUser()">
+				<form autocomplete="off" @submit.prevent="registerUser()" novalidate>
 					<h1>Register</h1>
 					<p>Please fill in this form to create an account.</p>
 					<hr>
@@ -17,7 +17,7 @@
 						<div id="accountTab" class="tab-pane fade active show">
 							<div v-if="userRegistered" class="alert alert-success alert-dismissible" role="alert">
 								<div>User has been successfully registered!</div>
-								<div>Please visit your inbox and confirm your registration!</div>
+								<div>Please visit your inbox and confirm the registration!</div>
 								<button type="button" class="btn-close" @click="closeRegistrationAlert()"></button>
 							</div>
 							<div class="mb-3">
@@ -106,7 +106,7 @@
 								<small v-if="errors.address.countryError && submitting" class="form-text errorInput">Please provide a valid country!</small>
 							</div>
 							<div>
-								<button type="button" class="btn btn-dark previousButton" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
+								<button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
 								<button type="button" class="btn btn-dark nextButton" @click="toggleTab('check')">Next <i class="fas fa-angle-double-right"></i></button>
 							</div>
 						</div>
@@ -119,7 +119,7 @@
 							<div class="mb-3 recaptcha">
 								<div class="g-recaptcha" :data-sitekey="reCaptchaSiteKey"></div>
 							</div>
-							<button type="button" class="btn btn-dark previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
+							<button type="button" class="btn btn-dark" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
 							<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
 						</div>
 					</div>
@@ -200,56 +200,56 @@
 				this.clearZipCodeStatus();
 				this.clearCountryStatus();
 				this.clearReCaptchaTokenStatus();
-				var allowSubmit = true;
+				var allowRegistration = true;
 				if(this.invalidUsername) {
 					this.errors.account.usernameError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(this.invalidEmail) {
 					this.errors.account.emailError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(this.invalidPassword) {
 					this.errors.account.passwordError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(this.invalidFirstName) {
 					this.errors.account.firstNameError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(this.invalidLastName) {
 					this.errors.account.lastNameError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(this.invalidMobileNumber) {
 					this.errors.account.mobileNumberError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(this.invalidStreet) {
 					this.errors.address.streetError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(this.invalidHouseNumber) {
 					this.errors.address.houseNumberError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(this.invalidCity) {
 					this.errors.address.cityError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(this.invalidZipCode) {
 					this.errors.address.zipCodeError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(this.invalidCountry) {
 					this.errors.address.countryError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
 				if(grecaptcha.getResponse() == "" || grecaptcha.getResponse() == undefined || grecaptcha.getResponse() == null) {
 					this.errors.reCaptchaTokenError = true;
-					allowSubmit = false;
+					allowRegistration = false;
 				}
-				if(!allowSubmit) {
+				if(!allowRegistration) {
 					this.alreadyExists = "";
 					this.userRegistered = false;
 					return;
@@ -259,10 +259,10 @@
 					if(response.data.registered) {
 						this.user = {account: {username: "", email: "", password: "", firstName: "", lastName: "", mobileNumber: ""}, address:{ street: "", houseNumber: 0, city: "", zipCode: 0, country: ""}};
 						grecaptcha.reset();
-						this.alreadyExists = "";
-						this.userRegistered = true;
 						this.errors = {account: {usernameError: false, emailError: false, passwordError: false, firstNameError: false, lastNameError: false, mobileNumberError: false}, address: {streetError: false, houseNumberError: false, cityError: false, zipCodeError: false, countryError: false}, reCaptchaTokenError: false};
 						this.submitting = false;
+						this.alreadyExists = "";
+						this.userRegistered = true;
 						this.toggleTab("account");
 					} else {
 						if(response.data.alreadyExists) {
@@ -339,9 +339,6 @@
 	}
 	.countryCodePrefix {
 		background-color: #fff;
-	}
-	.previousButton {
-		float: left;
 	}
 	.nextButton, .submitButton {
 		float: right;
