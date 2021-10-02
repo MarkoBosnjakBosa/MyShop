@@ -86,9 +86,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvents, checkStatus, va
 					var update = {"confirmation.authenticationToken": authenticationToken};
 					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
 						smsEvents.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
-						setTimeout(function() {
-							deleteAuthenticationToken(updatedUser.account.username);    
-						}, 5 * 60 * 1000);
+						setTimeout(function() { deleteAuthenticationToken(updatedUser.account.username); }, 5 * 60 * 1000);
 						response.status(200).json({sent: true}).end();
 					}).catch(error => console.log(error));
 				}
