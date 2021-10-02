@@ -68,7 +68,7 @@
 							</form>
 						</div>
 						<div id="addressTab" class="tab-pane fade" role="tabpanel">
-							<form autocomplete="off" @submit.prevent="editAddress()">
+							<form autocomplete="off" @submit.prevent="editAddress()" novalidate>
 								<div v-if="edits.addressEdited" class="alert alert-success alert-dismissible" role="alert">
 									<div>Your address has been successfully edited.</div>
 									<button type="button" class="btn-close" @click="closeAlert('address')"></button>

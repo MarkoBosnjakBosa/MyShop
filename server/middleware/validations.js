@@ -143,8 +143,8 @@ function validateAccountEdit(request, response, next) {
 function validateAddressEdit(request, response, next) {
     var allowEdit = true;
     var errorFields = [];
+    var username = request.body.username;
     var address = request.body.address;
-    var username = address.username;
     var street = address.street;
     if(validations.invalidUsername(username) || validations.invalidStreet(street)) {
         errorFields = [...errorFields, "street"];
