@@ -35,14 +35,14 @@
         data() {
             return {
                 username: this.$route.query.username,
+                confirmationToken: this.$route.query.confirmationToken,
                 registrationConfirmed: false,
                 emailSent: false
             }
         },
         methods: {
             getRegistrationConfirmation() {
-                var confirmationToken = this.$route.query.confirmationToken;
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/confirm/registration?username=" + this.username + "&confirmationToken=" + confirmationToken).then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/confirm/registration?username=" + this.username + "&confirmationToken=" + this.confirmationToken).then(response => {
                     this.registrationConfirmed = response.data.confirmed;
                 }).catch(error => console.log(error));
             },
