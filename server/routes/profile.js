@@ -18,7 +18,8 @@ module.exports = function(app, models, validation) {
         var mobileNumber = account.mobileNumber;
         var query = {"account.username": username};
         var update = {"account.email": email, "account.firstName": firstName, "account.lastName": lastName, "account.mobileNumber": mobileNumber};
-        User.findOneAndUpdate(query, update, {new: true}).then(user => {
+        var options = {new: true};
+        User.findOneAndUpdate(query, update, options).then(user => {
             response.status(200).json({edited: true}).end();
         }).catch(error => console.log(error));
     });
@@ -31,8 +32,9 @@ module.exports = function(app, models, validation) {
         var zipCode = address.zipCode;
         var country = address.country;
         var query = {"account.username": username};
-        var update = {address: {street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country}}
-        User.findOneAndUpdate(query, update, {new: true}).then(user => {
+        var update = {address: {street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country}};
+        var options = {new: true};
+        User.findOneAndUpdate(query, update, options).then(user => {
             response.status(200).json({edited: true}).end();
         }).catch(error => console.log(error));
     });
