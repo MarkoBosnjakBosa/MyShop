@@ -9,7 +9,7 @@
 					<p>Please fill in this form to log in.</p>
 					<hr>
 					<div class="mb-3">
-						<input type="text" id="username" class="form-control" :class="{'errorField' : errors.usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
+						<input type="text" id="username" class="form-control" :class="{'errorField' : errors.usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @focus="clearUsernameStatus()" @keypress="clearUsernameStatus()"/>
 						<small v-if="errors.usernameError" class="errorInput">Please provide a valid username!</small>
 					</div>
 					<div class="mb-3">
@@ -119,10 +119,10 @@
 							this.user = {username: "", password: ""};
 							this.errors = {usernameError: false, passwordError: false, noPasswordMatch: false, notConfirmed: false};
 							this.submitting = false;
-							var token = response.data.token;
 							var user = response.data.user;
+							var token = response.data.token;
 							var isAdmin = response.data.isAdmin;
-							this.$store.dispatch("login", {token, user, isAdmin});
+							this.$store.dispatch("login", {user, token, isAdmin});
 							this.openHome();
 						} else {
 							if(response.data.found) {
@@ -149,8 +149,16 @@
 			togglePassword() { helper.methods.togglePassword(); },
 			openForgotCredentials() { route.methods.openForgotCredentials(); },
 			openRegistration() { route.methods.openRegistration(); },
-			clearUsernameStatus() { this.errors.usernameError = false; },
-			clearPasswordStatus() { this.errors.passwordError = false; }
+			clearUsernameStatus() { 
+				this.errors.usernameError = false;
+				this.errors.noPasswordMatch = false;
+				this.errors.notConfirmed = false; 
+			},
+			clearPasswordStatus() { 
+				this.errors.passwordError = false;
+				this.errors.noPasswordMatch = false;
+				this.errors.notConfirmed = false; 
+			}
 		},
 		computed: {
 			invalidUsername() { return validation.methods.invalidUsername(this.user.username); },

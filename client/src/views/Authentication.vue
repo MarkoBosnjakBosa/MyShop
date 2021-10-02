@@ -60,10 +60,10 @@
                     if(response.data.authenticated) {
                         this.authenticationToken = "";
                         this.authenticationTokenError = false, this.authenticationTokenSent = false;
-                        var token = response.data.token;
                         var user = response.data.user;
+                        var token = response.data.token;
                         var isAdmin = response.data.isAdmin;
-                        this.$store.dispatch("login", {token, user, isAdmin});
+                        this.$store.dispatch("login", {user, token, isAdmin});
                         this.$store.dispatch("clearAuthentication");
                         this.openHome();
                     } else {

@@ -5,11 +5,11 @@ import createPersistedState from "vuex-persistedstate";
 const getDefaultState = () => {
 	return {
 		login: {
-			token: "",
 			user: "",
+			token: "",
 			isAdmin: false
 		},
-		authenticationData: {
+		authentication: {
 			username: ""
 		},
 		products: [],
@@ -25,16 +25,16 @@ export default new Vuex.Store({
 		isLoggedIn: state => { return state.login.token; },
 		getUser: state => { return state.login.user; },
 		isAdmin: state => { return state.login.isAdmin; },
-		isAuthenticated: state => { return state.authenticationData.username; },
+		isAuthenticated: state => { return state.authentication.username; },
 		getShoppingCart: state => { return state.products; },
 		getCheckout: state => { return state.checkout; }
 	},
 	mutations: {
-		SET_TOKEN: (state, token) => { state.login.token = token; },
 		SET_USER: (state, user) => { state.login.user = user; },
+		SET_TOKEN: (state, token) => { state.login.token = token; },
 		SET_ADMIN: (state, isAdmin) => { state.login.isAdmin = isAdmin; },
-		SET_USERNAME: (state, username) => { state.authenticationData.username = username; },
-		CLEAR_USERNAME: state => { state.authenticationData.username = ""; },
+		SET_USERNAME: (state, username) => { state.authentication.username = username; },
+		CLEAR_USERNAME: state => { state.authentication.username = ""; },
 		ADD_TO_SHOPPING_CART: (state, product) => {
 			var foundIndex = state.products.findIndex(foundProduct => foundProduct._id == product._id);
 			if(foundIndex > -1) {
@@ -55,9 +55,9 @@ export default new Vuex.Store({
 		RESET: state => { Object.assign(state, getDefaultState()); }
 	},
 	actions: {
-		login: ({commit}, {token, user, isAdmin}) => {
-			commit("SET_TOKEN", token);
+		login: ({commit}, {user, token, isAdmin}) => {
 			commit("SET_USER", user);
+			commit("SET_TOKEN", token);
 			commit("SET_ADMIN", isAdmin);
 			Axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 		},
