@@ -82,5 +82,5 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 			update = {"confirmation.confirmationToken": ""};
 		}
 		User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
-    }
+	}
 }
