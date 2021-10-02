@@ -7,7 +7,7 @@ function isLoggedIn(request, response, next) {
         request.userData = decodedToken;
         next();
     } catch(error) {
-        response.status(200).json({loggedIn: false}).end();
+        response.status(200).json({isLoggedIn: false}).end();
     }
 }
 

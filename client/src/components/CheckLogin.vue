@@ -7,13 +7,11 @@
         name: "checkLogin",
         methods: {
             isLoggedIn() {
-                if(!store.getters.isLoggedIn) {
-                    axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => {
-                        if(!response.data.loggedIn) {
-                            router.push("/login");
-                        }
-                    }).catch(error => console.log(error));
-                }
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => {
+                    if(!response.data.isLoggedIn) {
+                        router.push("/login");
+                    }
+                }).catch(error => console.log(error));
             },
             isAdmin() {
                 if(store.getters.isLoggedIn) {

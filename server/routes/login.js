@@ -96,7 +96,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvents, checkStatus, va
 		}).catch(error => console.log(error));
 	});
 	app.get("/checkStatus", checkStatus.isLoggedIn, (request, response) => {
-		response.status(200).json({loggedIn: true}).end();
+		response.status(200).json({isLoggedIn: true}).end();
 	});
 
 	function deleteAuthenticationToken(username) {
