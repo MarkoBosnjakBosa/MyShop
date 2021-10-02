@@ -64,7 +64,6 @@
                         var token = response.data.token;
                         var isAdmin = response.data.isAdmin;
                         this.$store.dispatch("login", {user, token, isAdmin});
-                        this.$store.dispatch("clearAuthentication");
                         this.openHome();
                     } else {
                         this.authenticationTokenError = true;
@@ -88,6 +87,9 @@
         },
         computed: {
             invalidAuthenticationToken() { return validation.methods.invalidAuthenticationToken(this.authenticationToken); }
+        },
+        beforeUnmount() {
+            this.$store.dispatch("clearAuthentication");
         },
         created() {
             this.checkLogin();
