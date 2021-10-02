@@ -98,7 +98,7 @@ function validateAuthenticationEnabling(request, response, next) {
 function validateForgotCredentials(request, response, next) {
     var email = request.body.email;
     var option = request.body.option;
-    if(!validations.invalidEmail(email) && !validation.invalidOption(option)) next();
+    if(!validations.invalidEmail(email) && !validations.invalidOption(option)) next();
     else response.status(200).json({sent: false}).end();
 }
 

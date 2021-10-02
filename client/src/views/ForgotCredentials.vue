@@ -27,15 +27,15 @@
                             </div>
                         </div>
                     </fieldset>
-                    <div class="mb-3 email">
+                    <div class="mb-3">
                         <input type="text" id="email" class="form-control" :class="{'errorField' : emailError}" placeholder="Email" v-model="email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
                         <small v-if="emailError" class="form-text errorInput">Please provide a valid email!</small>
                     </div>
-                    <div v-if="emailSent" class="form-group emailSentSuccessful">Please visit your inbox and follow suggested steps!</div>
-                    <div class="mb-3 submit">
+                    <div v-if="emailSent" class="form-group emailSent">Please visit your inbox and follow suggested steps!</div>
+                    <div class="mb-3">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
-                    <div class="mb-3 login">
+                    <div>
                         <button type="button" class="btn btn-dark" @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
                     </div>
                 </form>
@@ -106,14 +106,12 @@
         max-width: 400px;
         text-align: center;
         margin-top: 20px;
+        text-align: center;
     }
     .options {
         text-align: left;
     }
-    .email, .submit, .login {
-        text-align: center;
-    }
-    .emailSentSuccessful {
+    .emailSent {
         color: #008000;
         margin-bottom: 10px;
     }
