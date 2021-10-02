@@ -22,8 +22,8 @@ export default new Vuex.Store({
 	plugins: [createPersistedState()],
 	state: getDefaultState(),
 	getters: {
-		isLoggedIn: state => { return state.login.token; },
 		getUser: state => { return state.login.user; },
+		isLoggedIn: state => { return state.login.token; },
 		isAdmin: state => { return state.login.isAdmin; },
 		isAuthenticated: state => { return state.authentication.username; },
 		getShoppingCart: state => { return state.products; },

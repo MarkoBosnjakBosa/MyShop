@@ -1,4 +1,4 @@
-module.exports = function(app, models, smsEvent, validation) {
+module.exports = function(app, models, smsEvents, validations) {
     const User = models.User;
     app.get("/getAuthentication/:username", (request, response) => {
         var username = request.params.username;
@@ -7,17 +7,18 @@ module.exports = function(app, models, smsEvent, validation) {
             response.status(200).json({authenticationEnabled: user.confirmation.authenticationEnabled}).end();
         }).catch(error => console.log(error));
     });
-    app.put("/setAuthentication", validation.validateAuthenticationEnabling, (request, response) => {
+    app.put("/setAuthentication", validations.validateAuthenticationEnabling, (request, response) => {
         var username = request.body.username;
         var authenticationEnabled = request.body.authenticationEnabled;
         var query = {"account.username": username};
         var update = {};
+        var options = {new: true};
         if(authenticationEnabled) {
             User.findOne(query).then(user => {
                 var authenticationEnablingToken = request.body.authenticationEnablingToken;
                 if(authenticationEnablingToken == user.confirmation.authenticationEnablingToken) {
                     update = {"confirmation.authenticationEnabled": authenticationEnabled, "confirmation.authenticationEnablingToken": ""};
-                    User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
+                    User.findOneAndUpdate(query, update, options).then(updatedUser => {
                         response.status(200).json({valid: true, authenticationEnabled: updatedUser.confirmation.authenticationEnabled}).end();
                     }).catch(error => console.log(error));
                 }
@@ -27,7 +28,7 @@ module.exports = function(app, models, smsEvent, validation) {
             }).catch(error => console.log(error));
         } else {
             update = {"confirmation.authenticationEnabled": authenticationEnabled};
-            User.findOneAndUpdate(query, update, {new: true}).then(user => {
+            User.findOneAndUpdate(query, update, options).then(user => {
                 response.status(200).json({valid: true, authenticationEnabled: user.confirmation.authenticationEnabled}).end();
             }).catch(error => console.log(error));
         }
@@ -37,11 +38,10 @@ module.exports = function(app, models, smsEvent, validation) {
         var query = {"account.username": username};
         var authenticationEnablingToken = Math.floor(100000 + Math.random() * 900000);
         var update = {"confirmation.authenticationEnablingToken": authenticationEnablingToken};
-        User.findOneAndUpdate(query, update, {new: true}).then(user => {
-            smsEvent.emit("sendAuthenticationEnablingToken", user.account.mobileNumber, user.account.firstName, user.confirmation.authenticationEnablingToken);
-            setTimeout(function() {
-                deleteAuthenticationEnablingToken(user.account.username);    
-            }, 5 * 60 * 1000);
+        var options = {new: true};
+        User.findOneAndUpdate(query, update, options).then(user => {
+            smsEvents.emit("sendAuthenticationEnablingToken", user.account.mobileNumber, user.account.firstName, user.confirmation.authenticationEnablingToken);
+            setTimeout(function() { deleteAuthenticationEnablingToken(user.account.username); }, 5 * 60 * 1000);
             response.status(200).json({authenticationEnablingTokenSent: true}).end();
         }).catch(error => console.log(error));
     });
@@ -49,6 +49,7 @@ module.exports = function(app, models, smsEvent, validation) {
     function deleteAuthenticationEnablingToken(username) {
         var query = {"account.username": username};
         var update = {"confirmation.authenticationEnablingToken": ""};
-        User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
+        var options = {new: true};
+        User.findOneAndUpdate(query, update, options).then().catch(error => console.log(error));
     }
 }

@@ -79,16 +79,18 @@ function validateLogin(request, response, next) {
 }
 
 function validateAuthentication(request, response, next) {
+    var username = request.body.username;
     var authenticationToken = request.headers["authentication"];
-    if(!validations.invalidAuthenticationToken(authenticationToken)) next();
+    if(!validations.invalidUsername(username) && !validations.invalidAuthenticationToken(authenticationToken)) next();
     else response.status(200).json({authenticated: false}).end();
 }
 
 function validateAuthenticationEnabling(request, response, next) {
+    var username = request.body.username;
     var authenticationEnabled = request.body.authenticationEnabled;
     if(authenticationEnabled) {
         var authenticationEnablingToken = request.body.authenticationEnablingToken;
-        if(!validations.invalidAuthenticationToken(authenticationEnablingToken)) next();
+        if(!validations.invalidUsername(username) && !validations.invalidAuthenticationToken(authenticationEnablingToken)) next();
         else response.status(200).json({authenticated: false}).end();
     } else {
         next();
