@@ -34,8 +34,8 @@
         },
         data() {
             return {
-                username: this.$route.query.username,
-                confirmationToken: this.$route.query.confirmationToken,
+                username: "",
+                confirmationToken: "",
                 registrationConfirmed: false,
                 emailSent: false
             }
@@ -57,6 +57,8 @@
             }
         },
         created() {
+            this.username = this.$route.query.username;
+            this.confirmationToken = this.$route.query.confirmationToken;
             this.getRegistrationConfirmation();
         }
     }   
