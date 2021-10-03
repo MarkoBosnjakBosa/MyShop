@@ -5,7 +5,7 @@
             <div id="pageStyle">
                 <navigation></navigation>
                 <h1>Create Product</h1>
-                <form autocomplete="off" enctype="multipart/form-data" @submit.prevent="createProduct()">
+                <form autocomplete="off" enctype="multipart/form-data" @submit.prevent="createProduct()" novalidate>
                     <div class="nav nav-tabs justify-content-center" role="tablist">
                         <button type="button" id="mainNavTab" data-bs-toggle="tab" data-bs-target="#mainTab" class="nav-link active" role="tab">Main</button>
                         <button type="button" id="technicalDataNavTab" data-bs-toggle="tab" data-bs-target="#technicalDataTab" class="nav-link" role="tab">Technical Data</button>
@@ -42,7 +42,7 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <label for="quantity" class="input-group-text">Quantity</label>
-                                    <input type="number" id="quantity" class="form-control" :class="{'errorField' : errors.quantityError && submitting}" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
+                                    <input type="number" id="quantity" min="1" class="form-control" :class="{'errorField' : errors.quantityError && submitting}" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
                                 </div>
                                 <small v-if="errors.quantityError && submitting" class="form-text errorInput">Please provide a valid quantity!</small>
                             </div>
@@ -50,7 +50,7 @@
                                 <div class="input-group">
                                     <label for="category" class="input-group-text">Category</label>
                                     <select id="category" class="form-control" :class="{'errorField' : errors.categoryError && submitting}" v-model="product.category" @focus="clearCategoryStatus()" @keypress="clearCategoryStatus()">
-                                        <option value="" disabled selected>Select category...</option>
+                                        <option value="" selected disabled>Select category...</option>
                                         <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
                                     </select>
                                 </div>
@@ -64,7 +64,7 @@
                             <div class="mb-3 input-group">
                                 <label for="technicalData" class="input-group-text">Technical data</label>
                                 <select id="technicalData" class="form-control">
-                                    <option value="" disabled selected>Select technical information...</option>
+                                    <option value="" selected disabled>Select technical information...</option>
                                     <option v-for="technicalInformation in technicalData" :key="technicalInformation._id" :value="technicalInformation.title" :type="technicalInformation.type">{{technicalInformation.title}}</option>
                                 </select>
                                 <button type="button" class="btn btn-primary" @click="selectTechnicalInformation()">Add</button>
@@ -80,15 +80,15 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="(technicalInformation, index) in product.technicalData" :key="technicalInformation.title" :row="technicalInformation.title">
-                                        <th class="padding">{{index + 1}}</th>
-                                        <td class="padding">{{technicalInformation.title}}</td>
-                                        <td><textarea class="form-control" rows="1" v-model="product.technicalData[index].value"></textarea></td>
-                                        <td class="padding"><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
+                                        <th class="padded">{{index + 1}}</th>
+                                        <td class="padded">{{technicalInformation.title}}</td>
+                                        <td><textarea rows="1" class="form-control" v-model="product.technicalData[index].value"></textarea></td>
+                                        <td class="padded"><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
                                     </tr>
                                 </tbody>
                             </table>
                             <div>
-                                <button type="button" class="btn btn-dark previousButton" @click="toggleTab('main')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                                <button type="button" class="btn btn-dark" @click="toggleTab('main')"><i class="fas fa-angle-double-left"></i> Previous</button>
                                 <button type="button" class="btn btn-dark nextButton" @click="toggleTab('images')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>
                             <notification :product="product" :message="message" :type="'error'" @hide="hideNotification()"></notification>
@@ -108,11 +108,11 @@
                                 <div id="dropzone" @dragover.prevent="addDragOver()" @dragleave.prevent="removeDragOver()" @drop="removeDragOver()" @change="selectImages($event, 'images')">
                                     <div id="dropzoneDescription">
                                         <i class="fas fa-upload fa-2x"></i>
-                                        <p>Choose more images or drag them here.</p>
+                                        <p>Select images or drag them here.</p>
                                     </div>
                                     <input type="file" id="images" class="images" multiple/>
                                 </div>
-                                <small v-if="errors.imagesError && submitting" class="form-text errorInput">Please provide less than 5 valid images!</small>
+                                <small v-if="errors.imagesError" class="form-text errorInput">Please provide less than 5 valid images!</small>
                             </div>
                             <div v-if="product.images.length" class="mb-3">
                                 <div class="row">
@@ -123,7 +123,7 @@
                                 </div>
                             </div>
                             <div>
-                                <button type="button" class="btn btn-dark previousButton" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                                <button type="button" class="btn btn-dark" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
                                 <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
                             </div>
                         </div>
@@ -202,6 +202,7 @@
                 this.clearQuantityStatus();
                 this.clearCategoryStatus();
                 this.clearPrimaryImageStatus();
+                this.clearImagesStatus();
                 var allowCreation = true;
                 if(this.invalidTitle) {
                     this.errors.titleError = true;
@@ -259,6 +260,7 @@
                                     document.getElementById("previewPrimaryImage").innerText = "";
                                     document.getElementById("images").value = "";
                                     temp.errors = {titleError: false, descriptionError: false, priceError: false, quantityError: false, categoryError: false, primaryImageError: false};
+                                    temp.submiting = false;
                                     temp.productCreated = true;
                                     temp.toggleTab("main");
                                 } else {
@@ -269,6 +271,7 @@
                                     if(errorFields.includes("quantity")) temp.errors.quantityError = true;
                                     if(errorFields.includes("category")) temp.errors.categoryError = true;
                                     if(errorFields.includes("primaryImage")) temp.errors.primaryImageError = true;
+                                    if(errorFields.includes("images")) temp.errors.imagesError = true;
                                     temp.productCreated = false;
                                 }
                             }).catch(error => console.log(error));
@@ -314,18 +317,22 @@
                         }
                     } else {
                         temp.errors.imagesError = false;
-                        for (var i = 0, file; file = files[i]; i++) {
-                            if(!file.type.match("image.*")) {
-                                continue;
+                        if((files.length + temp.product.images.length) < 5) {
+                            for(var i = 0, file; file = files[i]; i++) {
+                                if(!file.type.match("image.*")) {
+                                    continue;
+                                }
+                                var fileReader = new FileReader();
+                                fileReader.onload = (function(specificFile) {
+                                    return function(e) {
+                                        var newImage = {name: specificFile.name, src: e.target.result, file: specificFile};
+                                        temp.product.images = [...temp.product.images, newImage];
+                                    };
+                                })(file);
+                                fileReader.readAsDataURL(file);
                             }
-                            var fileReader = new FileReader();
-                            fileReader.onload = (function(specificFile) {
-                                return function(e) {
-                                    var newImage = {name: specificFile.name, src: e.target.result, file: specificFile};
-                                    temp.product.images = [...temp.product.images, newImage];
-                                };
-                            })(file);
-                            fileReader.readAsDataURL(file);
+                        } else {
+                            temp.errors.imagesError = true;
                         }
                     }
                 }
@@ -354,7 +361,8 @@
             clearPriceStatus() { this.errors.priceError = false },
             clearQuantityStatus() { this.errors.quantityError = false },
             clearCategoryStatus() { this.errors.categoryError = false },
-            clearPrimaryImageStatus() { this.errors.primaryImageError = false }
+            clearPrimaryImageStatus() { this.errors.primaryImageError = false },
+            clearImagesStatus() { this.errors.imagesError = false }
         },
         computed: {
             invalidTitle() { return validation.methods.invalidTitle(this.product.title); },
@@ -386,15 +394,12 @@
         max-width: 800px;
         margin-top: 20px;
     }
-    .padding {
+    .padded {
         padding-top: 12px;
     }
     #previewPrimaryImage {
         text-align: center;
         margin-bottom: 10px;
-    }
-    .previousButton {
-        float: left;
     }
     .nextButton, .submitButton {
         float: right;

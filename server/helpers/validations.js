@@ -65,6 +65,7 @@ function invalidQuantity(quantity) {
 }
 function invalidCategory(category) { return category == ""; }
 function invalidPrimaryImage(primaryImage) { return primaryImage == ""; }
+function invalidImages(images) { return images > 4; }
 function invalidMessage(message) { return message == ""; }
 function invalidRating(rating) { return rating < 1 || rating > 5; }
 function invalidReview(review) { return review == ""; }
@@ -102,6 +103,7 @@ module.exports = {
     invalidQuantity: invalidQuantity,
     invalidCategory: invalidCategory,
     invalidPrimaryImage: invalidPrimaryImage,
+    invalidImages: invalidImages,
     invalidMessage: invalidMessage,
     invalidRating: invalidRating,
     invalidReview: invalidReview,

@@ -63,7 +63,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var primaryImageObject = {name: primaryImage.filename, contentType: primaryImage.mimetype, image: Buffer.from(encodedPrimaryImage, "base64")};
 		var images = request.files["images"];
 		var imagesObjects = [];
-		if(images != null && images != "" && images.length > 0 && images.length < 5) {
+		if(images && images.length > 0 && images.length < 5) {
 			for(var image = 0; image < images.length; image++) {
 				var imageRead = fs.readFileSync(images[image].path);
 				var encodedImage = imageRead.toString("base64");

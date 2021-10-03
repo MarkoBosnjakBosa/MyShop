@@ -4,10 +4,10 @@
 			<sidebar></sidebar>
 			<div id="pageStyle">
 				<navigation></navigation>
+				<h1>Register</h1>
+				<p>Please fill in this form to create an account.</p>
+				<hr>
 				<form autocomplete="off" @submit.prevent="registerUser()" novalidate>
-					<h1>Register</h1>
-					<p>Please fill in this form to create an account.</p>
-					<hr>
 					<div class="nav nav-tabs justify-content-center" role="tablist">
 						<button type="button" id="accountNavTab" data-bs-toggle="tab" data-bs-target="#accountTab" class="nav-link active" role="tab">Account</button>
 						<button type="button" id="addressNavTab" data-bs-toggle="tab" data-bs-target="#addressTab" class="nav-link" role="tab">Address</button>
@@ -97,7 +97,7 @@
 								</div>
 								<div class="mb-3 col-md-4">
 									<label for="zipCode">Zip code:</label>
-									<input type="number" id="zipCode" min="0" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submitting}" v-model="user.address.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
+									<input type="number" id="zipCode" min="1" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submitting}" v-model="user.address.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
 								</div>
 							</div>
 							<div class="mb-3">

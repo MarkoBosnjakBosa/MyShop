@@ -245,6 +245,11 @@ function validateProductCreation(request, response, next) {
         errorFields = [...errorFields, "primaryImage"];
         allowCreation = false;
     }
+    var images = request.files["images"];
+    if(validations.invalidImages(images.length) || request.extensionValidationError) {
+        errorFields = [...errorFields, "images"];
+        allowCreation = false;
+    }
     var reCaptchaToken = request.body.reCaptchaToken;
     if(validations.invalidReCaptchaToken(reCaptcha_v3_SecretKey, reCaptchaToken, request.connection.remoteAddress)) {
         errorFields = [...errorFields, "reCaptchaToken"];
