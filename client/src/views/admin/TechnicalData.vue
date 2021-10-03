@@ -4,22 +4,20 @@
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <div id="technicalDataForm">
-                    <form autocomplete="off" @submit.prevent="createTechnicalInformation()">
-                        <h1>Technical Data</h1>
-                        <div class="row">
-                            <div class="mb-3 col-md-11">
-                                <input type="text" id="title" class="form-control" :class="{'errorField' : titleError}" placeholder="Title" v-model="title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
-                                <small v-if="titleError" class="form-text errorInput">Please provide a valid title!</small>
-                            </div>
-                            <div class="mb-3 col-md-1">
-                                <button type="submit" class="btn btn-primary">Create</button>
-                            </div>
+                <form autocomplete="off" @submit.prevent="createTechnicalInformation()">
+                    <h1>Technical Data</h1>
+                    <div class="row">
+                        <div class="mb-3 col-md-11">
+                            <input type="text" id="title" class="form-control" :class="{'errorField' : titleError}" placeholder="Title" v-model="title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
+                            <small v-if="titleError" class="form-text errorInput">Please provide a valid title!</small>
                         </div>
-                        <div v-if="technicalInformationCreated" class="form-group creationSuccessful">Technical information has been successfully created!</div>
-                    </form>
-                </div>
-                <table id="technicalDataTable" class="table">
+                        <div class="mb-3 col-md-1">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </div>
+                    <div v-if="technicalInformationCreated" class="form-group creationSuccessful">Technical information has been successfully created!</div>
+                </form>
+                <table class="table">
                     <thead class="thead-light">
                         <tr>
                             <th scope="col">#</th>
@@ -144,14 +142,14 @@
 </script>
 
 <style scoped>
-    #technicalDataForm, #technicalDataTable {
-        margin: auto;
-        max-width: 900px;
-    }
     h1 {
         text-align: center;
         margin-top: 20px;
         margin-bottom: 20px;
+    }
+    form, table {
+        margin: auto;
+        max-width: 900px;
     }
     .noTechnicalData {
         font-weight: bold;
