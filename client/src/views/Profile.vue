@@ -61,7 +61,7 @@
 									<small class="form-text text-muted">Please insert your mobile number with the country calling code.</small><br>
 									<small v-if="errors.account.mobileNumberError && submittings.accountSubmitting" class="form-text errorInput">Please provide a valid mobile number!</small>
 								</div>
-								<div>
+								<div class="mb-3">
 									<button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
 									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
 								</div>
@@ -100,7 +100,7 @@
 									<input type="text" id="country" class="form-control" :class="{'errorField' : errors.address.countryError && submittings.addressSubmitting}" v-model="user.address.country" @focus="clearCountryStatus()" @keypress="clearCountryStatus()"/>
 									<small v-if="errors.address.countryError && submittings.addressSubmitting" class="form-text errorInput">Please provide a valid country!</small>
 								</div>
-								<div>
+								<div class="mb-3">
 									<button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
 									<button type="button" class="btn btn-dark nextButton" @click="toggleTab('resetPassword')">Next <i class="fas fa-angle-double-right"></i></button>
 									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
@@ -124,7 +124,7 @@
 									</div>
 									<small v-if="errors.passwordError" class="form-text errorInput">Please provide a valid password!</small>
 								</div>
-								<div>
+								<div class="mb-3">
 									<button type="button" class="btn btn-dark" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
 									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
 								</div>

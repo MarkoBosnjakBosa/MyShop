@@ -16,7 +16,7 @@
                         <button type="button" class="btn btn-dark" @click="sendAuthenticationToken()">Send token</button>
                         <button type="submit" class="btn btn-primary submit">Submit</button>
                     </div>
-                    <div v-if="authenticationTokenSent" class="authenticationTokenSent">The authentication token has been sccessfully sent.</div>
+                    <div v-if="authenticationTokenSent" class="mb-3 authenticationTokenSent">The authentication token has been sccessfully sent.</div>
                 </form>
             </div>
         </div>

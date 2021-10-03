@@ -29,7 +29,7 @@
 					<div class="mb-3 submit">
 						<button type="submit" class="btn btn-primary submitButton">Log in</button>
 					</div>
-					<div class="register">Not a member? <a href="#" @click="openRegistration()">Register</a></div>
+					<div class="mb-3 register">Not a member? <a href="#" @click="openRegistration()">Register</a></div>
 				</form>
 			</div>
 		</div>
