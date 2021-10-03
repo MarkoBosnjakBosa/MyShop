@@ -145,7 +145,7 @@
                             <button type="button" class="btn btn-danger" @click="deleteProduct()">Delete <i class="fas fa-trash"></i></button>
                         </div>
                         <div class="mb-3">
-                            <button type="button" class="btn btn-dark" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                            <button type="button" class="btn btn-dark previousButton" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
                         </div>
                     </div>
                 </div>
@@ -430,15 +430,18 @@
         max-width: 800px;
         margin-top: 20px;
     }
-    .padded {
-        padding-top: 12px;
-    }
     #deleteTab {
         text-align: center;
+    }
+    .padded {
+        padding-top: 12px;
     }
     #previewPrimaryImage {
         text-align: center;
         margin-bottom: 10px;
+    }
+    .previousButton {
+        float: left;
     }
     .nextButton {
         float: right;
