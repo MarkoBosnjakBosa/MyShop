@@ -161,7 +161,7 @@
 						street: "",
 						houseNumber: 0,
 						city: "",
-						zipCode: 0,
+						zipCode: 1,
 						country: ""
 					}
 				},
@@ -259,7 +259,7 @@
 				var body = {user: this.user, reCaptchaToken: grecaptcha.getResponse()};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/register", body).then(response => {
 					if(response.data.registered) {
-						this.user = {account: {username: "", email: "", password: "", firstName: "", lastName: "", mobileNumber: ""}, address:{ street: "", houseNumber: 0, city: "", zipCode: 0, country: ""}};
+						this.user = {account: {username: "", email: "", password: "", firstName: "", lastName: "", mobileNumber: ""}, address:{ street: "", houseNumber: 0, city: "", zipCode: 1, country: ""}};
 						grecaptcha.reset();
 						this.errors = {account: {usernameError: false, emailError: false, passwordError: false, firstNameError: false, lastNameError: false, mobileNumberError: false}, address: {streetError: false, houseNumberError: false, cityError: false, zipCodeError: false, countryError: false}, reCaptchaTokenError: false};
 						this.submitting = false;
