@@ -134,7 +134,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 						response.status(200).json({edited: false}).end();
 					}
 				}
-			});
+			}).catch(error => console.log(error));
 		}
 	});
 	app.post("/downloadProducts", (request, response) => {

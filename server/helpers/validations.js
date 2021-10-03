@@ -54,7 +54,7 @@ function invalidTitle(title) { return title == ""; }
 function invalidIcon(icon) { return icon == ""; }
 function invalidDescription(description) { return description == ""; }
 function invalidPrice(price) {
-    var priceFormat = /^[1-9]*\.[0-9]{2}$/;
+    var priceFormat = /^[1-9]\d*\.[0-9]{2}$/;
     if(price && priceFormat.test(price))  return false;
     else return true;
 }
