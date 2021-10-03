@@ -196,8 +196,7 @@
                     imagesError: false
                 },
                 submittings: {
-                    mainSubmitting: false,
-                    imagesSubmitting: false
+                    mainSubmitting: false
                 },
                 edits: {
                     mainEdited: false,
