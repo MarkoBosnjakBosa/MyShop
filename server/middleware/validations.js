@@ -298,7 +298,9 @@ function validateProductEdit(request, response, next) {
         if(!validations.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) next();
         else response.status(200).json({edited: false, errorFields: ["primarymage"]}).end();
     } else if(type == "images") {
-        next();
+        var images = request.files["images"];
+        if(!validations.invalidImages(images.length) && !request.extensionValidationError) next();
+        else response.status(200).json({edited: false, errorFields: ["images"]}).end();
     } else {
         response.status(200).json({edited: false}).end();
     }
