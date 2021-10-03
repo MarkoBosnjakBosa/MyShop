@@ -4,29 +4,27 @@
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <div id="categoriesForm">
-                    <form autocomplete="off" @submit.prevent="createCategory()">
-                        <h1>Categories</h1>
-                        <div class="row">
-                            <div class="mb-3 col-md-6">
-                                <input type="text" id="title" class="form-control" :class="{'errorField' : errors.titleError && submitting}" placeholder="Title" v-model="category.title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
-                                <small v-if="errors.titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
-                            </div>
-                            <div class="mb-3 col-md-4">
-                                <input type="text" id="icon" class="form-control" :class="{'errorField' : errors.iconError && submitting}" placeholder="Icon" v-model="category.icon" @focus="clearIconStatus()" @keyPress="clearIconStatus()"/>
-                                <small v-if="errors.iconError && submitting" class="form-text errorInput">Please provide a valid icon!</small>
-                            </div>
-                            <div class="mb-3 col-md-1 suggestion">
-                                <i class="far fa-question-circle" data-toggle="tooltip" title="Use only classes from Font Awesome icons."></i>
-                            </div>
-                            <div class="mb-3 col-md-1">
-                                <button type="submit" class="btn btn-primary">Create</button>
-                            </div>
+                <form autocomplete="off" @submit.prevent="createCategory()">
+                    <h1>Categories</h1>
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <input type="text" id="title" class="form-control" :class="{'errorField' : errors.titleError && submitting}" placeholder="Title" v-model="category.title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
+                            <small v-if="errors.titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
                         </div>
-                        <div v-if="categoryCreated" class="mb-3 creationSuccessful">Category has been successfully created!</div>
-                    </form>
-                </div>
-                <table id="categoriesTable" class="table">
+                        <div class="mb-3 col-md-4">
+                            <div class="input-group">
+                                <input type="text" id="icon" class="form-control" :class="{'errorField' : errors.iconError && submitting}" placeholder="Icon" v-model="category.icon" @focus="clearIconStatus()" @keyPress="clearIconStatus()"/>
+                                <span class="input-group-text"><i class="far fa-question-circle" data-toggle="tooltip" title="Use only classes from Font Awesome icons."></i></span>
+                            </div>
+                            <small v-if="errors.iconError && submitting" class="form-text errorInput">Please provide a valid icon!</small>
+                        </div>
+                        <div class="mb-3 col-md-2">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </div>
+                    <div v-if="categoryCreated" class="mb-3 creationSuccessful">Category has been successfully created!</div>
+                </form>
+                <table class="table">
                     <thead class="thead-light">
                         <tr>
                             <th scope="col">#</th>
@@ -150,7 +148,7 @@
                 }
             },
             deleteCategory(categoryId, categoryTitle) {
-                var confirmed = confirm("Delete category " + categoryTitle + "!");
+                var confirmed = confirm("Delete category " + categoryTitle + "?");
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteCategory/" + categoryId).then(response => {
                         if(response.data.deleted) {
@@ -175,17 +173,14 @@
 </script>
 
 <style scoped>
-    #categoriesForm, #categoriesTable {
-        margin: auto;
-        max-width: 900px;
-    }
     h1 {
         text-align: center;
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    .suggestion {
-        padding-top: 5px;
+    form, table {
+        margin: auto;
+        max-width: 900px;
     }
     .fa-question-circle {
         cursor: pointer;

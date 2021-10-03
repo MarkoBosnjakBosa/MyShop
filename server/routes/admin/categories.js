@@ -27,7 +27,8 @@ module.exports = function(app, models, validation) {
         var icon = request.body.icon;
         var query = {_id: categoryId};
         var update = {title: title, icon: icon};
-        Category.findOneAndUpdate(query, update, {new: true}).then(category => {
+        var options = {new: true};
+        Category.findOneAndUpdate(query, update, options).then(category => {
             if(!validation.isEmpty(category)) {
                 response.status(200).json({edited: true}).end();
             } else {
