@@ -353,9 +353,7 @@
             closeCreationAlert() {
                 this.productCreated = false;
             },
-            toggleTab(tab) {
-                helper.methods.toggleTab(tab);
-            },
+            toggleTab(tab) { helper.methods.toggleTab(tab); },
             clearTitleStatus() { this.errors.titleError = false },
             clearDescriptionStatus() { this.errors.descriptionError = false },
             clearPriceStatus() { this.errors.priceError = false },
