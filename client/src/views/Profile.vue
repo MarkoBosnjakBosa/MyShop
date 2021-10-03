@@ -166,7 +166,7 @@
 						street: "",
 						houseNumber: 0,
 						city: "",
-						zipCode: 0,
+						zipCode: 1,
 						country: ""
 					},
 					password: ""
