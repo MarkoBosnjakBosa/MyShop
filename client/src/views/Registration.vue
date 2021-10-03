@@ -4,10 +4,10 @@
 			<sidebar></sidebar>
 			<div id="pageStyle">
 				<navigation></navigation>
-				<h1>Register</h1>
-				<p>Please fill in this form to create an account.</p>
-				<hr>
 				<form autocomplete="off" @submit.prevent="registerUser()" novalidate>
+					<h1>Register</h1>
+					<p>Please fill in this form to create an account.</p>
+					<hr>
 					<div class="nav nav-tabs justify-content-center" role="tablist">
 						<button type="button" id="accountNavTab" data-bs-toggle="tab" data-bs-target="#accountTab" class="nav-link active" role="tab">Account</button>
 						<button type="button" id="addressNavTab" data-bs-toggle="tab" data-bs-target="#addressTab" class="nav-link" role="tab">Address</button>
@@ -73,7 +73,7 @@
 								<small class="form-text text-muted">Please insert your mobile number with the country calling code.</small><br>
 								<small v-if="errors.account.mobileNumberError && submitting" class="form-text errorInput">Please provide a valid mobile number!</small>
 							</div>
-							<div>
+							<div class="mb-3">
 								<button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
 							</div>
 						</div>
@@ -105,7 +105,7 @@
 								<input type="text" id="country" class="form-control" :class="{'errorField' : errors.address.countryError && submitting}" v-model="user.address.country" @focus="clearCountryStatus()" @keypress="clearCountryStatus()"/>
 								<small v-if="errors.address.countryError && submitting" class="form-text errorInput">Please provide a valid country!</small>
 							</div>
-							<div>
+							<div class="mb-3">
 								<button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
 								<button type="button" class="btn btn-dark nextButton" @click="toggleTab('check')">Next <i class="fas fa-angle-double-right"></i></button>
 							</div>
@@ -119,8 +119,10 @@
 							<div class="mb-3 recaptcha">
 								<div class="g-recaptcha" :data-sitekey="reCaptchaSiteKey"></div>
 							</div>
-							<button type="button" class="btn btn-dark" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
-							<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+							<div class="mb-3">
+								<button type="button" class="btn btn-dark" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
+								<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+							</div>
 						</div>
 					</div>
 				</form>
