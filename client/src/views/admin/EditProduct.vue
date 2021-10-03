@@ -13,7 +13,7 @@
                 </div>
                 <div class="tab-content">
                     <div id="mainTab" class="tab-pane fade active show" role="tabpanel">
-                        <form autocomplete="off" @submit.prevent="editProduct('main')">
+                        <form autocomplete="off" @submit.prevent="editProduct('main')" novalidate>
                             <div v-if="edits.mainEdited" class="alert alert-success alert-dismissible" role="alert">
                                 <div>Product has been successfully edited!</div>
                                 <button type="button" class="btn-close" @click="closeEditAlert('main')"></button>
@@ -38,12 +38,12 @@
                                     <input type="text" id="price" class="form-control" :class="{'errorField' : errors.priceError && submittings.mainSubmitting}" v-model="product.price" @focus="clearPriceStatus()" @keypress="clearPriceStatus()"/>
                                     <span class="input-group-text">0.00 €</span>
                                 </div>
-                            <small v-if="errors.priceError && submittings.mainSubmitting" class="form-text errorInput">Please provide a valid price!</small>
+                                <small v-if="errors.priceError && submittings.mainSubmitting" class="form-text errorInput">Please provide a valid price!</small>
                             </div>
                             <div class="mb-3">
                                 <div class="input-group">
                                     <label for="quantity" class="input-group-text">Quantity</label>
-                                    <input type="number" id="quantity" class="form-control" :class="{'errorField' : errors.quantityError && submittings.mainSubmitting}" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
+                                    <input type="number" id="quantity" min="1" class="form-control" :class="{'errorField' : errors.quantityError && submittings.mainSubmitting}" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
                                 </div>
                                 <small v-if="errors.quantityError && submittings.mainSubmitting" class="form-text errorInput">Please provide a valid quantity!</small>
                             </div>
@@ -51,7 +51,7 @@
                                 <div class="input-group">
                                     <label for="category" class="input-group-text">Category</label>
                                     <select id="category" class="form-control" :class="{'errorField' : errors.categoryError && submittings.mainSubmitting}" v-model="product.category" @focus="clearCategoryStatus()" @keypress="clearCategoryStatus()">
-                                        <option value="" disabled selected>Select category...</option>
+                                        <option value="" selected disabled>Select category...</option>
                                         <option v-for="category in categories" :key="category._id" :value="category._id">{{category.title}}</option>
                                     </select>
                                 </div>
@@ -72,7 +72,7 @@
                             <div class="mb-3 input-group">
                                 <label for="technicalData" class="input-group-text">Technical data</label>
                                 <select id="technicalData" class="form-control">
-                                    <option value="" disabled selected>Select technical information...</option>
+                                    <option value="" selected disabled>Select technical information...</option>
                                     <option v-for="technicalInformation in technicalData" :key="technicalInformation._id" :value="technicalInformation.title" :type="technicalInformation.type">{{technicalInformation.title}}</option>
                                 </select>
                                 <button type="button" class="btn btn-primary" @click="selectTechnicalInformation()">Add</button>
@@ -88,15 +88,15 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="(technicalInformation, index) in product.technicalData" :key="technicalInformation.title" :row="technicalInformation.title">
-                                        <th class="padding">{{index + 1}}</th>
-                                        <td class="padding">{{technicalInformation.title}}</td>
-                                        <td><textarea class="form-control" rows="1" v-model="product.technicalData[index].value"></textarea></td>
-                                        <td class="padding"><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
+                                        <th class="padded">{{index + 1}}</th>
+                                        <td class="padded">{{technicalInformation.title}}</td>
+                                        <td><textarea rows="1" class="form-control" v-model="product.technicalData[index].value"></textarea></td>
+                                        <td class="padded"><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
                                     </tr>
                                 </tbody>
                             </table>
                             <div>
-                                <button type="button" class="btn btn-dark previousButton" @click="toggleTab('main')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                                <button type="button" class="btn btn-dark" @click="toggleTab('main')"><i class="fas fa-angle-double-left"></i> Previous</button>
                                 <button type="button" class="btn btn-dark nextButton" @click="toggleTab('images')">Next <i class="fas fa-angle-double-right"></i></button>
                                 <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
                             </div>
@@ -108,7 +108,7 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span for="primaryImage" class="input-group-text">Primary image</span>
-                                    <input type="file" id="primaryImage" class="form-control" :class="{'errorField' : errors.primaryImageError}" @change="uploadImages($event, 'primaryImage')"/>
+                                    <input type="file" id="primaryImage" name="primaryImage" class="form-control" :class="{'errorField' : errors.primaryImageError}" @change="uploadImages($event, 'primaryImage')"/>
                                 </div>
                                 <small v-if="errors.primaryImageError" class="form-text errorInput">Please provide a valid primary image!</small>
                             </div>
@@ -117,7 +117,7 @@
                             </div>
                             <h3>Images</h3>
                             <div class="mb-3">
-                                <div id="dropzone" @dragover.prevent="addDragOver($event)" @dragleave.prevent="removeDragOver($event)" @drop="removeDragOver($event)" @change="uploadImages($event, 'images')">
+                                <div id="dropzone" @dragover.prevent="addDragOver()" @dragleave.prevent="removeDragOver()" @drop="removeDragOver()" @change="uploadImages($event, 'images')">
                                     <div id="dropzoneDescription">
                                         <i class="fas fa-upload fa-2x"></i>
                                         <p>Choose more images or drag them here.</p>
@@ -135,7 +135,7 @@
                                 </div>
                             </div>
                             <div>
-                                <button type="button" class="btn btn-dark previousButton" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                                <button type="button" class="btn btn-dark" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
                                 <button type="button" class="btn btn-dark nextButton" @click="toggleTab('delete')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </form>
@@ -145,7 +145,7 @@
                             <button type="button" class="btn btn-danger" @click="deleteProduct()">Delete <i class="fas fa-trash"></i></button>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-dark previousButton" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                            <button type="button" class="btn btn-dark" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
                         </div>
                     </div>
                 </div>
@@ -176,15 +176,11 @@
                 productId: "",
                 categories: [],
                 technicalData: [],
-                submittings: {
-                    mainSubmitting: false,
-                    imagesSubmitting: false
-                },
                 product: {
                     title: "",
                     description: "",
                     price: "",
-                    quantity: "",
+                    quantity: 1,
                     category: "",
                     technicalData: [],
                     primaryImage: "",
@@ -198,6 +194,10 @@
                     categoryError: false,
                     primaryImageError: false,
                     imagesError: false
+                },
+                submittings: {
+                    mainSubmitting: false,
+                    imagesSubmitting: false
                 },
                 edits: {
                     mainEdited: false,
@@ -280,13 +280,25 @@
                     }).catch(error => console.log(error));
                 }
             },
-            deleteProduct() {
-                var confirmed = confirm("Delete this product?");
-                if(confirmed) {
-                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteProduct/" + this.productId).then(response => {
-                        route.methods.openProducts();
-                    }).catch(error => console.log(error));
+            selectTechnicalInformation() {
+                var technicalInformationTitle = document.getElementById("technicalData").value;
+                if(technicalInformationTitle != "") {
+                    if(document.getElementsByTagName("tbody")[0]) {
+                        var rows = document.getElementsByTagName("tbody")[0].rows;
+                        for(var row = 0; row < rows.length; row++) {
+                            if(rows[row].cells[1].innerText == technicalInformationTitle) {
+                                this.message = "You have already selected the technical information!";
+                                return;
+                            }
+                        }
+                    }
+                    var newTechnicalInformation = {title: technicalInformationTitle, value: ""};
+                    this.product.technicalData = [...this.product.technicalData, newTechnicalInformation];
+                    document.getElementById("technicalData").value = "";
                 }
+            },
+            removeTechnicalInformation(currentIndex) {
+                this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index != currentIndex);
             },
             uploadImages(event, type) {
                 var files = event.target.files;
@@ -359,28 +371,13 @@
                     }).catch(error => console.log(error));
                 }
             },
-            renderImage(image) {
-                return helper.methods.renderImage(image);
-            },
-            selectTechnicalInformation() {
-                var technicalInformationTitle = document.getElementById("technicalData").value;
-                if(technicalInformationTitle != "") {
-                    if(document.getElementsByTagName("tbody")[0]) {
-                        var rows = document.getElementsByTagName("tbody")[0].rows;
-                        for(var row = 0; row < rows.length; row++) {
-                            if(rows[row].cells[1].innerText == technicalInformationTitle) {
-                                this.message = "You have already selected the technical information!";
-                                return;
-                            }
-                        }
-                    }
-                    var newTechnicalInformation = {title: technicalInformationTitle, value: ""};
-                    this.product.technicalData = [...this.product.technicalData, newTechnicalInformation];
-                    document.getElementById("technicalData").value = "";
+            deleteProduct() {
+                var confirmed = confirm("Delete this product?");
+                if(confirmed) {
+                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteProduct/" + this.productId).then(response => {
+                        route.methods.openProducts();
+                    }).catch(error => console.log(error));
                 }
-            },
-            removeTechnicalInformation(currentIndex) {
-                this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index != currentIndex);
             },
             addDragOver() {
                 document.getElementById("dropzone").className = "onDragOver";
@@ -395,9 +392,8 @@
                 if(type == "main") this.edits.mainEdited = false;
                 else this.edits.technicalDataEdited = false;
             },
-            toggleTab(tab) {
-                helper.methods.toggleTab(tab);
-            },
+            renderImage(image) { return helper.methods.renderImage(image); },
+            toggleTab(tab) { helper.methods.toggleTab(tab); },
             clearTitleStatus() { this.errors.titleError = false },
             clearDescriptionStatus() { this.errors.descriptionError = false },
             clearPriceStatus() { this.errors.priceError = false },
@@ -435,7 +431,7 @@
         max-width: 800px;
         margin-top: 20px;
     }
-    .padding {
+    .padded {
         padding-top: 12px;
     }
     #deleteTab {
@@ -444,9 +440,6 @@
     #previewPrimaryImage {
         text-align: center;
         margin-bottom: 10px;
-    }
-    .previousButton {
-        float: left;
     }
     .nextButton {
         float: right;
@@ -501,10 +494,6 @@
     }
     .position {
         position: relative;
-    }
-    .creationSuccessful {
-        color: #008000;
-        margin-bottom: 10px;
     }
     .errorField {
         border: 1px solid #ff0000;

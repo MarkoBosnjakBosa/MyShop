@@ -80,6 +80,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 	app.put("/editProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validations.validateProductEdit, (request, response) => {
 		var productId = request.body.productId;
 		var query = {_id: productId};
+		var options = {new: true};
 		var type = request.body.type;
 		if(type == "main") {
 			var title = request.body.title;
@@ -88,13 +89,13 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 			var quantity = request.body.quantity;
 			var category = request.body.category;
 			var update = {title: title, description: description, price: price, quantity: quantity, category: category};
-			Product.findOneAndUpdate(query, update).then(product => {
+			Product.findOneAndUpdate(query, update, options).then(product => {
 				response.status(200).json({edited: true}).end();
 			}).catch(error => console.log(error));
 		} else if(type == "technicalData") {
 			var technicalData = JSON.parse(request.body.technicalData);
 			var update = {technicalData: technicalData};
-			Product.findOneAndUpdate(query, update).then(product => {
+			Product.findOneAndUpdate(query, update, options).then(product => {
 				response.status(200).json({edited: true}).end();
 			}).catch(error => console.log(error));
 		} else if(type == "primaryImage") {
@@ -110,7 +111,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		} else if(type == "images") {
 			var images = request.files["images"];
 			var imagesObjects = [];
-			if(images != null && images != "" && images.length > 0 && images.length < 5) {
+			if(images && images.length > 0 && images.length < 5) {
 				for(var image = 0; image < images.length; image++) {
 					var imageRead = fs.readFileSync(images[image].path);
 					var encodedImage = imageRead.toString("base64");
@@ -120,10 +121,9 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 			}
 			Product.findOne(query).then(product => {
 				if(!validations.isEmpty(product)) {
-					var foundImagesLength = product.images.length;
-					if((foundImagesLength + images.length) < 5) {
+					if((product.images.length + images.length) < 5) {
 						var update = {$push: {images: imagesObjects}};
-						Product.findOneAndUpdate(query, update, {new: true}).then(savedProduct => {
+						Product.findOneAndUpdate(query, update, options).then(savedProduct => {
 							if(!validations.isEmpty(savedProduct)) {
 								response.status(200).json({edited: true, images: savedProduct.images}).end();
 							} else {

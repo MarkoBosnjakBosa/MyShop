@@ -98,7 +98,7 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span for="primaryImage" class="input-group-text">Primary image</span>
-                                    <input type="file" id="primaryImage" class="form-control" :class="{'errorField' : errors.primaryImageError && submitting}" @change="selectImages($event, 'primaryImage')"/>
+                                    <input type="file" id="primaryImage" name="primaryImage" class="form-control" :class="{'errorField' : errors.primaryImageError && submitting}" @change="selectImages($event, 'primaryImage')"/>
                                 </div>
                                 <small v-if="errors.primaryImageError && submitting" class="form-text errorInput">Please provide a valid primary image!</small>
                             </div>
@@ -110,7 +110,7 @@
                                         <i class="fas fa-upload fa-2x"></i>
                                         <p>Select images or drag them here.</p>
                                     </div>
-                                    <input type="file" id="images" class="images" multiple/>
+                                    <input type="file" id="images" name="images[]" class="images" multiple/>
                                 </div>
                                 <small v-if="errors.imagesError" class="form-text errorInput">Please provide less than 5 valid images!</small>
                             </div>
@@ -159,7 +159,7 @@
                     title: "",
                     description: "",
                     price: "",
-                    quantity: "",
+                    quantity: 1,
                     category: "",
                     technicalData: [],
                     primaryImage: "",
@@ -255,7 +255,7 @@
                             formData.append("reCaptchaToken", reCaptchaToken);
                             axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createProduct", formData).then(response => {
                                 if(response.data.created) {
-                                    temp.product = {title: "", description: "", price: "", quantity: "", category: "", technicalData: [], primaryImage: "", images: []};
+                                    temp.product = {title: "", description: "", price: "", quantity: 1, category: "", technicalData: [], primaryImage: "", images: []};
                                     document.getElementById("primaryImage").value = "";
                                     document.getElementById("previewPrimaryImage").innerText = "";
                                     document.getElementById("images").value = "";
@@ -448,10 +448,6 @@
     }
     .position {
         position: relative;
-    }
-    .creationSuccessful {
-        color: #008000;
-        margin-bottom: 10px;
     }
     .errorField {
         border: 1px solid #ff0000;
