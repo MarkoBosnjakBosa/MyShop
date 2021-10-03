@@ -1,4 +1,4 @@
-module.exports = function(app, models, validation) {
+module.exports = function(app, models, validations) {
     const Category = models.Category;
     app.get("/getCategories", (request, response) => {
         var query = {};
@@ -13,7 +13,7 @@ module.exports = function(app, models, validation) {
             response.status(200).json({category: category}).end();
         }).catch(error => console.log(error));
     });
-    app.post("/createCategory", validation.validateCategoryCreation, (request, response) => {
+    app.post("/createCategory", validations.validateCategoryCreation, (request, response) => {
         var title = request.body.title;
         var icon = request.body.icon;
         var newCategory = getCategoryScheme(Category, title, icon);
@@ -21,7 +21,7 @@ module.exports = function(app, models, validation) {
             response.status(200).json({created: true, category: category}).end();
         }).catch(error => console.log(error));
     });
-    app.put("/editCategory", validation.validateCategoryEdit, (request, response) => {
+    app.put("/editCategory", validations.validateCategoryEdit, (request, response) => {
         var categoryId = request.body.categoryId;
         var title = request.body.title;
         var icon = request.body.icon;
@@ -29,7 +29,7 @@ module.exports = function(app, models, validation) {
         var update = {title: title, icon: icon};
         var options = {new: true};
         Category.findOneAndUpdate(query, update, options).then(category => {
-            if(!validation.isEmpty(category)) {
+            if(!validations.isEmpty(category)) {
                 response.status(200).json({edited: true}).end();
             } else {
                 response.status(200).json({edited: false}).end();
@@ -41,7 +41,7 @@ module.exports = function(app, models, validation) {
         if(categoryId) {
             var query = {_id: categoryId};
             Category.findOneAndRemove(query).then(category => {
-                if(!validation.isEmpty(category)) {
+                if(!validations.isEmpty(category)) {
                     response.status(200).json({deleted: true}).end();
                 } else {
                     response.status(200).json({deleted: false}).end();
