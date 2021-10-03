@@ -21,7 +21,7 @@
 					<div class="mb-3">
 						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
-					<div>
+					<div class="mb-3">
 						<button type="button" class="btn btn-dark" @click.prevent="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
 					</div>
 				</form>
