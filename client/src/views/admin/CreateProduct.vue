@@ -56,7 +56,7 @@
                                 </div>
                                 <small v-if="errors.categoryError && submitting" class="form-text errorInput">Please provide a valid category!</small>
                             </div>
-                            <div>
+                            <div class="mb-3">
                                 <button type="button" class="btn btn-dark nextButton" @click="toggleTab('technicalData')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div>
+                            <div class="mb-3">
                                 <button type="button" class="btn btn-dark" @click="toggleTab('main')"><i class="fas fa-angle-double-left"></i> Previous</button>
                                 <button type="button" class="btn btn-dark nextButton" @click="toggleTab('images')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>
@@ -122,7 +122,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="mb-3">
                                 <button type="button" class="btn btn-dark" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
                                 <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
                             </div>
