@@ -5,7 +5,7 @@
             <div id="pageStyle">
                 <navigation></navigation>
                 <h1>Contact Settings</h1>
-                <form autocomplete="off" class="contactSettings" @submit.prevent="saveContactSettings()">
+                <form autocomplete="off" @submit.prevent="saveContactSettings()" novalidate>
                     <div class="row">
                         <div class="mb-3 col-md-5">
                             <label for="latitude" class="form-label">Latitude:</label>
@@ -40,7 +40,7 @@
                         </div>
                         <div class="mb-3 col-md-4">
                             <label for="zipCode" class="form-label">Zip code:</label>
-                            <input type="number" id="zipCode" min="0" class="form-control" :class="{'errorField' : errors.zipCodeError && submitting}" v-model="contactSettings.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
+                            <input type="number" id="zipCode" min="1" class="form-control" :class="{'errorField' : errors.zipCodeError && submitting}" v-model="contactSettings.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -64,8 +64,8 @@
                         </div>
                     </div>
                     <div v-if="contactSettingsSaved" class="mb-3 contactSettingsSaved">Contact settings have been successfully saved!</div>
-                    <div>
-                        <button type="submit" class="btn btn-primary saveButton">Save</button>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary save">Save</button>
                     </div>
                 </form>
             </div>
@@ -92,13 +92,13 @@
                 contactSettings: {
                     _id: "",
                     coordinates: {
-                        lat: "",
-                        lng: ""
+                        lat: 0,
+                        lng: 0
                     },
                     street: "",
-                    houseNumber: "",
+                    houseNumber: 0,
                     city: "",
-                    zipCode: "",
+                    zipCode: 1,
                     country: "",
                     mobileNumber: "",
                     email: ""
@@ -204,10 +204,12 @@
                         this.contactSettings.coordinates.lat = position.coords.latitude;
                         this.contactSettings.coordinates.lng = position.coords.longitude;
                         this.errors.latitudeError = false;
-                        this.errors.longitudeError = false
+                        this.errors.longitudeError = false;
+                        this.contactSettingsSaved = false;
                     });
                 } else {
                     this.errors.geolocationError = true;
+                    this.contactSettingsSaved = false;
                 }
             },
             clearLatitudeStatus() { this.errors.latitudeError = false, this.errors.geolocationError = false, this.contactSettingsSaved = false; },
@@ -245,7 +247,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    .contactSettings {
+    form {
         margin: auto;
         max-width: 900px;
     }
@@ -256,7 +258,7 @@
     .countryCodePrefix {
         background-color: #fff;
     }
-    .saveButton {
+    .save {
         float: right;
     }
     .contactSettingsSaved {

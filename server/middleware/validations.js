@@ -331,50 +331,55 @@ function validateReviewEdit(request, response, next) {
 }
 
 function validateContactSettings(request, response, next) {
-    var allowSubmission = true;
+    var allowSaving = true;
     var errorFields = [];
     var contactSettings = request.body.contactSettings;
     var latitude = contactSettings.coordinates.lat;
     if(validations.invalidLatitude(latitude)) {
         errorFields = [...errorFields, "latitude"];
-        allowSubmission = false;
+        allowSaving = false;
     }
     var longitude = contactSettings.coordinates.lng;
     if(validations.invalidLongitude(longitude)) {
         errorFields = [...errorFields, "longitude"];
-        allowSubmission = false;
+        allowSaving = false;
     }
     var street = contactSettings.street;
     if(validations.invalidStreet(street)) {
         errorFields = [...errorFields, "street"];
-        allowSubmission = false;
+        allowSaving = false;
     }
-    var houseNumber = contactSettings.houseNumber.toString();
+    var houseNumber = contactSettings.houseNumber;
     if(validations.invalidHouseNumber(houseNumber)) {
         errorFields = [...errorFields, "houseNumber"];
-        allowSubmission = false;
+        allowSaving = false;
     }
     var city = contactSettings.city;
     if(validations.invalidCity(city)) {
         errorFields = [...errorFields, "city"];
-        allowSubmission = false;
+        allowSaving = false;
     }
-    var zipCode = contactSettings.zipCode.toString();
+    var zipCode = contactSettings.zipCode;
     if(validations.invalidZipCode(zipCode)) {
         errorFields = [...errorFields, "zipCode"];
-        allowSubmission = false;
+        allowSaving = false;
+    }
+    var country = contactSettings.country;
+    if(validations.invalidCountry(country)) {
+        errorFields = [...errorFields, "country"];
+        allowSaving = false;
     }
     var mobileNumber = contactSettings.mobileNumber;
     if(validations.invalidMobileNumber(mobileNumber)) {
         errorFields = [...errorFields, "mobileNumber"];
-        allowSubmission = false;
+        allowSaving = false;
     }
     var email = contactSettings.email;
     if(validations.invalidEmail(email)) {
         errorFields = [...errorFields, "email"];
-        allowSubmission = false;
+        allowSaving = false;
     }
-    if(allowSubmission) next();
+    if(allowSaving) next();
     else response.status(200).json({saved: false, errorFields: errorFields}).end();
 }
 

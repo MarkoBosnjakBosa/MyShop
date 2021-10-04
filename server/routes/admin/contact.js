@@ -7,7 +7,7 @@ module.exports = function(app, models, moment, emailEvent, validation) {
             if(!validation.isEmpty(contactSettings) && contactSettings.length > 0) {
                 response.status(200).json({contactSettings: contactSettings[0]}).end();
             } else {
-                response.status(200).json({contactSettings: {_id: "", coordinates: {lat: "", lng: ""}, street: "", houseNumber: "", city: "", zipCode: "", country: "", mobileNumber: "", email: ""}}).end();
+                response.status(200).json({contactSettings: {_id: "", coordinates: {lat: 0, lng: 0}, street: "", houseNumber: 0, city: "", zipCode: 1, country: "", mobileNumber: "", email: ""}}).end();
             }
         }).catch(error => console.log(error));
     });

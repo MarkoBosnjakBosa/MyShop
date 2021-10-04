@@ -66,11 +66,11 @@
 			invalidReview(review) { return review == ""},
 			invalidFoundUser(user) { return user == ""},
 			invalidLatitude(latitude) {
-				if(latitude && !isNaN(latitude)) return false;
+				if(!isNaN(parseFloat(latitude))) return false;
 				else return true;
 			},
 			invalidLongitude(longitude) { 
-				if(longitude && !isNaN(longitude)) return false;
+				if(!isNaN(parseFloat(longitude))) return false;
 				else return true;
 			}
 		}

@@ -74,11 +74,11 @@ function invalidOption(option) {
     else return false;
 }
 function invalidLatitude(latitude) {
-    if(latitude && !isNaN(latitude)) return false;
+    if(!isNaN(parseFloat(latitude))) return false;
     else return true;
 }
 function invalidLongitude(longitude) {
-    if(longitude && !isNaN(longitude)) return false;
+    if(!isNaN(parseFloat(longitude))) return false;
     else return true;
 }
 
