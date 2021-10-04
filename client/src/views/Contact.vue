@@ -44,13 +44,13 @@
                                 <small v-if="errors.messageError && submitting" class="form-text errorInput">Please provide a valid message!</small>
                             </div>
                             <div v-if="messageSubmitted" class="mb-3 submissionSuccessful">Your message has been successfully submitted!</div>
-                            <div>
+                            <div class="mb-3">
                                 <button type="button" class="btn btn-danger" @click="resetMessage()">Reset</button>
                                 <button type="button" class="btn btn-dark nextButton" @click="toggleTab('map')">Next <i class="fas fa-angle-double-right"></i></button>               
                                 <button type="button" class="btn btn-primary submitButton" @click="submitMessage()">Submit</button>
                             </div>
                         </form>
-                        <div class="contact">
+                        <div>
                             <h3>My Shop</h3>
                             <div v-if="contactSettings.street && contactSettings.houseNumber && contactSettings.zipCode && contactSettings.city && contactSettings.country" class="information">
                                 <i class="fas fa-address-book"></i> {{contactSettings.street}} {{contactSettings.houseNumber}}, {{contactSettings.zipCode}} {{contactSettings.city}}, {{contactSettings.country}}
@@ -65,7 +65,7 @@
                     </div>
                     <div id="mapTab" class="tab-pane fade" role="tabpanel">
                         <div id="map" class="mb-3"></div>
-                        <div>
+                        <div class="mb-3">
                             <button type="button" class="btn btn-dark" @click="toggleTab('message')"><i class="fas fa-angle-double-left"></i> Previous</button>
                         </div>
                     </div>
@@ -78,8 +78,8 @@
 <script>
     import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";
-    import validation from "../components/Validation.vue";
     import helper from "../components/Helper.vue";  
+    import validation from "../components/Validation.vue";
     const axios = require("axios");
 	
     export default {
@@ -94,8 +94,8 @@
                 contactSettings: {
                     _id: "",
                     coordinates: {
-                        lat: "",
-                        lng: ""
+                        lat: 0,
+                        lng: 0
                     },
                     street: "",
                     houseNumber: 0,
@@ -202,7 +202,7 @@
             setLocation() {
                 var icon = {url: require("../assets/images/GoogleMapsIcon.png"), scaledSize: new google.maps.Size(50, 50)};
                 var location = new google.maps.Marker({position: this.contactSettings.coordinates, map: this.map, icon: icon});
-                var infoWindow = new google.maps.InfoWindow({content: "<h3 style='text-align: center'>MyShop</h3><div>" + this.contactSettings.street + " " + this.contactSettings.houseNumber + ", " + this.contactSettings.zipCode + " " + this.contactSettings.city + ", " + this.contactSettings.country + "</div>"});
+                var infoWindow = new google.maps.InfoWindow({content: (this.contactSettings.street && this.contactSettings.houseNumber && this.contactSettings.city && this.contactSettings.zipCode && this.contactSettings.country) ? ("<h3 style='text-align: center'>MyShop</h3><div>" + this.contactSettings.street + " " + this.contactSettings.houseNumber + ", " + this.contactSettings.zipCode + " " + this.contactSettings.city + ", " + this.contactSettings.country + "</div>") : ("<h3 style='text-align: center'>MyShop</h3>")});
                 location.addListener("mouseover", function() {
                     infoWindow.open(this.map, location);
                 });
@@ -210,9 +210,7 @@
                     infoWindow.close();
                 });
             },
-            toggleTab(tab) {
-                helper.methods.toggleTab(tab);
-            },
+            toggleTab(tab) { helper.methods.toggleTab(tab); },
             clearFirstNameStatus() { this.errors.firstNameError = false, this.messageSubmitted = false },
             clearLastNameStatus() { this.errors.lastNameError = false, this.messageSubmitted = false },
             clearEmailStatus() { this.errors.emailError = false, this.messageSubmitted = false },
@@ -252,9 +250,6 @@
     }
     .submitButton {
         float: right;
-    }
-    .contact {
-        margin-top: 10px;
     }
     .information {
         margin-bottom: 5px;

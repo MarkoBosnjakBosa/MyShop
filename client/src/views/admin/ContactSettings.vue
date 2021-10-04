@@ -40,7 +40,7 @@
                         </div>
                         <div class="mb-3 col-md-4">
                             <label for="zipCode" class="form-label">Zip code:</label>
-                            <input type="number" id="zipCode" min="1" class="form-control" :class="{'errorField' : errors.zipCodeError && submitting}" v-model="contactSettings.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
+                            <input type="number" id="zipCode" min="0" class="form-control" :class="{'errorField' : errors.zipCodeError && submitting}" v-model="contactSettings.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -98,7 +98,7 @@
                     street: "",
                     houseNumber: 0,
                     city: "",
-                    zipCode: 1,
+                    zipCode: 0,
                     country: "",
                     mobileNumber: "",
                     email: ""

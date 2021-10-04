@@ -7,7 +7,7 @@ module.exports = function(app, models, moment, emailEvent, validation) {
             if(!validation.isEmpty(contactSettings) && contactSettings.length > 0) {
                 response.status(200).json({contactSettings: contactSettings[0]}).end();
             } else {
-                response.status(200).json({contactSettings: {_id: "", coordinates: {lat: 0, lng: 0}, street: "", houseNumber: 0, city: "", zipCode: 1, country: "", mobileNumber: "", email: ""}}).end();
+                response.status(200).json({contactSettings: {_id: "", coordinates: {lat: 0, lng: 0}, street: "", houseNumber: 0, city: "", zipCode: 0, country: "", mobileNumber: "", email: ""}}).end();
             }
         }).catch(error => console.log(error));
     });
@@ -25,7 +25,8 @@ module.exports = function(app, models, moment, emailEvent, validation) {
         if(contactSettingsId) {
             var query = {_id: contactSettingsId};
             var update = {coordinates: coordinates, street: street, houseNumber: houseNumber, city: city, zipCode: zipCode, country: country, mobileNumber: mobileNumber, email: email};
-            ContactSettings.findOneAndUpdate(query, update).then(savedContactSettings => {
+            var options = {new: true};
+            ContactSettings.findOneAndUpdate(query, update, options).then(savedContactSettings => {
                 response.status(200).json({saved: true, contactSettingsId: savedContactSettings._id}).end();
             }).catch(error => console.log(error));
         } else {
@@ -52,7 +53,7 @@ module.exports = function(app, models, moment, emailEvent, validation) {
             default:
                 sort = {};
         }
-        var query = search != "" ? {$or: [{firstName: {$regex: search, $options: "i" }}, {lastName: {$regex: search, $options: "i"}}, {email: {$regex: search, $options: "i"}}, {message: {$regex: search, $options: "i"}}]} : {};
+        var query = search ? {$or: [{firstName: {$regex: search, $options: "i" }}, {lastName: {$regex: search, $options: "i"}}, {email: {$regex: search, $options: "i"}}, {message: {$regex: search, $options: "i"}}]} : {};
         var contactsQuery = Contact.find(query).sort(sort).skip(skip).limit(limit);
         var totalQuery = Contact.find(query).countDocuments();
         var queries = [contactsQuery, totalQuery];

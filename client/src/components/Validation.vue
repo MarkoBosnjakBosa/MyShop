@@ -32,8 +32,8 @@
 			},
 			invalidCity(city) { return city == ""; },
 			invalidZipCode(zipCode) {
-				var zipCodeFormat = /^[1-9]\d*$/;
-				if(zipCode && zipCodeFormat.test(zipCode)) return false;
+				var zipCodeFormat = /^[0-9]\d*$/;
+				if(zipCodeFormat.test(zipCode)) return false;
 				else return true;
 			},
 			invalidCountry(country) { return country == ""; },
@@ -51,8 +51,8 @@
 				else return true;
 			},
 			invalidQuantity(quantity) {
-				var quantityFormat = /^[1-9]\d*$/;
-				if(quantity && quantityFormat.test(quantity)) return false;
+				var quantityFormat = /^[0-9]\d*$/;
+				if(quantityFormat.test(quantity)) return false;
 				else return true;
 			},
 			invalidCategory(category) { return category == ""; },

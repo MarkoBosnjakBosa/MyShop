@@ -30,8 +30,8 @@ function invalidHouseNumber(houseNumber) {
 }
 function invalidCity(city) { return city == ""; }
 function invalidZipCode(zipCode) {
-    var zipCodeFormat = /^[1-9]\d*$/;
-    if(zipCode && zipCodeFormat.test(zipCode)) return false;
+    var zipCodeFormat = /^[0-9]\d*$/;
+    if(zipCodeFormat.test(zipCode)) return false;
     else return true;
 }
 function invalidCountry(country) { return country == ""; }
@@ -59,8 +59,8 @@ function invalidPrice(price) {
     else return true;
 }
 function invalidQuantity(quantity) {
-    var quantityFormat = /^[1-9]\d*$/;
-    if(quantity && quantityFormat.test(quantity)) return false;
+    var quantityFormat = /^[0-9]\d*$/;
+    if(quantityFormat.test(quantity)) return false;
     else return true;
 }
 function invalidCategory(category) { return category == ""; }
