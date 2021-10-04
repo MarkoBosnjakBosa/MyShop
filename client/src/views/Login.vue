@@ -69,7 +69,7 @@
 			checkLogin() {
 				if(this.$store.getters.isLoggedIn) {
 					axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => {
-						if(response.data.loggedIn) this.openHome();
+						if(response.data.isLoggedIn) this.openHome();
 					}).catch(error => console.log(error));
 				}
 			},
