@@ -245,11 +245,6 @@ function validateProductCreation(request, response, next) {
         errorFields = [...errorFields, "primaryImage"];
         allowCreation = false;
     }
-    var images = request.files["images"];
-    if(validations.invalidImages(images.length) || request.extensionValidationError) {
-        errorFields = [...errorFields, "images"];
-        allowCreation = false;
-    }
     var reCaptchaToken = request.body.reCaptchaToken;
     if(validations.invalidReCaptchaToken(reCaptcha_v3_SecretKey, reCaptchaToken, request.connection.remoteAddress)) {
         errorFields = [...errorFields, "reCaptchaToken"];
@@ -298,9 +293,7 @@ function validateProductEdit(request, response, next) {
         if(!validations.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) next();
         else response.status(200).json({edited: false, errorFields: ["primarymage"]}).end();
     } else if(type == "images") {
-        var images = request.files["images"];
-        if(!validations.invalidImages(images.length) && !request.extensionValidationError) next();
-        else response.status(200).json({edited: false, errorFields: ["images"]}).end();
+        next();
     } else {
         response.status(200).json({edited: false}).end();
     }
