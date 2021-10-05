@@ -38,8 +38,8 @@ module.exports = function(app, models, moment, emailEvent, validation) {
     });
     app.post("/getContacts", (request, response) => {
         var search = request.body.search;
-        var page = Number(request.body.page) - 1; 
-        var limit = Number(request.body.limit);
+        var page = Number(request.body.page) - 1;
+        var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
         var skip = page * limit;
         var orderBy = request.body.orderBy;
         var sort = {};

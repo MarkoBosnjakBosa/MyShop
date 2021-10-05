@@ -5,7 +5,7 @@
             <div id="pageStyle">
                 <navigation></navigation>
                 <h1>Contacts</h1>
-                <form autocomplete="off" class="contactsForm" @submit.prevent="getContacts()">
+                <form autocomplete="off" @submit.prevent="getContacts()" novalidate>
                     <div class="row">
                         <div class="mb-3 col-md-5">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
@@ -20,10 +20,8 @@
                                 <option value="dateDesc">Date &#129047;</option>
                             </select>
                         </div>
-                        <div class="mb-3 col-md-1">
+                        <div class="btn-group mb-3 col-md-2">
                             <button type="submit" class="btn btn-primary md-1">Search</button>
-                        </div>
-                        <div class="mb-3 col-md-1">
                             <button type="button" class="btn btn-dark" data-toggle="tooltip" :title="'Total: ' + total">{{total}}</button>
                         </div>
                     </div>
@@ -41,13 +39,13 @@
                             <div class="email">{{contact.email}}</div> 
                             <div class="action">
                                 <button type="button" class="btn btn-success"><i class="fas fa-phone"></i> +{{contact.mobileNumber}}</button>
-                                <a :href="'mailto:' + contact.email" class="btn btn-primary answer">Answer</a>
+                                <a :href="'mailto:' + contact.email + '?subject=MyShop - Answer to ' + contact.firstName + ' ' + contact.lastName + ' (' + contact.date + ')'" class="btn btn-primary answer"><i class="far fa-envelope"></i> Answer</a>
                                 <button type="button" class="btn btn-danger delete" @click="deleteContact(contact._id, contact.firstName + ' ' + contact.lastName)">Delete</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="form-group pages">
+                <div class="mb-3 pages">
                     <button v-if="page - 1 > 0" type="button" class="btn btn-dark page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="btn btn-dark page">{{page}}</button>
                     <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
@@ -82,6 +80,7 @@
         },
         methods: {
             getContacts() {
+                if(!Number.isInteger(this.limit) || this.limit < 1) this.limit = 1;
                 var body = {search: this.search, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getContacts", body).then(response => {
                     this.contacts = response.data.contacts;
@@ -119,7 +118,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    .contactsForm, .contacts {
+    form, .contacts {
         margin: auto;
         max-width: 900px;
     }
@@ -143,7 +142,6 @@
     }
     .pages {
         text-align: center;
-        margin-bottom: 10px;
     }
     .page {
         margin-left: 10px;
