@@ -57,10 +57,6 @@
 			},
 			invalidCategory(category) { return category == ""; },
 			invalidPrimaryImage(primaryImage) { return primaryImage == ""; },
-			invalidImages(images) {
-				if(images > 0 && images < 5) return false;
-				else return true;
-			},
 			invalidMessage(message) { return message == ""; },
 			invalidRating(rating) { return rating < 1 || rating > 5; },
 			invalidReview(review) { return review == ""},
