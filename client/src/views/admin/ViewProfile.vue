@@ -39,7 +39,10 @@
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">Mobile number:</label>
                             <div class="col-md-9">
-                                <input type="text" id="mobileNumber" class="form-control" v-model="user.account.mobileNumber" disabled>
+                                <div class="input-group">
+                                    <span class="input-group-text countryCodePrefix">+</span>
+                                    <input type="text" id="mobileNumber" class="form-control" v-model="user.account.mobileNumber" disabled>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -77,7 +80,7 @@
                                 <input type="text" id="country" class="form-control" v-model="user.address.country" disabled>
                             </div>
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
                             <button type="button" class="btn btn-dark nextButton" @click="toggleTab('delete')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
@@ -86,8 +89,8 @@
                         <div class="mb-3 delete">
                             <button type="button" class="btn btn-danger" @click="deleteUser()">Delete <i class="fas fa-trash"></i></button>
                         </div>
-                        <div>
-                            <button type="button" class="btn btn-dark previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-dark" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
                         </div>
                     </div>
                 </div>
@@ -169,14 +172,14 @@
         text-align: center;
         margin-top: 20px;
         margin-bottom: 20px;
-        overflow: hidden;
-        white-space: nowrap;
-        cursor: pointer;
     }
     #accountTab, #addressTab, #deleteTab {
         margin: auto;
         max-width: 600px;
         margin-top: 20px;
+    }
+    .countryCodePrefix {
+        background-color: #fff;
     }
     .nextButton {
         float: right;
