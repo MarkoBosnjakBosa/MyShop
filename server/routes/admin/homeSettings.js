@@ -48,7 +48,7 @@ module.exports = function(app, models, fs, path, uploadImages, validations) {
                             var options = {new: true};
                             HomeSettings.findOneAndUpdate(query, update, options).then(savedHomeSettings => {
                                 if(!validations.isEmpty(savedHomeSettings)) {
-                                    response.status(200).json({saved: true, homeSettingsId: savedHomeSettings._id}).end();
+                                    response.status(200).json({saved: true, homeSettingsId: savedHomeSettings._id, images: savedHomeSettings.images}).end();
                                 } else {
                                     response.status(200).json({saved: false}).end(); 
                                 }
@@ -64,7 +64,7 @@ module.exports = function(app, models, fs, path, uploadImages, validations) {
                 var message = "";
                 var newHomeSettings = getHomeSettingsScheme(HomeSettings, message, imagesObjects);
                 newHomeSettings.save().then(savedHomeSettings => {
-                    response.status(200).json({saved: true, homeSettingsId: savedHomeSettings._id}).end();
+                    response.status(200).json({saved: true, homeSettingsId: savedHomeSettings._id, images: savedHomeSettings.images}).end();
                 }).catch(error => console.log(error));
             }
         } else {

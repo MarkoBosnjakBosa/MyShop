@@ -64,8 +64,8 @@
     import checkLogin from "../../components/CheckLogin.vue";
     import navigation from "../../components/Navigation.vue";
     import sidebar from "../../components/Sidebar.vue";
-    import validation from "../../components/Validation.vue";
     import helper from "../../components/Helper.vue";
+    import validation from "../../components/Validation.vue";
     import tinymce from "@tinymce/tinymce-vue";
     const axios = require("axios");
 
@@ -128,19 +128,26 @@
                         }
                         images = [...images, file];
                     }
-                    var formData = new FormData();
-                    formData.append("homeSettingsId", this.homeSettings.id);
-                    formData.append("type", "homeSettings");
-                    for(var image = 0 ; image < images.length; image++) {
-                        formData.append("images", images[image]);
-                    }
-                    axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/saveHomeSettingsImages", formData).then(response => {
-                        if(response.data.saved) {
-                            this.getHomeSettings();
-                        } else {
-                            this.errors.imagesError = true;
+                    if(images.length > 0) {
+                        var formData = new FormData();
+                        formData.append("homeSettingsId", this.homeSettings.id);
+                        formData.append("type", "homeSettingsImages");
+                        for(var image = 0 ; image < images.length; image++) {
+                            formData.append("images", images[image]);
                         }
-                    }).catch(error => console.log(error));
+                        axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/saveHomeSettingsImages", formData).then(response => {
+                            if(response.data.saved) {
+                                this.homeSettings.images = [];
+                                for(var image = 0; image < response.data.images.length; image++) {
+                                    this.homeSettings.images = [...this.homeSettings.images, response.data.images[image]];
+                                }
+                            } else {
+                                this.errors.imagesError = true;
+                            }
+                        }).catch(error => console.log(error));
+                    } else {
+                        this.errors.imagesError = true;
+                    }
                 } else {
                     this.errors.imagesError = true;
                 }
@@ -153,6 +160,8 @@
                         if(response.data.deleted) {
                             this.homeSettings.images = this.homeSettings.images.filter(image => image._id != imageId);
                             this.errors.imagesError = false;
+                        } else {
+                            this.errors.imagesError = true;
                         }
                     }).catch(error => console.log(error));
                 }

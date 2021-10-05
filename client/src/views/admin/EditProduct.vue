@@ -405,8 +405,7 @@
             invalidPrice() { return validation.methods.invalidPrice(this.product.price); },
             invalidQuantity() { return validation.methods.invalidQuantity(this.product.quantity); },
             invalidCategory() { return validation.methods.invalidCategory(this.product.category); },
-            invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); },
-            invalidImages() { return validation.methods.invalidImages(this.product.images.length); }
+            invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); }
         },
         created() {
             checkLogin.methods.isLoggedIn();

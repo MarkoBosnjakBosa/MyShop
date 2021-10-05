@@ -58,7 +58,7 @@
 			invalidCategory(category) { return category == ""; },
 			invalidPrimaryImage(primaryImage) { return primaryImage == ""; },
 			invalidImages(images) {
-				if(images < 5) return false;
+				if(images > 0 && images < 5) return false;
 				else return true;
 			},
 			invalidMessage(message) { return message == ""; },
