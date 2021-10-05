@@ -27,7 +27,7 @@
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         </button>
                     </div>
-                    <div class="container-fluid mb-3 introductionText">
+                    <div class="mb-3">
                         <h3 v-if="homeSettings.message" v-html="homeSettings.message"></h3>
                         <h3 v-else>Welcome to the best online shop in the world!</h3>
                     </div>
