@@ -1,9 +1,9 @@
 <template>
-	<div id="viewProfile" class="container-fluid">
-		<div class="d-flex" id="pageContent">
-			<sidebar></sidebar>
-			<div id="pageStyle">
-				<navigation></navigation>
+    <div id="viewProfile" class="container-fluid">
+        <div class="d-flex" id="pageContent">
+            <sidebar></sidebar>
+            <div id="pageStyle">
+                <navigation></navigation>
                 <h1>Profile: {{user.account.username}}</h1>
                 <div class="nav nav-tabs justify-content-center" role="tablist">
                     <button type="button" id="accountNavTab" data-bs-toggle="tab" data-bs-target="#accountTab" class="nav-link active" role="tab">Account</button>
@@ -45,7 +45,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
@@ -101,46 +101,46 @@
 
 <script>
     import checkLogin from "../../components/CheckLogin.vue";
-	import navigation from "../../components/Navigation.vue";
-	import sidebar from "../../components/Sidebar.vue";
+    import navigation from "../../components/Navigation.vue";
+    import sidebar from "../../components/Sidebar.vue";
     import helper from "../../components/Helper.vue";
     import route from "../../components/Route.vue";
-	const axios = require("axios");
+    const axios = require("axios");
 	
-	export default {
-		name: "viewProfile",
-		components: {
-			navigation,
-			sidebar
-		},
-		data() {
-			return {
+    export default {
+        name: "viewProfile",
+        components: {
+            navigation,
+            sidebar
+        },
+        data() {
+            return {
                 userId: "",
-				user: {
-					account: {
-						username: "",
-						email: "",
-						firstName: "",
-						lastName: "",
-						mobileNumber: ""
-					},
-					address: {
-						street: "",
-						houseNumber: 0,
-						city: "",
-						zipCode: 0,
-						country: ""
-					}
-				}
-			}
-		},
-		methods: {
-			getUser() {
-				axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUserById/" + this.userId).then(response => {
-					this.user.account = response.data.account;
-					this.user.address = response.data.address;
-				}).catch(error => console.log(error));
-			},
+                user: {
+                    account: {
+                        username: "",
+                        email: "",
+                        firstName: "",
+                        lastName: "",
+                        mobileNumber: ""
+                    },
+                    address: {
+                        street: "",
+                        houseNumber: 0,
+                        city: "",
+                        zipCode: 0,
+                        country: ""
+                    }
+                }
+            }
+        },
+        methods: {
+            getUser() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUserById/" + this.userId).then(response => {
+                    this.user.account = response.data.account;
+                    this.user.address = response.data.address;
+                }).catch(error => console.log(error));
+            },
             deleteUser() {
                 var confirmed = confirm("Delete user " + this.user.account.username + "?");
                 if(confirmed) {
