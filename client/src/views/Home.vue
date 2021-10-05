@@ -15,7 +15,7 @@
                     </div>
                     <div v-else class="carousel-inner">
                         <div class="carousel-item active">
-                            <img :src="require('../assets/images/OnlineShop.jpg')" alt="Online Shop" class="d-block w-100">
+                            <img :src="require('../assets/images/OnlineShopImage.jpg')" alt="Online shop image" class="d-block w-100">
                         </div>
                     </div>
                     <button type="button" class="carousel-control-prev" data-bs-target="#imagesCarousel" data-bs-slide="prev">
@@ -25,7 +25,7 @@
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     </button>
                 </div>
-                <div class="container-fluid introductionText">
+                <div class="container-fluid mb-3 introductionText">
                     <h1>MyShop</h1>
                     <h3 v-if="homeSettings.message" v-html="homeSettings.message"></h3>
                     <h3 v-else>Welcome to the best online shop in the world!</h3>
@@ -82,7 +82,6 @@
     }
     .introductionText {
         text-align: center;
-        margin-bottom: 50px;
     }
     h1 {
         margin-bottom: 10px;

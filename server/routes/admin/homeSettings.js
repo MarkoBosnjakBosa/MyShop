@@ -1,22 +1,23 @@
-module.exports = function(app, models, fs, path, uploadImages, validation) {
+module.exports = function(app, models, fs, path, uploadImages, validations) {
     const HomeSettings = models.HomeSettings;
     app.get("/getHomeSettings", (request, response) => {
         var query = {};
         HomeSettings.find(query).then(homeSettings => {
-            if(!validation.isEmpty(homeSettings)) {
+            if(!validations.isEmpty(homeSettings)) {
                 response.status(200).json({id: homeSettings[0]._id, message: homeSettings[0].message, images: homeSettings[0].images}).end();
             } else {
                 response.status(200).json({id: "", message: "", images: []}).end();
             }
         }).catch(error => console.log(error));
     });
-    app.post("/saveHomeSettingsMessage", validation.validateHomeSettingsMessage, (request, response) => {
+    app.post("/saveHomeSettingsMessage", validations.validateHomeSettingsMessage, (request, response) => {
         var homeSettingsId = request.body.homeSettingsId;
         var message = request.body.message;
         if(homeSettingsId) {
             var query = {_id: homeSettingsId};
             var update = {message: message};
-            HomeSettings.findOneAndUpdate(query, update).then(savedMessage => {
+            var options = {new: true};
+            HomeSettings.findOneAndUpdate(query, update, options).then(savedMessage => {
                 response.status(200).json({saved: true, homeSettingsId: savedMessage._id}).end();
             }).catch(error => console.log(error));
         } else {
@@ -41,11 +42,12 @@ module.exports = function(app, models, fs, path, uploadImages, validation) {
             if(homeSettingsId) {
                 var query = {_id: homeSettingsId};
                 HomeSettings.findOne(query).then(homeSettings => {
-                    if(!validation.isEmpty(homeSettings)) {
+                    if(!validations.isEmpty(homeSettings)) {
                         if((homeSettings.images.length + imagesObjects.length) < 5) {
                             var update = {$push: {images: imagesObjects}};
-                            HomeSettings.findOneAndUpdate(query, update, {new: true}).then(savedHomeSettings => {
-                                if(!validation.isEmpty(savedHomeSettings)) {
+                            var options = {new: true};
+                            HomeSettings.findOneAndUpdate(query, update, options).then(savedHomeSettings => {
+                                if(!validations.isEmpty(savedHomeSettings)) {
                                     response.status(200).json({saved: true, homeSettingsId: savedHomeSettings._id}).end();
                                 } else {
                                     response.status(200).json({saved: false}).end(); 
@@ -76,8 +78,9 @@ module.exports = function(app, models, fs, path, uploadImages, validation) {
         if(homeSettingsId && imageId && imageName) {
             var query = {_id: homeSettingsId};
             var update = {$pull: {images: {_id: imageId}}};
-            HomeSettings.findOneAndUpdate(query, update, {new: true}).then(homeSettings => {
-                if(!validation.isEmpty(homeSettings)) {
+            var options = {new: true};
+            HomeSettings.findOneAndUpdate(query, update, options).then(homeSettings => {
+                if(!validations.isEmpty(homeSettings)) {
                     fs.unlink(path.join(__dirname, "../../images/home/", imageName), function(error) {});
                     response.status(200).json({deleted: true}).end();
                 } else {
