@@ -5,7 +5,7 @@
             <div id="pageStyle">
                 <navigation></navigation>
                 <h1>Shop</h1>
-                <form autocomplete="off" class="productsForm" @submit.prevent="getProducts()">
+                <form autocomplete="off" @submit.prevent="getProducts()" novalidate>
                     <div class="row">
                         <div class="mb-3 col-md-4">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
@@ -26,31 +26,37 @@
                                 <option value="titleDesc">Title &#129047;</option>
                                 <option value="priceAsc">Price &#129045;</option>
                                 <option value="priceDesc">Price &#129047;</option>
+                                <option value="quantityAsc">Quantity &#129045;</option>
+                                <option value="quantityDesc">Quantity &#129047;</option>
                                 <option value="ratingAsc">Rating &#129045;</option>
                                 <option value="ratingDesc">Rating &#129047;</option>
                             </select>
                         </div>
-                        <div class="mb-3 col-md-1">
+                        <div class="btn-group mb-3 col-md-2">
                             <button type="submit" class="btn btn-primary md-1">Search</button>
-                        </div>
-                        <div class="mb-3 col-md-1">
                             <button type="button" class="btn btn-dark" data-toggle="tooltip" :title="'Total: ' + total">{{total}}</button>
                         </div>
                     </div>
                 </form>
-                <div class="row products">
+                <div class="row mb-3 products">
                     <div v-for="product in products" :key="product._id" class="col-md-3">
                         <div class="card">
                             <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)">
                             <div class="card-body">
                                 <h5 class="card-title" data-toggle="tooltip" :title="product.title">{{product.title}}</h5>
-                                <p class="card-text">Price: {{formatNumber(product.price)}}</p>
+                                <p class="card-text">Price: {{formatNumber(product.price)}}<br>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(1, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(2, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(3, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(4, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(5, product.rating.averageRating)}"></i>
+                                </p>
                                 <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="pages">
+                <div class="mb-3 pages">
                     <button v-if="page - 1 > 0" type="button" class="btn btn-dark page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="btn btn-dark page">{{page}}</button>
                     <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
@@ -103,12 +109,20 @@
                 this.userData = checkLogin.methods.getUserData();
             },
             getProducts() {
+                if(!Number.isInteger(this.limit) || this.limit < 1) this.limit = 1;
                 var body = {search: this.search, page: this.page, limit: this.limit, orderBy: this.orderBy, category: this.category};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProducts", body).then(response => {
                     this.products = response.data.products;
                     this.total = response.data.total;
                     this.pagesNumber = response.data.pagesNumber;
                 }).catch(error => console.log(error));
+            },
+            getRating(rating, averageRating) {
+                if(rating <= averageRating) {
+                    return true;
+                } else {
+                    return false;
+                }
             },
             getCategories() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategories").then(response => {
@@ -148,7 +162,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    .productsForm, .products {
+    form, .products {
         margin: auto;
         max-width: 1000px;
     }
@@ -164,8 +178,10 @@
         height: 200px;
         cursor: pointer;
     }
+    .checked {
+        color: #ffa500;
+    }
     .pages {
-        margin: auto;
         text-align: center;
     }
     .page {
