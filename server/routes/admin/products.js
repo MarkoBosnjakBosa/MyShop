@@ -5,7 +5,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var search = request.body.search;
 		var category = request.body.category;
 		var page = Number(request.body.page) - 1; 
-		var limit = Number(request.body.limit);
+		var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
 		var skip = page * limit;
 		var orderBy = request.body.orderBy;
 		var sort = {};
@@ -22,6 +22,12 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 			case "priceDesc":
 				sort = {"price": -1};
 				break;
+			case "quantityAsc":
+				sort = {"quantity": 1};
+				break;
+			case "quantityDesc":
+				sort = {"quantity": -1};
+				break;
 			case "ratingAsc":
 				sort = {"rating.averageRating": 1};
 				break;
@@ -31,8 +37,8 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 			default:
 				sort = {};
 		}
-		var categoryQuery = category != "" ? {category: category} : {};
-		var query = search != "" ? {$and: [categoryQuery, {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]}]} : categoryQuery;
+		var categoryQuery = category ? {category: category} : {};
+		var query = search ? {$and: [categoryQuery, {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]}]} : categoryQuery;
 		var productsQuery = Product.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = Product.find(query).countDocuments();
 		var queries = [productsQuery, totalQuery];
@@ -141,7 +147,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var search = request.body.search;
 		var category = request.body.category;
 		var page = Number(request.body.page) - 1; 
-		var limit = Number(request.body.limit);
+		var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
 		var skip = page * limit;
 		var orderBy = request.body.orderBy;
 		var sort = {};
@@ -157,6 +163,12 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 				break;
 			case "priceDesc":
 				sort = {"price": -1};
+				break;
+			case "quantityAsc":
+				sort = {"quantity": 1};
+				break;
+			case "quantityDesc":
+				sort = {"quantity": -1};
 				break;
 			case "ratingAsc":
 				sort = {"rating.averageRating": 1};

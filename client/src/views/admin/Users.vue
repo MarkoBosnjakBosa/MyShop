@@ -150,7 +150,6 @@
     }
     .pages {
         text-align: center;
-        margin: auto;
     }
     .page {
         margin-left: 10px;

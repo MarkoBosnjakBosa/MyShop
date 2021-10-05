@@ -1,11 +1,11 @@
 <template>
-    <div id="categories" class="container-fluid">
+    <div id="products" class="container-fluid">
         <div class="d-flex" id="pageContent">
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
                 <h1>Products</h1>
-                <form autocomplete="off" class="productsForm" @submit.prevent="getProducts()">
+                <form autocomplete="off" @submit.prevent="getProducts()" novalidate>
                     <div class="row">
                         <div class="mb-3 col-md-4">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
@@ -26,6 +26,8 @@
                                 <option value="titleDesc">Title &#129047;</option>
                                 <option value="priceAsc">Price &#129045;</option>
                                 <option value="priceDesc">Price &#129047;</option>
+                                <option value="quantityAsc">Quantity &#129045;</option>
+                                <option value="quantityDesc">Quantity &#129047;</option>
                                 <option value="ratingAsc">Rating &#129045;</option>
                                 <option value="ratingDesc">Rating &#129047;</option>
                             </select>
@@ -44,28 +46,36 @@
                             <th>Title</th>
                             <th>Price</th>
                             <th>Quantity</th>
+                            <th>Rating</th>
                             <th>Primary image</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-if="!products.length">
-                            <td colspan="6" class="noProducts">No products found!</td>
+                            <td colspan="7" class="noProducts">No products found!</td>
                         </tr>
                         <tr v-for="(product, index) in products" :key="product._id">
-                            <th class="padding">{{++index}}</th>
-                            <td class="padding">{{product.title}}</td>
-                            <td class="padding">{{product.price}}</td>
-                            <td class="padding">{{product.quantity}}</td>
+                            <th class="padded">{{++index}}</th>
+                            <td class="padded title">{{product.title}}</td>
+                            <td class="padded">{{product.price}}</td>
+                            <td class="padded">{{product.quantity}}</td>
+                            <td class="padded">
+                                <i class="fas fa-star" :class="{'checked' : getRating(1, product.rating.averageRating)}"></i>
+                                <i class="fas fa-star" :class="{'checked' : getRating(2, product.rating.averageRating)}"></i>
+                                <i class="fas fa-star" :class="{'checked' : getRating(3, product.rating.averageRating)}"></i>
+                                <i class="fas fa-star" :class="{'checked' : getRating(4, product.rating.averageRating)}"></i>
+                                <i class="fas fa-star" :class="{'checked' : getRating(5, product.rating.averageRating)}"></i>
+                            </td>
                             <td><img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image" @click="openModal($event)"></td>
-                            <td class="padding">
-                                <i class="fas fa-external-link-alt" @click="openEditProduct(product._id)"></i>
+                            <td class="padded">
+                                <i class="fas fa-external-link-square-alt" @click="openEditProduct(product._id)"></i>
                                 <i class="fas fa-trash" @click="deleteProduct(product._id, product.title)"></i>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="form-group pages">
+                <div class="mb-3 pages">
                     <button v-if="page - 1 > 0" type="button" class="btn btn-dark page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="btn btn-dark page">{{page}}</button>
                     <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
@@ -107,12 +117,20 @@
         },
         methods: {
             getProducts() {
+                if(!Number.isInteger(this.limit) || this.limit < 1) this.limit = 1;
                 var body = {search: this.search, category: this.category, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProducts", body).then(response => {
                     this.products = response.data.products;
                     this.total = response.data.total;
                     this.pagesNumber = response.data.pagesNumber;
                 }).catch(error => console.log(error));
+            },
+            getRating(rating, averageRating) {
+                if(rating <= averageRating) {
+                    return true;
+                } else {
+                    return false;
+                }
             },
             getCategories() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategories").then(response => {
@@ -136,14 +154,14 @@
                     }
                 }).catch(error => console.log(error));
             },
-            renderImage(image) {
-                return helper.methods.renderImage(image);
-            },
             loadPage(page) {
                 if(page > 0 && page <= this.pagesNumber) {
                     this.page = page;
                     this.getProducts();
                 }
+            },
+            renderImage(image) {
+                return helper.methods.renderImage(image);
             },
             openEditProduct(productId) {
                 route.methods.openEditProduct(productId);
@@ -167,7 +185,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    .productsForm {
+    form {
         margin: auto;
         max-width: 1000px;
     }
@@ -176,8 +194,11 @@
         text-align: center;
         margin-top: 20px;
     }
-    .padding {
+    .padded {
         padding-top: 20px;
+    }
+    .checked {
+        color: #ffa500;
     }
     tbody .fas {
         margin-right: 5px;
@@ -190,7 +211,6 @@
     }
     .pages {
         text-align: center;
-        margin: auto;
     }
     .page {
         margin-left: 10px;
