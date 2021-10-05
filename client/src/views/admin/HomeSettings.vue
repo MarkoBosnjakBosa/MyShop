@@ -12,16 +12,18 @@
                 <div class="tab-content">
                     <div id="imagesTab" class="tab-pane fade active show" role="tabpanel">
                         <h3>Images</h3>
-                        <div class="mb-3">
-                            <div id="dropzone" @dragover.prevent="addDragOver()" @dragleave.prevent="removeDragOver()" @drop="removeDragOver()" @change="uploadImages($event)">
-                                <div id="dropzoneDescription">
-                                    <i class="fas fa-upload fa-2x"></i>
-                                    <p>Choose more images or drag them here.</p>
+                        <form enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <div id="dropzone" @dragover.prevent="addDragOver()" @dragleave.prevent="removeDragOver()" @drop="removeDragOver()" @change="uploadImages($event)">
+                                    <div id="dropzoneDescription">
+                                        <i class="fas fa-upload fa-2x"></i>
+                                        <p>Choose more images or drag them here.</p>
+                                    </div>
+                                    <input type="file" id="images" name="images[]" class="images" multiple/>
                                 </div>
-                                <input type="file" id="images" name="images[]" class="images" multiple/>
+                                <small v-if="errors.imagesError" class="form-text errorInput">Please provide less than 5 images!</small>
                             </div>
-                            <small v-if="errors.imagesError" class="form-text errorInput">Please provide less than 5 images!</small>
-                        </div>
+                        </form>
                         <div v-if="homeSettings.images.length" class="mb-3">
                             <div class="row">
                                 <div v-for="image in homeSettings.images" :key="image._id" class="col-md-3 position">
