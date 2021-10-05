@@ -32,7 +32,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <button type="button" class="btn btn-dark nextButton" @click="toggleTab('message')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
@@ -50,9 +50,9 @@
                                 <small v-if="errors.messageError" class="form-text errorInput">Please provide a valid message!</small>
                                 <small v-if="messageSaved" class="form-text messageSaved">Message has been successfully saved!</small>
                             </div>
-                            <div>
-                                <button type="button" class="btn btn-dark previousButton" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
-                                <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-dark" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                                <button type="submit" class="btn btn-primary saveButton">Save <i class="fas fa-check"></i></button>
                             </div>
                         </form>
                     </div>
@@ -207,10 +207,7 @@
         max-width: 800px;
         margin-top: 20px;
     }
-    .previousButton {
-        float: left;
-    }
-    .nextButton, .submitButton  {
+    .nextButton, .saveButton  {
         float: right;
     }
     #dropzone {
