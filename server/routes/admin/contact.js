@@ -1,17 +1,17 @@
-module.exports = function(app, models, moment, emailEvent, validation) {
+module.exports = function(app, models, moment, emailEvents, validations) {
     const ContactSettings = models.ContactSettings;
     const Contact = models.Contact;
     app.get("/getContactSettings", (request, response) => {
         var query = {};
         ContactSettings.find(query).then(contactSettings => {
-            if(!validation.isEmpty(contactSettings) && contactSettings.length > 0) {
+            if(!validations.isEmpty(contactSettings) && contactSettings.length > 0) {
                 response.status(200).json({contactSettings: contactSettings[0]}).end();
             } else {
                 response.status(200).json({contactSettings: {_id: "", coordinates: {lat: 0, lng: 0}, street: "", houseNumber: 0, city: "", zipCode: 0, country: "", mobileNumber: "", email: ""}}).end();
             }
         }).catch(error => console.log(error));
     });
-    app.post("/saveContactSettings", validation.validateContactSettings, (request, response) => {
+    app.post("/saveContactSettings", validations.validateContactSettings, (request, response) => {
         var contactSettings = request.body.contactSettings;
         var contactSettingsId = contactSettings._id;
         var coordinates = contactSettings.coordinates;
@@ -64,7 +64,7 @@ module.exports = function(app, models, moment, emailEvent, validation) {
             response.status(200).json({contacts: results[0], total: total, pagesNumber: pagesNumber}).end();
         });
     });
-    app.post("/newContact", validation.validateContact, (request, response) => {
+    app.post("/newContact", validations.validateContact, (request, response) => {
         var contact = request.body.contact;
         var firstName = contact.firstName;
         var lastName = contact.lastName;
@@ -75,7 +75,7 @@ module.exports = function(app, models, moment, emailEvent, validation) {
         var date = moment().format(dateFormat);
         var newContact = getContactScheme(Contact, firstName, lastName, email, mobileNumber, message, date);
         newContact.save().then(contact => {
-            emailEvent.emit("sendContactEmail", contact);
+            emailEvents.emit("sendContactEmail", contact);
             response.status(200).json({submitted: true}).end();
         }).catch(error => console.log(error));
     });
@@ -84,7 +84,7 @@ module.exports = function(app, models, moment, emailEvent, validation) {
         if(contactId) {
             var query = {_id: contactId};
             Contact.findOneAndRemove(query).then(contact => {
-                if(!validation.isEmpty(contact)) {
+                if(!validations.isEmpty(contact)) {
                     response.status(200).json({deleted: true}).end();
                 } else {
                     response.status(200).json({deleted: false}).end(); 
