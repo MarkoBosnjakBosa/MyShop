@@ -1,7 +1,7 @@
 <template>
     <div id="cart">
         <a id="cartProducts" href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"><i class="fas fa-shopping-cart"></i><span class="badge bg-dark">{{totalQuantity}}</span></a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cartProducts">
+        <ul class="dropdown-menu dropdown-menu-end scrollable" aria-labelledby="cartProducts">
             <li v-for="(product, index) in products" :key="product._id" class="row product dropdownDivider" :class="{'lowerProduct' : index > 0}">
                 <div class="col-md-4">
                     <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="rounded img-fluid" @click="openProduct(product._id)">
@@ -9,7 +9,7 @@
                 <div class="col-md-7">
                     <h3 data-toggle="tooltip" :title="product.title" @click="openProduct(product._id)">{{product.title}}</h3>
                     <b>{{product.selectedQuantity}} x {{formatNumber(product.price)}} = {{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</b><br>
-                    <i class="fas fa-external-link-alt" @click="openViewProduct(product._id)"></i>
+                    <i class="fas fa-external-link-square-alt" @click="openViewProduct(product._id)"></i>
                 </div>
                 <i class="fas fa-times productRemoval" :class="index == 0 ? 'firstRemoval' : 'otherRemovals'" @click="removeFromShoppingCart(product._id)"></i>
             </li>
@@ -86,6 +86,11 @@
         margin-top: 8px !important;
         width: 400px;
     }
+    .scrollable {
+        max-height: 650px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
     .row {
         margin: 0px;
         cursor: default;
@@ -96,7 +101,6 @@
     h3 {
         overflow: hidden;
         white-space: nowrap;
-        cursor: pointer;
     }
     .product {
         position: relative;
@@ -115,10 +119,10 @@
         cursor: pointer;
     }
     .productRemoval {
-        left: 362px;
+        left: 355px;
     }
     .totalRemoval {
-        right: 15px;
+        left: 365px;
     }
     .firstRemoval {
         top: 0px;
@@ -126,7 +130,7 @@
     .otherRemovals {
         top: 10px;
     }
-    .fas.fa-external-link-alt {
+    .fas.fa-external-link-square-alt {
         cursor: pointer;
     }
     a {
