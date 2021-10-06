@@ -47,6 +47,16 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-md-6 titleColumn"><b>Rating</b></div>
+                                <div class="col-md-6 valueColumn">
+                                    <i class="fas fa-star" :class="{'checked' : getRating(1, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(2, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(3, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(4, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(5, product.rating.averageRating)}"></i>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-6 titleColumn"><b>Description</b></div>
                                 <div class="col-md-6 valueColumn">{{product.description}}</div>
                             </div>
@@ -58,6 +68,7 @@
                                 <div class="col-md-6 titleColumn"><b>{{technicalInformation.title}}</b></div>
                                 <div class="col-md-6 valueColumn">{{technicalInformation.value}}</div>
                             </div>
+                            <div class="mb-3"></div>
                         </div>
                         <div id="reviewsTab" class="tab-pane fade" role="tabpanel">
                             <div class="writeReview" @click="toggleReview()">Add review <i id="reviewIcon" class="fas fa-plus"></i></div>
@@ -100,7 +111,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="pages">
+                            <div class="mb-3 pages">
                                 <button v-if="page - 1 > 0" type="button" class="btn btn-dark page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
                                 <button type="button" class="btn btn-dark page">{{page}}</button>
                                 <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
@@ -164,27 +175,53 @@
                     this.getUserRating(this.product.rating.usersRatings);
                 }).catch(error => console.log(error));
             },
+            getRating(rating, averageRating) {
+                if(rating <= averageRating) {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            getUserRating(usersRatings) {
+                var foundIndex = usersRatings.findIndex(userRating => userRating.username == this.username);
+                if(foundIndex > -1) {
+                    this.rateProduct(usersRatings[foundIndex].rating, "load");
+                }
+            },
+            rateProduct(rating, type) {
+                if((rating && rating < 6)) {
+                    if(type == "load") {
+                        for(var index = 1; index < 6; index ++) {
+                            if(index <= rating) {
+                                document.getElementById("rating_" + index).classList.add("checked");
+                            } else {
+                                document.getElementById("rating_" + index).classList.remove("checked");
+                            }
+                        }
+                    } else {
+                        var body = {productId: this.productId, username: this.username, rating: rating};
+                        axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/rateProduct", body).then(response => {
+                            if(response.data.rated) {
+                                for(var index = 1; index < 6; index ++) {
+                                    if(index <= rating) {
+                                        document.getElementById("rating_" + index).classList.add("checked");
+                                    } else {
+                                        document.getElementById("rating_" + index).classList.remove("checked");
+                                    }
+                                }
+                                this.product.rating = response.data.rating;
+                                this.message = "You have successfully rated this product!";
+                            }
+                        }).catch(error => console.log(error));
+                    }
+                }
+            },
             getReviews() {
                 var body = {productId: this.productId, page: this.page};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getReviews", body).then(response => {
                     this.reviews = response.data.reviews;  
                     this.pagesNumber = response.data.pagesNumber;  
                 }).catch(error => console.log(error));
-            },
-            addToShoppingCart() {
-                if(Number.isInteger(this.product.selectedQuantity) && this.product.selectedQuantity > 0 && this.product.selectedQuantity <= this.product.quantity) {
-                    var product = {};
-                    product._id = this.product._id;
-                    product.title = this.product.title;
-                    product.price = this.product.price;
-                    product.quantity = this.product.quantity;
-                    product.selectedQuantity = this.product.selectedQuantity;
-                    product.primaryImage = this.product.primaryImage;
-                    product.rating = this.product.rating;
-                    this.$store.dispatch("addToShoppingCart", product);
-                    this.product.selectedQuantity = 1;
-                    this.message = "This product has been successfully added to your cart!";
-                }
             },
             toggleReview() {
                 var review = document.getElementById("review");
@@ -201,41 +238,8 @@
                     reviewIcon.classList.add("fa-plus");
                 }
             },
-            getUserRating(usersRatings) {
-                var foundIndex = usersRatings.findIndex(userRating => userRating.username == this.username);
-                if(foundIndex > -1) {
-                    this.rateProduct(usersRatings[foundIndex].rating, "load");
-                }
-            },
-            rateProduct(rating, type) {
-                if(!validation.methods.invalidRating(this.rating)) {
-                    if(type == "load") {
-                        for(var index = 1; index < 6; index ++) {
-                            if(index <= rating) {
-                                document.getElementById("rating_" + index).classList.add("checked");
-                            } else {
-                                document.getElementById("rating_" + index).classList.remove("checked");
-                            }
-                        }
-                    } else {
-                        var body = {productId: this.productId, username: this.username, rating: rating};
-                        axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/rateProduct", body).then(response => {
-                            if(response.data.rated) {
-                                for(var index = 1; index < 6; index ++) {
-                                    if(index <= rating) {
-                                        document.getElementById("rating_" + index).classList.add("checked");
-                                    } else {
-                                        document.getElementById("rating_" + index).classList.remove("checked");
-                                    }
-                                }
-                                this.message = "You have successfully rated this product!";
-                            }
-                        }).catch(error => console.log(error));
-                    }
-                }
-            },
             writeReview() {
-                if(!validation.methods.invalidReview(this.review)) {
+                if(this.review) {
                     var body = {productId: this.productId, username: this.username, review: this.review};
                     axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/writeReview", body).then(response => {
                         if(response.data.written) {
@@ -249,11 +253,11 @@
                 }
             },
             editReview(updatedReview) {
-                if(!validation.methods.invalidReview(updatedReview.review)) {
+                if(updatedReview.review) {
                     var body = {reviewId: updatedReview._id, username: this.username, review: updatedReview.review};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editReview", body).then(response => {
                         if(response.data.edited) {
-                            this.reviews = this.reviews.map(review => review._id == updatedReview._id ? updatedReview : review);
+                            this.reviews = this.reviews.map(review => review._id == response.data.review._id ? response.data.review : review);
                             this.editing = null;
                             this.message = "You have successfully edited a review for this product!";
                         }
@@ -271,6 +275,21 @@
                             this.message = "You have successfully deleted a review for this product!";
                         }
                     }).catch(error => console.log(error));
+                }
+            },
+            addToShoppingCart() {
+                if(Number.isInteger(this.product.selectedQuantity) && this.product.selectedQuantity > 0 && this.product.selectedQuantity <= this.product.quantity) {
+                    var product = {};
+                    product._id = this.product._id;
+                    product.title = this.product.title;
+                    product.price = this.product.price;
+                    product.quantity = this.product.quantity;
+                    product.selectedQuantity = this.product.selectedQuantity;
+                    product.primaryImage = this.product.primaryImage;
+                    product.rating = this.product.rating;
+                    this.$store.dispatch("addToShoppingCart", product);
+                    this.product.selectedQuantity = 1;
+                    this.message = "This product has been successfully added to your cart!";
                 }
             },
             enableEditing(review) {
@@ -349,6 +368,7 @@
         border: 1px #808080 solid;
         padding-top: 10px;
         padding-bottom: 10px;
+        word-wrap: break-word;
     }
     .writeReview {
         border: 1px #808080 solid;
@@ -367,11 +387,11 @@
         float: left;
         padding-top: 15px;
     }
-    .checked {
-        color: #ffa500;
-    }
     .fas.fa-star {
         cursor: pointer;
+    }
+    .checked {
+        color: #ffa500;
     }
     .reviewButton {
         float: right;
@@ -403,7 +423,7 @@
         color: #ff0000;
     }
     .pages {
-        margin: 10px auto;
+        margin-top: 10px;
         text-align: center;
     }
     .page {

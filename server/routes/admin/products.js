@@ -143,64 +143,6 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 			}).catch(error => console.log(error));
 		}
 	});
-	app.post("/downloadProducts", (request, response) => {
-		var search = request.body.search;
-		var category = request.body.category;
-		var page = Number(request.body.page) - 1; 
-		var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
-		var skip = page * limit;
-		var orderBy = request.body.orderBy;
-		var sort = {};
-		switch(orderBy) {
-			case "titleAsc":
-				sort = {"title": 1};
-				break;
-			case "titleDesc":
-				sort = {"title": -1};
-				break;
-			case "priceAsc":
-				sort = {"price": 1};
-				break;
-			case "priceDesc":
-				sort = {"price": -1};
-				break;
-			case "quantityAsc":
-				sort = {"quantity": 1};
-				break;
-			case "quantityDesc":
-				sort = {"quantity": -1};
-				break;
-			case "ratingAsc":
-				sort = {"rating.averageRating": 1};
-				break;
-			case "ratingDesc":
-				sort = {"rating.averageRating": -1};
-				break;
-			default:
-				sort = {};
-		}
-		var categoryQuery = category != "" ? {category: category} : {};
-		var query = search != "" ? {$and: [categoryQuery, {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]}]} : categoryQuery;
-		Product.find(query).sort(sort).skip(skip).limit(limit).then(products => {
-			if(!validations.isEmpty(products)) {
-				var fields = ["_id", "title", "price", "quantity", "category", "description"];
-				var csv;
-				try {
-					csv = json2csv(products, {fields});
-					var timestamp = moment(new Date());
-					var filePath = path.join(__dirname, "../../exports/Products_" + timestamp + ".csv");
-					fs.promises.writeFile(filePath, csv).then(csvFile => {
-						setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
-						response.status(200).json({downloaded: true, fileName: "Products_" + timestamp + ".csv"});
-					}).catch(error => console.log(error));
-				} catch(error) {
-					response.status(200).json({downloaded: false}).end(); 
-				}
-			} else {
-				response.status(200).json({downloaded: false}).end(); 
-			}
-		}).catch(error => console.log(error));
-	});
 	app.put("/deleteProductImage", (request, response) => {
 		var productId = request.body.productId;
 		var imageId = request.body.imageId;
@@ -241,7 +183,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 			response.status(200).json({deleted: false}).end();
 		}
 	});
-	app.post("/rateProduct", validations.validateRating, (request, response) => {
+	app.put("/rateProduct", validations.validateRating, (request, response) => {
 		var productId = request.body.productId;
 		var username = request.body.username;
 		var rating = Number(request.body.rating);
@@ -253,7 +195,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 				var usersRatings = product.rating.usersRatings;
 				var foundIndex = usersRatings.findIndex(userRating => userRating.username == username);
 				if(foundIndex > -1) {
-					totalRating = totalRating - usersRatings[foundIndex].rating + rating;
+					totalRating = totalRating - Number(usersRatings[foundIndex].rating) + rating;
 					usersRatings[foundIndex].rating = rating;
 				} else {
 					votes = votes + 1;
@@ -262,21 +204,23 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 				}
 				var averageRating = Math.round(totalRating / votes);
 				var update = {rating: {votes: votes, totalRating: totalRating, averageRating: averageRating, usersRatings: usersRatings}};
-				Product.findOneAndUpdate(query, update, {new: true}).then(updatedProduct => {
-					response.status(200).json({rated: true}).end();
-				});
+				var options = {new: true};
+				Product.findOneAndUpdate(query, update, options).then(updatedProduct => {
+					response.status(200).json({rated: true, rating: updatedProduct.rating}).end();
+				}).catch(error => console.log(error));
 			} else {
 				response.status(200).json({rated: false}).end();
 			}
-		});
+		}).catch(error => console.log(error));
 	});
 	app.post("/getReviews", (request, response) => {
 		var productId = request.body.productId;
+		var query = {product: productId};
 		var page = Number(request.body.page) - 1;
 		var limit = 5;
 		var skip = page * limit;
-		var query = {product: productId};
-		var reviewsQuery = Review.find(query).skip(skip).limit(limit);
+		var sort = {"date": -1};
+		var reviewsQuery = Review.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = Review.find(query).countDocuments();
 		var queries = [reviewsQuery, totalQuery];
 		Promise.all(queries).then(results => {
@@ -290,7 +234,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var productId = request.body.productId;
 		var username = request.body.username;
 		var review = request.body.review;
-		var date = moment(new Date()).format("DD.MM.YYYY");
+		var date = moment(new Date()).format("DD.MM.YYYY HH:mm");
 		var newReview = getReviewScheme(Review, productId, username, review, date);
 		newReview.save().then(review => {
 			response.status(200).json({written: true, review: review}).end();
@@ -300,12 +244,13 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var reviewId = request.body.reviewId;
 		var username = request.body.username;
 		var review = request.body.review;
-		var date = moment(new Date()).format("DD.MM.YYYY");
+		var date = moment(new Date()).format("DD.MM.YYYY HH:mm");
 		var query = {_id: reviewId, username: username};
 		var update = {review: review, date: date};
-		Review.findOneAndUpdate(query, update).then(review => {
+		var options = {new: true};
+		Review.findOneAndUpdate(query, update, options).then(review => {
 			if(!validations.isEmpty(review)) {
-				response.status(200).json({edited: true}).end();
+				response.status(200).json({edited: true, review: review}).end();
 			} else {
 				response.status(200).json({edited: false}).end();
 			}
@@ -326,6 +271,64 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		} else {
 			response.status(200).json({deleted: false}).end();
 		}
+	});
+	app.post("/downloadProducts", (request, response) => {
+		var search = request.body.search;
+		var category = request.body.category;
+		var page = Number(request.body.page) - 1; 
+		var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
+		var skip = page * limit;
+		var orderBy = request.body.orderBy;
+		var sort = {};
+		switch(orderBy) {
+			case "titleAsc":
+				sort = {"title": 1};
+				break;
+			case "titleDesc":
+				sort = {"title": -1};
+				break;
+			case "priceAsc":
+				sort = {"price": 1};
+				break;
+			case "priceDesc":
+				sort = {"price": -1};
+				break;
+			case "quantityAsc":
+				sort = {"quantity": 1};
+				break;
+			case "quantityDesc":
+				sort = {"quantity": -1};
+				break;
+			case "ratingAsc":
+				sort = {"rating.averageRating": 1};
+				break;
+			case "ratingDesc":
+				sort = {"rating.averageRating": -1};
+				break;
+			default:
+				sort = {};
+		}
+		var categoryQuery = category ? {category: category} : {};
+		var query = search ? {$and: [categoryQuery, {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]}]} : categoryQuery;
+		Product.find(query).sort(sort).skip(skip).limit(limit).then(products => {
+			if(!validations.isEmpty(products)) {
+				var fields = ["_id", "title", "price", "quantity", "category", "description"];
+				var csv;
+				try {
+					csv = json2csv(products, {fields});
+					var timestamp = moment(new Date());
+					var filePath = path.join(__dirname, "../../exports/Products_" + timestamp + ".csv");
+					fs.promises.writeFile(filePath, csv).then(csvFile => {
+						setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
+						response.status(200).json({downloaded: true, fileName: "Products_" + timestamp + ".csv"});
+					}).catch(error => console.log(error));
+				} catch(error) {
+					response.status(200).json({downloaded: false}).end(); 
+				}
+			} else {
+				response.status(200).json({downloaded: false}).end(); 
+			}
+		}).catch(error => console.log(error));
 	});
 
 	function getProductScheme(Product, title, description, price, quantity, category, technicalData, primaryImageObject, imagesObjects, rating) {

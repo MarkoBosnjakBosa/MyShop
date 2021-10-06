@@ -58,8 +58,6 @@
 			invalidCategory(category) { return category == ""; },
 			invalidPrimaryImage(primaryImage) { return primaryImage == ""; },
 			invalidMessage(message) { return message == ""; },
-			invalidRating(rating) { return rating < 1 || rating > 5; },
-			invalidReview(review) { return review == ""},
 			invalidFoundUser(user) { return user == ""},
 			invalidLatitude(latitude) {
 				if(!isNaN(parseFloat(latitude))) return false;
