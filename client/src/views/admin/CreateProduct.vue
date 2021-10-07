@@ -346,6 +346,16 @@
             hideNotification() {
                 this.message = "";
             },
+            displayReCaptcha(type) {
+                var reCaptchas = document.getElementsByClassName("grecaptcha-badge");
+                reCaptchas.forEach(function(reCaptcha) {
+                    if(type) {
+                        reCaptcha.style.visibility = "visible";
+                    } else {
+                        reCaptcha.style.visibility = "hidden";
+                    }
+                });
+            },
             closeCreationAlert() {
                 this.productCreated = false;
             },
@@ -366,12 +376,16 @@
             invalidCategory() { return validation.methods.invalidCategory(this.product.category); },
             invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); }
         },
+        beforeUnmount() {
+            this.displayReCaptcha(false);
+        },
         created() {
             checkLogin.methods.isLoggedIn();
             checkLogin.methods.isAdmin();
             this.getCategories();
             this.getTechnicalData();
             this.loadReCaptcha();
+            this.displayReCaptcha(true);
         }
     }
 </script>
