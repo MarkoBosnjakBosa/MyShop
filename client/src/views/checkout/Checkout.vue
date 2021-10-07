@@ -60,7 +60,7 @@
                             If your address has changed, please update it.<br>
                             If everything fits, you can proceed with your payment.
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <button type="button" class="btn btn-secondary" @click="openProfile()">Update <i class="fas fa-pencil-alt"></i> </button>
                             <button type="button" class="btn btn-secondary paymentButton" @click="toggleTab('payment')">Payment <i class="fas fa-cart-arrow-down"></i></button>
                         </div>
@@ -76,7 +76,7 @@
                                 <div ref="paypal"></div>
                             </div>
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <button type="button" class="btn btn-secondary" @click="toggleTab('address')">Address <i class="fas fa-address-book"></i></button>
                         </div>
                     </div>
@@ -104,8 +104,6 @@
             return {
                 username: this.$store.getters.getUser,
                 products: this.$store.getters.getShoppingCart,
-                stripePublishableKey: process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY,
-                payPalClientId: process.env.VUE_APP_PAYPAL_CLIENT_ID,
                 address: {
                     street: "",
                     houseNumber: 0,
@@ -161,22 +159,43 @@
                 stripeScript.addEventListener("load", this.configureStripe);
                 document.body.appendChild(stripeScript);
                 var payPalScript = document.createElement("script");
-                payPalScript.src = "https://www.paypal.com/sdk/js?client-id=" + this.payPalClientId + "&currency=EUR";
+                payPalScript.src = "https://www.paypal.com/sdk/js?client-id=" + process.env.VUE_APP_PAYPAL_CLIENT_ID + "&currency=EUR";
                 payPalScript.addEventListener("load", this.configurePayPal);
                 document.body.appendChild(payPalScript);
             },
             configureStripe(){
-                this.stripe = Stripe(this.stripePublishableKey);            
+                this.stripe = Stripe(process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY);            
             },
             configurePayPal() {
-                var purchase_units = this.products.map(product => {
-                    var purchase_unit = {};
-                    purchase_unit.description = product.title;
-                    var amount = {};
-                    amount.value = (product.price * product.selectedQuantity).toFixed(2);
-                    purchase_unit.amount = amount;
-                    return purchase_unit;
+                var purchase_units = [];
+                var amount = {};
+                amount.currency_code = "EUR";
+                var value = 0;
+                this.products.forEach(product => {
+                    value += product.price * product.selectedQuantity;
                 });
+                amount.value = value.toFixed(2);
+                var breakdown = {};
+                var item_total = {};
+                item_total.currency_code = "EUR";
+                item_total.value = value.toFixed(2);
+                breakdown.item_total = item_total;
+                amount.breakdown = breakdown;
+                var items = this.products.map(product => {
+                    var item = {};
+                    item.name = product.title;
+                    var unit_amount = {};
+                    unit_amount.currency_code = "EUR";
+                    unit_amount.value = product.price;
+                    item.unit_amount = unit_amount;
+                    item.quantity = product.selectedQuantity;
+                    return item;
+                });
+                var purchase_unit = {};
+                purchase_unit.description = "Purchase at MyShop";
+                purchase_unit.amount = amount;
+                purchase_unit.items = items;
+                purchase_units = [...purchase_units, purchase_unit];
                 window.paypal.Buttons({
                     createOrder: (data, actions) => {
                         return actions.order.create({purchase_units: purchase_units});
@@ -194,11 +213,11 @@
             formatNumber(number) {
                 return helper.methods.formatNumber(number);
             },
-            openProfile() {
-                route.methods.openProfile();
-            },
             toggleTab(tab) {
                 helper.methods.toggleTab(tab);
+            },
+            openProfile() {
+                route.methods.openProfile();
             },
             openCheckoutSuccess() {
                 route.methods.openCheckoutSuccess();
@@ -236,6 +255,9 @@
         padding: 20px;
         margin-right: 10px;
         text-align: center;
+    }
+    h3 {
+        margin-bottom: 10px;
     }
     .paymentButton {
         float: right;

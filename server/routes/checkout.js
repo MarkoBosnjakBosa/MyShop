@@ -1,4 +1,4 @@
-module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, emailEvent) {
+module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, emailEvents) {
 	const Order = models.Order;
 	const User = models.User;
 	const Product = models.Product;
@@ -43,14 +43,15 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 		var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/invoice/invoice.html"), "utf-8"));
 		var html = htmlCompiled({orderNumber: orderNumber, createdAt: createdAt, paymentType: paymentType, user: user, products: products, totalPrice: totalPrice});
 		pdf.create(html).toFile(path.join(__dirname, "../invoices/Invoice_" + orderNumber + ".pdf"), function(error, response) {
-			emailEvent.emit("sendInvoiceEmail", user.account, orderNumber);
+			emailEvents.emit("sendInvoiceEmail", user.account, orderNumber);
 		});
 	}
 	function updateQuantities(products) {
 		products.forEach(product => {
-			var query = {_id: product._id, quantity: {$gte: product.selectedQuantity}};
-			var options = {$inc: {quantity: -product.selectedQuantity}};
-			Product.findOneAndUpdate(query, options).then().catch(error => console.log(error));
+			var query = {_id: product._id};
+			var update = [{$set: {"quantity": {$cond: [{$gt: [{$subtract: ["$quantity", Number(product.selectedQuantity)]}, 0]}, {$subtract: ["$quantity", Number(product.selectedQuantity)]}, 0]}}}];
+			var options = {new: true};
+			Product.findOneAndUpdate(query, update, options).then().catch(error => console.log(error));
 		});
 	}
 	function formatNumber(number) {
