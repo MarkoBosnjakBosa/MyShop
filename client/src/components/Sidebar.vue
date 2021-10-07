@@ -1,5 +1,5 @@
 <template>
-    <div id="sidebarStyle" class="bg-light border-right">
+    <div id="sidebar" class="bg-light border-right">
         <div class="heading">
             <span v-if="userData.isAdmin">MyShop Admin</span>
             <span v-else>MyShop</span>    
@@ -99,7 +99,7 @@
     #pageContent {
         overflow-x: hidden;
     }
-    #sidebarStyle {
+    #sidebar {
         min-height: 100vh;
         margin-left: -15rem;
         -webkit-transition: margin .25s ease-out;
@@ -107,11 +107,11 @@
         -o-transition: margin .25s ease-out;
         transition: margin .25s ease-out;
     }
-    #sidebarStyle .heading {
+    #sidebar .heading {
         padding: 0.875rem 1.25rem;
         font-size: 1.2rem;
     }
-    #sidebarStyle .list {
+    #sidebar .list {
         width: 15rem;
         padding-left: 0px;
     }
@@ -132,14 +132,14 @@
         width: 10%;
     }
     @media (min-width: 768px) {
-        #sidebarStyle {
+        #sidebar {
             margin-left: 0px;
         }
         #pageStyle {
             min-width: 0px;
             width: 100%;
         }
-        #pageContent.toggled #sidebarStyle {
+        #pageContent.toggled #sidebar {
             margin-left: -15rem;
         }
     }
