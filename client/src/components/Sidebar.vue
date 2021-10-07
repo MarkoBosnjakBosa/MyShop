@@ -16,7 +16,7 @@
             <li class="list-group-item list-group-item-action bg-light" @click="openChats()">Chats</li>
             <li class="list-group-item list-group-item-action bg-light" @click="openUsers()">Users</li>
         </ul>
-        <ul v-else class="list list-group-flush">
+        <ul v-else class="list list-group-flush scrolling">
             <li class="list-group-item list-group-item-action bg-light" @click="openShop()"><div class="categoryIcon"><i class="fas fa-search"></i></div>Shop</li>
             <li v-for="category in categories" :key="category._id" class="list-group-item list-group-item-action bg-light" @click="openShopCategory(category._id)"><div class="categoryIcon"><i :class="category.icon"></i></div>{{category.title}}</li>
         </ul>
@@ -114,6 +114,11 @@
     #sidebar .list {
         width: 15rem;
         padding-left: 0px;
+    }
+    .scrolling {
+        max-height: 800px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
     #pageStyle {
         min-width: 100vw;
