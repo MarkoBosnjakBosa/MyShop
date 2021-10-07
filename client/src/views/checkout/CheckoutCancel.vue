@@ -6,7 +6,7 @@
                 <navigation></navigation>
                 <div class="checkoutCancel">
                     <div class="alert alert-danger" role="alert">
-                        Something went wrong. Please contact the admin team.
+                        Something went wrong. Please contact the Admin team.
                     </div>
                     <button type="button" class="btn btn-dark" @click="openContact()">Contact</button>
                 </div>
@@ -41,8 +41,8 @@
 <style scoped>
     .checkoutCancel {
         margin: auto;
-        text-align: center;
-        margin-top: 20px;
         max-width: 500px;
+        margin-top: 20px;
+        text-align: center;
     }
 </style>
