@@ -12,13 +12,13 @@
                                 <img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image"/>
                             </div>
                             <div class="col-md-7">
-                                <h3 data-toggle="tooltip" :title="product.title">{{product.title}}</h3>
+                                <h3 class="title" data-toggle="tooltip" :title="product.title">{{product.title}}</h3>
                                 <div class="ratings">
-                                    <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 0}"></i>
-                                    <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 1}"></i>
-                                    <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 2}"></i>
-                                    <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 3}"></i>
-                                    <i class="fas fa-star" :class="{'checked' : product.rating.averageRating > 4}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(1, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(2, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(3, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(4, product.rating.averageRating)}"></i>
+                                    <i class="fas fa-star" :class="{'checked' : getRating(5, product.rating.averageRating)}"></i>
                                 </div>
                                 <div class="row margin">
                                     <label class="col-md-3 col-form-label">Quantity:</label>
@@ -38,16 +38,18 @@
                                 <i class="fas fa-times fa-2x" @click="removeFromShoppingCart(product)"></i>
                             </div>
                         </div>
-                        <div v-if="products.length" class="row product">
-                            <button type="button" class="btn btn-danger" @click="clearShoppingCart()">Remove all</button>
-                        </div>
                     </div>
-                    <div v-if="checkTotal()" class="col-md-4">
-                        <div class="checkout">
-                            <div class="checkoutInfo">
-                                <h3>Total: {{totalCost}}</h3>
-                                <button type="button" class="btn btn-primary btn-lg checkoutButton" @click="openCheckout()">Checkout</button>
+                    <div class="col-md-4">
+                        <div v-if="checkTotal()">
+                            <div class="checkout">
+                                <div class="checkoutInfo">
+                                    <h3>Total: {{totalCost}}</h3>
+                                    <button type="button" class="btn btn-primary btn-lg checkoutButton" @click="openCheckout()">Checkout</button>
+                                </div>
                             </div>
+                        </div>
+                        <div v-if="products.length">
+                            <button type="button" class="btn btn-danger removeAll" @click="clearShoppingCart()">Remove all</button>
                         </div>
                     </div>
                     <div v-if="!products.length && !checkTotal()" class="mb-3 alert alert-dark" role="alert">
@@ -104,8 +106,20 @@
                     return false;
                 }
             },
+            getRating(rating, averageRating) {
+                if(rating <= averageRating) {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
             hideNotification() {
                 this.message = "";
+            },
+            openCheckout() {
+                if(this.checkTotal()) {
+                    route.methods.openCheckout();
+                }
             },
             renderImage(image) {
                 return helper.methods.renderImage(image);
@@ -115,11 +129,6 @@
             },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);
-            },
-            openCheckout() {
-                if(this.checkTotal()) {
-                    route.methods.openCheckout();
-                }
             }
         },
         computed: {
@@ -160,25 +169,9 @@
         margin: auto;
         max-width: 1200px;
     }
-    h3 {
+    .title {
         overflow: hidden;
         white-space: nowrap;
-        cursor: pointer;
-    }
-    .checkout {
-        height: 200px;
-        line-height: 200px;
-        text-align: center;
-        background-color: #e6e6ff;
-        border-radius: 10px;
-    }
-    .checkoutInfo {
-        display: inline-block;
-        vertical-align: middle;
-        line-height: normal;
-    }
-    .checkoutButton {
-        width: 100%;
     }
     .product {
         background-color: #f4f4f2;
@@ -202,6 +195,25 @@
     }
     .margin {
         margin-top: 10px;
+    }
+    .checkout {
+        height: 200px;
+        line-height: 200px;
+        text-align: center;
+        background-color: #e6e6ff;
+        border-radius: 10px;
+    }
+    .checkoutInfo {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: normal;
+    }
+    .checkoutButton {
+        width: 100%;
+    }
+    .removeAll {
+        width: 100%;
+        margin-top: 20px;
     }
     .alert {
         margin: auto;

@@ -130,7 +130,6 @@
     import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";
     import helper from "../components/Helper.vue";
-    import validation from "../components/Validation.vue";
     import notification from "../components/Notification.vue";
     const axios = require("axios");
 	
