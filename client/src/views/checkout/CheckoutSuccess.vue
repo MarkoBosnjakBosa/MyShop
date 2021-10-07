@@ -11,22 +11,22 @@
                 <table v-if="paymentType" class="table table-secondary">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Total price</th>
-                            <th scope="col">Actions</th>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total price</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(product, index) in products" :key="product._id">
-                            <td>{{++index}}</td>
+                            <th>{{++index}}</th>
                             <td>{{product.title}}</td>
                             <td>{{formatNumber(product.price)}}</td>
                             <td>{{product.selectedQuantity}}</td>
                             <td>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</td>
-                            <td><i class="fas fa-external-link-alt" @click="openViewProduct(product._id)"></i></td>
+                            <td><i class="fas fa-external-link-square-alt" @click="openViewProduct(product._id)"></i></td>
                         </tr>
                         <tr>
                             <th colspan="4">Total</th>
@@ -35,7 +35,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="home">
+                <div class="mb-3 home">
                     <button type="button" class="btn btn-dark" @click="openHome()">Home <i class="fas fa-home"></i></button>
                 </div>
             </div>
@@ -69,7 +69,7 @@
         methods: {
             finalizePayment() {
                 this.paymentType = this.$store.getters.getCheckout;
-                if(this.paymentType != "") {
+                if(this.paymentType) {
                     this.products = this.$store.getters.getShoppingCart;
                     var products = this.products.map(product => {
                         var productObject = {};

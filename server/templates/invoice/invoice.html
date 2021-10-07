@@ -87,7 +87,7 @@
 				<tbody>
 					<% products.forEach(function(product, index) { %>
 						<tr>
-							<td><%= ++index %></td>
+							<th><%= ++index %></th>
 							<td><%= product.title %></td>
 							<td><%= product.price %></td>
 							<td><%= product.selectedQuantity %></td>
@@ -95,8 +95,8 @@
 						</tr>
 					<% }); %>
 					<tr class="highlight">
-						<td colspan="4">Total</td>
-						<td><b><%= totalPrice %></b></td>
+						<th colspan="4">Total</th>
+						<th><%= totalPrice %></th>
 					</tr>
 				</tbody>
 			</table>
