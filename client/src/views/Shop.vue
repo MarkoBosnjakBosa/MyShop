@@ -172,7 +172,6 @@
     .card-title {
         overflow: hidden;
         white-space: nowrap;
-        cursor: pointer;
     }
     .card-img-top {
         height: 200px;

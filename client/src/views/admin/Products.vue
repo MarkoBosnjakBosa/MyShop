@@ -57,7 +57,7 @@
                         </tr>
                         <tr v-for="(product, index) in products" :key="product._id">
                             <th class="padded">{{++index}}</th>
-                            <td class="padded title">{{product.title}}</td>
+                            <td class="padded">{{product.title}}</td>
                             <td class="padded">{{product.price}}</td>
                             <td class="padded">{{product.quantity}}</td>
                             <td class="padded">

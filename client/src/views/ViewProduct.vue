@@ -332,7 +332,6 @@
         margin-bottom: 20px;
         overflow: hidden;
         white-space: nowrap;
-        cursor: pointer;
     }
     #imagesCarousel {
         margin: auto;
