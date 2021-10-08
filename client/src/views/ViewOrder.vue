@@ -136,7 +136,7 @@
             getOrder() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getOrder/" + this.orderId).then(response => {
                     this.order = response.data.order;
-                }).catch(error => console.log(error));
+                }).catch(error => route.methods.openPageNotFound());
             },
             formatNumber(number) {
                 return helper.methods.formatNumber(number);

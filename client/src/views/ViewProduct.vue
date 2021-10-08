@@ -130,6 +130,7 @@
     import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";
     import helper from "../components/Helper.vue";
+    import route from "../components/Route.vue";
     import notification from "../components/Notification.vue";
     const axios = require("axios");
 	
@@ -172,7 +173,7 @@
                     if(this.product.quantity < 1) this.product.quantity = 0;
                     this.product.selectedQuantity = 1;
                     this.getUserRating(this.product.rating.usersRatings);
-                }).catch(error => console.log(error));
+                }).catch(error => route.methods.openPageNotFound());
             },
             getRating(rating, averageRating) {
                 if(rating <= averageRating) {

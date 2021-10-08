@@ -163,7 +163,10 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
         var query = {_id: orderId};
         Order.findOne(query).then(order => {
             response.status(200).json({order: order}).end();
-        }).catch(error => console.log(error));
+        }).catch(error => {
+			console.log(error);
+			response.status(404).end();
+		});
     });
 	app.put("/dispatchOrder",(request, response) => {
 		var orderId = request.body.orderId;

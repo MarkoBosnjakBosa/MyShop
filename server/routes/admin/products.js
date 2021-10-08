@@ -54,7 +54,10 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var query = {_id: productId};
 		Product.findOne(query).then(product => {
 			response.status(200).json({product: product}).end();
-		}).catch(error => console.log(error));
+		}).catch(error => {
+			console.log(error);
+			response.status(404).end();
+		});
 	});
 	app.post("/createProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validations.validateProductCreation, (request, response) => {
 		var title = request.body.title;

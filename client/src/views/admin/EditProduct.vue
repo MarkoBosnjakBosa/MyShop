@@ -209,7 +209,7 @@
             getProduct() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProduct/" + this.productId).then(response => {
                     this.product = response.data.product;
-                }).catch(error => console.log(error));
+                }).catch(error => route.methods.openPageNotFound());
             },
             getCategories() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategories").then(response => {
