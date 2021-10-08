@@ -171,7 +171,8 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 		var dispatchedAt = moment().format(dateAndTimeFormat);
 		var orderQuery = {_id: orderId};
 		var update = {isDispatched: true, dispatchedAt: dispatchedAt};
-		Order.findOneAndUpdate(orderQuery, update).then(order => {
+		var options = {new: true};
+		Order.findOneAndUpdate(orderQuery, update, options).then(order => {
 			if(!validations.isEmpty(order)) {
 				var userQuery = {_id: order.userId};
 				User.findOne(userQuery).then(user => {

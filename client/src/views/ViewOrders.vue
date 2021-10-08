@@ -6,6 +6,9 @@
                 <navigation></navigation>
                 <h1>Orders</h1>
                 <div class="orders">
+                    <div v-if="!orders.length" class="mb-3 alert alert-dark" role="alert">
+                        There are no orders!
+                    </div>
                     <div v-for="order in orders" :key="order._id" class="accordion-item">
                         <h2 class="accordion-header" :id="'heading_' + order._id">
                             <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + order._id" aria-expanded="false">
@@ -41,7 +44,7 @@
                                     <tbody>
                                         <tr v-for="(product, index) in order.products" :key="product._id">
                                             <th>{{++index}}</th>
-                                            <td class="title" data-toggle="tooltip" :title="product.title">{{product.title}}</td>
+                                            <td>{{product.title}}</td>
                                             <td>{{formatNumber(product.price)}}</td>
                                             <td>{{product.selectedQuantity}}</td>
                                             <td>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</td>
@@ -55,7 +58,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pages">
+                    <div class="mb-3 pages">
                         <button v-if="page - 1 > 0" type="button" class="btn btn-dark page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
                         <button type="button" class="btn btn-dark page">{{page}}</button>
                         <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
@@ -125,6 +128,10 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
+    .alert {
+        font-weight: bold;
+        text-align: center;
+    }
     .orders {
         margin: auto;
         max-width: 800px;
@@ -145,21 +152,14 @@
         cursor: pointer;
     }
     table {
-        table-layout: fixed;
-        width: 100%;
         margin-top: 10px;
-    }
-    .title {
-        overflow: hidden;
-        white-space: nowrap;
-        cursor: pointer;
     }
     .total {
         border-bottom: 0px;
     }
     .pages {
-        margin: 10px auto;
         text-align: center;
+        margin-top: 10px;
     }
     .page {
         margin-left: 10px;
