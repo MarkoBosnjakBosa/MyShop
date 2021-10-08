@@ -1,7 +1,7 @@
 module.exports = function(app, models, validations) {
-    const User = models.User;
+	const User = models.User;
 	const Message = models.Message;
-    app.post("/getUsers", (request, response) => {
+	app.post("/getUsers", (request, response) => {
 		var search = request.body.search;
 		var page = Number(request.body.page) - 1; 
 		var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
@@ -31,7 +31,7 @@ module.exports = function(app, models, validations) {
 				sort = {};
 		}
 		var query = search ? {$and: [{"account.isAdmin": false}, {$or: [{"account.username": {$regex: search, $options: "i" }}, {"account.email": {$regex: search, $options: "i"}}, {"account.mobileNumber": {$regex: search, $options: "i"}}, {"account.firstName": {$regex: search, $options: "i"}}, {"account.lastName": {$regex: search, $options: "i"}}]}]} : {"account.isAdmin": false};
-        var usersQuery = User.find(query).sort(sort).skip(skip).limit(limit);
+		var usersQuery = User.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = User.find(query).countDocuments();
 		var queries = [usersQuery, totalQuery];
 		Promise.all(queries).then(results => {
@@ -41,18 +41,18 @@ module.exports = function(app, models, validations) {
 			response.status(200).json({users: results[0], total: total, pagesNumber: pagesNumber}).end();
 		});
 	});
-    app.get("/getUserById/:userId", (request, response) => {
-        var userId = request.params.userId;
-        var query = {_id: userId};
-        User.findOne(query).then(user => {
-            user.account.password = null;
-            user.account.isAdmin = null;
-            response.status(200).json({account: user.account, address: user.address}).end();
-        }).catch(error => {
+	app.get("/getUserById/:userId", (request, response) => {
+		var userId = request.params.userId;
+		var query = {_id: userId};
+		User.findOne(query).then(user => {
+			user.account.password = null;
+			user.account.isAdmin = null;
+			response.status(200).json({account: user.account, address: user.address}).end();
+		}).catch(error => {
 			console.log(error);
 			response.status(404).end();
 		});
-    });
+	});
 	app.delete("/deleteUser/:userId", (request, response) => {
 		var userId = request.params.userId;
 		if(userId) {
@@ -61,7 +61,7 @@ module.exports = function(app, models, validations) {
 				if(!validations.isEmpty(user)) {
 					var messagesQuery = {chatId: user.account.username};
 					Message.deleteMany(messagesQuery).then(messages => {
-                    	response.status(200).json({deleted: true}).end();
+						response.status(200).json({deleted: true}).end();
 					}).catch(error => console.log(error));
 				} else {
 					response.status(200).json({deleted: false}).end(); 
