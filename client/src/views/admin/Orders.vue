@@ -5,7 +5,7 @@
             <div id="pageStyle">
                 <navigation></navigation>
                 <h1>Orders</h1>
-                <form autocomplete="off" @submit.prevent="getOrders()">
+                <form autocomplete="off" @submit.prevent="getOrders()" novalidate>
                     <div class="row">
                         <div class="mb-3 col-md-4">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
@@ -81,7 +81,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="form-group pages">
+                <div class="mb-3 pages">
                     <button v-if="page - 1 > 0" type="button" class="btn btn-dark page" @click="loadPage(page - 1)"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="btn btn-dark page">{{page}}</button>
                     <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
@@ -118,6 +118,7 @@
         },
         methods: {
             getOrders() {
+                if(!Number.isInteger(this.limit) || this.limit < 1) this.limit = 1;
                 var body = {search: this.search, type: this.type, page: this.page, limit: this.limit, orderBy: this.orderBy};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getOrders", body).then(response => {
                     this.orders = response.data.orders;

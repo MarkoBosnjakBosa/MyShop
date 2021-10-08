@@ -26,7 +26,7 @@
                             <tbody>
                                 <tr v-for="(product, index) in order.products" :key="product._id">
                                     <th>{{++index}}</th>
-                                    <td class="title" data-toggle="tooltip" :title="product.title">{{product.title}}</td>
+                                    <td>{{product.title}}</td>
                                     <td>{{formatNumber(product.price)}}</td>
                                     <td>{{product.selectedQuantity}}</td>
                                     <td>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</td>
@@ -41,7 +41,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div>
+                        <div class="mb-3">
                             <button v-if="!order.isDispatched" type="button" class="btn btn-primary" @click="dispatchOrder()">Dispatch</button>
                             <button v-else type="button" class="btn btn-success">Dispatched: {{order.dispatchedAt}}</button>
                             <button type="button" class="btn btn-dark download" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <button type="button" class="btn btn-dark" @click="toggleTab('order')"><i class="fas fa-angle-double-left"></i> Previous</button>
                             <button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
@@ -118,7 +118,7 @@
                                 <input type="text" id="country" class="form-control" v-model="order.user.address.country" disabled>
                             </div>
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
                             <button type="button" class="btn btn-dark nextButton" @click="toggleTab('delete')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
@@ -127,7 +127,7 @@
                         <div class="mb-3">
                             <button type="button" class="btn btn-danger" @click="deleteOrder()">Delete <i class="fas fa-trash"></i></button>
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <button type="button" class="btn btn-dark previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
                         </div>
                     </div>
@@ -173,9 +173,9 @@
                         },
                         address: {
                             street: "",
-                            houseNumber: "",
+                            houseNumber: 0,
                             city: "",
-                            zipCode: "",
+                            zipCode: 0,
                             country: ""
                         }
                     }
@@ -242,15 +242,6 @@
     }
     #deleteTab {
         text-align: center;
-    }
-    table {
-        table-layout: fixed;
-        width: 100%;
-    }
-    .title {
-        overflow: hidden;
-        white-space: nowrap;
-        cursor: pointer;
     }
     .download {
         margin-left: 5px;
