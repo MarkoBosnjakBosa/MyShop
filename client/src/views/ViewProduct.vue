@@ -35,12 +35,14 @@
                             <div class="row">
                                 <div class="col-md-6 price"><b>Price: {{formatNumber(product.price)}}</b></div>
                                 <div v-if="product.quantity" class="col-md-6">
-                                    <div class="mb-3 input-group">
-                                        <input type="number" id="selectedQuantity" min="1" :max="product.quantity" class="form-control" :class="{'errorField' : !Number.isInteger(product.selectedQuantity) || product.selectedQuantity < 1 || product.selectedQuantity > product.quantity}" v-model="product.selectedQuantity"/>
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-primary" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'" @click="addToShoppingCart()">Add to cart</button>
+                                    <form autocomplete="off" @submit.prevent="addToShoppingCart()" novalidate>
+                                        <div class="mb-3 input-group">
+                                            <input type="number" id="selectedQuantity" min="1" :max="product.quantity" class="form-control" :class="{'errorField' : !Number.isInteger(product.selectedQuantity) || product.selectedQuantity < 1 || product.selectedQuantity > product.quantity}" v-model="product.selectedQuantity"/>
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-primary" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'">Add to cart</button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                                 <div v-else class="col-md-6">
                                     <div class="mb-3 soldOut">Sold out</div>
@@ -94,7 +96,9 @@
                                         <div v-if="editing == review._id" class="accordion-body">
                                             <div class="row">
                                                 <div class="editMessage">
-                                                    <textarea class="form-control" rows="5" v-model="reviews[index].review"></textarea>
+                                                    <form autocomplete="off" novalidate>
+                                                        <textarea class="form-control" rows="5" v-model="reviews[index].review"></textarea>
+                                                    </form>
                                                 </div>
                                             </div>
                                             <div class="action">
