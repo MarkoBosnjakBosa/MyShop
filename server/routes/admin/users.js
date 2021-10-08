@@ -1,5 +1,6 @@
 module.exports = function(app, models, validations) {
     const User = models.User;
+	const Message = models.Message;
     app.post("/getUsers", (request, response) => {
 		var search = request.body.search;
 		var page = Number(request.body.page) - 1; 
@@ -55,10 +56,13 @@ module.exports = function(app, models, validations) {
 	app.delete("/deleteUser/:userId", (request, response) => {
 		var userId = request.params.userId;
 		if(userId) {
-			var query = {_id: userId};
-			User.findOneAndRemove(query).then(user => {
+			var userQuery = {_id: userId};
+			User.findOneAndRemove(userQuery).then(user => {
 				if(!validations.isEmpty(user)) {
-                    response.status(200).json({deleted: true}).end();
+					var messagesQuery = {chatId: user.account.username};
+					Message.deleteMany(messagesQuery).then(messages => {
+                    	response.status(200).json({deleted: true}).end();
+					}).catch(error => console.log(error));
 				} else {
 					response.status(200).json({deleted: false}).end(); 
 				}

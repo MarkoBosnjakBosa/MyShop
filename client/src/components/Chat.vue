@@ -142,7 +142,7 @@
                 chatBox.style.display = "none";
             },
             joinChat() {
-                if(this.userData.username != "") {
+                if(this.userData.username) {
                     this.socket.emit("userJoining", this.userData.username, this.userData.isAdmin);
                     this.listen();
                 }

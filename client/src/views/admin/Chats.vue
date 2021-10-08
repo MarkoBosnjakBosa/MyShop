@@ -26,6 +26,7 @@
         },
         created() {
             checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isAdmin();
         }
     }
 </script>
