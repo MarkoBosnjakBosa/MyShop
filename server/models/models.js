@@ -34,7 +34,7 @@ module.exports = function(mongoose) {
 		technicalData: {type: Array},
 		primaryImage: {name: String, contentType: String, image: Buffer},
 		images: [{name: String, contentType: String, image: Buffer}],
-        rating: {type: Object, required: true}
+		rating: {type: Object, required: true}
 	});
 	const reviewScheme = new mongoose.Schema({
 		product: {type: String, required: true},
@@ -106,7 +106,7 @@ module.exports = function(mongoose) {
 		message: {type: String},
 		date: {type: String}
 	});
-    const models = {
+	const models = {
 		User: mongoose.model("User", userScheme),
 		Product: mongoose.model("Product", productScheme),
 		Review: mongoose.model("Review", reviewScheme),
