@@ -96,7 +96,7 @@
             getCategory() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategory/" + this.category._id).then(response => {
                     this.category = response.data.category;
-                }).catch(error => console.log(error));
+                }).catch(error => route.methods.openPageNotFound());
             },
             getProducts() {
                 if(!Number.isInteger(this.limit) || this.limit < 1) this.limit = 1;

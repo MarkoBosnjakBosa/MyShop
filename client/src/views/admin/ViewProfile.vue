@@ -139,7 +139,7 @@
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUserById/" + this.userId).then(response => {
                     this.user.account = response.data.account;
                     this.user.address = response.data.address;
-                }).catch(error => console.log(error));
+                }).catch(error => route.methods.openPageNotFound());
             },
             deleteUser() {
                 var confirmed = confirm("Delete user " + this.user.account.username + "?");

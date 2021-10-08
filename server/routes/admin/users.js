@@ -47,7 +47,10 @@ module.exports = function(app, models, validations) {
             user.account.password = null;
             user.account.isAdmin = null;
             response.status(200).json({account: user.account, address: user.address}).end();
-        }).catch(error => console.log(error));
+        }).catch(error => {
+			console.log(error);
+			response.status(404).end();
+		});
     });
 	app.delete("/deleteUser/:userId", (request, response) => {
 		var userId = request.params.userId;

@@ -11,7 +11,10 @@ module.exports = function(app, models, validations) {
         var query = {_id: categoryId};
         Category.findOne(query).then(category => {
             response.status(200).json({category: category}).end();
-        }).catch(error => console.log(error));
+        }).catch(error => {
+			console.log(error);
+			response.status(404).end();
+		});
     });
     app.post("/createCategory", validations.validateCategoryCreation, (request, response) => {
         var title = request.body.title;
