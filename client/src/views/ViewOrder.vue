@@ -48,32 +48,32 @@
                     </div>
                     <div id="addressTab" class="tab-pane fade" role="tabpanel">
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Street:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Street:</label>
+                            <div class="col-9">
                                 <input type="text" id="street" class="form-control" v-model="order.user.address.street" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">House number:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">House number:</label>
+                            <div class="col-9">
                                 <input type="text" id="houseNumber" class="form-control" v-model="order.user.address.houseNumber" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">City:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">City:</label>
+                            <div class="col-9">
                                 <input type="text" id="city" class="form-control" v-model="order.user.address.city" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">ZIP code:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">ZIP code:</label>
+                            <div class="col-9">
                                 <input type="text" id="zipCode" class="form-control" v-model="order.user.address.zipCode" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Country:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Country:</label>
+                            <div class="col-9">
                                 <input type="text" id="country" class="form-control" v-model="order.user.address.country" disabled>
                             </div>
                         </div>

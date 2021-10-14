@@ -128,7 +128,7 @@
                             </div>
                             <div class="mb-3">
                                 <div class="row">
-                                    <div v-for="image in product.images" :key="image._id" class="col-md-3 position">
+                                    <div v-for="image in product.images" :key="image._id" class="col-3 position">
                                         <img :src="renderImage(image)" :alt="image.name" class="img-fluid rounded image"/>
                                         <i class="fas fa-times-circle removeImage" @click="deleteImage(image._id, image.name)"></i>
                                     </div>

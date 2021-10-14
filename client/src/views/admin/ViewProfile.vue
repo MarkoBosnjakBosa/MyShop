@@ -13,32 +13,32 @@
                 <div class="tab-content">
                     <div id="accountTab" class="tab-pane fade active show" role="tabpanel">
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Username:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Username:</label>
+                            <div class="col-9">
                                 <input type="text" id="username" class="form-control" v-model="user.account.username" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Email:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Email:</label>
+                            <div class="col-9">
                                 <input type="text" id="email" class="form-control" v-model="user.account.email" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">First name:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">First name:</label>
+                            <div class="col-9">
                                 <input type="text" id="firstName" class="form-control" v-model="user.account.firstName" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Last name:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Last name:</label>
+                            <div class="col-9">
                                 <input type="text" id="lastName" class="form-control" v-model="user.account.lastName" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Mobile number:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Mobile number:</label>
+                            <div class="col-9">
                                 <div class="input-group">
                                     <span class="input-group-text countryCodePrefix">+</span>
                                     <input type="text" id="mobileNumber" class="form-control" v-model="user.account.mobileNumber" disabled>
@@ -51,32 +51,32 @@
                     </div>
                     <div id="addressTab" class="tab-pane fade" role="tabpanel">
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Street:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Street:</label>
+                            <div class="col-9">
                                 <input type="text" id="street" class="form-control" v-model="user.address.street" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">House number:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">House number:</label>
+                            <div class="col-9">
                                 <input type="text" id="houseNumber" class="form-control" v-model="user.address.houseNumber" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">City:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">City:</label>
+                            <div class="col-9">
                                 <input type="text" id="city" class="form-control" v-model="user.address.city" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">ZIP code:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">ZIP code:</label>
+                            <div class="col-9">
                                 <input type="text" id="zipCode" class="form-control" v-model="user.address.zipCode" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Country:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Country:</label>
+                            <div class="col-9">
                                 <input type="text" id="country" class="form-control" v-model="user.address.country" disabled>
                             </div>
                         </div>

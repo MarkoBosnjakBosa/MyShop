@@ -74,23 +74,23 @@
 									<button type="button" class="btn-close" @click="closeAlert('address')"></button>
 								</div>
 								<div class="row">
-									<div class="mb-3 col-md-8">
+									<div class="mb-3 col-8">
 										<label for="street">Street:</label>
 										<input type="text" id="street" class="form-control" :class="{'errorField' : errors.address.streetError && submittings.addressSubmitting}" v-model="user.address.street" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
 										<small v-if="(errors.address.streetError || errors.address.houseNumberError) && submittings.addressSubmitting" class="form-text errorInput">Please provide a valid street / house number!</small>
 									</div>
-									<div class="mb-3 col-md-4">
+									<div class="mb-3 col-4">
 										<label for="houseNumber">House number:</label>
 										<input type="number" id="houseNumber" min="0" class="form-control" :class="{'errorField' : errors.address.houseNumberError && submittings.addressSubmitting}" v-model="user.address.houseNumber" @focus="clearHouseNumberStatus()" @keypress="clearHouseNumberStatus()"/>
 									</div>
 								</div>
 								<div class="row">
-									<div class="mb-3 col-md-8">
+									<div class="mb-3 col-8">
 										<label for="city">City:</label>
 										<input type="text" id="city" class="form-control" :class="{'errorField' : errors.address.cityError && submittings.addressSubmitting}" v-model="user.address.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
 										<small v-if="(errors.address.cityError || errors.address.zipCodeError) && submittings.addressSubmitting" class="form-text errorInput">Please provide a valid city / zip code!</small>
 									</div>
-									<div class="mb-3 col-md-4">
+									<div class="mb-3 col-4">
 										<label for="zipCode">Zip code:</label>
 										<input type="number" id="zipCode" min="1" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submittings.addressSubmitting}" v-model="user.address.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
 									</div>

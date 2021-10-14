@@ -6,12 +6,12 @@
                 <navigation></navigation>
                 <h1>Shopping Cart</h1>
                 <div class="row shoppingCart">
-                    <div class="col-md-8">
+                    <div class="col-8">
                         <div v-for="product in products" :key="product._id" class="row product">
-                            <div class="col-md-3">
+                            <div class="col-3">
                                 <img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image"/>
                             </div>
-                            <div class="col-md-7">
+                            <div class="col-7">
                                 <h3 class="title" data-toggle="tooltip" :title="product.title">{{product.title}}</h3>
                                 <div class="ratings">
                                     <i class="fas fa-star" :class="{'checked' : getRating(1, product.rating.averageRating)}"></i>
@@ -21,25 +21,25 @@
                                     <i class="fas fa-star" :class="{'checked' : getRating(5, product.rating.averageRating)}"></i>
                                 </div>
                                 <div class="row margin">
-                                    <label class="col-md-3 col-form-label">Quantity:</label>
-                                    <div class="col-md-9">
+                                    <label class="col-3 col-form-label">Quantity:</label>
+                                    <div class="col-9">
                                         <input type="number" min="1" :max="product.quantity" class="form-control quantity" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'" :value="product.selectedQuantity" @change="updateSelectedQuantity($event, product._id)"/>
                                     </div>
                                 </div>
                                 <div class="row margin">
-                                    <div class="col-md-3">Price:</div>
-                                    <div class="col-md-9"><b>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</b></div>
+                                    <div class="col-3">Price:</div>
+                                    <div class="col-9"><b>{{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</b></div>
                                 </div>
                                 <div class="margin">
                                     <button type="button" class="btn btn-primary" @click="openViewProduct(product._id)">More...</button>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-2">
                                 <i class="fas fa-times fa-2x" @click="removeFromShoppingCart(product)"></i>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-4">
                         <div v-if="checkTotal()">
                             <div class="checkout">
                                 <div class="checkoutInfo">

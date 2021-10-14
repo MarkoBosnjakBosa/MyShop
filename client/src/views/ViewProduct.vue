@@ -33,8 +33,8 @@
                     <div class="tab-content">
                         <div id="mainTab" class="tab-pane fade active show" role="tabpanel">
                             <div class="row">
-                                <div class="col-md-6 price"><b>Price: {{formatNumber(product.price)}}</b></div>
-                                <div v-if="product.quantity" class="col-md-6">
+                                <div class="col-6 price"><b>Price: {{formatNumber(product.price)}}</b></div>
+                                <div v-if="product.quantity" class="col-6">
                                     <form autocomplete="off" @submit.prevent="addToShoppingCart()" novalidate>
                                         <div class="mb-3 input-group">
                                             <input type="number" id="selectedQuantity" min="1" :max="product.quantity" class="form-control" :class="{'errorField' : !Number.isInteger(product.selectedQuantity) || product.selectedQuantity < 1 || product.selectedQuantity > product.quantity}" v-model="product.selectedQuantity"/>
@@ -44,13 +44,13 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div v-else class="col-md-6">
+                                <div v-else class="col-6">
                                     <div class="mb-3 soldOut">Sold out</div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 titleColumn"><b>Rating</b></div>
-                                <div class="col-md-6 valueColumn">
+                                <div class="col-6 titleColumn"><b>Rating</b></div>
+                                <div class="col-6 valueColumn">
                                     <i class="fas fa-star" :class="{'checked' : getRating(1, product.rating.averageRating)}"></i>
                                     <i class="fas fa-star" :class="{'checked' : getRating(2, product.rating.averageRating)}"></i>
                                     <i class="fas fa-star" :class="{'checked' : getRating(3, product.rating.averageRating)}"></i>
@@ -59,16 +59,16 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 titleColumn"><b>Description</b></div>
-                                <div class="col-md-6 valueColumn">{{product.description}}</div>
+                                <div class="col-6 titleColumn"><b>Description</b></div>
+                                <div class="col-6 valueColumn">{{product.description}}</div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 titleColumn"><b>Quantity</b></div>
-                                <div class="col-md-6 valueColumn">{{product.quantity}}</div>
+                                <div class="col-6 titleColumn"><b>Quantity</b></div>
+                                <div class="col-6 valueColumn">{{product.quantity}}</div>
                             </div>
                             <div v-for="technicalInformation in product.technicalData" :key="technicalInformation._id" class="row">
-                                <div class="col-md-6 titleColumn"><b>{{technicalInformation.title}}</b></div>
-                                <div class="col-md-6 valueColumn">{{technicalInformation.value}}</div>
+                                <div class="col-6 titleColumn"><b>{{technicalInformation.title}}</b></div>
+                                <div class="col-6 valueColumn">{{technicalInformation.value}}</div>
                             </div>
                             <div class="mb-3"></div>
                         </div>

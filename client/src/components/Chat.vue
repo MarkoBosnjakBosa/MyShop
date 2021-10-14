@@ -2,7 +2,7 @@
     <div id="chat" class="container-fluid">
         <div v-if="userData.isAdmin" class="adminArea">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-4">
                     <h3 v-if="onlineUsers.length" class="onlineUsers">Online</h3>
                     <ul class="list-group">
                         <li v-for="onlineUser in onlineUsers" :key="onlineUser" class="list-group-item d-flex justify-content-between align-items-center" @click="loadMessages(onlineUser.user)">
@@ -22,7 +22,7 @@
                         </li>
                     </ul>
                 </div>
-                <div v-if="displayMessages" class="col-md-8">
+                <div v-if="displayMessages" class="col-8">
                     <h3 class="chat">{{chatId}}</h3>
                     <div id="adminMessages" @click="readMessage()">
                         <div v-if="!displayMessages.length" class="noMessages">No messages yet.</div>
@@ -64,11 +64,11 @@
             <i id="chatIcon" class="fas fa-comments fa-2x" @click="displayChatBox()"></i>
             <div id="chatBox" style="display: none;">
                 <div class="row informationRow">
-                    <div class="col-md-10">
+                    <div class="col-10">
                         <h3 class="informationTitle">Admin</h3>
                         <small v-if="typing" class="typing"><b>{{typing}}</b> is typing...</small>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-2">
                         <i class="fas fa-times fa-2x hideChatBox" @click="hideChatBox()"></i>
                     </div>
                 </div>

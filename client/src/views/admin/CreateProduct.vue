@@ -116,7 +116,7 @@
                             </div>
                             <div v-if="product.images.length" class="mb-3">
                                 <div class="row">
-                                    <div v-for="(image, index) in product.images" :key="image.name" class="col-md-3 position">
+                                    <div v-for="(image, index) in product.images" :key="image.name" class="col-3 position">
                                         <img :src="image.src" :alt="image.name" class="img-fluid rounded image"/>
                                         <i class="fas fa-times-circle removeImage" @click="removeImage(index)"></i>
                                     </div>

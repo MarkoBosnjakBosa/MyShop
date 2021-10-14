@@ -7,11 +7,11 @@
                 <form autocomplete="off" @submit.prevent="createTechnicalInformation()">
                     <h1>Technical Data</h1>
                     <div class="row">
-                        <div class="mb-3 col-md-11">
+                        <div class="mb-3 col-11">
                             <input type="text" id="title" class="form-control" :class="{'errorField' : titleError}" placeholder="Title" v-model="title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
                             <small v-if="titleError" class="form-text errorInput">Please provide a valid title!</small>
                         </div>
-                        <div class="mb-3 col-md-1">
+                        <div class="mb-3 col-1">
                             <button type="submit" class="btn btn-primary">Create</button>
                         </div>
                     </div>

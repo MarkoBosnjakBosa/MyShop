@@ -7,21 +7,21 @@
                 <h1>Contacts</h1>
                 <form autocomplete="off" @submit.prevent="getContacts()" novalidate>
                     <div class="row">
-                        <div class="mb-3 col-md-5">
+                        <div class="mb-3 col-5">
                             <input type="text" id="search" class="form-control" placeholder="Search..." v-model="search"/>
                         </div>
-                        <div class="mb-3 col-md-3">
+                        <div class="mb-3 col-3">
                             <input type="number" id="limit" min="1" class="form-control" v-model="limit"/>
                         </div>
-                        <div class="mb-3 col-md-2">
+                        <div class="mb-3 col-2">
                             <select id="orderBy" class="form-control" v-model="orderBy">
                                 <option value="" selected>Order by</option>
                                 <option value="dateAsc">Date &#129045;</option>
                                 <option value="dateDesc">Date &#129047;</option>
                             </select>
                         </div>
-                        <div class="btn-group mb-3 col-md-2">
-                            <button type="submit" class="btn btn-primary md-1">Search</button>
+                        <div class="btn-group mb-3 col-2">
+                            <button type="submit" class="btn btn-primary">Search</button>
                             <button type="button" class="btn btn-dark" data-toggle="tooltip" :title="'Total: ' + total">{{total}}</button>
                         </div>
                     </div>

@@ -12,38 +12,38 @@
                 <div class="tab-content">
                     <div id="addressTab" class="tab-pane fade active show" role="tabpanel">
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Street:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Street:</label>
+                            <div class="col-9">
                                 <input type="text" id="street" class="form-control" v-model="address.street" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">House number:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">House number:</label>
+                            <div class="col-9">
                                 <input type="text" id="houseNumber" class="form-control" v-model="address.houseNumber" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">City:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">City:</label>
+                            <div class="col-9">
                                 <input type="text" id="city" class="form-control" v-model="address.city" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">ZIP code:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">ZIP code:</label>
+                            <div class="col-9">
                                 <input type="text" id="zipCode" class="form-control" v-model="address.zipCode" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Country:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Country:</label>
+                            <div class="col-9">
                                 <input type="text" id="country" class="form-control" v-model="address.country" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Mobile number:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Mobile number:</label>
+                            <div class="col-9">
                                 <div class="input-group">
                                     <div class="input-group-text countryCodePrefix">+</div>
                                     <input type="text" id="mobileNumber" class="form-control" v-model="address.mobileNumber" disabled>
@@ -51,8 +51,8 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-3 col-form-label">Email:</label>
-                            <div class="col-md-9">
+                            <label class="col-3 col-form-label">Email:</label>
+                            <div class="col-9">
                                 <input type="text" id="email" class="form-control" v-model="address.email" disabled>
                             </div>
                         </div>
@@ -67,11 +67,11 @@
                     </div>
                     <div id="paymentTab" class="tab-pane fade" role="tabpanel">
                         <div class="mb-3 row">
-                            <div class="col-md stripe">
+                            <div class="col stripe">
                                 <h3>Credit card <i class="fab fa-cc-stripe"></i></h3>
                                 <button id="stripeCheckout" class="btn btn-primary" @click="openStripeCheckout()">Pay {{totalCost}}</button>
                             </div>
-                            <div class="col-md payPal">
+                            <div class="col payPal">
                                 <h3>PayPal <i class="fab fa-cc-paypal"></i></h3>
                                 <div ref="paypal"></div>
                             </div>

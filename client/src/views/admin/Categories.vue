@@ -7,18 +7,18 @@
                 <form autocomplete="off" @submit.prevent="createCategory()">
                     <h1>Categories</h1>
                     <div class="row">
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-6">
                             <input type="text" id="title" class="form-control" :class="{'errorField' : errors.titleError && submitting}" placeholder="Title" v-model="category.title" @focus="clearTitleStatus()" @keyPress="clearTitleStatus()"/>
                             <small v-if="errors.titleError && submitting" class="form-text errorInput">Please provide a valid title!</small>
                         </div>
-                        <div class="mb-3 col-md-4">
+                        <div class="mb-3 col-4">
                             <div class="input-group">
                                 <input type="text" id="icon" class="form-control" :class="{'errorField' : errors.iconError && submitting}" placeholder="Icon" v-model="category.icon" @focus="clearIconStatus()" @keyPress="clearIconStatus()"/>
                                 <span class="input-group-text"><i class="far fa-question-circle" data-toggle="tooltip" title="Use only classes from Font Awesome icons."></i></span>
                             </div>
                             <small v-if="errors.iconError && submitting" class="form-text errorInput">Please provide a valid icon!</small>
                         </div>
-                        <div class="mb-3 col-md-2">
+                        <div class="mb-3 col-2">
                             <button type="submit" class="btn btn-primary">Create</button>
                         </div>
                     </div>

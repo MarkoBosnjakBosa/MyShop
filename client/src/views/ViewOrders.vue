@@ -20,11 +20,11 @@
                         <div :id="'order_' + order._id" class="accordion">
                             <div :id="'collapse_' + order._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + order._id" :data-bs-parent="'#order_' + order._id">
                                 <div class="row">
-                                    <div class="col-md-8">
+                                    <div class="col-8">
                                         Created at: <b>{{order.createdAt}}</b><br>
                                         Payment type: <b>{{order.paymentType}}</b>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-4">
                                         <i class="fas fa-external-link-square-alt icon" @click="openViewOrder(order._id)"></i>
                                         <i class="fas fa-file-download icon" @click="downloadInvoice(order.orderNumber)"></i><br>
                                         <span v-if="order.isDispatched" class="badge bg-success text-light dispatchAccordion">Dispatched: {{order.dispatchedAt}}</span>

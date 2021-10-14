@@ -7,38 +7,38 @@
                 <h1>Contact Settings</h1>
                 <form autocomplete="off" @submit.prevent="saveContactSettings()" novalidate>
                     <div class="row">
-                        <div class="mb-3 col-md-5">
+                        <div class="mb-3 col-5">
                             <label for="latitude" class="form-label">Latitude:</label>
                             <input type="number" id="latitude" step="any" class="form-control" :class="{'errorField' : errors.latitudeError && submitting}" v-model="contactSettings.coordinates.lat" @focus="clearLatitudeStatus()" @keypress="clearLatitudeStatus()"/>
                             <small v-if="(errors.latitudeError || errors.longitudeError) && submitting" class="form-text errorInput">Please provide valid coordinates!</small>
                             <small v-if="errors.geolocationError" class="form-text errorInput">Geolocation is not provided by this browser!</small>
                         </div>
-                        <div class="mb-3 col-md-5">
+                        <div class="mb-3 col-5">
                             <label for="longitude" class="form-label">Longitude:</label>
                             <input type="number" id="longitude" step="any" class="form-control" :class="{'errorField' : errors.longitudeError && submitting}" v-model="contactSettings.coordinates.lng" @focus="clearLongitudeStatus()" @keypress="clearLongitudeStatus()"/>
                         </div>
-                        <div class="mb-3 col-md-2">
+                        <div class="mb-3 col-2">
                             <button type="button" class="btn btn-dark coordinates" @click="getCoordinates()">Coordinates</button>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="mb-3 col-md-8">
+                        <div class="mb-3 col-8">
                             <label for="street" class="form-label">Street:</label>
                             <input type="text" id="street" class="form-control" :class="{'errorField' : errors.streetError && submitting}" v-model="contactSettings.street" @focus="clearStreetStatus()" @keypress="clearStreetStatus()"/>
                             <small v-if="(errors.streetError || errors.houseNumberError) && submitting" class="form-text errorInput">Please provide a valid street / house number!</small>
                         </div>
-                        <div class="mb-3 col-md-4">
+                        <div class="mb-3 col-4">
                             <label for="houseNumber" class="form-label">House number:</label>
                             <input type="number" id="houseNumber" min="0" class="form-control" :class="{'errorField' : errors.houseNumberError && submitting}" v-model="contactSettings.houseNumber" @focus="clearHouseNumberStatus()" @keypress="clearHouseNumberStatus()"/>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="mb-3 col-md-8">
+                        <div class="mb-3 col-8">
                             <label for="city" class="form-label">City:</label>
                             <input type="text" id="city" class="form-control" :class="{'errorField' : errors.cityError && submitting}" v-model="contactSettings.city" @focus="clearCityStatus()" @keypress="clearCityStatus()"/>
                             <small v-if="(errors.cityError || errors.zipCodeError) && submitting" class="form-text errorInput">Please provide a valid city / zip code!</small>
                         </div>
-                        <div class="mb-3 col-md-4">
+                        <div class="mb-3 col-4">
                             <label for="zipCode" class="form-label">Zip code:</label>
                             <input type="number" id="zipCode" min="0" class="form-control" :class="{'errorField' : errors.zipCodeError && submitting}" v-model="contactSettings.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
                         </div>
@@ -49,7 +49,7 @@
                         <small v-if="errors.countryError && submitting" class="form-text errorInput">Please provide a valid country!</small>
                     </div>
                     <div class="row">
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-6">
                             <label for="mobileNumber" class="form-label">Mobile number:</label>
                             <div class="input-group">
                                 <span class="input-group-text countryCodePrefix">+</span>
@@ -58,7 +58,7 @@
                             <small class="form-text text-muted">Please insert your mobile number with the country calling code.</small><br>
                             <small v-if="(errors.mobileNumberError || errors.emailError) && submitting" class="form-text errorInput">Please provide a valid mobile number / email!</small>
                         </div>
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-6">
                             <label for="email" class="form-label">Email:</label>
                             <input type="text" id="email" class="form-control" :class="{'errorField' : errors.emailError && submitting}" v-model="contactSettings.email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
                         </div>

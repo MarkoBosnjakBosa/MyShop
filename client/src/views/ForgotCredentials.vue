@@ -10,8 +10,8 @@
                     <hr>
                     <fieldset class="mb-3 options">
                         <div class="row">
-                            <legend class="col-form-label col-md-2 pt-0">Forgot:</legend>
-                            <div class="col-md-10">
+                            <legend class="col-form-label col-2 pt-0">Forgot:</legend>
+                            <div class="col-10">
                                 <div class="form-check">
                                     <input type="radio" name="option" id="password" class="form-check-input" value="password" v-model="option" checked/>
                                     <label for="password" class="form-check-label">Password</label>
