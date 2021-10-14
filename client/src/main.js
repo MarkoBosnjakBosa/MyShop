@@ -5,6 +5,8 @@ import router from "./router";
 import Axios from "axios";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "@fortawesome/fontawesome-free/js/all.js";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 Axios.defaults.headers.common["Authorization"] = "Bearer " + store.state.login.token;
 
