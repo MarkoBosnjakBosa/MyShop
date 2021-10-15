@@ -38,7 +38,7 @@ const login = require("./routes/login.js")(app, models, jwt, bcryptjs, smsEvents
 const forgotCredentials = require("./routes/forgotCredentials.js")(app, models, bcryptjs, emailEvents, validations);
 const profile = require("./routes/profile.js")(app, models, validations);
 const setup = require("./routes/setup.js")(app, models, smsEvents, validations);
-const checkout = require("./routes/checkout.js")(app, models, stripe, moment, ejs, pdf, fs, path, emailEvents);
+const checkout = require("./routes/checkout.js")(app, models, stripe, moment, ejs, pdf, fs, path, emailEvents, validations);
 const products = require("./routes/admin/products.js")(app, models, moment, json2csv, fs, path, uploadImages, validations);
 const categories = require("./routes/admin/categories.js")(app, models, validations);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validations);
@@ -49,8 +49,7 @@ const users = require("./routes/admin/users.js")(app, models, validations);
 const chat = require("./chat/chat.js")(app, io, models, moment, validations);
 const backup = require("./database/backup.js")(spawn, cron, moment, fs, path);
 
-mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
-mongoose.set("useCreateIndex", true);
+mongoose.connect(process.env.DATABASE_URL);
 const database = mongoose.connection;
 database.on("error", function(error) {
     console.log("Connection to the database has not been established!");

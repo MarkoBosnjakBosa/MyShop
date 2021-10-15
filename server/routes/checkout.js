@@ -1,4 +1,4 @@
-module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, emailEvents) {
+module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, emailEvents, validations) {
 	const Order = models.Order;
 	const User = models.User;
 	const Product = models.Product;
@@ -15,14 +15,19 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 		var products = request.body.products;
 		var totalPrice = request.body.totalPrice;
 		var createdAt = moment(new Date()).format("DD.MM.YYYY HH:mm");
-		var query = {"account.username": username};
-		User.findOne(query).then(user => {
+		var userQuery = {"account.username": username};
+		User.findOne(userQuery).then(user => {
 			user.account.password = null;
 			user.account.isAdmin = null;
-			Order.countDocuments().then(count => {
-				var orderNumber = ++count;
+			var orderQuery = {};
+			var orderSort = {"orderNumber": -1};
+			Order.findOne(orderQuery).sort(orderSort).then(order => {
+				var orderNumber = 1;
+				if(!validations.isEmpty(order)) {
+					orderNumber += Number(order.orderNumber);
+				}
 				var newOrder = getOrderScheme(Order, orderNumber, user._id, paymentType, products, totalPrice, createdAt, false, "", {account: user.account, address: user.address});
-				newOrder.save().then(order => {
+				newOrder.save().then(newOrder => {
 					createInvoice(orderNumber, createdAt, paymentType, user, products, totalPrice);
 					updateQuantities(products);
 					response.status(200).json({finalized: true, orderNumber: orderNumber}).end();
