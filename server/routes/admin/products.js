@@ -320,7 +320,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 				try {
 					csv = json2csv(products, {fields});
 					var timestamp = moment(new Date());
-					var filePath = path.join(__dirname, "../../exports/Products_", timestamp, ".csv");
+					var filePath = path.join(__dirname, "../../exports/Products_" + timestamp + ".csv");
 					fs.promises.writeFile(filePath, csv).then(csvFile => {
 						setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
 						response.status(200).json({downloaded: true, fileName: "Products_" + timestamp + ".csv"});

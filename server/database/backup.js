@@ -11,7 +11,7 @@ module.exports = function(spawn, cron, moment, fs, path) {
 	});
 
 	function createBackup() {
-		var archive = path.join(__dirname, "/backups/MyShop_", currentDate, ".gzip");
+		var archive = path.join(__dirname, "/backups/MyShop_" + currentDate + ".gzip");
 		var child = spawn("mongodump", ["--db=myshop", "--archive=" + archive, "--gzip"]);
 		var dateAndTime = moment().format(dateAndTimeFormat);
 		child.stdout.on("data", (data) => {
@@ -31,7 +31,7 @@ module.exports = function(spawn, cron, moment, fs, path) {
 	}
 
 	function removeBackup() {
-		var archive = path.join(__dirname, "/backups/MyShop_", oldDate, ".gzip");
+		var archive = path.join(__dirname, "/backups/MyShop_" + oldDate + ".gzip");
 		if(fs.existsSync(archive)) {
 			fs.unlink(archive, function(error) {
 				var dateAndTime = moment().format(dateAndTimeFormat);
