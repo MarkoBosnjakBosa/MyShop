@@ -47,7 +47,7 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 		});
 		var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/invoice/invoice.html"), "utf-8"));
 		var html = htmlCompiled({orderNumber: orderNumber, createdAt: createdAt, paymentType: paymentType, user: user, products: products, totalPrice: totalPrice});
-		pdf.create(html).toFile(path.join(__dirname, "../invoices/Invoice_" + orderNumber + ".pdf"), function(error, response) {
+		pdf.create(html).toFile(path.join(__dirname, "../invoices/Invoice_", orderNumber, ".pdf"), function(error, response) {
 			emailEvents.emit("sendInvoiceEmail", user.account, orderNumber);
 		});
 	}

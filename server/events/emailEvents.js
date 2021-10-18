@@ -59,7 +59,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 			from: process.env.EMAIL_USER,
 			to: account.email,
 			subject: "Invoice " + orderNumber,
-			attachments: [{filename: "Invoice_" + orderNumber, path: path.join(__dirname, "../invoices/Invoice_" + orderNumber + ".pdf"), contentType: "application/pdf"}],
+			attachments: [{filename: "Invoice_" + orderNumber, path: path.join(__dirname, "../invoices/Invoice_", orderNumber, ".pdf"), contentType: "application/pdf"}],
 			html: html
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));

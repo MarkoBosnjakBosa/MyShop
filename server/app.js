@@ -70,7 +70,7 @@ function createAdmin() {
     bcryptjs.genSalt(10, (error, salt) => {
         bcryptjs.hash(password, salt, (error, hashedPassword) => {
             var query = {"account.username": "admin"};
-            var update = {$setOnInsert: {account: {username: "admin", email: "default", password: hashedPassword, firstName: "default", lastName: "default", mobileNumber: "", isAdmin: true}, address: {street: "default", houseNumber: 0, city: "default", zipCode: 0, country: "default"}, confirmation: {confirmed: true, confirmationToken: "", authenticationEnabled: false, authenticationToken: "", authenticationEnablingToken: "", resetPasswordToken: ""}}};
+            var update = {$setOnInsert: {account: {username: process.env.ADMIN_DEFAULT_USERNAME, email: "default", password: hashedPassword, firstName: "default", lastName: "default", mobileNumber: "", isAdmin: true}, address: {street: "default", houseNumber: 0, city: "default", zipCode: 0, country: "default"}, confirmation: {confirmed: true, confirmationToken: "", authenticationEnabled: false, authenticationToken: "", authenticationEnablingToken: "", resetPasswordToken: ""}}};
             var options = {upsert: true, new: true};
             User.findOneAndUpdate(query, update, options).then().catch(error => console.log(error));
         });

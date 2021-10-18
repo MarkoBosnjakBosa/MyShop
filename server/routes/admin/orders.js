@@ -145,7 +145,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 				try {
 					csv = json2csv(orders, {fields});
 					var timestamp = moment(new Date());
-					var filePath = path.join(__dirname, "../../exports/Orders_" + timestamp + ".csv");
+					var filePath = path.join(__dirname, "../../exports/Orders_", timestamp, ".csv");
 					fs.promises.writeFile(filePath, csv).then(csvFile => {
 						setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
 						response.status(200).json({downloaded: true, fileName: "Orders_" + timestamp + ".csv"});
@@ -198,7 +198,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 			var options = {new: true};
 			Order.findOneAndRemove(query, options).then(order => {
 				if(!validations.isEmpty(order)) {
-					fs.unlink(path.join(__dirname, "../../invoices/Invoice_" + order.orderNumber + ".pdf"), function(error) {});
+					fs.unlink(path.join(__dirname, "../../invoices/Invoice_", order.orderNumber, ".pdf"), function(error) {});
 					response.status(200).json({deleted: true}).end();
 				} else {
 					response.status(200).json({deleted: false}).end(); 
@@ -211,7 +211,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
     app.get("/downloadInvoice/:orderNumber", (request, response) => {
         var orderNumber = request.params.orderNumber;
         if(orderNumber) {
-			var invoice = path.join(__dirname, "../../invoices/Invoice_" + orderNumber + ".pdf");
+			var invoice = path.join(__dirname, "../../invoices/Invoice_", orderNumber, ".pdf");
 			if(fs.existsSync(invoice)) {
             	response.download(invoice);
 			} else {
