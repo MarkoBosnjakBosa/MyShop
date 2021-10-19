@@ -126,9 +126,6 @@
     #pageContent.toggled #sidebarDiv {
         margin-left: 0;
     }
-    .list-group-item {
-        display: inline-block;
-    }
     li {
         cursor: pointer;
     }
