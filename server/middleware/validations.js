@@ -65,11 +65,11 @@ function validateLogin(request, response, next) {
     var allowLogin = true;
     var errorFields = [];
     var username = request.body.username;
-    var password = request.body.password;
     if(validations.invalidUsername(username)) {
         errorFields = [...errorFields, "username"];
         allowLogin = false;
     }
+    var password = request.body.password;
     if(validations.invalidPassword(password)) {
         errorFields = [...errorFields, "password"];
         allowLogin = false;
