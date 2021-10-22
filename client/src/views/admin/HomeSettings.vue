@@ -202,7 +202,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #imagesTab, #messageTab {
+    .nav-tabs, #imagesTab, #messageTab {
         margin: auto;
         max-width: 800px;
         margin-top: 20px;

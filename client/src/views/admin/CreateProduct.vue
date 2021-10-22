@@ -348,13 +348,13 @@
             },
             displayReCaptcha(type) {
                 var reCaptchas = document.getElementsByClassName("grecaptcha-badge");
-                reCaptchas.forEach(function(reCaptcha) {
+                if(reCaptchas && reCaptchas.length) {
                     if(type) {
-                        reCaptcha.style.visibility = "visible";
+                        reCaptchas[0].style.visibility = "visible";
                     } else {
-                        reCaptcha.style.visibility = "hidden";
+                        reCaptchas[0].style.visibility = "hidden";
                     }
-                });
+                }
             },
             closeCreationAlert() {
                 this.productCreated = false;
@@ -396,7 +396,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #mainTab, #technicalDataTab, #imagesTab {
+    .nav-tabs, #mainTab, #technicalDataTab, #imagesTab {
         margin: auto;
         max-width: 800px;
         margin-top: 20px;

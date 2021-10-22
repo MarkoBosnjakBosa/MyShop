@@ -236,7 +236,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #messageTab, #mapTab, .nav-tabs {
+    .nav-tabs, #messageTab, #mapTab {
         margin: auto;
         max-width: 700px;
         margin-top: 20px;

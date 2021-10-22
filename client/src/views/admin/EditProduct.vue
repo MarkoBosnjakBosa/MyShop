@@ -424,7 +424,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #mainTab, #technicalDataTab, #imagesTab, #deleteTab {
+    .nav-tabs, #mainTab, #technicalDataTab, #imagesTab, #deleteTab {
         margin: auto;
         max-width: 800px;
         margin-top: 20px;

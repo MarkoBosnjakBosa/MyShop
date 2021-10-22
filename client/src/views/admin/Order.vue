@@ -235,7 +235,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #orderTab, #accountTab, #addressTab, #deleteTab {
+    .nav-tabs, #orderTab, #accountTab, #addressTab, #deleteTab {
         margin: auto;
         max-width: 800px;
         margin-top: 20px;

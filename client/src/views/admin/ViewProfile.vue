@@ -173,7 +173,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #accountTab, #addressTab, #deleteTab {
+    .nav-tabs, #accountTab, #addressTab, #deleteTab {
         margin: auto;
         max-width: 600px;
         margin-top: 20px;

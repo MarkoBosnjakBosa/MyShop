@@ -162,7 +162,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #orderTab, #addressTab {
+    .nav-tabs, #orderTab, #addressTab {
         margin: auto;
         max-width: 800px;
         margin-top: 20px;

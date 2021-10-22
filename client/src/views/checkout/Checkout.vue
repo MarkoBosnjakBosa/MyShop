@@ -241,7 +241,7 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
-    #addressTab, #paymentTab, .nav-tabs {
+    .nav-tabs, #addressTab, #paymentTab {
         margin: auto;
         max-width: 600px;
         margin-top: 20px;
