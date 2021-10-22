@@ -74,18 +74,22 @@
 				}
 			},
 			checkUsername() {
-				var body = {username: this.user.username};
-				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkUsername", body).then(response => {
-					if(response.data.exists) {
-						this.errors.usernameError = false;
-					} else {
-						if(response.data.empty) {
+				if(this.user.username) {
+					var body = {username: this.user.username};
+					axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkUsername", body).then(response => {
+						if(response.data.exists) {
 							this.errors.usernameError = false;
 						} else {
-							this.errors.usernameError = true;
+							if(response.data.empty) {
+								this.errors.usernameError = false;
+							} else {
+								this.errors.usernameError = true;
+							}
 						}
-					}
-				}).catch(error => console.log(error));
+					}).catch(error => console.log(error));
+				} else {
+					this.errors.usernameError = false;
+				}
 			},
 			loginUser() {
 				this.submitting = true;

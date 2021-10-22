@@ -198,7 +198,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 			var options = {new: true};
 			Order.findOneAndRemove(query, options).then(order => {
 				if(!validations.isEmpty(order)) {
-					fs.unlink(path.join(__dirname, "../../invoices/Invoice_" + order.orderNumber + ".pdf"), function(error) {});
+					fs.unlinkSync(path.join(__dirname, "../../invoices/Invoice_" + order.orderNumber + ".pdf"));
 					response.status(200).json({deleted: true}).end();
 				} else {
 					response.status(200).json({deleted: false}).end(); 

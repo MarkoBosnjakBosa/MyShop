@@ -301,7 +301,7 @@
             },
             uploadImages(event, type) {
                 var files = event.target.files;
-                if(files && files.length > 0) {
+                if(files && files.length) {
                     if(type == "primaryImage") {
                         this.errors.primaryImageError = false;
                         var file = files[0];

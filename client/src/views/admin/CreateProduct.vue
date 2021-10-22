@@ -298,7 +298,7 @@
             selectImages(event, type) {
                 var files = event.target.files;
                 var temp = this;
-                if(files && files.length > 0) {
+                if(files && files.length) {
                     if(type == "primaryImage") {
                         temp.errors.primaryImageError = false;
                         var file = files[0];

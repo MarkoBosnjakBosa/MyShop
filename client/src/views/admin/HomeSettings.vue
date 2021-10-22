@@ -122,7 +122,7 @@
             uploadImages(event) {
                 this.errors.imagesError = false;
                 var files = event.target.files;
-                if(files && files.length > 0 && ((files.length + this.homeSettings.images.length) < 5)) {
+                if(files && files.length && ((files.length + this.homeSettings.images.length) < 5)) {
                     var images = [];
                     for (var i = 0, file; file = files[i]; i++) {
                         if (!file.type.match("image.*")) {

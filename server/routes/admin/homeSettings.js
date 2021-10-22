@@ -81,7 +81,7 @@ module.exports = function(app, models, fs, path, uploadImages, validations) {
             var options = {new: true};
             HomeSettings.findOneAndUpdate(query, update, options).then(homeSettings => {
                 if(!validations.isEmpty(homeSettings)) {
-                    fs.unlink(path.join(__dirname, "../../images/home/", imageName), function(error) {});
+                    fs.unlinkSync(path.join(__dirname, "../../images/home/", imageName));
                     response.status(200).json({deleted: true}).end();
                 } else {
                     response.status(200).json({deleted: false}).end(); 

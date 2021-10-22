@@ -114,7 +114,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 			var primaryImageObject = {name: primaryImage.filename, contentType: primaryImage.mimetype, image: Buffer.from(encodedPrimaryImage, "base64")};
 			var update = {primaryImage: primaryImageObject};
 			Product.findOneAndUpdate(query, update).then(product => {
-				fs.unlink(path.join(__dirname, "../../images/products/", product.primaryImage.name), function(error) {});
+				fs.unlinkSync(path.join(__dirname, "../../images/products/", product.primaryImage.name));
 				response.status(200).json({edited: true, primaryImage: primaryImageObject}).end();
 			}).catch(error => console.log(error));
 		} else if(type == "images") {
@@ -155,7 +155,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 			var update = {$pull: {images: {_id: imageId}}};
 			Product.findOneAndUpdate(query, update, {new: true}).then(product => {
 				if(!validations.isEmpty(product)) {
-					fs.unlink(path.join(__dirname, "../../images/products/", imageName), function(error) {});
+					fs.unlinkSync(path.join(__dirname, "../../images/products/", imageName));
 					response.status(200).json({deleted: true}).end();
 				} else {
 					response.status(200).json({deleted: false}).end(); 
@@ -172,10 +172,10 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 			Product.findOneAndRemove(query).then(product => {
 				if(!validations.isEmpty(product)) {
 					var primaryImage = product.primaryImage;
-					fs.unlink(path.join(__dirname, "../../images/products/", primaryImage.name), function(error) {});
+					fs.unlinkSync(path.join(__dirname, "../../images/products/", primaryImage.name));
 					var images = product.images;
 					for(var image = 0; image < images.length; image++) {
-						fs.unlink(path.join(__dirname, "../../images/products/", images[image].name), function(error) {});
+						fs.unlinkSync(path.join(__dirname, "../../images/products/", images[image].name));
 					}
 					response.status(200).json({deleted: true}).end();
 				} else {
