@@ -119,7 +119,7 @@
 										<span class="input-group-text"><i class="fas fa-lock"></i></span>
 										<input type="password" id="password" class="form-control" :class="{'errorField' : errors.passwordError}" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
 										<div class="input-group-append">
-											<button type="button" class="btn btn-light" :class="{'errorIcon' : errors.passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+											<button type="button" class="btn btn-light" :class="{'errorIcon' : errors.passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye-slash"></i></button>
 										</div>
 									</div>
 									<small v-if="errors.passwordError" class="form-text errorInput">Please provide a valid password!</small>

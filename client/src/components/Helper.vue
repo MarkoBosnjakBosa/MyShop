@@ -7,14 +7,14 @@
                 switch(type) {
                     case "password": {
                         document.getElementById("password").setAttribute("type", "text");
-                        document.getElementById("togglePassword").classList.remove("fa-eye");
-                        document.getElementById("togglePassword").classList.add("fa-eye-slash");
+                        document.getElementById("togglePassword").classList.remove("fa-eye-slash");
+                        document.getElementById("togglePassword").classList.add("fa-eye");
                         break;
                     }
                     case "text": {
                         document.getElementById("password").setAttribute("type", "password");
-                        document.getElementById("togglePassword").classList.remove("fa-eye-slash");
-                        document.getElementById("togglePassword").classList.add("fa-eye");
+                        document.getElementById("togglePassword").classList.remove("fa-eye");
+                        document.getElementById("togglePassword").classList.add("fa-eye-slash");
                         break;
                     }
                 }

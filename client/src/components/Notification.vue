@@ -1,13 +1,11 @@
 <template>
-    <div id="notification">
-        <div class="position-fixed bottom-0 end-0" :class="type == 'success' ? 'p-3' : 'margin'">
-            <div class="toast" :class="message ? 'show' : 'hide'" role="alert">
-                <div class="toast-header">
-                    <strong class="me-auto title">{{product.title ? product.title : "Product"}}</strong>
-                    <button type="button" class="btn-close" @click="hideNotification()"></button>
-                </div>
-                <div class="toast-body" :class="type">{{message}}</div>
+    <div id="notification" class="position-fixed bottom-0 end-0" :class="type == 'success' ? 'p-3' : 'margin'">
+        <div class="toast" :class="message ? 'show' : 'hide'" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto title">{{product.title ? product.title : "Product"}}</strong>
+                <button type="button" class="btn-close" @click="hideNotification()"></button>
             </div>
+            <div class="toast-body" :class="type">{{message}}</div>
         </div>
     </div>
 </template>
