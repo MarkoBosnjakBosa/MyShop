@@ -47,7 +47,7 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 			}
 		}).catch(error => console.log(error));
 	});
-	app.put("/resetPassword", validations.validatePasswordResetting, (request, response) => {
+	app.put("/resetPassword", validations.validatePasswordReset, (request, response) => {
 		var username = request.body.username;
 		var password = request.body.password;
 		var isLoggedIn = request.body.isLoggedIn;

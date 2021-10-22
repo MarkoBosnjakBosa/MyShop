@@ -104,7 +104,7 @@ function validateForgotCredentials(request, response, next) {
     else response.status(200).json({sent: false}).end();
 }
 
-function validatePasswordResetting(request, response, next) {
+function validatePasswordReset(request, response, next) {
     var username = request.body.username;
     var password = request.body.password;
     if(!validations.invalidUsername(username) && !validations.invalidPassword(password)) next();
@@ -430,7 +430,7 @@ module.exports = {
     validateAuthentication: validateAuthentication,
     validateAuthenticationEnabling: validateAuthenticationEnabling,
     validateForgotCredentials: validateForgotCredentials,
-    validatePasswordResetting: validatePasswordResetting,
+    validatePasswordReset: validatePasswordReset,
     validateAccountEdit: validateAccountEdit,
     validateAddressEdit: validateAddressEdit,
     validateCategoryCreation: validateCategoryCreation,
