@@ -29,6 +29,16 @@
                         <div v-for="message in displayMessages" :key="message._id" class="card" :class="message.username == userData.username ? 'adminMessage' : 'userMessage'">
                             <div class="card-header">
                                 <div v-if="message.username != userData.username" class="username">{{message.username}}</div>
+                                <div v-else class="actions">
+                                    <div v-if="editing != message._id">
+                                        <i class="fas fa-pencil-alt enableEditing" @click="enableEditing(message)"></i>
+                                        <i class="fas fa-times-circle deleteMessage" @click="deleteMessage(message._id)"></i>
+                                    </div>
+                                    <div v-else>
+                                        <i class="far fa-check-circle editMessage" @click="editMessage(message)"></i>
+                                        <i class="far fa-times-circle disableEditing" @click="disableEditing(message)"></i>
+                                    </div>
+                                </div>
                                 <div class="date">{{renderDate(message.date)}}</div>
                             </div>
                             <div class="card-body">
@@ -36,16 +46,6 @@
                                     <input type="text" class="form-control" v-model="message.message"/>	
                                 </div>
                                 <div v-else>{{message.message}}</div>
-                            </div>
-                            <div v-if="message.username == userData.username" class="card-footer">
-                                <div v-if="editing != message._id">
-                                    <i class="fas fa-pencil-alt enableEditing" @click="enableEditing(message)"></i>
-                                    <i class="fas fa-times-circle deleteMessage" @click="deleteMessage(message._id)"></i>
-                                </div>
-                                <div v-else>
-                                    <i class="far fa-check-circle editMessage" @click="editMessage(message)"></i>
-                                    <i class="far fa-times-circle disableEditing" @click="disableEditing(message)"></i>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -365,15 +365,16 @@
             },
             renderDate(date) {
                 if(date) {
-                    var dateAndTime = date.split(" ");
-                    var temporaryDateArray = dateAndTime[0].split(".");
+                    var transformedDate = new Date(date).toLocaleString("en-US").replace(",", "");
+                    var dateAndTime = transformedDate.split(" ");
+                    var temporaryDateArray = dateAndTime[0].split("/");
                     var temporaryDate = temporaryDateArray[2] + "-" + temporaryDateArray[1] + "-" + temporaryDateArray[0];
                     var parsedDate = moment(temporaryDate);
                     var currentDate = moment().startOf("day");
                     if(parsedDate.isBefore(currentDate)) {
                         return dateAndTime[0];
                     } else {
-                        return dateAndTime[1];
+                        return dateAndTime[1] + " " + dateAndTime[2];
                     }
                 }
             },
@@ -479,7 +480,7 @@
         background-color: #4d4dff;
         color: #fff;
     }
-    .username {
+    .username, .actions {
         float: left;
     }
     .date {

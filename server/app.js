@@ -46,7 +46,7 @@ const orders = require("./routes/admin/orders.js")(app, models, moment, json2csv
 const homeSettings = require("./routes/admin/homeSettings.js")(app, models, fs, path, uploadImages, validations);
 const contact = require("./routes/admin/contact.js")(app, models, emailEvents, validations);
 const users = require("./routes/admin/users.js")(app, models, validations);
-const chat = require("./chat/chat.js")(app, io, models, moment, validations);
+const chat = require("./chat/chat.js")(app, io, models, validations);
 const backup = require("./database/backup.js")(spawn, cron, moment, fs, path);
 
 mongoose.connect(process.env.DATABASE_URL);

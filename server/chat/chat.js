@@ -1,4 +1,4 @@
-module.exports = function(app, io, models, moment, validations) {
+module.exports = function(app, io, models, validations) {
     const User = models.User;
     const Message = models.Message;
     var admin = {};
@@ -39,8 +39,7 @@ module.exports = function(app, io, models, moment, validations) {
         socket.on("sendMessage", (chatId, isAdmin, user, message) => {
             if(chatId && validations.validateMessage(message)) {
                 var newMessage;
-                var dateFormat = "DD.MM.YYYY HH:mm";
-                var date = moment().format(dateFormat);
+                var date = new Date().getTime();
                 newMessage = getMessageScheme(Message, chatId, user, message, date);
                 newMessage.save().then(message => {
                     var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
@@ -60,7 +59,7 @@ module.exports = function(app, io, models, moment, validations) {
             }
         });
         socket.on("editMessage", (chatId, message) => {
-            if(message._id && validations.validateMessage(message.message)) {
+            if(validations.validateMessage(message.message)) {
                 var query = {_id: message._id};
                 var update = {message: message.message};
                 Message.findOneAndUpdate(query, update, {new: true}).then(foundMessage => {
@@ -76,26 +75,24 @@ module.exports = function(app, io, models, moment, validations) {
             }
         });
         socket.on("deleteMessage", (chatId, isAdmin, messageId) => {
-            if(messageId) {
-                var query = {_id: messageId};
-                Message.findOneAndRemove(query).then(message => {
-                    if(!validations.isEmpty(message)) {
-                        var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
-                        if(foundIndex > -1) {
-                            users[foundIndex].messages = users[foundIndex].messages.filter(message => message._id != messageId);
-                            if(isAdmin) {
-                                socket.emit("messageDeleted", {user: chatId, isAdmin: true, messageId: messageId});
-                                socket.broadcast.to(users[foundIndex].socketId).emit("messageDeleted", {user: "", isAdmin: false, messageId: messageId});
-                            } else {
-                                if(Object.keys(admin).length) {
-                                    socket.broadcast.to(admin.socketId).emit("messageDeleted", {user: chatId, isAdmin: true, messageId: messageId});
-                                }
-                                socket.emit("messageDeleted", {user: "", isAdmin: false, messageId: messageId});
+            var query = {_id: messageId};
+            Message.findOneAndRemove(query).then(message => {
+                if(!validations.isEmpty(message)) {
+                    var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
+                    if(foundIndex > -1) {
+                        users[foundIndex].messages = users[foundIndex].messages.filter(message => message._id != messageId);
+                        if(isAdmin) {
+                            socket.emit("messageDeleted", {user: chatId, isAdmin: true, messageId: messageId});
+                            socket.broadcast.to(users[foundIndex].socketId).emit("messageDeleted", {user: "", isAdmin: false, messageId: messageId});
+                        } else {
+                            if(Object.keys(admin).length) {
+                                socket.broadcast.to(admin.socketId).emit("messageDeleted", {user: chatId, isAdmin: true, messageId: messageId});
                             }
+                            socket.emit("messageDeleted", {user: "", isAdmin: false, messageId: messageId});
                         }
                     }
-                }).catch(error => console.log(error));
-            }
+                }
+            }).catch(error => console.log(error));
         });
         socket.on("readMessage", (chatId, isAdmin, username) => {
             var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
