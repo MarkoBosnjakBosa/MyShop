@@ -1,7 +1,7 @@
 module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents, validations) {
-    const Order = models.Order;
-    const User = models.User;
-    app.post("/getOrders", (request, response) => {
+	const Order = models.Order;
+	const User = models.User;
+	app.post("/getOrders", (request, response) => {
 		var search = request.body.search;
 		var type = request.body.type;
 		var page = Number(request.body.page) - 1; 
@@ -64,8 +64,8 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			if(total >= limit) pagesNumber = Math.ceil(total / limit);
 			response.status(200).json({orders: results[0], total: total, pagesNumber: pagesNumber}).end();
 		});
-    });
-    app.post("/getUserOrders", (request, response) => {
+	});
+	app.post("/getUserOrders", (request, response) => {
         var username = request.body.username;
         var userQuery = {"account.username": username};
         User.findOne(userQuery).then(user => {
