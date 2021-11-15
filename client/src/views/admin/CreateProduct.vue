@@ -243,7 +243,6 @@
                             formData.append("quantity", temp.product.quantity);
                             formData.append("category", temp.product.category);
                             formData.append("technicalData", JSON.stringify(temp.product.technicalData));
-                            formData.append("type", "images");
                             formData.append("primaryImage", temp.product.primaryImage);
                             for(var image = 0; image < temp.product.images.length; image++) {
                                 formData.append("images", temp.product.images[image].file);
@@ -260,14 +259,10 @@
                                     temp.productCreated = true;
                                     temp.toggleTab("main");
                                 } else {
-                                    var errorFields = response.data.errorFields;
-                                    if(errorFields.includes("title")) temp.errors.titleError = true;
-                                    if(errorFields.includes("description")) temp.errors.descriptionError = true;
-                                    if(errorFields.includes("price")) temp.errors.priceError = true;
-                                    if(errorFields.includes("quantity")) temp.errors.quantityError = true;
-                                    if(errorFields.includes("category")) temp.errors.categoryError = true;
-                                    if(errorFields.includes("primaryImage")) temp.errors.primaryImageError = true;
-                                    if(errorFields.includes("images")) temp.errors.imagesError = true;
+                                    var errors = response.data.errors;
+                                    errors.forEach(element => {
+                                        this.errors[element + "Error"] = true;
+                                    });
                                     temp.productCreated = false;
                                 }
                             }).catch(error => console.log(error));

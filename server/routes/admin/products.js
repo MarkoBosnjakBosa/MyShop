@@ -1,4 +1,4 @@
-module.exports = function(app, models, moment, json2csv, fs, path, uploadImages, validations) {
+module.exports = function(app, models, json2csv, fs, path, uploadImages, validations) {
 	const Product = models.Product;
 	const Review = models.Review;
 	app.post("/getProducts", (request, response) => {
@@ -11,22 +11,22 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var sort = {};
 		switch(orderBy) {
 			case "titleAsc":
-				sort = {"title": 1};
+				sort = {title: 1};
 				break;
 			case "titleDesc":
-				sort = {"title": -1};
+				sort = {title: -1};
 				break;
 			case "priceAsc":
-				sort = {"price": 1};
+				sort = {price: 1};
 				break;
 			case "priceDesc":
-				sort = {"price": -1};
+				sort = {price: -1};
 				break;
 			case "quantityAsc":
-				sort = {"quantity": 1};
+				sort = {quantity: 1};
 				break;
 			case "quantityDesc":
-				sort = {"quantity": -1};
+				sort = {quantity: -1};
 				break;
 			case "ratingAsc":
 				sort = {"rating.averageRating": 1};
@@ -70,6 +70,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var primaryImageRead = fs.readFileSync(primaryImage.path);
 		var encodedPrimaryImage = primaryImageRead.toString("base64");
 		var primaryImageObject = {name: primaryImage.filename, contentType: primaryImage.mimetype, image: Buffer.from(encodedPrimaryImage, "base64")};
+		fs.unlinkSync(primaryImage.path);
 		var images = request.files["images"];
 		var imagesObjects = [];
 		if(images && images.length > 0 && images.length < 5) {
@@ -77,6 +78,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 				var imageRead = fs.readFileSync(images[image].path);
 				var encodedImage = imageRead.toString("base64");
 				var imageObject = {name: images[image].filename, contentType: images[image].mimetype, image: Buffer.from(encodedImage, "base64")};
+				fs.unlinkSync(images[image].path);
 				imagesObjects.push(imageObject);
 			}
 		}
@@ -112,9 +114,10 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 			var primaryImageRead = fs.readFileSync(primaryImage.path);
 			var encodedPrimaryImage = primaryImageRead.toString("base64");
 			var primaryImageObject = {name: primaryImage.filename, contentType: primaryImage.mimetype, image: Buffer.from(encodedPrimaryImage, "base64")};
+			fs.unlinkSync(primaryImage.path);
 			var update = {primaryImage: primaryImageObject};
-			Product.findOneAndUpdate(query, update).then(product => {
-				fs.unlinkSync(path.join(__dirname, "../../images/products/", product.primaryImage.name));
+			var options = {new: true};
+			Product.findOneAndUpdate(query, update, options).then(product => {
 				response.status(200).json({edited: true, primaryImage: primaryImageObject}).end();
 			}).catch(error => console.log(error));
 		} else if(type == "images") {
@@ -125,6 +128,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 					var imageRead = fs.readFileSync(images[image].path);
 					var encodedImage = imageRead.toString("base64");
 					var imageObject = {name: images[image].filename, contentType: images[image].mimetype, image: Buffer.from(encodedImage, "base64")};
+					fs.unlinkSync(images[image].path);
 					imagesObjects.push(imageObject);
 				}
 			}
@@ -149,42 +153,26 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 	app.put("/deleteProductImage", (request, response) => {
 		var productId = request.body.productId;
 		var imageId = request.body.imageId;
-		var imageName = request.body.imageName;
-		if(productId && imageId && imageName) {
-			var query = {_id: productId};
-			var update = {$pull: {images: {_id: imageId}}};
-			Product.findOneAndUpdate(query, update, {new: true}).then(product => {
-				if(!validations.isEmpty(product)) {
-					fs.unlinkSync(path.join(__dirname, "../../images/products/", imageName));
-					response.status(200).json({deleted: true}).end();
-				} else {
-					response.status(200).json({deleted: false}).end(); 
-				}
-			}).catch(error => console.log(error));
-		} else {
-			response.status(200).json({deleted: false}).end();
-		}
+		var query = {_id: productId};
+		var update = {$pull: {images: {_id: imageId}}};
+		Product.findOneAndUpdate(query, update, {new: true}).then(product => {
+			if(!validations.isEmpty(product)) {
+				response.status(200).json({deleted: true}).end();
+			} else {
+				response.status(200).json({deleted: false}).end(); 
+			}
+		}).catch(error => console.log(error));
 	});
 	app.delete("/deleteProduct/:productId", (request, response) => {
 		var productId = request.params.productId;
-		if(productId) {
-			var query = {_id: productId};
-			Product.findOneAndRemove(query).then(product => {
-				if(!validations.isEmpty(product)) {
-					var primaryImage = product.primaryImage;
-					fs.unlinkSync(path.join(__dirname, "../../images/products/", primaryImage.name));
-					var images = product.images;
-					for(var image = 0; image < images.length; image++) {
-						fs.unlinkSync(path.join(__dirname, "../../images/products/", images[image].name));
-					}
-					response.status(200).json({deleted: true}).end();
-				} else {
-					response.status(200).json({deleted: false}).end(); 
-				}
-			}).catch(error => console.log(error));
-		} else {
-			response.status(200).json({deleted: false}).end();
-		}
+		var query = {_id: productId};
+		Product.findOneAndRemove(query).then(product => {
+			if(!validations.isEmpty(product)) {
+				response.status(200).json({deleted: true}).end();
+			} else {
+				response.status(200).json({deleted: false}).end(); 
+			}
+		}).catch(error => console.log(error));
 	});
 	app.put("/rateProduct", validations.validateRating, (request, response) => {
 		var productId = request.body.productId;
@@ -222,7 +210,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var page = Number(request.body.page) - 1;
 		var limit = 5;
 		var skip = page * limit;
-		var sort = {"date": -1};
+		var sort = {date: -1};
 		var reviewsQuery = Review.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = Review.find(query).countDocuments();
 		var queries = [reviewsQuery, totalQuery];
@@ -237,7 +225,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var productId = request.body.productId;
 		var username = request.body.username;
 		var review = request.body.review;
-		var date = moment(new Date()).format("DD.MM.YYYY HH:mm");
+		var date = new Date().getTime();
 		var newReview = getReviewScheme(Review, productId, username, review, date);
 		newReview.save().then(review => {
 			response.status(200).json({written: true, review: review}).end();
@@ -247,7 +235,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var reviewId = request.body.reviewId;
 		var username = request.body.username;
 		var review = request.body.review;
-		var date = moment(new Date()).format("DD.MM.YYYY HH:mm");
+		var date = new Date().getTime();
 		var query = {_id: reviewId, username: username};
 		var update = {review: review, date: date};
 		var options = {new: true};
@@ -262,18 +250,14 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 	app.delete("/deleteReview/:reviewId/:username", (request, response) => {
 		var reviewId = request.params.reviewId;
 		var username = request.params.username;
-		if(reviewId && username) {
-			var query = {_id: reviewId, username: username};
-			Review.findOneAndRemove(query).then(review => {
-				if(!validations.isEmpty(review)) {
-					response.status(200).json({deleted: true}).end();
-				} else {
-					response.status(200).json({deleted: false}).end();
-				}
-			}).catch(error => console.log(error));
-		} else {
-			response.status(200).json({deleted: false}).end();
-		}
+		var query = {_id: reviewId, username: username};
+		Review.findOneAndRemove(query).then(review => {
+			if(!validations.isEmpty(review)) {
+				response.status(200).json({deleted: true}).end();
+			} else {
+				response.status(200).json({deleted: false}).end();
+			}
+		}).catch(error => console.log(error));
 	});
 	app.post("/downloadProducts", (request, response) => {
 		var search = request.body.search;
@@ -285,22 +269,22 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 		var sort = {};
 		switch(orderBy) {
 			case "titleAsc":
-				sort = {"title": 1};
+				sort = {title: 1};
 				break;
 			case "titleDesc":
-				sort = {"title": -1};
+				sort = {title: -1};
 				break;
 			case "priceAsc":
-				sort = {"price": 1};
+				sort = {price: 1};
 				break;
 			case "priceDesc":
-				sort = {"price": -1};
+				sort = {price: -1};
 				break;
 			case "quantityAsc":
-				sort = {"quantity": 1};
+				sort = {quantity: 1};
 				break;
 			case "quantityDesc":
-				sort = {"quantity": -1};
+				sort = {quantity: -1};
 				break;
 			case "ratingAsc":
 				sort = {"rating.averageRating": 1};
@@ -319,8 +303,8 @@ module.exports = function(app, models, moment, json2csv, fs, path, uploadImages,
 				var csv;
 				try {
 					csv = json2csv(products, {fields});
-					var timestamp = moment(new Date());
-					var filePath = path.join(__dirname, "../../exports/Products_" + timestamp + ".csv");
+					var timestamp = new Date().getTime();
+					var filePath = path.join(__dirname, "../../temporary/Products_" + timestamp + ".csv");
 					fs.promises.writeFile(filePath, csv).then(csvFile => {
 						setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
 						response.status(200).json({downloaded: true, fileName: "Products_" + timestamp + ".csv"});

@@ -28,7 +28,7 @@
                             <div class="row">
                                 <div v-for="image in homeSettings.images" :key="image._id" class="col-3 position">
                                     <img :src="renderImage(image)" :alt="image.name" class="img-fluid rounded image"/>
-                                    <i class="fas fa-times-circle removeImage" @click="deleteImage(image._id, image.name)"></i>
+                                    <i class="fas fa-times-circle removeImage" @click="deleteImage(image._id)"></i>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +133,6 @@
                     if(images.length > 0) {
                         var formData = new FormData();
                         formData.append("homeSettingsId", this.homeSettings.id);
-                        formData.append("type", "homeSettingsImages");
                         for(var image = 0 ; image < images.length; image++) {
                             formData.append("images", images[image]);
                         }
@@ -154,10 +153,10 @@
                     this.errors.imagesError = true;
                 }
             },
-            deleteImage(imageId, imageName) {
+            deleteImage(imageId) {
                 var confirmed = confirm("Delete selected image?");
                 if(confirmed) {
-                    var body = {homeSettingsId: this.homeSettings.id, imageId: imageId, imageName: imageName};
+                    var body = {homeSettingsId: this.homeSettings.id, imageId: imageId};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteHomeSettingsImage", body).then(response => {
                         if(response.data.deleted) {
                             this.homeSettings.images = this.homeSettings.images.filter(image => image._id != imageId);

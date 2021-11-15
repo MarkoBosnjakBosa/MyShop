@@ -37,6 +37,7 @@ module.exports = function(app, models, fs, path, uploadImages, validations) {
                 var imageRead = fs.readFileSync(images[image].path);
                 var encodedImage = imageRead.toString("base64");
                 var imageObject = {name: images[image].filename, contentType: images[image].mimetype, image: Buffer.from(encodedImage, "base64")};
+                fs.unlinkSync(images[image].path);
                 imagesObjects.push(imageObject);
             }
             if(homeSettingsId) {
@@ -74,22 +75,16 @@ module.exports = function(app, models, fs, path, uploadImages, validations) {
     app.put("/deleteHomeSettingsImage", (request, response) => {
         var homeSettingsId = request.body.homeSettingsId;
         var imageId = request.body.imageId;
-        var imageName = request.body.imageName;
-        if(homeSettingsId && imageId && imageName) {
-            var query = {_id: homeSettingsId};
-            var update = {$pull: {images: {_id: imageId}}};
-            var options = {new: true};
-            HomeSettings.findOneAndUpdate(query, update, options).then(homeSettings => {
-                if(!validations.isEmpty(homeSettings)) {
-                    fs.unlinkSync(path.join(__dirname, "../../images/home/", imageName));
-                    response.status(200).json({deleted: true}).end();
-                } else {
-                    response.status(200).json({deleted: false}).end(); 
-                }
-            }).catch(error => console.log(error));
-        } else {
-            response.status(200).json({deleted: false}).end();
-        }
+        var query = {_id: homeSettingsId};
+        var update = {$pull: {images: {_id: imageId}}};
+        var options = {new: true};
+        HomeSettings.findOneAndUpdate(query, update, options).then(homeSettings => {
+            if(!validations.isEmpty(homeSettings)) {
+                response.status(200).json({deleted: true}).end();
+            } else {
+                response.status(200).json({deleted: false}).end(); 
+            }
+        }).catch(error => console.log(error));
     });
 
     function getHomeSettingsScheme(HomeSettings, message, images) {

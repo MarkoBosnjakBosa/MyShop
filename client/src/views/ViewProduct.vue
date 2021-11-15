@@ -89,7 +89,7 @@
                                 <div v-for="(review, index) in reviews" :key="review._id" class="accordion-item" style="clear: both">
                                     <h2 class="accordion-header" :id="'heading_' + review._id">
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + review._id" aria-expanded="false">
-                                            {{review.username}} {{review.date}}
+                                            {{review.username}} - {{new Date(review.date).toLocaleString("en-US")}}
                                         </button>
                                     </h2>
                                     <div :id="'collapse_' + review._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + review._id" data-bs-parent="#reviews">

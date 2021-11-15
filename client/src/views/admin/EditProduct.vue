@@ -130,7 +130,7 @@
                                 <div class="row">
                                     <div v-for="image in product.images" :key="image._id" class="col-3 position">
                                         <img :src="renderImage(image)" :alt="image.name" class="img-fluid rounded image"/>
-                                        <i class="fas fa-times-circle removeImage" @click="deleteImage(image._id, image.name)"></i>
+                                        <i class="fas fa-times-circle removeImage" @click="deleteImage(image._id)"></i>
                                     </div>
                                 </div>
                             </div>
@@ -261,12 +261,10 @@
                             this.submittings.mainSubmitting = false;
                             this.edits.mainEdited = true;
                         } else {
-                            var errorFields = response.data.errorFields;
-                            if(errorFields.includes("title")) this.errors.titleError = true;
-                            if(errorFields.includes("description")) this.errors.descriptionError = true;
-                            if(errorFields.includes("price")) this.errors.priceError = true;
-                            if(errorFields.includes("quantity")) this.errors.quantityError = true;
-                            if(errorFields.includes("category")) this.errors.categoryError = true;
+                            var errors = response.data.errors;
+                            errors.forEach(element => {
+                                this.errors[element + "Error"] = true;
+                            });
                             this.edits.mainEdited = false;
                         }
                     }).catch(error => console.log(error));
@@ -356,10 +354,10 @@
                     }
                 }
             },
-            deleteImage(imageId, imageName) {
-                var confirmed = confirm("Delete this image?");
+            deleteImage(imageId) {
+                var confirmed = confirm("Delete selected image?");
                 if(confirmed) {
-                    var body = {productId: this.productId, imageId: imageId, imageName: imageName};
+                    var body = {productId: this.productId, imageId: imageId};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteProductImage", body).then(response => {
                         if(response.data.deleted) {
                             this.product.images = this.product.images.filter(image => image._id != imageId);
