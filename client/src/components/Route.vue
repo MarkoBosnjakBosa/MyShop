@@ -98,11 +98,8 @@
             openPageNotFound() {
                 router.push("/pageNotFound");
             },
-            downloadInvoice(orderNumber) {
-                window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + orderNumber, "_blank");
-            },
-            downloadCsvFile(fileName) {
-                window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/exports/" + fileName, "_blank");
+            downloadFile(fileName) {
+                window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/temporary/" + fileName, "_blank");
             },
             logout() {
                 store.dispatch("logout");

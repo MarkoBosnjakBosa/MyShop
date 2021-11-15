@@ -60,10 +60,9 @@
         data() {
             return {
                 username: this.$store.getters.getUser,
-                orderNumber: "",
+                orderId: "",
                 paymentType: "",
-                products: [],
-                paymentType: ""
+                products: []
             }
         },
         methods: {
@@ -83,7 +82,7 @@
                     var body = {username: this.username, paymentType: this.paymentType, products: products, totalPrice: this.getTotalCost()};
                     axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/finalizePayment", body).then(response => {
                         if(response.data.finalized) {
-                            this.orderNumber = response.data.orderNumber;
+                            this.orderId = response.data.orderId;
                             this.$store.dispatch("setCheckout", "");
                         }
                     }).catch(error => console.log(error));
@@ -100,7 +99,11 @@
                 return helper.methods.formatNumber(number);
             },
             downloadInvoice() {
-                route.methods.downloadInvoice(this.orderNumber);
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + this.orderId).then(response => {
+                     if(response.data.downloaded) {
+                        route.methods.downloadFile(response.data.fileName);
+                    }
+                }).catch(error => console.log(error));
             },
             openViewProduct(productId) {
                 route.methods.openViewProduct(productId);

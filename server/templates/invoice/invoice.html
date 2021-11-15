@@ -55,9 +55,9 @@
 				<tr>
 					<td class="title">MyShop</td>
 					<td class="information">
-						Invoice #<b><%= orderNumber %></b><br>
-						Created at: <%= createdAt %><br>
-						Payment type: <%= paymentType %>
+						Invoice #<b><%= order.orderNumber %></b><br>
+						Created at: <%= order.createdAt %><br>
+						Payment type: <%= order.paymentType %>
 					</td>
 				</tr>
 			</table>
@@ -97,7 +97,7 @@
 					<% }); %>
 					<tr class="highlight">
 						<th colspan="4">Total</th>
-						<th><%= totalPrice %></th>
+						<th><%= order.totalPrice %></th>
 					</tr>
 				</tbody>
 			</table>

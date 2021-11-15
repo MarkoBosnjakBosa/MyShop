@@ -1,4 +1,4 @@
-module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, validations) {
+module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents, validations) {
     const Order = models.Order;
     const User = models.User;
     app.post("/getOrders", (request, response) => {
@@ -11,28 +11,28 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 		var sort = {};
 		switch(orderBy) {
 			case "orderNumberAsc":
-				sort = {"orderNumber": 1};
+				sort = {orderNumber: 1};
 				break;
 			case "orderNumberDesc":
-				sort = {"orderNumber": -1};
+				sort = {orderNumber: -1};
 				break;
 			case "paymentTypeAsc":
-				sort = {"paymentType": 1};
+				sort = {paymentType: 1};
 				break;
 			case "paymentTypeDesc":
-				sort = {"paymentType": -1};
+				sort = {paymentType: -1};
 				break;
 			case "createdAtAsc":
-				sort = {"createdAt": 1};
+				sort = {createdAt: 1};
 				break;
 			case "createdAtDesc":
-				sort = {"createdAt": -1};
+				sort = {createdAt: -1};
 				break;
             case "dispatchedAtAsc":
-                sort = {"dispatchedAt": 1};
+                sort = {dispatchedAt: 1};
                 break;
             case "dispatchedDesc":
-                sort = {"dispatchedAt": -1};
+                sort = {dispatchedAt: -1};
                 break;
 			default:
 				sort = {};
@@ -94,28 +94,28 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 		var sort = {};
 		switch(orderBy) {
 			case "orderNumberAsc":
-				sort = {"orderNumber": 1};
+				sort = {orderNumber: 1};
 				break;
 			case "orderNumberDesc":
-				sort = {"orderNumber": -1};
+				sort = {orderNumber: -1};
 				break;
 			case "paymentTypeAsc":
-				sort = {"paymentType": 1};
+				sort = {paymentType: 1};
 				break;
 			case "paymentTypeDesc":
-				sort = {"paymentType": -1};
+				sort = {paymentType: -1};
 				break;
 			case "createdAtAsc":
-				sort = {"createdAt": 1};
+				sort = {createdAt: 1};
 				break;
 			case "createdAtDesc":
-				sort = {"createdAt": -1};
+				sort = {createdAt: -1};
 				break;
             case "dispatchedAtAsc":
-                sort = {"dispatchedAt": 1};
+                sort = {dispatchedAt: 1};
                 break;
             case "dispatchedAtDesc":
-                sort = {"dispatchedAt": -1};
+                sort = {dispatchedAt: -1};
                 break;
 			default:
 				sort = {};
@@ -144,8 +144,8 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 				var csv;
 				try {
 					csv = json2csv(orders, {fields});
-					var timestamp = moment(new Date());
-					var filePath = path.join(__dirname, "../../exports/Orders_" + timestamp + ".csv");
+					var timestamp = new Date().getTime();
+					var filePath = path.join(__dirname, "../../temporary/Orders_" + timestamp + ".csv");
 					fs.promises.writeFile(filePath, csv).then(csvFile => {
 						setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
 						response.status(200).json({downloaded: true, fileName: "Orders_" + timestamp + ".csv"});
@@ -170,8 +170,7 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
     });
 	app.put("/dispatchOrder",(request, response) => {
 		var orderId = request.body.orderId;
-		var dateAndTimeFormat = "DD.MM.YYYY HH:mm";
-		var dispatchedAt = moment().format(dateAndTimeFormat);
+		var dispatchedAt = new Date().getTime();
 		var orderQuery = {_id: orderId};
 		var update = {isDispatched: true, dispatchedAt: dispatchedAt};
 		var options = {new: true};
@@ -193,32 +192,41 @@ module.exports = function(app, models, moment, json2csv, fs, path, emailEvents, 
 	});
 	app.delete("/deleteOrder/:orderId", (request, response) => {
 		var orderId = request.params.orderId;
-		if(orderId) {
-			var query = {_id: orderId};
-			var options = {new: true};
-			Order.findOneAndRemove(query, options).then(order => {
-				if(!validations.isEmpty(order)) {
-					fs.unlinkSync(path.join(__dirname, "../../invoices/Invoice_" + order.orderNumber + ".pdf"));
-					response.status(200).json({deleted: true}).end();
-				} else {
-					response.status(200).json({deleted: false}).end(); 
-				}
-			}).catch(error => console.log(error));
-		} else {
-			response.status(200).json({deleted: false}).end();
-		}
-	});
-    app.get("/downloadInvoice/:orderNumber", (request, response) => {
-        var orderNumber = request.params.orderNumber;
-        if(orderNumber) {
-			var invoice = path.join(__dirname, "../../invoices/Invoice_" + orderNumber + ".pdf");
-			if(fs.existsSync(invoice)) {
-            	response.download(invoice);
+		var query = {_id: orderId};
+		Order.findOneAndRemove(query).then(order => {
+			if(!validations.isEmpty(order)) {
+				response.status(200).json({deleted: true}).end();
 			} else {
-				response.status(200).json({downloaded: false}).end();
+				response.status(200).json({deleted: false}).end(); 
 			}
-        } else {
-            response.status(200).json({downloaded: false}).end();
-        }
+		}).catch(error => console.log(error));
+	});
+    app.get("/downloadInvoice/:orderId", (request, response) => {
+        var orderId = request.params.orderId;
+		var orderQuery = {_id: orderId};
+		Order.findOne(orderQuery).then(order => {
+			var products = order.products.map(product => {
+				var updatedProduct = {};
+				updatedProduct.title = product.title;
+				updatedProduct.price = formatNumber(product.price);
+				updatedProduct.selectedQuantity = product.selectedQuantity;
+				updatedProduct.totalPrice = formatNumber(product.price * product.selectedQuantity);
+				return updatedProduct;
+			});
+			var userQuery = {_id: order.userId};
+			User.findOne(userQuery).then(user => {
+				var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../../templates/invoice/invoice.html"), "UTF-8"));
+				var html = htmlCompiled({order: order, products: products, user: user});
+				var filePath = path.join(__dirname, "../../temporary/Invoice_" + order.orderNumber + ".pdf");
+				pdf.create(html).toFile(filePath, function(error, result) {
+					setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
+					response.status(200).json({downloaded: true, fileName: "Invoice_" + order.orderNumber + ".pdf"}).end();
+				});
+			}).catch(error => console.log(error));
+		}).catch(error => console.log(error));
     });
+
+	function formatNumber(number) {
+		return Number(number).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
+	}
 }

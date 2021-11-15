@@ -37,13 +37,13 @@
                                 </tr>
                                 <tr>
                                     <th colspan="4">Created at</th>
-                                    <th>{{order.createdAt}}</th>
+                                    <th>{{new Date(order.createdAt).toLocaleString("de-DE").replace(",", "")}}</th>
                                 </tr>
                             </tbody>
                         </table>
                         <div class="mb-3">
                             <button v-if="!order.isDispatched" type="button" class="btn btn-primary" @click="dispatchOrder()">Dispatch</button>
-                            <button v-else type="button" class="btn btn-success">Dispatched: {{order.dispatchedAt}}</button>
+                            <button v-else type="button" class="btn btn-success">Dispatched: {{new Date(order.dispatchedAt).toLocaleString("de-DE").replace(",", "")}}</button>
                             <button type="button" class="btn btn-dark download" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
                             <button type="button" class="btn btn-dark nextButton" @click="toggleTab('account')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
@@ -217,7 +217,11 @@
                 helper.methods.toggleTab(tab);
             },
             downloadInvoice() {
-                route.methods.downloadInvoice(this.order.orderNumber);
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + this.orderId).then(response => {
+                     if(response.data.downloaded) {
+                        route.methods.downloadFile(response.data.fileName);
+                    }
+                }).catch(error => console.log(error));
             }
         },
         created() {

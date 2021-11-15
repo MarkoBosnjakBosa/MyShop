@@ -1,4 +1,4 @@
-module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, emailEvents, validations) {
+module.exports = function(app, models, stripe, ejs, pdf, fs, path, emailEvents, validations) {
 	const Order = models.Order;
 	const User = models.User;
 	const Product = models.Product;
@@ -14,7 +14,7 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 		var paymentType = request.body.paymentType;
 		var products = request.body.products;
 		var totalPrice = request.body.totalPrice;
-		var createdAt = moment(new Date()).format("DD.MM.YYYY HH:mm");
+		var createdAt = new Date().getTime();
 		var userQuery = {"account.username": username};
 		User.findOne(userQuery).then(user => {
 			user.account.password = null;
@@ -28,16 +28,16 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 				}
 				var newOrder = getOrderScheme(Order, orderNumber, user._id, paymentType, products, totalPrice, createdAt, false, "", {account: user.account, address: user.address});
 				newOrder.save().then(newOrder => {
-					createInvoice(orderNumber, createdAt, paymentType, user, products, totalPrice);
+					createInvoice(newOrder, user);
 					updateQuantities(products);
-					response.status(200).json({finalized: true, orderNumber: orderNumber}).end();
+					response.status(200).json({finalized: true, orderId: newOrder._id}).end();
 				}).catch(error => console.error(error));
 			}).catch(error => console.error(error));
 		}).catch(error => console.error(error));
 	});
 
-	function createInvoice(orderNumber, createdAt, paymentType, user, products, totalPrice) {
-		products = products.map(product => {
+	function createInvoice(order, user) {
+		var products = order.products.map(product => {
 			var updatedProduct = {};
 			updatedProduct.title = product.title;
 			updatedProduct.price = formatNumber(product.price);
@@ -45,10 +45,12 @@ module.exports = function(app, models, stripe, moment, ejs, pdf, fs, path, email
 			updatedProduct.totalPrice = formatNumber(product.price * product.selectedQuantity);
 			return updatedProduct;
 		});
-		var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/invoice/invoice.html"), "utf-8"));
-		var html = htmlCompiled({orderNumber: orderNumber, createdAt: createdAt, paymentType: paymentType, user: user, products: products, totalPrice: totalPrice});
-		pdf.create(html).toFile(path.join(__dirname, "../invoices/Invoice_" + orderNumber + ".pdf"), function(error, response) {
-			emailEvents.emit("sendInvoiceEmail", user.account, orderNumber);
+		var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/invoice/invoice.html"), "UTF-8"));
+		var html = htmlCompiled({order: order, products: products, user: user});
+		var filePath = path.join(__dirname, "../temporary/Invoice_" + order.orderNumber + ".pdf");
+		pdf.create(html).toFile(path.join(filePath), function(error, response) {
+			setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
+			emailEvents.emit("sendInvoiceEmail", user.account, order.orderNumber);
 		});
 	}
 	function updateQuantities(products) {

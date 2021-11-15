@@ -30,17 +30,18 @@ const smsEvents = require("./events/smsEvents.js")(EventEmitter, vonage);
 
 app.use(cors({origin: "*"}));
 app.use(express.json());
+app.use("/temporary", express.static(__dirname + "/temporary"));
 
 const registration = require("./routes/registration.js")(app, models, bcryptjs, emailEvents, validations);
 const login = require("./routes/login.js")(app, models, jwt, bcryptjs, smsEvents, checkStatus, validations);
 const forgotCredentials = require("./routes/forgotCredentials.js")(app, models, bcryptjs, emailEvents, validations);
 const profile = require("./routes/profile.js")(app, models, validations);
 const setup = require("./routes/setup.js")(app, models, smsEvents, validations);
-const checkout = require("./routes/checkout.js")(app, models, stripe, moment, ejs, pdf, fs, path, emailEvents, validations);
+const checkout = require("./routes/checkout.js")(app, models, stripe, ejs, pdf, fs, path, emailEvents, validations);
 const products = require("./routes/admin/products.js")(app, models, json2csv, fs, path, uploadImages, validations);
 const categories = require("./routes/admin/categories.js")(app, models, validations);
 const technicalData = require("./routes/admin/technicalData.js")(app, models, validations);
-const orders = require("./routes/admin/orders.js")(app, models, moment, json2csv, fs, path, emailEvents, validations);
+const orders = require("./routes/admin/orders.js")(app, models, json2csv, ejs, pdf, fs, path, emailEvents, validations);
 const homeSettings = require("./routes/admin/homeSettings.js")(app, models, fs, path, uploadImages, validations);
 const contact = require("./routes/admin/contact.js")(app, models, emailEvents, validations);
 const users = require("./routes/admin/users.js")(app, models, validations);

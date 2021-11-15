@@ -13,7 +13,7 @@
                         <h2 class="accordion-header" :id="'heading_' + order._id">
                             <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + order._id" aria-expanded="false">
                                 Order #<b>{{order.orderNumber}}</b>
-                                <span v-if="order.isDispatched" class="badge bg-success text-light dispatchButton">Dispatched: {{order.dispatchedAt}}</span>
+                                <span v-if="order.isDispatched" class="badge bg-success text-light dispatchButton">Dispatched: {{new Date(order.dispatchedAt).toLocaleString("en-US")}}</span>
                                 <span v-else class="badge bg-danger text-light dispatchButton">Not dispatched</span>
                             </button>
                         </h2>
@@ -21,13 +21,13 @@
                             <div :id="'collapse_' + order._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + order._id" :data-bs-parent="'#order_' + order._id">
                                 <div class="row">
                                     <div class="col-8">
-                                        Created at: <b>{{order.createdAt}}</b><br>
+                                        Created at: <b>{{new Date(order.createdAt).toLocaleString("en-US")}}</b><br>
                                         Payment type: <b>{{order.paymentType}}</b>
                                     </div>
                                     <div class="col-4">
                                         <i class="fas fa-external-link-square-alt icon" @click="openViewOrder(order._id)"></i>
-                                        <i class="fas fa-file-download icon" @click="downloadInvoice(order.orderNumber)"></i><br>
-                                        <span v-if="order.isDispatched" class="badge bg-success text-light dispatchAccordion">Dispatched: {{order.dispatchedAt}}</span>
+                                        <i class="fas fa-file-download icon" @click="downloadInvoice(order._id)"></i><br>
+                                        <span v-if="order.isDispatched" class="badge bg-success text-light dispatchAccordion">Dispatched: {{new Date(order.dispatchedAt).toLocaleString("en-US")}}</span>
                                         <span v-else class="badge bg-danger text-light dispatchAccordion">Not dispatched</span>
                                     </div>
                                 </div>
@@ -108,8 +108,12 @@
             formatNumber(number) {
                 return helper.methods.formatNumber(number);
             },
-            downloadInvoice(orderNumber) {
-                route.methods.downloadInvoice(orderNumber);
+            downloadInvoice(orderId) {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + orderId).then(response => {
+                     if(response.data.downloaded) {
+                        route.methods.downloadFile(response.data.fileName);
+                    }
+                }).catch(error => console.log(error));
             },
             openViewOrder(orderId) {
                 route.methods.openViewOrder(orderId);
