@@ -16,7 +16,6 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvents, checkStatus, va
 		}
 	});
 	app.post("/login", validations.validateLogin, (request, response) => {
-		var errorFields = [];
 		var username = request.body.username;
 		var password = request.body.password;
 		var query = {"account.username": username};
@@ -46,8 +45,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvents, checkStatus, va
 					response.status(200).json({authentication: false, valid: false, found: true, error: "notConfirmed"}).end();	
 				}
 			} else {
-				errorFields = [...errorFields, "username"];
-				response.status(200).json({authentication: false, valid: false, found: false, errorFields: errorFields}).end();
+				response.status(200).json({authentication: false, valid: false, found: false, errors: ["username"]}).end();
 			}
 		}).catch(error => console.log(error));
 	});

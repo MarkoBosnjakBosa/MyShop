@@ -98,8 +98,10 @@
                         this.authenticationEnablingTokenError = false;
                         this.authenticationEnablingTokenSent = false;
                     } else {
-                        var errorFields = response.data.errorFields;
-                        if(errorFields.includes("authenticationEnablingToken")) this.authenticationEnablingTokenError = true;               
+                        var errors = response.data.errors;
+                        errors.forEach(element => {
+                            this[element + "Error"] = true;
+                        });
                     }
                 }).catch(error => console.log(error));
             },

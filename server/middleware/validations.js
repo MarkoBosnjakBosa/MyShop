@@ -3,79 +3,63 @@ const reCaptcha_v2_SecretKey = process.env.RECAPTCHA_v2_SECRET_KEY;
 const reCaptcha_v3_SecretKey = process.env.RECAPTCHA_v3_SECRET_KEY;
 
 function validateRegistration(request, response, next) {
-    var allowRegistration = true;
-    var errorFields = [];
+    var errors = [];
     var user = request.body.user;
     var account = user.account;
     var address = user.address;
     var reCaptchaToken = request.body.reCaptchaToken;
     if(validations.invalidUsername(account.username)) {
-        errorFields = [...errorFields, "username"];
-        allowRegistration = false;
+        errors = [...errors, "username"];
     }
     if(validations.invalidEmail(account.email)) {
-        errorFields = [...errorFields, "email"];
-        allowRegistration = false;
+        errors = [...errors, "email"];
     }
     if(validations.invalidPassword(account.password)) {
-        errorFields = [...errorFields, "password"];
-        allowRegistration = false;
+        errors = [...errors, "password"];
     }
     if(validations.invalidFirstName(account.firstName)) {
-        errorFields = [...errorFields, "firstName"];
-        allowRegistration = false;
+        errors = [...errors, "firstName"];
     }
     if(validations.invalidLastName(account.lastName)) {
-        errorFields = [...errorFields, "lastName"];
-        allowRegistration = false;
+        errors = [...errors, "lastName"];
     }
     if(validations.invalidMobileNumber(account.mobileNumber)) {
-        errorFields = [...errorFields, "mobileNumber"];
-        allowRegistration = false;
+        errors = [...errors, "mobileNumber"];
     }
     if(validations.invalidStreet(address.street)) {
-        errorFields = [...errorFields, "street"];
-        allowRegistration = false;
+        errors = [...errors, "street"];
     }
     if(validations.invalidHouseNumber(address.houseNumber)) {
-        errorFields = [...errorFields, "houseNumber"];
-        allowRegistration = false;
+        errors = [...errors, "houseNumber"];
     }
     if(validations.invalidCity(address.city)) {
-        errorFields = [...errorFields, "city"];
-        allowRegistration = false;
+        errors = [...errors, "city"];
     }
     if(validations.invalidZipCode(address.zipCode)) {
-        errorFields = [...errorFields, "zipCode"];
-        allowRegistration = false;
+        errors = [...errors, "zipCode"];
     }
     if(validations.invalidCountry(address.country)) {
-        errorFields = [...errorFields, "country"];
-        allowRegistration = false;
+        errors = [...errors, "country"];
     }
     if(validations.invalidReCaptchaToken(reCaptcha_v2_SecretKey, reCaptchaToken, request.connection.remoteAddress)) {
-        errorFields = [...errorFields, "reCaptchaToken"];
-        allowRegistration = false;
+        errors = [...errors, "reCaptchaToken"];
     }
-    if(allowRegistration) next();
-    else response.status(200).json({created: false, alreadyExists: false, errorFields: errorFields}).end();
+    if(!errors.length) next();
+    else response.status(200).json({created: false, alreadyExists: false, errors: errors}).end();
 }
 
 function validateLogin(request, response, next) {
-    var allowLogin = true;
-    var errorFields = [];
+    var errors = [];
     var username = request.body.username;
     if(validations.invalidUsername(username)) {
-        errorFields = [...errorFields, "username"];
-        allowLogin = false;
+        errors = [...errors, "username"];
     }
     var password = request.body.password;
     if(validations.invalidPassword(password)) {
-        errorFields = [...errorFields, "password"];
-        allowLogin = false;
+        errors = [...errors, "password"];
     }
-    if(allowLogin) next();
-    else response.status(200).json({authentication: false, valid: false, allowed: false, errorFields: errorFields}).end();
+    if(!errors.length) next();
+    else response.status(200).json({authentication: false, valid: false, allowed: false, errors: errors}).end();
 }
 
 function validateAuthentication(request, response, next) {
@@ -112,83 +96,69 @@ function validatePasswordReset(request, response, next) {
 }
 
 function validateAccountEdit(request, response, next) {
-    var allowEdit = true;
-    var errorFields = [];
+    var errors = [];
     var account = request.body.account;
     var username = account.username;
     var email = account.email;
     if(validations.invalidUsername(username) || validations.invalidEmail(email)) {
-        errorFields = [...errorFields, "email"];
-        allowEdit = false;
+        errors = [...errors, "email"];
     }
     var firstName = account.firstName;
     if(validations.invalidFirstName(firstName)) {
-        errorFields = [...errorFields, "firstName"];
-        allowEdit = false;
+        errors = [...errors, "firstName"];
     }
     var lastName = account.lastName;
     if(validations.invalidLastName(lastName)) {
-        errorFields = [...errorFields, "lastName"];
-        allowEdit = false;
+        errors = [...errors, "lastName"];
     }
     var mobileNumber = account.mobileNumber;
     if(validations.invalidMobileNumber(mobileNumber)) {
-        errorFields = [...errorFields, "mobileNumber"];
-        allowEdit = false;
+        errors = [...errors, "mobileNumber"];
     }
-    if(allowEdit) next();
-    else response.status(200).json({edited: false, errorFields: errorFields}).end();
+    if(!errors.length) next();
+    else response.status(200).json({edited: false, errors: errors}).end();
 }
 
 function validateAddressEdit(request, response, next) {
-    var allowEdit = true;
-    var errorFields = [];
+    var errors = [];
     var username = request.body.username;
     var address = request.body.address;
     var street = address.street;
     if(validations.invalidUsername(username) || validations.invalidStreet(street)) {
-        errorFields = [...errorFields, "street"];
-        allowEdit = false;
+        errors = [...errors, "street"];
     }
     var houseNumber = address.houseNumber;
     if(validations.invalidHouseNumber(houseNumber)) {
-        errorFields = [...errorFields, "houseNumber"];
-        allowEdit = false;
+        errors = [...errors, "houseNumber"];
     }
     var city = address.city;
     if(validations.invalidCity(city)) {
-        errorFields = [...errorFields, "city"];
-        allowEdit = false;
+        errors = [...errors, "city"];
     }
     var zipCode = address.zipCode;
     if(validations.invalidZipCode(zipCode)) {
-        errorFields = [...errorFields, "zipCode"];
-        allowEdit = false;
+        errors = [...errors, "zipCode"];
     }
     var country = address.country;
     if(validations.invalidCountry(country)) {
-        errorFields = [...errorFields, "country"];
-        allowEdit = false;
+        errors = [...errors, "country"];
     }
-    if(allowEdit) next();
-    else response.status(200).json({edited: false, errorFields: errorFields}).end();
+    if(!errors.length) next();
+    else response.status(200).json({edited: false, errors: errors}).end();
 }
 
 function validateCategoryCreation(request, response, next) {
-    var allowCreation = true;
-    var errorFields = [];
+    var errors = [];
     var title = request.body.title;
     if(validations.invalidTitle(title)) {
-        errorFields = [...errorFields, "title"];
-        allowCreation = false;
+        errors = [...errors, "title"];
     }
     var icon = request.body.icon;
     if(validations.invalidIcon(icon)) {
-        errorFields = [...errorFields, "icon"];
-        allowCreation = false;
+        errors = [...errors, "icon"];
     }
-    if(allowCreation) next();
-    else response.status(200).json({created: false, errorFields: errorFields}).end();
+    if(!errors.length) next();
+    else response.status(200).json({created: false, errors: errors}).end();
 }
 
 function validateCategoryEdit(request, response, next) {
@@ -202,7 +172,7 @@ function validateCategoryEdit(request, response, next) {
 function validateTechnicalInformationCreation(request, response, next) {
     var title = request.body.title;
     if(!validations.invalidTitle(title)) next();
-    else response.status(200).json({created: false, errorFields: ["title"]}).end();
+    else response.status(200).json({created: false, errors: ["title"]}).end();
 }
 
 function validateTechnicalInformationEdit(request, response, next) {
@@ -213,85 +183,71 @@ function validateTechnicalInformationEdit(request, response, next) {
 }
 
 function validateProductCreation(request, response, next) {
-    var allowCreation = true;
-    var errorFields = [];
+    var errors = [];
     var title = request.body.title;
     if(validations.invalidTitle(title)) {
-        errorFields = [...errorFields, "title"];
-        allowCreation = false;
+        errors = [...errors, "title"];
     }
     var description = request.body.description;
     if(validations.invalidDescription(description)) {
-        errorFields = [...errorFields, "description"];
-        allowCreation = false;
+        errors = [...errors, "description"];
     }
     var price = request.body.price;
     if(validations.invalidPrice(price)) {
-        errorFields = [...errorFields, "price"];
-        allowCreation = false;
+        errors = [...errors, "price"];
     }
     var quantity = request.body.quantity;
     if(validations.invalidQuantity(quantity)) {
-        errorFields = [...errorFields, "quantity"];
-        allowCreation = false;
+        errors = [...errors, "quantity"];
     }
     var category = request.body.category;
     if(validations.invalidCategory(category)) {
-        errorFields = [...errorFields, "category"];
-        allowCreation = false;
+        errors = [...errors, "category"];
     }
     var primaryImage = request.files["primaryImage"][0];
     if(validations.invalidPrimaryImage(primaryImage) || request.extensionValidationError) {
-        errorFields = [...errorFields, "primaryImage"];
-        allowCreation = false;
+        errors = [...errors, "primaryImage"];
     }
     var reCaptchaToken = request.body.reCaptchaToken;
     if(validations.invalidReCaptchaToken(reCaptcha_v3_SecretKey, reCaptchaToken, request.connection.remoteAddress)) {
-        errorFields = [...errorFields, "reCaptchaToken"];
-        allowCreation = false;
+        errors = [...errors, "reCaptchaToken"];
     }
-    if(allowCreation) next();
-    else response.status(200).json({created: false, errorFields: errorFields}).end();
+    if(!errors.length) next();
+    else response.status(200).json({created: false, errors: errors}).end();
 }
 
 function validateProductEdit(request, response, next) {
-    var allowEdit = true;
-    var errorFields = [];
+    var errors = [];
     var type = request.body.type;
     if(type == "main") {
         var title = request.body.title;
         if(validations.invalidTitle(title)) {
-            errorFields = [...errorFields, "title"];
-            allowEdit = false;
+            errors = [...errors, "title"];
         }
         var description = request.body.description;
         if(validations.invalidDescription(description)) {
-            errorFields = [...errorFields, "description"];
-            allowEdit = false;
+            errors = [...errors, "description"];
         }
         var price = request.body.price;
         if(validations.invalidPrice(price)) {
-            errorFields = [...errorFields, "price"];
-            allowEdit = false;
+            errors = [...errors, "price"];
         }
         var quantity = request.body.quantity;
         if(validations.invalidQuantity(quantity)) {
-            errorFields = [...errorFields, "quantity"];
-            allowEdit = false;
+            errors = [...errors, "quantity"];
         }
         var category = request.body.category;
         if(validations.invalidCategory(category)) {
-            errorFields = [...errorFields, "category"];
-            allowEdit = false;
+            errors = [...errors, "category"];
         }
-        if(allowEdit) next();
-        else response.status(200).json({edited: false, errorFields: errorFields}).end();
+        if(!errors.length) next();
+        else response.status(200).json({edited: false, errors: errors}).end();
     } else if(type == "technicalData") {
         next();
     } else if(type == "primaryImage") {
         var primaryImage = request.files["primaryImage"][0];
         if(!validations.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) next();
-        else response.status(200).json({edited: false, errorFields: ["primarymage"]}).end();
+        else response.status(200).json({edited: false, errors: ["primarymage"]}).end();
     } else if(type == "images") {
         next();
     } else {
@@ -324,89 +280,73 @@ function validateReviewEdit(request, response, next) {
 }
 
 function validateContactSettings(request, response, next) {
-    var allowSaving = true;
-    var errorFields = [];
+    var errors = [];
     var contactSettings = request.body.contactSettings;
     var latitude = contactSettings.coordinates.lat;
     if(validations.invalidLatitude(latitude)) {
-        errorFields = [...errorFields, "latitude"];
-        allowSaving = false;
+        errors = [...errors, "latitude"];
     }
     var longitude = contactSettings.coordinates.lng;
     if(validations.invalidLongitude(longitude)) {
-        errorFields = [...errorFields, "longitude"];
-        allowSaving = false;
+        errors = [...errors, "longitude"];
     }
     var street = contactSettings.street;
     if(validations.invalidStreet(street)) {
-        errorFields = [...errorFields, "street"];
-        allowSaving = false;
+        errors = [...errors, "street"];
     }
     var houseNumber = contactSettings.houseNumber;
     if(validations.invalidHouseNumber(houseNumber)) {
-        errorFields = [...errorFields, "houseNumber"];
-        allowSaving = false;
+        errors = [...errors, "houseNumber"];
     }
     var city = contactSettings.city;
     if(validations.invalidCity(city)) {
-        errorFields = [...errorFields, "city"];
-        allowSaving = false;
+        errors = [...errors, "city"];
     }
     var zipCode = contactSettings.zipCode;
     if(validations.invalidZipCode(zipCode)) {
-        errorFields = [...errorFields, "zipCode"];
-        allowSaving = false;
+        errors = [...errors, "zipCode"];
     }
     var country = contactSettings.country;
     if(validations.invalidCountry(country)) {
-        errorFields = [...errorFields, "country"];
-        allowSaving = false;
+        errors = [...errors, "country"];
     }
     var mobileNumber = contactSettings.mobileNumber;
     if(validations.invalidMobileNumber(mobileNumber)) {
-        errorFields = [...errorFields, "mobileNumber"];
-        allowSaving = false;
+        errors = [...errors, "mobileNumber"];
     }
     var email = contactSettings.email;
     if(validations.invalidEmail(email)) {
-        errorFields = [...errorFields, "email"];
-        allowSaving = false;
+        errors = [...errors, "email"];
     }
-    if(allowSaving) next();
-    else response.status(200).json({saved: false, errorFields: errorFields}).end();
+    if(!errors.length) next();
+    else response.status(200).json({saved: false, errors: errors}).end();
 }
 
 function validateContact(request, response, next) {
-    var allowSubmission = true;
-    var errorFields = [];
+    var errors = [];
     var contact = request.body.contact;
     var firstName = contact.firstName;
     if(validations.invalidFirstName(firstName)) {
-        errorFields = [...errorFields, "firstName"];
-        allowSubmission = false;
+        errors = [...errors, "firstName"];
     }
     var lastName = contact.lastName;
     if(validations.invalidLastName(lastName)) {
-        errorFields = [...errorFields, "lastName"];
-        allowSubmission = false;
+        errors = [...errors, "lastName"];
     }
     var email = contact.email;
     if(validations.invalidEmail(email)) {
-        errorFields = [...errorFields, "email"];
-        allowSubmission = false;
+        errors = [...errors, "email"];
     }
     var mobileNumber = contact.mobileNumber;
     if(validations.invalidMobileNumber(mobileNumber)) {
-        errorFields = [...errorFields, "mobileNumber"];
-        allowSubmission = false;
+        errors = [...errors, "mobileNumber"];
     }
     var message = contact.message;
     if(validations.invalidMessage(message)) {
-        errorFields = [...errorFields, "message"];
-        allowSubmission = false;
+        errors = [...errors, "message"];
     }
-    if(allowSubmission) next();
-    else response.status(200).json({submitted: false, errorFields: errorFields}).end();
+    if(!errors.length) next();
+    else response.status(200).json({submitted: false, errors: errors}).end();
 }
 
 function validateHomeSettingsMessage(request, response, next) {

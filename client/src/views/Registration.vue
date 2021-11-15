@@ -271,19 +271,16 @@
 							this.alreadyExists = response.data.field;
 							this.userRegistered = false;
 						} else {
-							var errorFields = response.data.errorFields;
-							if(errorFields.includes("username")) this.errors.account.usernameError = true;
-							if(errorFields.includes("email")) this.errors.account.emailError = true;
-							if(errorFields.includes("password")) this.errors.account.passwordError = true;
-							if(errorFields.includes("firstName")) this.errors.account.firstNameError = true;
-							if(errorFields.includes("lastName")) this.errors.account.lastNameError = true;
-							if(errorFields.includes("mobileNumber")) this.errors.account.mobileNumberError = true;
-							if(errorFields.includes("street")) this.errors.address.streetError = true;
-							if(errorFields.includes("houseNumber")) this.errors.address.houseNumberError = true;
-							if(errorFields.includes("city")) this.errors.address.cityError = true;
-							if(errorFields.includes("zipCode")) this.errors.address.zipCodeError = true;
-							if(errorFields.includes("country")) this.errors.address.countryError = true;
-							if(errorFields.includes("reCaptchaToken")) this.errors.reCaptchaTokenError = true;
+							var errors = response.data.errors;
+							errors.forEach(element => {
+								if(element == "username" || element == "email" || element == "password" || element == "firstName" || element == "lastName" || element == "mobileNumber") {
+									this.errors.account[element + "Error"] = true;
+								} else if(element == "street" || element == "houseNumber" || element == "city" || element == "zipCode" || element == "country") {
+									this.errors.address[element + "Error"] = true;
+								} else {
+									this.errors.reCaptchaTokenError = true;
+								}
+							});
 							this.alreadyExists = "";
 							this.userRegistered = false;
 						}

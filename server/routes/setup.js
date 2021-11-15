@@ -23,7 +23,7 @@ module.exports = function(app, models, smsEvents, validations) {
                     }).catch(error => console.log(error));
                 }
                 else {
-                    response.status(200).json({valid: false, errorFields: ["authenticationEnablingToken"]}).end();
+                    response.status(200).json({valid: false, errors: ["authenticationEnablingToken"]}).end();
                 }
             }).catch(error => console.log(error));
         } else {

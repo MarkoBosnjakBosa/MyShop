@@ -136,9 +136,10 @@
 									this.errors.noPasswordMatch = true;
 								}
 							} else {
-								var errorFields = response.data.errorFields;
-								if(errorFields.includes("username")) this.errors.usernameError = true;
-								if(errorFields.includes("password")) this.errors.passwordError = true;
+								var errors = response.data.errors;
+								errors.forEach(element => {
+									this.errors[element + "Error"] = true;
+								});
 								this.errors.noPasswordMatch = false, this.errors.notConfirmed = false;
 							}
 						}
