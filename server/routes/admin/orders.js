@@ -66,25 +66,25 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 		});
 	});
 	app.post("/getUserOrders", (request, response) => {
-        var username = request.body.username;
-        var userQuery = {"account.username": username};
-        User.findOne(userQuery).then(user => {
-            var query = {userId: user._id};
-            var page = Number(request.body.page) - 1;
-            var limit = 10;
-            var skip = page * limit;
-            var ordersQuery = Order.find(query).skip(skip).limit(limit);
-            var totalQuery = Order.find(query).countDocuments();
-            var queries = [ordersQuery, totalQuery];
-            Promise.all(queries).then(results => {
-                var total = results[1];
-                var pagesNumber = 1;
-                if(total >= limit) pagesNumber = Math.ceil(total / limit);
-                response.status(200).json({orders: results[0], total: total, pagesNumber: pagesNumber}).end();
-            });
-        }).catch(error => console.log(error));
+		var username = request.body.username;
+		var userQuery = {"account.username": username};
+		User.findOne(userQuery).then(user => {
+			var query = {userId: user._id};
+			var page = Number(request.body.page) - 1;
+			var limit = 10;
+			var skip = page * limit;
+			var ordersQuery = Order.find(query).skip(skip).limit(limit);
+			var totalQuery = Order.find(query).countDocuments();
+			var queries = [ordersQuery, totalQuery];
+			Promise.all(queries).then(results => {
+				var total = results[1];
+				var pagesNumber = 1;
+				if(total >= limit) pagesNumber = Math.ceil(total / limit);
+				response.status(200).json({orders: results[0], total: total, pagesNumber: pagesNumber}).end();
+			});
+		}).catch(error => console.log(error));
     });
-    app.post("/downloadOrders", (request, response) => {
+	app.post("/downloadOrders", (request, response) => {
 		var search = request.body.search;
 		var type = request.body.type;
 		var page = Number(request.body.page) - 1; 
@@ -111,12 +111,12 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			case "createdAtDesc":
 				sort = {createdAt: -1};
 				break;
-            case "dispatchedAtAsc":
-                sort = {dispatchedAt: 1};
-                break;
-            case "dispatchedAtDesc":
-                sort = {dispatchedAt: -1};
-                break;
+			case "dispatchedAtAsc":
+				sort = {dispatchedAt: 1};
+				break;
+			case "dispatchedAtDesc":
+				sort = {dispatchedAt: -1};
+				break;
 			default:
 				sort = {};
 		}
@@ -137,7 +137,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			default:
 				typeQuery = {};
 		}
-        var query = search ? {$and: [typeQuery, {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
+		var query = search ? {$and: [typeQuery, {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
 		Order.find(query).sort(sort).skip(skip).limit(limit).then(orders => {
 			if(!validations.isEmpty(orders)) {
 				var fields = ["_id", "orderNumber", "userId", "paymentType", "totalPrice", "createdAt", "isDispatched", "dispatchedAt"];
@@ -158,16 +158,16 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			}
 		}).catch(error => console.log(error));
 	});
-    app.get("/getOrder/:orderId", (request, response) => {
-        var orderId = request.params.orderId;
-        var query = {_id: orderId};
-        Order.findOne(query).then(order => {
-            response.status(200).json({order: order}).end();
-        }).catch(error => {
+	app.get("/getOrder/:orderId", (request, response) => {
+		var orderId = request.params.orderId;
+		var query = {_id: orderId};
+		Order.findOne(query).then(order => {
+			response.status(200).json({order: order}).end();
+		}).catch(error => {
 			console.log(error);
 			response.status(404).end();
 		});
-    });
+	});
 	app.put("/dispatchOrder",(request, response) => {
 		var orderId = request.body.orderId;
 		var dispatchedAt = new Date().getTime();
@@ -188,7 +188,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			} else {
 				response.status(200).json({isDispatched: false}).end();
 			}
-        }).catch(error => console.log(error));
+		}).catch(error => console.log(error));
 	});
 	app.delete("/deleteOrder/:orderId", (request, response) => {
 		var orderId = request.params.orderId;
@@ -201,8 +201,8 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			}
 		}).catch(error => console.log(error));
 	});
-    app.get("/downloadInvoice/:orderId", (request, response) => {
-        var orderId = request.params.orderId;
+	app.get("/downloadInvoice/:orderId", (request, response) => {
+		var orderId = request.params.orderId;
 		var orderQuery = {_id: orderId};
 		Order.findOne(orderQuery).then(order => {
 			var products = order.products.map(product => {
@@ -224,7 +224,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 				});
 			}).catch(error => console.log(error));
 		}).catch(error => console.log(error));
-    });
+	});
 
 	function formatNumber(number) {
 		return Number(number).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
