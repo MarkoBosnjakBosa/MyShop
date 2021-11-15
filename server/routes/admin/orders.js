@@ -2,7 +2,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
     const Order = models.Order;
     const User = models.User;
     app.post("/getOrders", (request, response) => {
-        var search = request.body.search;
+		var search = request.body.search;
 		var type = request.body.type;
 		var page = Number(request.body.page) - 1; 
 		var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
@@ -28,12 +28,12 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			case "createdAtDesc":
 				sort = {createdAt: -1};
 				break;
-            case "dispatchedAtAsc":
-                sort = {dispatchedAt: 1};
-                break;
-            case "dispatchedDesc":
-                sort = {dispatchedAt: -1};
-                break;
+			case "dispatchedAtAsc":
+				sort = {dispatchedAt: 1};
+				break;
+			case "dispatchedDesc":
+				sort = {dispatchedAt: -1};
+				break;
 			default:
 				sort = {};
 		}
@@ -54,7 +54,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			default:
 				typeQuery = {};
 		}
-        var query = search ? {$and: [typeQuery, {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
+		var query = search ? {$and: [typeQuery, {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
 		var ordersQuery = Order.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = Order.find(query).countDocuments();
 		var queries = [ordersQuery, totalQuery];
