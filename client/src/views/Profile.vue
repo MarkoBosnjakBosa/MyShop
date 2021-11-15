@@ -240,11 +240,10 @@
 						this.submittings.accountSubmitting = false;
 						this.edits.accountEdited = true;
 					} else {
-						var errorFields = response.data.errorFields;
-						if(errorFields.includes("email")) this.errors.account.emailError = true;
-						if(errorFields.includes("firstName")) this.errors.account.firstNameError = true;
-						if(errorFields.includes("lastName")) this.errors.account.lastNameError = true;
-						if(errorFields.includes("mobileNumber")) this.errors.account.mobileNumberError = true;
+						var errors = response.data.errors;
+						errors.forEach(element => {
+							this.errors.account[element + "Error"] = true;
+						});
 						this.edits.accountEdited = false;
 					}
 				}).catch(error => console.log(error));
@@ -288,12 +287,10 @@
 						this.submittings.addressSubmitting = false;
 						this.edits.addressEdited = true;
 					} else {
-						var errorFields = response.data.errorFields;
-						if(errorFields.includes("street")) this.errors.address.streetError = true;
-						if(errorFields.includes("houseNumber")) this.errors.address.houseNumberError = true;
-						if(errorFields.includes("city")) this.errors.address.cityError = true;
-						if(errorFields.includes("zipCode")) this.errors.address.zipCodeError = true;
-						if(errorFields.includes("country")) this.errors.address.countryError = true;
+						var errors = response.data.errors;
+						errors.forEach(element => {
+							this.errors.address[element + "Error"] = true;
+						});
 						this.edits.addressEdited = false;
 					}
 				}).catch(error => console.log(error));

@@ -121,9 +121,10 @@
                         this.submitting = false;
                         this.categoryCreated = true;
                     } else {
-                        var errorFields = response.data.errorFields;
-                        if(errorFields.includes("title")) this.errors.titleError = true;
-                        if(errorFields.includes("icon")) this.errors.iconError = true;
+                        var errors = response.data.errors;
+                        errors.forEach(element => {
+                            this.errors[element + "Error"] = true;
+                        });
                         this.categoryCreated = false;
                     }
                 }).catch(error => console.log(error));
