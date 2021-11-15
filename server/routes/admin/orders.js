@@ -83,7 +83,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 				response.status(200).json({orders: results[0], total: total, pagesNumber: pagesNumber}).end();
 			});
 		}).catch(error => console.log(error));
-    });
+	});
 	app.post("/downloadOrders", (request, response) => {
 		var search = request.body.search;
 		var type = request.body.type;
