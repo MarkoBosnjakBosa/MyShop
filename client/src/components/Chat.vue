@@ -278,7 +278,7 @@
                 }
             },
             deleteMessage(messageId) {
-                var confirmed = confirm("Delete message?");
+                var confirmed = confirm("Delete selected message?");
                 if(confirmed) {
                     if(this.userData.isAdmin) {
                         this.socket.emit("deleteMessage", this.chatId, this.userData.isAdmin, messageId);
