@@ -93,8 +93,10 @@
                         this.titleError = false;
                         this.technicalInformationCreated = true;
                     } else {
-                        var errorFields = response.data.errorFields;
-                        if(errorFields.includes("title")) this.titleError = true;
+                        var errors = response.data.errors;
+                        errors.forEach(element => {
+                            this[element + "Error"] = true;
+                        });
                         this.technicalInformationCreated = false;
                     }
                 }).catch(error => console.log(error));
