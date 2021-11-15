@@ -1,4 +1,4 @@
-module.exports = function(app, models, moment, emailEvents, validations) {
+module.exports = function(app, models, emailEvents, validations) {
     const ContactSettings = models.ContactSettings;
     const Contact = models.Contact;
     app.get("/getContactSettings", (request, response) => {
@@ -71,8 +71,7 @@ module.exports = function(app, models, moment, emailEvents, validations) {
         var email = contact.email;
         var mobileNumber = contact.mobileNumber;
         var message = contact.message;
-        var dateFormat = "DD.MM.YYYY HH:mm";
-        var date = moment().format(dateFormat);
+        var date = new Date().getTime();
         var newContact = getContactScheme(Contact, firstName, lastName, email, mobileNumber, message, date);
         newContact.save().then(contact => {
             emailEvents.emit("sendContactEmail", contact);
@@ -81,18 +80,14 @@ module.exports = function(app, models, moment, emailEvents, validations) {
     });
     app.delete("/deleteContact/:contactId", (request, response) => {
         var contactId = request.params.contactId;
-        if(contactId) {
-            var query = {_id: contactId};
-            Contact.findOneAndRemove(query).then(contact => {
-                if(!validations.isEmpty(contact)) {
-                    response.status(200).json({deleted: true}).end();
-                } else {
-                    response.status(200).json({deleted: false}).end(); 
-                }
-            }).catch(error => console.log(error));
-        } else {
-            response.status(200).json({deleted: false}).end();
-        }
+        var query = {_id: contactId};
+        Contact.findOneAndRemove(query).then(contact => {
+            if(!validations.isEmpty(contact)) {
+                response.status(200).json({deleted: true}).end();
+            } else {
+                response.status(200).json({deleted: false}).end(); 
+            }
+        }).catch(error => console.log(error));
     });
 
     function getContactSettingsScheme(ContactSettings, coordinates, street, houseNumber, city, zipCode, country, mobileNumber, email) {

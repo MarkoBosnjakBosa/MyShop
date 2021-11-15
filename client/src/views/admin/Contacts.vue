@@ -30,7 +30,7 @@
                     <div v-if="!contacts.length" class="noContacts">No contacts found!</div>
                     <div class="card contact" v-for="contact in contacts" :key="contact._id">
                         <div class="card-header">
-                            {{contact.firstName}} {{contact.lastName}} <div class="date">{{contact.date}}</div>
+                            {{contact.firstName}} {{contact.lastName}} <div class="date">{{new Date(contact.date).toLocaleString("de-DE").replace(",", ".")}}</div>
                         </div>
                         <div class="card-body">
                             {{contact.message}}
@@ -39,7 +39,7 @@
                             <div class="email">{{contact.email}}</div> 
                             <div class="action">
                                 <button type="button" class="btn btn-success"><i class="fas fa-phone"></i> +{{contact.mobileNumber}}</button>
-                                <a :href="'mailto:' + contact.email + '?subject=MyShop - Answer to ' + contact.firstName + ' ' + contact.lastName + ' (' + contact.date + ')'" class="btn btn-primary answer"><i class="far fa-envelope"></i> Answer</a>
+                                <a :href="'mailto:' + contact.email + '?subject=MyShop - Answer to ' + contact.firstName + ' ' + contact.lastName + ' (' + new Date(contact.date).toLocaleString('en-US') + ')'" class="btn btn-primary answer"><i class="far fa-envelope"></i> Answer</a>
                                 <button type="button" class="btn btn-danger delete" @click="deleteContact(contact._id, contact.firstName + ' ' + contact.lastName)">Delete</button>
                             </div>
                         </div>
