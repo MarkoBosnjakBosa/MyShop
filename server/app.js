@@ -30,8 +30,6 @@ const smsEvents = require("./events/smsEvents.js")(EventEmitter, vonage);
 
 app.use(cors({origin: "*"}));
 app.use(express.json());
-app.use("/exports", express.static(__dirname + "/exports"));
-app.use("/images/products", express.static(__dirname + "/images/products"));
 
 const registration = require("./routes/registration.js")(app, models, bcryptjs, emailEvents, validations);
 const login = require("./routes/login.js")(app, models, jwt, bcryptjs, smsEvents, checkStatus, validations);
