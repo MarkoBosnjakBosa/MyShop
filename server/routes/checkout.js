@@ -26,7 +26,7 @@ module.exports = function(app, models, stripe, ejs, pdf, fs, path, emailEvents, 
 				if(!validations.isEmpty(order)) {
 					orderNumber += Number(order.orderNumber);
 				}
-				var newOrder = getOrderScheme(Order, orderNumber, user._id, paymentType, products, totalPrice, createdAt, false, "", {account: user.account, address: user.address});
+				var newOrder = getOrderScheme(Order, orderNumber, user._id, paymentType, products, totalPrice, createdAt, false, 0, {account: user.account, address: user.address});
 				newOrder.save().then(newOrder => {
 					createInvoice(newOrder, user);
 					updateQuantities(products);
