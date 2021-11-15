@@ -40,7 +40,7 @@ module.exports = function(mongoose) {
 		product: {type: String, required: true},
 		username: {type: String, required: true},
 		review: {type: String, required: true},
-		date: {type: String, required: true}
+		date: {type: Number, required: true}
 	});
 	const technicalInformationScheme = new mongoose.Schema({
 		title: {type: String, required: true}
@@ -98,13 +98,13 @@ module.exports = function(mongoose) {
 		email: {type: String, required: true},
 		mobileNumber: {type: String, required: true},
 		message: {type: String, required: true},
-		date: {type: String, required: true}
+		date: {type: Number, required: true}
 	});
 	const messageScheme = new mongoose.Schema({
 		chatId: {type: String},
 		username: {type: String},
 		message: {type: String},
-		date: {type: String}
+		date: {type: Number}
 	});
 	const models = {
 		User: mongoose.model("User", userScheme),
