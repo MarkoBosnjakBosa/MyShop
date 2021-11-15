@@ -184,16 +184,10 @@
                         this.submitting = false;
                         this.contactSettingsSaved = true;
                     } else {
-                        var errorFields = response.data.errorFields;
-                        if(errorFields.includes("latitude")) this.errors.latitudeError = true;
-                        if(errorFields.includes("longitude")) this.errors.longitudeError = true;
-                        if(errorFields.includes("street")) this.errors.streetError = true;
-                        if(errorFields.includes("houseNumber")) this.errors.houseNumberError = true;
-                        if(errorFields.includes("city")) this.errors.cityError = true;
-                        if(errorFields.includes("zipCode")) this.errors.zipCodeError = true;
-                        if(errorFields.includes("country")) this.errors.countryError = true;
-                        if(errorFields.includes("mobileNumber")) this.errors.mobileNumberError = true;
-                        if(errorFields.includes("email")) this.errors.emailError = true;
+                        var errors = response.data.errors;
+                        errors.forEach(element => {
+                            this.errors[element + "Error"] = true;
+                        });
                         this.contactSettingsSaved = false;
                     }
                 }).catch(error => console.log(error));

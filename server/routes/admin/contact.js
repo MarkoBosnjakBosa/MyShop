@@ -45,10 +45,10 @@ module.exports = function(app, models, emailEvents, validations) {
         var sort = {};
         switch(orderBy) {
             case "dateAsc":
-                sort = {"date": 1};
+                sort = {date: 1};
                 break;
             case "dateDesc":
-                sort = {"date": -1};
+                sort = {date: -1};
                 break;
             default:
                 sort = {};

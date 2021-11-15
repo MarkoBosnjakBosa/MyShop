@@ -170,12 +170,10 @@
                         this.submitting = false;
                         this.messageSubmitted = true;
                     } else {
-                        var errorFields = response.data.errorFields;
-                        if(errorFields.includes("firstName")) this.errors.firstNameError = true;
-                        if(errorFields.includes("lastName")) this.errors.lastNameError = true;
-                        if(errorFields.includes("email")) this.errors.emailError = true;
-                        if(errorFields.includes("mobileNumber")) this.errors.mobileNumberError = true;
-                        if(errorFields.includes("message")) this.errors.messageError = true;
+                        var errors = response.data.errors;
+                        errors.forEach(element => {
+                            this.errors[element + "Error"] = true;
+                        });
                         this.messageSubmitted = false;
                     }
                 }).catch(error => console.log(error));
