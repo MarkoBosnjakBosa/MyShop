@@ -27,9 +27,9 @@
                             SMS authentication will be required, when logging in.
                         </div>
                         <div class="mb-3">
-                            <button type="button" class="btn btn-primary mb-3" @click="sendAuthenticationEnablingToken()">Send token</button>
-                            <div>
-                                <small v-if="authenticationEnablingTokenSent" class="form-text authenticationEnablingTokenSent">
+                            <button type="button" class="btn btn-primary" @click="sendAuthenticationEnablingToken()">Send token</button>
+                            <div v-if="authenticationEnablingTokenSent" class="authenticationEnablingTokenSent">
+                                <small class="form-text">
                                     Authentication token has been sent to your mobile phone.<br>
                                     Please insert the token and enable the authentication.
                                 </small>
@@ -135,6 +135,9 @@
         float: right;
     }
     .authenticationEnablingTokenSent {
+        margin-top: 10px;
+    }
+    .authenticationEnablingTokenSent .form-text {
         color: #008000;
     }
     .errorField {
