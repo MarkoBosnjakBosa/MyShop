@@ -15,7 +15,7 @@
 					</div>
 					<div class="tab-content">
 						<div id="accountTab" class="tab-pane fade active show" role="tabpanel">
-							<form autocomplete="off" @submit.prevent="editAccount()">
+							<form autocomplete="off" @submit.prevent="editAccount()" novalidate>
 								<div v-if="edits.accountEdited" class="alert alert-success alert-dismissible" role="alert">
 									<div>Your account has been successfully edited.</div>
 									<button type="button" class="btn-close" @click="closeAlert('account')"></button>
@@ -92,7 +92,7 @@
 									</div>
 									<div class="mb-3 col-4">
 										<label for="zipCode">Zip code:</label>
-										<input type="number" id="zipCode" min="1" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submittings.addressSubmitting}" v-model="user.address.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
+										<input type="number" id="zipCode" min="0" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submittings.addressSubmitting}" v-model="user.address.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
 									</div>
 								</div>
 								<div class="mb-3">
@@ -108,7 +108,7 @@
 							</form>
 						</div>
 						<div id="resetPasswordTab" class="tab-pane fade" role="tabpanel">
-							<form autocomplete="off" @submit.prevent="resetPassword()">
+							<form autocomplete="off" @submit.prevent="resetPassword()" novalidate>
 								<div v-if="edits.passwordReset" class="alert alert-success alert-dismissible" role="alert">
 									<div>Your password has been successfully reset.</div>
 									<button type="button" class="btn-close" @click="closeAlert('resetPassword')"></button>
@@ -166,7 +166,7 @@
 						street: "",
 						houseNumber: 0,
 						city: "",
-						zipCode: 1,
+						zipCode: 0,
 						country: ""
 					},
 					password: ""
