@@ -82,7 +82,8 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvents, checkStatus, va
 				if(user.confirmation.authenticationEnabled) {
 					var authenticationToken = Math.floor(100000 + Math.random() * 900000);
 					var update = {"confirmation.authenticationToken": authenticationToken};
-					User.findOneAndUpdate(query, update, {new: true}).then(updatedUser => {
+					var options = {new: true};
+					User.findOneAndUpdate(query, update, options).then(updatedUser => {
 						smsEvents.emit("sendAuthenticationToken", updatedUser.account.mobileNumber, updatedUser.account.firstName, updatedUser.confirmation.authenticationToken);
 						setTimeout(function() { deleteAuthenticationToken(updatedUser.account.username); }, 5 * 60 * 1000);
 						response.status(200).json({sent: true}).end();
@@ -98,6 +99,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvents, checkStatus, va
 	function deleteAuthenticationToken(username) {
 		var query = {"account.username": username};
 		var update = {"confirmation.authenticationToken": ""};
-		User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
+		var options = {new: true};
+		User.findOneAndUpdate(query, update, options).then().catch(error => console.log(error));
 	}
 }

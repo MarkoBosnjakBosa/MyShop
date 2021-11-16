@@ -4,7 +4,7 @@
 			<sidebar></sidebar>
 			<div id="pageStyle">
 				<navigation></navigation>
-				<form autocomplete="off" @submit.prevent="loginUser()">
+				<form autocomplete="off" @submit.prevent="loginUser()" novalidate>
 					<h1>Login</h1>
 					<p>Please fill in this form to log in.</p>
 					<hr>
@@ -140,7 +140,8 @@
 								errors.forEach(element => {
 									this.errors[element + "Error"] = true;
 								});
-								this.errors.noPasswordMatch = false, this.errors.notConfirmed = false;
+								this.errors.noPasswordMatch = false;
+								this.errors.notConfirmed = false;
 							}
 						}
 					}

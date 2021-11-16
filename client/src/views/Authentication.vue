@@ -4,7 +4,7 @@
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <form autocomplete="off" @submit.prevent="authenticateUser()">
+                <form autocomplete="off" @submit.prevent="authenticateUser()" novalidate>
                     <h1>Authenticate</h1>
                     <p>Please insert the authentication token to log in.</p>
                     <hr>
@@ -54,12 +54,13 @@
                     this.authenticationTokenError = true;
                     return;
                 }
-                var options = {headers: {["authentication"]: this.authenticationToken}};
                 var body = {username: this.username};
+                var options = {headers: {["authentication"]: this.authenticationToken}};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/authenticate", body, options).then(response => {
                     if(response.data.authenticated) {
                         this.authenticationToken = "";
-                        this.authenticationTokenError = false, this.authenticationTokenSent = false;
+                        this.authenticationTokenError = false;
+                        this.authenticationTokenSent = false;
                         var user = response.data.user;
                         var token = response.data.token;
                         var isAdmin = response.data.isAdmin;
@@ -83,7 +84,10 @@
                 if(isAdmin) route.methods.openProducts();
                 else route.methods.openHome();
             },
-            clearAuthenticationTokenStatus() { this.authenticationTokenError = false, this.authenticationTokenSent = false; }
+            clearAuthenticationTokenStatus() { 
+                this.authenticationTokenError = false;
+                this.authenticationTokenSent = false;
+            }
         },
         computed: {
             invalidAuthenticationToken() { return validation.methods.invalidAuthenticationToken(this.authenticationToken); }
