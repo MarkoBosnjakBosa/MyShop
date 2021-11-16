@@ -4,7 +4,7 @@
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <div class="setupDialog">
+                <div class="setupInformation">
                     <div class="setupTitle">
                         <h1>Setup</h1>
                         <div>
@@ -31,11 +31,11 @@
                             <div>
                                 <small v-if="authenticationEnablingTokenSent" class="form-text authenticationEnablingTokenSent">
                                     Authentication token has been sent to your mobile phone.<br>
-                                    Insert the token and enable the authentication.
+                                    Please insert the token and enable the authentication.
                                 </small>
                             </div>
                         </div>
-                        <form autocomplete="off" @submit.prevent="setAuthentication(true)">
+                        <form autocomplete="off" @submit.prevent="setAuthentication(true)" novalidate>
                             <div class="input-group">
                             <input type="text" id="authenticationTestToken" class="form-control" :class="{'errorField' : authenticationEnablingTokenError}" placeholder="Authentication token" v-model="authenticationEnablingToken" @focus="clearAuthenticationEnablingTokenStatus()" @keypress="clearAuthenticationEnablingTokenStatus()"/>
                                 <div class="input-group-append">
@@ -124,7 +124,7 @@
 </script>
 
 <style scoped>
-    .setupDialog {
+    .setupInformation {
         margin: auto;
         max-width: 450px;
     }
