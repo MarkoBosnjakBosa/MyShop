@@ -4,7 +4,7 @@
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <form autocomplete="off" @submit.prevent="sendEmail()">
+                <form autocomplete="off" @submit.prevent="sendEmail()" novalidate>
                     <h1>Forgot credentials</h1>
                     <p>Please check an option.</p>
                     <hr>
@@ -13,15 +13,15 @@
                             <legend class="col-form-label col-2 pt-0">Forgot:</legend>
                             <div class="col-10">
                                 <div class="form-check">
-                                    <input type="radio" name="option" id="password" class="form-check-input" value="password" v-model="option" checked/>
+                                    <input type="radio" id="password" name="option" class="form-check-input" value="password" v-model="option" checked/>
                                     <label for="password" class="form-check-label">Password</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="option" id="username" class="form-check-input" value="username" v-model="option"/>
+                                    <input type="radio" id="username" name="option" class="form-check-input" value="username" v-model="option"/>
                                     <label for="username" class="form-check-label">Username</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="option" id="confirmation" class="form-check-input" value="confirmation" v-model="option"/>
+                                    <input type="radio" id="confirmation" name="option" class="form-check-input" value="confirmation" v-model="option"/>
                                     <label for="confirmation" class="form-check-label">Confirmation email</label>
                                 </div>
                             </div>
@@ -31,7 +31,7 @@
                         <input type="text" id="email" class="form-control" :class="{'errorField' : emailError}" placeholder="Email" v-model="email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
                         <small v-if="emailError" class="form-text errorInput">Please provide a valid email!</small>
                     </div>
-                    <div v-if="emailSent" class="form-group emailSent">Please visit your inbox and follow suggested steps!</div>
+                    <div v-if="emailSent" class="mb-3 emailSent">Please visit your inbox and follow suggested steps!</div>
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
@@ -106,7 +106,6 @@
         max-width: 400px;
         text-align: center;
         margin-top: 20px;
-        text-align: center;
     }
     .options {
         text-align: left;

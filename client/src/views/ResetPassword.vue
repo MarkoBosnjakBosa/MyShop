@@ -4,7 +4,7 @@
 			<sidebar></sidebar>
 			<div id="pageStyle">
 				<navigation></navigation>
-				<form autocomplete="off" @submit.prevent="resetPassword()">
+				<form autocomplete="off" @submit.prevent="resetPassword()" novalidate>
 					<h1>Reset password</h1>
 					<p>Please insert your new password.</p>
 					<hr>
@@ -17,7 +17,7 @@
 						</div>
 						<small v-if="passwordError" class="form-text errorInput">Please provide a valid password!</small>
 					</div>
-					<div v-if="passwordReset" class="passwordReset">Your password has been successfully reset!</div>
+					<div v-if="passwordReset" class="mb-3 passwordReset">Your password has been successfully reset!</div>
 					<div class="mb-3">
 						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
