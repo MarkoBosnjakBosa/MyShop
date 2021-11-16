@@ -205,24 +205,36 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 		var orderId = request.params.orderId;
 		var orderQuery = {_id: orderId};
 		Order.findOne(orderQuery).then(order => {
-			var products = order.products.map(product => {
-				var updatedProduct = {};
-				updatedProduct.title = product.title;
-				updatedProduct.price = formatNumber(product.price);
-				updatedProduct.selectedQuantity = product.selectedQuantity;
-				updatedProduct.totalPrice = formatNumber(product.price * product.selectedQuantity);
-				return updatedProduct;
-			});
-			var userQuery = {_id: order.userId};
-			User.findOne(userQuery).then(user => {
-				var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../../templates/invoice/invoice.html"), "UTF-8"));
-				var html = htmlCompiled({order: order, products: products, user: user});
-				var filePath = path.join(__dirname, "../../temporary/Invoice_" + order.orderNumber + ".pdf");
-				pdf.create(html).toFile(filePath, function(error, result) {
-					setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
-					response.status(200).json({downloaded: true, fileName: "Invoice_" + order.orderNumber + ".pdf"}).end();
+			if(!validations.isEmpty(order)) {
+				var products = order.products.map(product => {
+					var updatedProduct = {};
+					updatedProduct.title = product.title;
+					updatedProduct.price = formatNumber(product.price);
+					updatedProduct.selectedQuantity = product.selectedQuantity;
+					updatedProduct.totalPrice = formatNumber(product.price * product.selectedQuantity);
+					return updatedProduct;
 				});
-			}).catch(error => console.log(error));
+				var userQuery = {_id: order.userId};
+				User.findOne(userQuery).then(user => {
+					if(!validations.isEmpty(user)) {
+						var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../../templates/invoice/invoice.html"), "UTF-8"));
+						var html = htmlCompiled({order: order, products: products, user: user});
+						var filePath = path.join(__dirname, "../../temporary/Invoice_" + order.orderNumber + ".pdf");
+						pdf.create(html).toFile(filePath, function(error, result) {
+							setTimeout(function() { 
+								if(fs.existsSync(filePath)) {
+									fs.unlinkSync(filePath);
+								}
+							}, 30000);
+							response.status(200).json({downloaded: true, fileName: "Invoice_" + order.orderNumber + ".pdf"}).end();
+						});
+					} else {
+						response.status(200).json({downloaded: false}).end();
+					}
+				}).catch(error => console.log(error));
+			} else {
+				response.status(200).json({downloaded: false}).end();
+			}
 		}).catch(error => console.log(error));
 	});
 
