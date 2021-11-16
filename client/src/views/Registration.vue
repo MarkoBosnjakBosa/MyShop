@@ -97,7 +97,7 @@
 								</div>
 								<div class="mb-3 col-4">
 									<label for="zipCode">Zip code:</label>
-									<input type="number" id="zipCode" min="1" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submitting}" v-model="user.address.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
+									<input type="number" id="zipCode" min="0" class="form-control" :class="{'errorField' : errors.address.zipCodeError && submitting}" v-model="user.address.zipCode" @focus="clearZipCodeStatus()" @keypress="clearZipCodeStatus()"/>
 								</div>
 							</div>
 							<div class="mb-3">
@@ -161,7 +161,7 @@
 						street: "",
 						houseNumber: 0,
 						city: "",
-						zipCode: 1,
+						zipCode: 0,
 						country: ""
 					}
 				},
@@ -259,7 +259,7 @@
 				var body = {user: this.user, reCaptchaToken: grecaptcha.getResponse()};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/register", body).then(response => {
 					if(response.data.registered) {
-						this.user = {account: {username: "", email: "", password: "", firstName: "", lastName: "", mobileNumber: ""}, address:{ street: "", houseNumber: 0, city: "", zipCode: 1, country: ""}};
+						this.user = {account: {username: "", email: "", password: "", firstName: "", lastName: "", mobileNumber: ""}, address:{ street: "", houseNumber: 0, city: "", zipCode: 0, country: ""}};
 						grecaptcha.reset();
 						this.errors = {account: {usernameError: false, emailError: false, passwordError: false, firstNameError: false, lastNameError: false, mobileNumberError: false}, address: {streetError: false, houseNumberError: false, cityError: false, zipCodeError: false, countryError: false}, reCaptchaTokenError: false};
 						this.submitting = false;
