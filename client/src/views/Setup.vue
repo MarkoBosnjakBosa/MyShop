@@ -27,7 +27,7 @@
                             SMS authentication will be required, when logging in.
                         </div>
                         <div class="mb-3">
-                            <button type="button" class="btn btn-primary" @click="sendAuthenticationEnablingToken()">Send token</button>
+                            <button type="button" class="btn btn-primary mb-3" @click="sendAuthenticationEnablingToken()">Send token</button>
                             <div>
                                 <small v-if="authenticationEnablingTokenSent" class="form-text authenticationEnablingTokenSent">
                                     Authentication token has been sent to your mobile phone.<br>
@@ -68,8 +68,8 @@
             return {
                 username: this.$store.getters.getUser,
                 authenticationEnabled: false,
-                authenticationEnablingTokenError: false,
                 authenticationEnablingToken: "",
+                authenticationEnablingTokenError: false,
                 authenticationEnablingTokenSent: false
             }
         },
