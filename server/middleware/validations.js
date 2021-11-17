@@ -204,9 +204,13 @@ function validateProductCreation(request, response, next) {
     if(validations.invalidCategory(category)) {
         errors = [...errors, "category"];
     }
-    var primaryImage = request.files["primaryImage"][0];
-    if(validations.invalidPrimaryImage(primaryImage) || request.extensionValidationError) {
-        errors = [...errors, "primaryImage"];
+    if(request.files["primaryImage"] && request.files["primaryImage"][0]) {
+        var primaryImage = request.files["primaryImage"][0];
+        if(validations.invalidPrimaryImage(primaryImage) || request.extensionValidationError) {
+            errors = [...errors, "primaryImage"];
+        }
+    } else {
+        errors = [...errors, "primaryImage"]; 
     }
     var reCaptchaToken = request.body.reCaptchaToken;
     if(validations.invalidReCaptchaToken(reCaptcha_v3_SecretKey, reCaptchaToken, request.connection.remoteAddress)) {

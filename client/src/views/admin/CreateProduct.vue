@@ -42,7 +42,7 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <label for="quantity" class="input-group-text">Quantity</label>
-                                    <input type="number" id="quantity" min="1" class="form-control" :class="{'errorField' : errors.quantityError && submitting}" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
+                                    <input type="number" id="quantity" min="0" class="form-control" :class="{'errorField' : errors.quantityError && submitting}" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
                                 </div>
                                 <small v-if="errors.quantityError && submitting" class="form-text errorInput">Please provide a valid quantity!</small>
                             </div>
@@ -69,7 +69,7 @@
                                 </select>
                                 <button type="button" class="btn btn-primary" @click="selectTechnicalInformation()">Add</button>
                             </div>
-                            <table v-if="product.technicalData.length" class="table table-hover">
+                            <table v-if="product.technicalData.length" class="table">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -159,7 +159,7 @@
                     title: "",
                     description: "",
                     price: "",
-                    quantity: 1,
+                    quantity: 0,
                     category: "",
                     technicalData: [],
                     primaryImage: "",
@@ -250,7 +250,7 @@
                             formData.append("reCaptchaToken", reCaptchaToken);
                             axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createProduct", formData).then(response => {
                                 if(response.data.created) {
-                                    temp.product = {title: "", description: "", price: "", quantity: 1, category: "", technicalData: [], primaryImage: "", images: []};
+                                    temp.product = {title: "", description: "", price: "", quantity: 0, category: "", technicalData: [], primaryImage: "", images: []};
                                     document.getElementById("primaryImage").value = "";
                                     document.getElementById("previewPrimaryImage").innerText = "";
                                     document.getElementById("images").value = "";
@@ -261,7 +261,7 @@
                                 } else {
                                     var errors = response.data.errors;
                                     errors.forEach(element => {
-                                        this.errors[element + "Error"] = true;
+                                        temp.errors[element + "Error"] = true;
                                     });
                                     temp.productCreated = false;
                                 }
@@ -277,6 +277,7 @@
                         var rows = document.getElementsByTagName("tbody")[0].rows;
                         for(var row = 0; row < rows.length; row++) {
                             if(rows[row].cells[1].innerText == technicalInformationTitle) {
+                                document.getElementById("technicalData").value = "";
                                 this.message = "You have already selected the technical information!";
                                 return;
                             }
@@ -297,14 +298,17 @@
                     if(type == "primaryImage") {
                         temp.errors.primaryImageError = false;
                         var file = files[0];
+                        var previewPrimaryImage = document.getElementById("previewPrimaryImage");
                         if(file.type.match("image.*")) {
                             var fileReader = new FileReader();
                             fileReader.onload = function(e) {
-                                var previewPrimaryImage = document.getElementById("previewPrimaryImage");
                                 previewPrimaryImage.innerHTML = "<img src='" + e.target.result + "' class='rounded mx-auto d-block' alt='" + file.name + "' style='height: 150px; weight: 150px;'/>";
                             }
                             this.product.primaryImage = file;
                             fileReader.readAsDataURL(file);
+                        } else {
+                            this.product.primaryImage = "";
+                            previewPrimaryImage.innerHTML = "";
                         }
                     } else {
                         temp.errors.imagesError = false;
