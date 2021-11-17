@@ -43,7 +43,7 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <label for="quantity" class="input-group-text">Quantity</label>
-                                    <input type="number" id="quantity" min="1" class="form-control" :class="{'errorField' : errors.quantityError && submittings.mainSubmitting}" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
+                                    <input type="number" id="quantity" min="0" class="form-control" :class="{'errorField' : errors.quantityError && submittings.mainSubmitting}" v-model="product.quantity" @focus="clearQuantityStatus()" @keypress="clearQuantityStatus()"/>
                                 </div>
                                 <small v-if="errors.quantityError && submittings.mainSubmitting" class="form-text errorInput">Please provide a valid quantity!</small>
                             </div>
@@ -64,7 +64,7 @@
                         </form>
                     </div>
                     <div id="technicalDataTab" class="tab-pane fade" role="tabpanel">
-                        <form autocomplete="off" @submit.prevent="editProduct('technicalData')">
+                        <form autocomplete="off" @submit.prevent="editProduct('technicalData')" novalidate>
                             <div v-if="edits.technicalDataEdited" class="alert alert-success alert-dismissible" role="alert">
                                 <div>Product has been successfully edited!</div>
                                 <button type="button" class="btn-close" @click="closeEditAlert('technicalData')"></button>
@@ -77,7 +77,7 @@
                                 </select>
                                 <button type="button" class="btn btn-primary" @click="selectTechnicalInformation()">Add</button>
                             </div>
-                            <table v-if="product.technicalData.length" class="table table-hover">
+                            <table v-if="product.technicalData.length" class="table">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -101,10 +101,9 @@
                                 <button type="submit" class="btn btn-primary submit">Submit <i class="fas fa-check"></i></button>
                             </div>
                         </form>
-                        <notification :product="product" :message="message" :type="'error'" @hide="hideNotification()"></notification>
                     </div>
                     <div id="imagesTab" class="tab-pane fade" role="tabpanel">
-                        <form autocomplete="off" enctype="multipart/form-data">
+                        <form enctype="multipart/form-data">
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span for="primaryImage" class="input-group-text">Primary image</span>
@@ -161,15 +160,13 @@
     import helper from "../../components/Helper.vue"; 
     import route from "../../components/Route.vue";
     import validation from "../../components/Validation.vue";
-    import notification from "../../components/Notification.vue";
     const axios = require("axios");
 	
     export default {
         name: "editProduct",
         components: {
             navigation,
-            sidebar,
-            notification
+            sidebar
         },
         data() {
             return {
@@ -180,7 +177,7 @@
                     title: "",
                     description: "",
                     price: "",
-                    quantity: 1,
+                    quantity: 0,
                     category: "",
                     technicalData: [],
                     primaryImage: "",
@@ -201,8 +198,7 @@
                 edits: {
                     mainEdited: false,
                     technicalDataEdited: false
-                },
-                message: ""
+                }
             }
         },
         methods: {
@@ -284,7 +280,7 @@
                         var rows = document.getElementsByTagName("tbody")[0].rows;
                         for(var row = 0; row < rows.length; row++) {
                             if(rows[row].cells[1].innerText == technicalInformationTitle) {
-                                this.message = "You have already selected the technical information!";
+                                document.getElementById("technicalData").value = "";
                                 return;
                             }
                         }
@@ -318,6 +314,7 @@
                         } else {
                             this.errors.primaryImageError = true;
                         }
+                        document.getElementById("primaryImage").value = "";
                     } else {
                         this.errors.imagesError = false;
                         if((files.length + this.product.images.length) < 5) {
@@ -351,6 +348,7 @@
                         } else {
                             this.errors.imagesError = true;
                         }
+                        document.getElementById("images").value = "";
                     }
                 }
             },
@@ -381,9 +379,6 @@
             },
             removeDragOver() {
                 document.getElementById("dropzone").classList.remove("onDragOver");
-            },
-            hideNotification() {
-                this.message = "";
             },
             closeEditAlert(type) { 
                 if(type == "main") this.edits.mainEdited = false;

@@ -249,9 +249,16 @@ function validateProductEdit(request, response, next) {
     } else if(type == "technicalData") {
         next();
     } else if(type == "primaryImage") {
-        var primaryImage = request.files["primaryImage"][0];
-        if(!validations.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) next();
-        else response.status(200).json({edited: false, errors: ["primarymage"]}).end();
+        if(request.files["primaryImage"] && request.files["primaryImage"][0]) {
+            var primaryImage = request.files["primaryImage"][0];
+            if(!validations.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) {
+                next();
+            } else {
+                response.status(200).json({edited: false, errors: ["primaryImage"]}).end();
+            }
+        } else{
+            response.status(200).json({edited: false, errors: ["primaryImage"]}).end();
+        }
     } else if(type == "images") {
         next();
     } else {
