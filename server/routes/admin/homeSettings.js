@@ -17,8 +17,8 @@ module.exports = function(app, models, fs, uploadImages, validations) {
             var query = {_id: homeSettingsId};
             var update = {message: message};
             var options = {new: true};
-            HomeSettings.findOneAndUpdate(query, update, options).then(savedMessage => {
-                response.status(200).json({saved: true, homeSettingsId: savedMessage._id}).end();
+            HomeSettings.findOneAndUpdate(query, update, options).then(savedHomeSettings => {
+                response.status(200).json({saved: true, homeSettingsId: savedHomeSettings._id}).end();
             }).catch(error => console.log(error));
         } else {
             var imagesObjects = [];
