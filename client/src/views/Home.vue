@@ -52,6 +52,7 @@
         data() {
             return {
                 homeSettings: {
+                    _id: "",
                     message: "",
                     images: []
                 }
@@ -60,8 +61,7 @@
         methods: {
             getHomeSettings() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getHomeSettings").then(response => {
-                    this.homeSettings.message = response.data.message;
-                    this.homeSettings.images = response.data.images;
+                    this.homeSettings = response.data.homeSettings;
                 }).catch(error => console.log(error));
             },
             renderImage(image) {
