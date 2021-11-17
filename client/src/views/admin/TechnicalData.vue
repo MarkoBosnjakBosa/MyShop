@@ -70,7 +70,7 @@
                 technicalInformationCreated: false,
                 editing: null
             }
-		},
+        },
         methods: {
             getTechnicalData() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getTechnicalData").then(response => {
