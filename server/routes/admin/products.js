@@ -101,13 +101,21 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			var category = request.body.category;
 			var update = {title: title, description: description, price: price, quantity: quantity, category: category};
 			Product.findOneAndUpdate(query, update, options).then(product => {
-				response.status(200).json({edited: true}).end();
+				if(!validations.isEmpty(product)) {
+					response.status(200).json({edited: true}).end();
+				} else {
+					response.status(200).json({edited: false}).end();
+				}
 			}).catch(error => console.log(error));
 		} else if(type == "technicalData") {
 			var technicalData = JSON.parse(request.body.technicalData);
 			var update = {technicalData: technicalData};
 			Product.findOneAndUpdate(query, update, options).then(product => {
-				response.status(200).json({edited: true}).end();
+				if(!validations.isEmpty(product)) {
+					response.status(200).json({edited: true}).end();
+				} else {
+					response.status(200).json({edited: false}).end();
+				}
 			}).catch(error => console.log(error));
 		} else if(type == "primaryImage") {
 			var primaryImage = request.files["primaryImage"][0];
@@ -118,7 +126,11 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			var update = {primaryImage: primaryImageObject};
 			var options = {new: true};
 			Product.findOneAndUpdate(query, update, options).then(product => {
-				response.status(200).json({edited: true, primaryImage: primaryImageObject}).end();
+				if(!validations.isEmpty(product)) {
+					response.status(200).json({edited: true, primaryImage: primaryImageObject}).end();
+				} else {
+					response.status(200).json({edited: false}).end();
+				}
 			}).catch(error => console.log(error));
 		} else if(type == "images") {
 			var images = request.files["images"];
