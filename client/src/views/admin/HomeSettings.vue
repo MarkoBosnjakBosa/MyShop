@@ -168,7 +168,6 @@
                         }
                     }).catch(error => console.log(error));
                 }
-                document.getElementById("images").value = "";
             },
             addDragOver() {
                 document.getElementById("dropzone").className = "onDragOver";
