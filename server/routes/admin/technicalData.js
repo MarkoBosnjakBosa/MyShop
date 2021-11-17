@@ -29,18 +29,14 @@ module.exports = function(app, models, validations) {
     });
     app.delete("/deleteTechnicalInformation/:technicalInformationId", (request, response) => {
         var technicalInformationId = request.params.technicalInformationId;
-        if(technicalInformationId) {
-            var query = {_id: technicalInformationId};
-            TechnicalInformation.findOneAndRemove(query).then(technicalInformation => {
-                if(!validations.isEmpty(technicalInformation)) {
-                    response.status(200).json({deleted: true}).end();
-                } else {
-                    response.status(200).json({deleted: false}).end();
-                }
-            }).catch(error => console.log(error));
-        } else {
-            response.status(200).json({deleted: false}).end();
-        }
+        var query = {_id: technicalInformationId};
+        TechnicalInformation.findOneAndRemove(query).then(technicalInformation => {
+            if(!validations.isEmpty(technicalInformation)) {
+                response.status(200).json({deleted: true}).end();
+            } else {
+                response.status(200).json({deleted: false}).end();
+            }
+        }).catch(error => console.log(error));
     });
 
     function getTechnicalInformationScheme(TechnicalInformation, title) {

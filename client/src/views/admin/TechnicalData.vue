@@ -4,7 +4,7 @@
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <form autocomplete="off" @submit.prevent="createTechnicalInformation()">
+                <form autocomplete="off" @submit.prevent="createTechnicalInformation()" novalidate>
                     <h1>Technical Data</h1>
                     <div class="row">
                         <div class="mb-3 col-11">
@@ -15,14 +15,14 @@
                             <button type="submit" class="btn btn-primary">Create</button>
                         </div>
                     </div>
-                    <div v-if="technicalInformationCreated" class="form-group creationSuccessful">Technical information has been successfully created!</div>
+                    <div v-if="technicalInformationCreated" class="mb-3 creationSuccessful">Technical information has been successfully created!</div>
                 </form>
                 <table class="table">
-                    <thead class="thead-light">
+                    <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Actions</th>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -30,7 +30,7 @@
                             <td colspan="3" class="noTechnicalData">No technical data found!</td>
                         </tr>
                         <tr v-for="(technicalInformation, index) in technicalData" :key="technicalInformation._id">
-                            <th scope="row">{{++index}}</th>
+                            <th>{{++index}}</th>
                             <td v-if="editing == technicalInformation._id"><input type="text" class="form-control" v-model="technicalInformation.title"/></td>
                             <td v-else>{{technicalInformation.title}}</td>
                             <td v-if="editing == technicalInformation._id" class="padded">

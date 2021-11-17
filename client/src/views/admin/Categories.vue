@@ -27,10 +27,10 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Icon</th>
-                            <th scope="col">Actions</th>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Icon</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,7 +38,7 @@
                             <td colspan="4" class="noCategories">No categories found!</td>
                         </tr>
                         <tr v-for="(category, index) in categories" :key="category._id">
-                            <th scope="row">{{++index}}</th>
+                            <th>{{++index}}</th>
                             <td v-if="editing == category._id"><input type="text" class="form-control" v-model="category.title"/></td>
                             <td v-else>{{category.title}}</td>
                             <td v-if="editing == category._id"><input type="text" class="form-control" v-model="category.icon"/></td>
