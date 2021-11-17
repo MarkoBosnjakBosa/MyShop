@@ -33,7 +33,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <button type="button" class="btn btn-dark nextButton" @click="toggleTab('message')">Next <i class="fas fa-angle-double-right"></i></button>
+                            <button type="button" class="btn btn-dark next" @click="toggleTab('message')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
                     <div id="messageTab" class="tab-pane fade" role="tabpanel">
@@ -52,7 +52,7 @@
                             </div>
                             <div class="mb-3">
                                 <button type="button" class="btn btn-dark" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
-                                <button type="submit" class="btn btn-primary saveButton">Save <i class="fas fa-check"></i></button>
+                                <button type="submit" class="btn btn-primary save">Save <i class="fas fa-check"></i></button>
                             </div>
                         </form>
                     </div>
@@ -206,7 +206,7 @@
         max-width: 800px;
         margin-top: 20px;
     }
-    .nextButton, .saveButton  {
+    .next, .save  {
         float: right;
     }
     #dropzone {

@@ -43,7 +43,7 @@
                             <button v-if="order.isDispatched" type="button" class="btn btn-success">Dispatched {{new Date(order.dispatchedAt).toLocaleString("en-US")}}</button>
                             <button v-else type="button" class="btn btn-danger">Not dispatched</button>
                             <button type="button" class="btn btn-dark download" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
-                            <button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
+                            <button type="button" class="btn btn-dark next" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
                     <div id="addressTab" class="tab-pane fade" role="tabpanel">
@@ -174,7 +174,7 @@
     .download {
         margin-left: 5px;
     }
-    .nextButton {
+    .next {
         float: right;
         margin-left: 5px;
     }

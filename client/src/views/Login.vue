@@ -27,7 +27,7 @@
 						<a href="#" @click="openForgotCredentials()">Forgot credentials?</a>
 					</div>
 					<div class="mb-3 submit">
-						<button type="submit" class="btn btn-primary submitButton">Log in</button>
+						<button type="submit" class="btn btn-primary submit">Log in</button>
 					</div>
 					<div class="mb-3 register">Not a member? <a href="#" @click="openRegistration()">Register</a></div>
 				</form>
@@ -185,7 +185,7 @@
 	.forgotCredentials {
 		text-align: right;
 	}
-	.submitButton {
+	.submit {
 		width: 100%;
 	}
 	.submit, .register {

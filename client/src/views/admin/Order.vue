@@ -45,7 +45,7 @@
                             <button v-if="!order.isDispatched" type="button" class="btn btn-primary" @click="dispatchOrder()">Dispatch</button>
                             <button v-else type="button" class="btn btn-success">Dispatched: {{new Date(order.dispatchedAt).toLocaleString("de-DE").replace(",", "")}}</button>
                             <button type="button" class="btn btn-dark download" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
-                            <button type="button" class="btn btn-dark nextButton" @click="toggleTab('account')">Next <i class="fas fa-angle-double-right"></i></button>
+                            <button type="button" class="btn btn-dark next" @click="toggleTab('account')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
                     <div id="accountTab" class="tab-pane fade" role="tabpanel">
@@ -84,7 +84,7 @@
                         </div>
                         <div class="mb-3">
                             <button type="button" class="btn btn-dark" @click="toggleTab('order')"><i class="fas fa-angle-double-left"></i> Previous</button>
-                            <button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
+                            <button type="button" class="btn btn-dark next" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
                     <div id="addressTab" class="tab-pane fade" role="tabpanel">
@@ -120,7 +120,7 @@
                         </div>
                         <div class="mb-3">
                             <button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
-                            <button type="button" class="btn btn-dark nextButton" @click="toggleTab('delete')">Next <i class="fas fa-angle-double-right"></i></button>
+                            <button type="button" class="btn btn-dark next" @click="toggleTab('delete')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
                     <div id="deleteTab" class="tab-pane fade" role="tabpanel">
@@ -128,7 +128,7 @@
                             <button type="button" class="btn btn-danger" @click="deleteOrder()">Delete <i class="fas fa-trash"></i></button>
                         </div>
                         <div class="mb-3">
-                            <button type="button" class="btn btn-dark previousButton" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                            <button type="button" class="btn btn-dark previous" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
                         </div>
                     </div>
                 </div>
@@ -250,10 +250,10 @@
     .download {
         margin-left: 5px;
     }
-    .previousButton {
+    .previous {
         float: left;
     }
-    .nextButton {
+    .next {
         float: right;
     }
     .countryCodePrefix {

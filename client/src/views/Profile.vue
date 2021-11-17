@@ -62,8 +62,8 @@
 									<small v-if="errors.account.mobileNumberError && submittings.accountSubmitting" class="form-text errorInput">Please provide a valid mobile number!</small>
 								</div>
 								<div class="mb-3">
-									<button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
-									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+									<button type="button" class="btn btn-dark next" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
+									<button type="submit" class="btn btn-primary submit">Submit <i class="fas fa-check"></i></button>
 								</div>
 							</form>
 						</div>
@@ -102,8 +102,8 @@
 								</div>
 								<div class="mb-3">
 									<button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
-									<button type="button" class="btn btn-dark nextButton" @click="toggleTab('resetPassword')">Next <i class="fas fa-angle-double-right"></i></button>
-									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+									<button type="button" class="btn btn-dark next" @click="toggleTab('resetPassword')">Next <i class="fas fa-angle-double-right"></i></button>
+									<button type="submit" class="btn btn-primary submit">Submit <i class="fas fa-check"></i></button>
 								</div>
 							</form>
 						</div>
@@ -126,7 +126,7 @@
 								</div>
 								<div class="mb-3">
 									<button type="button" class="btn btn-dark" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
-									<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+									<button type="submit" class="btn btn-primary submit">Submit <i class="fas fa-check"></i></button>
 								</div>
 							</form>
 						</div>
@@ -371,7 +371,7 @@
 	.countryCodePrefix {
 		background-color: #fff;
 	}
-	.nextButton, .submitButton {
+	.next, .submit {
 		float: right;
 		margin-left: 5px;
 	}

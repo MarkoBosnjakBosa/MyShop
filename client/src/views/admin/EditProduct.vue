@@ -58,8 +58,8 @@
                                 <small v-if="errors.categoryError && submittings.mainSubmitting" class="form-text errorInput">Please provide a valid category!</small>
                             </div>
                             <div class="mb-3">
-                                <button type="button" class="btn btn-dark nextButton" @click="toggleTab('technicalData')">Next <i class="fas fa-angle-double-right"></i></button>
-                                <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+                                <button type="button" class="btn btn-dark next" @click="toggleTab('technicalData')">Next <i class="fas fa-angle-double-right"></i></button>
+                                <button type="submit" class="btn btn-primary submit">Submit <i class="fas fa-check"></i></button>
                             </div>
                         </form>
                     </div>
@@ -97,8 +97,8 @@
                             </table>
                             <div class="mb-3">
                                 <button type="button" class="btn btn-dark" @click="toggleTab('main')"><i class="fas fa-angle-double-left"></i> Previous</button>
-                                <button type="button" class="btn btn-dark nextButton" @click="toggleTab('images')">Next <i class="fas fa-angle-double-right"></i></button>
-                                <button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+                                <button type="button" class="btn btn-dark next" @click="toggleTab('images')">Next <i class="fas fa-angle-double-right"></i></button>
+                                <button type="submit" class="btn btn-primary submit">Submit <i class="fas fa-check"></i></button>
                             </div>
                         </form>
                         <notification :product="product" :message="message" :type="'error'" @hide="hideNotification()"></notification>
@@ -136,7 +136,7 @@
                             </div>
                             <div class="mb-3">
                                 <button type="button" class="btn btn-dark" @click="toggleTab('technicalData')"><i class="fas fa-angle-double-left"></i> Previous</button>
-                                <button type="button" class="btn btn-dark nextButton" @click="toggleTab('delete')">Next <i class="fas fa-angle-double-right"></i></button>
+                                <button type="button" class="btn btn-dark next" @click="toggleTab('delete')">Next <i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </form>
                     </div>
@@ -145,7 +145,7 @@
                             <button type="button" class="btn btn-danger" @click="deleteProduct()">Delete <i class="fas fa-trash"></i></button>
                         </div>
                         <div class="mb-3">
-                            <button type="button" class="btn btn-dark previousButton" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
+                            <button type="button" class="btn btn-dark previous" @click="toggleTab('images')"><i class="fas fa-angle-double-left"></i> Previous</button>
                         </div>
                     </div>
                 </div>
@@ -437,10 +437,10 @@
         text-align: center;
         margin-bottom: 10px;
     }
-    .previousButton {
+    .previous {
         float: left;
     }
-    .nextButton, .submitButton {
+    .next, .submit {
         float: right;
         margin-left: 5px;
     }

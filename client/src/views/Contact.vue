@@ -46,8 +46,8 @@
                             <div v-if="messageSubmitted" class="mb-3 submissionSuccessful">Your message has been successfully submitted!</div>
                             <div class="mb-3">
                                 <button type="button" class="btn btn-danger" @click="resetMessage()">Reset</button>
-                                <button type="button" class="btn btn-dark nextButton" @click="toggleTab('map')">Next <i class="fas fa-angle-double-right"></i></button>               
-                                <button type="button" class="btn btn-primary submitButton" @click="submitMessage()">Submit</button>
+                                <button type="button" class="btn btn-dark next" @click="toggleTab('map')">Next <i class="fas fa-angle-double-right"></i></button>               
+                                <button type="button" class="btn btn-primary submit" @click="submitMessage()">Submit</button>
                             </div>
                         </form>
                         <div class="mb-3">
@@ -242,7 +242,7 @@
     .countryCodePrefix {
         background-color: #fff;
     }
-    .nextButton, .submitButton {
+    .next, .submit {
         float: right;
         margin-left: 5px;
     }

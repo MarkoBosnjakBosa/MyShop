@@ -74,7 +74,7 @@
 								<small v-if="errors.account.mobileNumberError && submitting" class="form-text errorInput">Please provide a valid mobile number!</small>
 							</div>
 							<div class="mb-3">
-								<button type="button" class="btn btn-dark nextButton" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
+								<button type="button" class="btn btn-dark next" @click="toggleTab('address')">Next <i class="fas fa-angle-double-right"></i></button>
 							</div>
 						</div>
 						<div id="addressTab" class="tab-pane fade">
@@ -107,7 +107,7 @@
 							</div>
 							<div class="mb-3">
 								<button type="button" class="btn btn-dark" @click="toggleTab('account')"><i class="fas fa-angle-double-left"></i> Previous</button>
-								<button type="button" class="btn btn-dark nextButton" @click="toggleTab('check')">Next <i class="fas fa-angle-double-right"></i></button>
+								<button type="button" class="btn btn-dark next" @click="toggleTab('check')">Next <i class="fas fa-angle-double-right"></i></button>
 							</div>
 						</div>
 						<div id="checkTab" class="tab-pane fade">
@@ -121,7 +121,7 @@
 							</div>
 							<div class="mb-3">
 								<button type="button" class="btn btn-dark" @click="toggleTab('address')"><i class="fas fa-angle-double-left"></i> Previous</button>
-								<button type="submit" class="btn btn-primary submitButton">Submit <i class="fas fa-check"></i></button>
+								<button type="submit" class="btn btn-primary submit">Submit <i class="fas fa-check"></i></button>
 							</div>
 						</div>
 					</div>
@@ -339,7 +339,7 @@
 	.countryCodePrefix {
 		background-color: #fff;
 	}
-	.nextButton, .submitButton {
+	.next, .submit {
 		float: right;
 	}
 	.recaptcha {
