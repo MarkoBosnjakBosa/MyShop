@@ -28,7 +28,7 @@
                 </form>
                 <div class="contacts">
                     <div v-if="!contacts.length" class="noContacts">No contacts found!</div>
-                    <div class="card contact" v-for="contact in contacts" :key="contact._id">
+                    <div v-for="contact in contacts" :key="contact._id" class="card contact">
                         <div class="card-header">
                             {{contact.firstName}} {{contact.lastName}} <div class="date">{{new Date(contact.date).toLocaleString("de-DE").replace(",", ".")}}</div>
                         </div>

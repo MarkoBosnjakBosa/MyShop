@@ -11,12 +11,12 @@
                 </div>
                 <div class="tab-content">
                     <div id="messageTab" class="tab-pane fade active show" role="tabpanel">
-                        <form autocomplete="off" @submit.prevent="sendMessage()">
+                        <form autocomplete="off" @submit.prevent="sendMessage()" novalidate>
                             <div class="mb-3">
                                 <div class="input-group">
                                     <label for="firstName" class="input-group-text">Full name</label>
-                                    <input type="text" id="firstName" class="form-control" :class="{'errorField' : errors.firstNameError && submitting}" v-model="contact.firstName" @focus="clearFirstNameStatus()" @keypress="clearFirstNameStatus()">
-                                    <input type="text" id="lastName" class="form-control" :class="{'errorField' : errors.lastNameError && submitting}" v-model="contact.lastName" @focus="clearLastNameStatus()" @keypress="clearLastNameStatus()">
+                                    <input type="text" id="firstName" class="form-control" :class="{'errorField' : errors.firstNameError && submitting}" v-model="contact.firstName" @focus="clearFirstNameStatus()" @keypress="clearFirstNameStatus()"/>
+                                    <input type="text" id="lastName" class="form-control" :class="{'errorField' : errors.lastNameError && submitting}" v-model="contact.lastName" @focus="clearLastNameStatus()" @keypress="clearLastNameStatus()"/>
                                 </div>
                                 <small v-if="(errors.firstNameError || errors.lastNameError) && submitting" class="form-text errorInput">Please provide a valid full name!</small>
                             </div>
@@ -50,7 +50,7 @@
                                 <button type="button" class="btn btn-primary submitButton" @click="submitMessage()">Submit</button>
                             </div>
                         </form>
-                        <div>
+                        <div class="mb-3">
                             <h3>My Shop</h3>
                             <div v-if="contactSettings.street && contactSettings.houseNumber && contactSettings.zipCode && contactSettings.city && contactSettings.country" class="information">
                                 <i class="fas fa-address-book"></i> {{contactSettings.street}} {{contactSettings.houseNumber}}, {{contactSettings.zipCode}} {{contactSettings.city}}, {{contactSettings.country}}
@@ -242,12 +242,9 @@
     .countryCodePrefix {
         background-color: #fff;
     }
-    .nextButton {
+    .submitButton, .nextButton {
         float: right;
         margin-left: 5px;
-    }
-    .submitButton {
-        float: right;
     }
     .information {
         margin-bottom: 5px;

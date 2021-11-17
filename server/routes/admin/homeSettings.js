@@ -2,9 +2,9 @@ module.exports = function(app, models, fs, uploadImages, validations) {
     const HomeSettings = models.HomeSettings;
     app.get("/getHomeSettings", (request, response) => {
         var query = {};
-        HomeSettings.find(query).then(homeSettings => {
+        HomeSettings.findOne(query).then(homeSettings => {
             if(!validations.isEmpty(homeSettings)) {
-                response.status(200).json({id: homeSettings[0]._id, message: homeSettings[0].message, images: homeSettings[0].images}).end();
+                response.status(200).json({id: homeSettings._id, message: homeSettings.message, images: homeSettings.images}).end();
             } else {
                 response.status(200).json({id: "", message: "", images: []}).end();
             }

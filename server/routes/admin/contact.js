@@ -3,9 +3,9 @@ module.exports = function(app, models, emailEvents, validations) {
     const Contact = models.Contact;
     app.get("/getContactSettings", (request, response) => {
         var query = {};
-        ContactSettings.find(query).then(contactSettings => {
-            if(!validations.isEmpty(contactSettings) && contactSettings.length > 0) {
-                response.status(200).json({contactSettings: contactSettings[0]}).end();
+        ContactSettings.findOne(query).then(contactSettings => {
+            if(!validations.isEmpty(contactSettings)) {
+                response.status(200).json({contactSettings: contactSettings}).end();
             } else {
                 response.status(200).json({contactSettings: {_id: "", coordinates: {lat: 0, lng: 0}, street: "", houseNumber: 0, city: "", zipCode: 0, country: "", mobileNumber: "", email: ""}}).end();
             }
