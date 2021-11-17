@@ -371,12 +371,9 @@
 	.countryCodePrefix {
 		background-color: #fff;
 	}
-	.nextButton {
+	.nextButton, .submitButton {
 		float: right;
 		margin-left: 5px;
-	}
-	.submitButton {
-		float: right;
 	}
 	.input-group-text {
 		border-right: 0px;

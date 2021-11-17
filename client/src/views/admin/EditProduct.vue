@@ -440,12 +440,9 @@
     .previousButton {
         float: left;
     }
-    .nextButton {
+    .nextButton, .submitButton {
         float: right;
         margin-left: 5px;
-    }
-    .submitButton {
-        float: right;
     }
     tbody .fas {
         cursor: pointer;

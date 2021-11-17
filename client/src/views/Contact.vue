@@ -242,7 +242,7 @@
     .countryCodePrefix {
         background-color: #fff;
     }
-    .submitButton, .nextButton {
+    .nextButton, .submitButton {
         float: right;
         margin-left: 5px;
     }
