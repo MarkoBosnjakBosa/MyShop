@@ -12,9 +12,9 @@ module.exports = function(app, models, validations) {
         Category.findOne(query).then(category => {
             response.status(200).json({category: category}).end();
         }).catch(error => {
-			console.log(error);
-			response.status(404).end();
-		});
+            console.log(error);
+            response.status(404).end();
+        });
     });
     app.post("/createCategory", validations.validateCategoryCreation, (request, response) => {
         var title = request.body.title;
