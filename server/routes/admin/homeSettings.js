@@ -4,9 +4,9 @@ module.exports = function(app, models, fs, uploadImages, validations) {
         var query = {};
         HomeSettings.findOne(query).then(homeSettings => {
             if(!validations.isEmpty(homeSettings)) {
-                response.status(200).json({id: homeSettings._id, message: homeSettings.message, images: homeSettings.images}).end();
+                response.status(200).json({homeSettings: homeSettings}).end();
             } else {
-                response.status(200).json({id: "", message: "", images: []}).end();
+                response.status(200).json({homeSettings: {_id: "", message: "", images: []}}).end();
             }
         }).catch(error => console.log(error));
     });

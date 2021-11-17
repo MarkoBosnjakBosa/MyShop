@@ -82,7 +82,7 @@
             return {
                 tinyMceEditorApiKey: process.env.VUE_APP_TINY_MCE_EDITOR_API_KEY,
                 homeSettings: {
-                    id: "",
+                    _id: "",
                     message: "",
                     images: []
                 },
@@ -96,9 +96,7 @@
         methods: {
             getHomeSettings() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getHomeSettings").then(response => {
-                    this.homeSettings.id = response.data.id;
-                    this.homeSettings.message = response.data.message;
-                    this.homeSettings.images = response.data.images;
+                    this.homeSettings = response.data.homeSettings;
                 }).catch(error => console.log(error));
             },
             saveMessage() {
@@ -107,10 +105,10 @@
                     this.errors.messageError = true;
                     return;
                 }
-                var body = {homeSettingsId: this.homeSettings.id, message: this.homeSettings.message};
+                var body = {homeSettingsId: this.homeSettings._id, message: this.homeSettings.message};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/saveHomeSettingsMessage", body).then(response => {
                     if(response.data.saved) {
-                        this.homeSettings.id = response.data.homeSettingsId;
+                        this.homeSettings._id = response.data.homeSettingsId;
                         this.errors.messageError = false;
                         this.messageSaved = true;
                     } else {
@@ -132,13 +130,13 @@
                     }
                     if(images.length > 0) {
                         var formData = new FormData();
-                        formData.append("homeSettingsId", this.homeSettings.id);
+                        formData.append("homeSettingsId", this.homeSettings._id);
                         for(var image = 0 ; image < images.length; image++) {
                             formData.append("images", images[image]);
                         }
                         axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/saveHomeSettingsImages", formData).then(response => {
                             if(response.data.saved) {
-                                this.homeSettings.id = response.data.homeSettingsId;
+                                this.homeSettings._id = response.data.homeSettingsId;
                                 this.homeSettings.images = [];
                                 for(var image = 0; image < response.data.images.length; image++) {
                                     this.homeSettings.images = [...this.homeSettings.images, response.data.images[image]];
@@ -158,7 +156,7 @@
             deleteImage(imageId) {
                 var confirmed = confirm("Delete selected image?");
                 if(confirmed) {
-                    var body = {homeSettingsId: this.homeSettings.id, imageId: imageId};
+                    var body = {homeSettingsId: this.homeSettings._id, imageId: imageId};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteHomeSettingsImage", body).then(response => {
                         if(response.data.deleted) {
                             this.homeSettings.images = this.homeSettings.images.filter(image => image._id != imageId);
