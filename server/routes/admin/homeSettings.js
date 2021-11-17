@@ -1,4 +1,4 @@
-module.exports = function(app, models, fs, path, uploadImages, validations) {
+module.exports = function(app, models, fs, uploadImages, validations) {
     const HomeSettings = models.HomeSettings;
     app.get("/getHomeSettings", (request, response) => {
         var query = {};
@@ -31,7 +31,7 @@ module.exports = function(app, models, fs, path, uploadImages, validations) {
     app.post("/saveHomeSettingsImages",  uploadImages.array("images", 4), (request, response) => {
         var homeSettingsId = request.body.homeSettingsId;
         var images = request.files;
-        if(images && images.length < 5) {
+        if(images && images.length && images.length < 5) {
             var imagesObjects = [];
             for(var image = 0; image < images.length; image++) {
                 var imageRead = fs.readFileSync(images[image].path);

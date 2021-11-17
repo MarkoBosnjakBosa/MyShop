@@ -73,7 +73,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 		fs.unlinkSync(primaryImage.path);
 		var images = request.files["images"];
 		var imagesObjects = [];
-		if(images && images.length > 0 && images.length < 5) {
+		if(images && images.length && images.length < 5) {
 			for(var image = 0; image < images.length; image++) {
 				var imageRead = fs.readFileSync(images[image].path);
 				var encodedImage = imageRead.toString("base64");
@@ -123,7 +123,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 		} else if(type == "images") {
 			var images = request.files["images"];
 			var imagesObjects = [];
-			if(images && images.length > 0 && images.length < 5) {
+			if(images && images.length && images.length < 5) {
 				for(var image = 0; image < images.length; image++) {
 					var imageRead = fs.readFileSync(images[image].path);
 					var encodedImage = imageRead.toString("base64");

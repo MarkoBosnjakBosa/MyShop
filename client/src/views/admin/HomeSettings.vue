@@ -38,7 +38,7 @@
                     </div>
                     <div id="messageTab" class="tab-pane fade" role="tabpanel">
                         <h3>Message</h3>
-                        <form autocomplete="off" @submit.prevent="saveMessage()">
+                        <form autocomplete="off" @submit.prevent="saveMessage()" novalidate>
                             <div class="mb-3">
                                 <tinymce :api-key="tinyMceEditorApiKey" :init="{
                                     height: 500,
@@ -138,6 +138,7 @@
                         }
                         axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/saveHomeSettingsImages", formData).then(response => {
                             if(response.data.saved) {
+                                this.homeSettings.id = response.data.homeSettingsId;
                                 this.homeSettings.images = [];
                                 for(var image = 0; image < response.data.images.length; image++) {
                                     this.homeSettings.images = [...this.homeSettings.images, response.data.images[image]];
@@ -152,6 +153,7 @@
                 } else {
                     this.errors.imagesError = true;
                 }
+                document.getElementById("images").value = "";
             },
             deleteImage(imageId) {
                 var confirmed = confirm("Delete selected image?");
@@ -166,6 +168,7 @@
                         }
                     }).catch(error => console.log(error));
                 }
+                document.getElementById("images").value = "";
             },
             addDragOver() {
                 document.getElementById("dropzone").className = "onDragOver";
