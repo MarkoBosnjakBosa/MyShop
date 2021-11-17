@@ -41,18 +41,14 @@ module.exports = function(app, models, validations) {
     });
     app.delete("/deleteCategory/:categoryId", (request, response) => {
         var categoryId = request.params.categoryId;
-        if(categoryId) {
-            var query = {_id: categoryId};
-            Category.findOneAndRemove(query).then(category => {
-                if(!validations.isEmpty(category)) {
-                    response.status(200).json({deleted: true}).end();
-                } else {
-                    response.status(200).json({deleted: false}).end();
-                }
-            }).catch(error => console.log(error));
-        } else {
-            response.status(200).json({deleted: false}).end();
-        }
+        var query = {_id: categoryId};
+        Category.findOneAndRemove(query).then(category => {
+            if(!validations.isEmpty(category)) {
+                response.status(200).json({deleted: true}).end();
+            } else {
+                response.status(200).json({deleted: false}).end();
+            }
+        }).catch(error => console.log(error));
     });
 
     function getCategoryScheme(Category, title, icon) {

@@ -4,7 +4,7 @@
             <sidebar></sidebar>
             <div id="pageStyle">
                 <navigation></navigation>
-                <form autocomplete="off" @submit.prevent="createCategory()">
+                <form autocomplete="off" @submit.prevent="createCategory()" novalidate>
                     <h1>Categories</h1>
                     <div class="row">
                         <div class="mb-3 col-6">
@@ -25,7 +25,7 @@
                     <div v-if="categoryCreated" class="mb-3 creationSuccessful">Category has been successfully created!</div>
                 </form>
                 <table class="table">
-                    <thead class="thead-light">
+                    <thead>
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
@@ -159,7 +159,7 @@
                 }
             },
             clearTitleStatus() { this.errors.titleError = false, this.categoryCreated = false; },
-            clearIconStatus() { this.errors.iconError = false, this.categoryCreated = false; },
+            clearIconStatus() { this.errors.iconError = false, this.categoryCreated = false; }
         },
         computed: {
             invalidTitle() { return validation.methods.invalidTitle(this.category.title); },
