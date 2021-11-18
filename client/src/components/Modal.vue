@@ -1,6 +1,6 @@
 <template>
     <div id="modal" class="modal">
-        <span class="closeButton" @click="closeModal()">&times;</span>
+        <span class="close" @click="closeModal()">&times;</span>
         <img id="modalImage" class="modalImage">
     </div>
 </template>
@@ -51,7 +51,7 @@
         from {transform:scale(0)} 
         to {transform:scale(1)}
     }
-    .closeButton {
+    .close {
         position: absolute;
         top: 15px;
         right: 35px;

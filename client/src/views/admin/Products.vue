@@ -201,6 +201,9 @@
     .checked {
         color: #ffa500;
     }
+    .fas.fa-star {
+        cursor: auto;
+    }
     tbody .fas {
         margin-right: 5px;
         cursor: pointer;

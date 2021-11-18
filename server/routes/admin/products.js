@@ -37,9 +37,10 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			default:
 				sort = {};
 		}
+		var collation = {locale: "de", numericOrdering: true};
 		var categoryQuery = category ? {category: category} : {};
 		var query = search ? {$and: [categoryQuery, {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]}]} : categoryQuery;
-		var productsQuery = Product.find(query).sort(sort).skip(skip).limit(limit);
+		var productsQuery = Product.find(query).sort(sort).collation(collation).skip(skip).limit(limit);
 		var totalQuery = Product.find(query).countDocuments();
 		var queries = [productsQuery, totalQuery];
 		Promise.all(queries).then(results => {
@@ -307,9 +308,10 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			default:
 				sort = {};
 		}
+		var collation = {locale: "de", numericOrdering: true};
 		var categoryQuery = category ? {category: category} : {};
 		var query = search ? {$and: [categoryQuery, {$or: [{title: {$regex: search, $options: "i" }}, {description: {$regex: search, $options: "i"}}]}]} : categoryQuery;
-		Product.find(query).sort(sort).skip(skip).limit(limit).then(products => {
+		Product.find(query).sort(sort).collation(collation).skip(skip).limit(limit).then(products => {
 			if(!validations.isEmpty(products)) {
 				var fields = ["_id", "title", "price", "quantity", "category", "description"];
 				var csv;
