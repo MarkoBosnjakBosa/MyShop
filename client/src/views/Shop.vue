@@ -40,7 +40,7 @@
                 </form>
                 <div class="row mb-3 products">
                     <div v-if="!products.length" class="noProducts">
-                        There are no such products!
+                        No products found!
                     </div>
                     <div v-for="product in products" :key="product._id" class="col-3">
                         <div class="card">
