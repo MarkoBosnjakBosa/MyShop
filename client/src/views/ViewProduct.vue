@@ -83,7 +83,7 @@
                                     <i id="rating_4" class="fas fa-star" @click="rateProduct(4, 'rate')"></i>
                                     <i id="rating_5" class="fas fa-star" @click="rateProduct(5, 'rate')"></i>
                                 </div>
-                                <button type="button" class="btn btn-primary reviewButton" @click="writeReview()">Write a review</button>
+                                <button type="button" class="btn btn-primary review" @click="writeReview()">Write a review</button>
                             </div>
                             <div id="reviews" class="accordion">
                                 <div v-for="(review, index) in reviews" :key="review._id" class="accordion-item" style="clear: both">
@@ -96,20 +96,18 @@
                                         <div v-if="editing == review._id" class="accordion-body">
                                             <div class="row">
                                                 <div class="editMessage">
-                                                    <form autocomplete="off" novalidate>
-                                                        <textarea class="form-control" rows="5" v-model="reviews[index].review"></textarea>
-                                                    </form>
+                                                    <textarea class="form-control" rows="5" v-model="reviews[index].review"></textarea>
                                                 </div>
                                             </div>
-                                            <div class="action">
-                                                <i class="fas fa-check actionButton editReview" @click="editReview(review)"></i>
-                                                <i class="fas fa-times actionButton disableEditing" @click="disableEditing(review)"></i>
+                                            <div class="actions">
+                                                <i class="fas fa-check action editReview" @click="editReview(review)"></i>
+                                                <i class="fas fa-times action disableEditing" @click="disableEditing(review)"></i>
                                             </div>
                                         </div>
                                         <div v-else class="accordion-body">{{review.review}}
                                             <div v-if="review.username == username && editing != review._id" class="action">
-                                                <i class="fas fa-edit actionButton" @click="enableEditing(review)"></i>
-                                                <i class="fas fa-trash actionButton" @click="deleteReview(review._id)"></i>
+                                                <i class="fas fa-edit action" @click="enableEditing(review)"></i>
+                                                <i class="fas fa-trash action" @click="deleteReview(review._id)"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -393,10 +391,13 @@
     .fas.fa-star {
         cursor: pointer;
     }
+    .valueColumn .fas.fa-star {
+        cursor: auto;
+    }
     .checked {
         color: #ffa500;
     }
-    .reviewButton {
+    .review {
         float: right;
         margin-top: 10px;
         margin-bottom: 10px;
@@ -411,11 +412,11 @@
         clear: both;
         margin-top: 10px;
     }
-    .action {
+    .actions {
         text-align: right;
         margin-top: 5px;
     }
-    .actionButton {
+    .action {
         margin-left: 5px;
         cursor: pointer;
     }
