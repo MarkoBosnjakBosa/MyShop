@@ -61,7 +61,7 @@
                     <button type="button" class="btn btn-dark page">{{page}}</button>
                     <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
                 </div>
-                <chat v-if="userData.isLoggedIn"></chat>
+                <chat v-if="userData.isLoggedIn && !userData.isAdmin"></chat>
                 <modal></modal>
             </div>
         </div>
