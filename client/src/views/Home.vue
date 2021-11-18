@@ -12,12 +12,12 @@
                         </div>
                         <div v-if="homeSettings.images.length" class="carousel-inner">
                             <div v-for="(image, index) in homeSettings.images" :key="image._id" class="carousel-item" :class="{'active' : index == 0}">
-                                <img :src="renderImage(image)" :alt="image.name" class="d-block w-100">
+                                <img :src="renderImage(image)" :alt="image.name" class="d-block w-100"/>
                             </div>
                         </div>
                         <div v-else class="carousel-inner">
                             <div class="carousel-item active">
-                                <img :src="require('../assets/images/OnlineShopImage.jpg')" alt="Online shop image" class="d-block w-100">
+                                <img :src="require('../assets/images/OnlineShopImage.jpg')" alt="Online shop image" class="d-block w-100"/>
                             </div>
                         </div>
                         <button type="button" class="carousel-control-prev" data-bs-target="#imagesCarousel" data-bs-slide="prev">

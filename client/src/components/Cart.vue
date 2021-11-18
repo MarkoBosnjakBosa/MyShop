@@ -4,7 +4,7 @@
         <ul class="dropdown-menu dropdown-menu-end scrollable" aria-labelledby="cartProducts">
             <li v-for="(product, index) in products" :key="product._id" class="row product dropdownDivider" :class="{'lowerProduct' : index > 0}">
                 <div class="col-4">
-                    <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="rounded img-fluid" @click="openProduct(product._id)">
+                    <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="rounded img-fluid" @click="openProduct(product._id)"/>
                 </div>
                 <div class="col-7">
                     <h3 data-toggle="tooltip" :title="product.title" @click="openProduct(product._id)">{{product.title}}</h3>

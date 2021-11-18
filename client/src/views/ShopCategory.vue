@@ -38,7 +38,7 @@
                     </div>
                     <div v-for="product in products" :key="product._id" class="col-3">
                         <div class="card">
-                            <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)">
+                            <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)"/>
                             <div class="card-body">
                                 <h5 class="card-title" data-toggle="tooltip" :title="product.title">{{product.title}}</h5>
                                 <p class="card-text">Price: {{formatNumber(product.price)}}<br>

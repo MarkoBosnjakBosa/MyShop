@@ -67,7 +67,7 @@
                                 <i class="fas fa-star" :class="{'checked' : getRating(4, product.rating.averageRating)}"></i>
                                 <i class="fas fa-star" :class="{'checked' : getRating(5, product.rating.averageRating)}"></i>
                             </td>
-                            <td><img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image" @click="openModal($event)"></td>
+                            <td><img :src="renderImage(product.primaryImage)" :id="product.primaryImage._id" :alt="product.title" class="rounded img-fluid image" @click="openModal($event)"/></td>
                             <td class="padded">
                                 <i class="fas fa-external-link-square-alt" @click="openEditProduct(product._id)"></i>
                                 <i class="fas fa-trash" @click="deleteProduct(product._id, product.title)"></i>

@@ -12,10 +12,10 @@
                     </div>
                     <div class="carousel-inner">
                         <div class="carousel-item active">
-                            <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="d-block w-100">
+                            <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="d-block w-100"/>
                         </div>
                         <div v-for="image in product.images" :key="image._id" class="carousel-item">
-                            <img :src="renderImage(image)" :alt="image.name" class="d-block w-100">
+                            <img :src="renderImage(image)" :alt="image.name" class="d-block w-100"/>
                         </div>
                     </div>
                     <button type="button" class="carousel-control-prev" data-bs-target="#imagesCarousel" data-bs-slide="prev">
