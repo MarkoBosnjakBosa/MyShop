@@ -69,7 +69,7 @@
                 sidebar.classList.toggle("toggled"); 
             },
             formatNumber(number) {
-                return number.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
+                return Number(number).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
             },
             renderImage(image) {
                 if(image && !(image instanceof File)) return "data:" + image.contentType + ";base64," + (new Buffer.from(image.image)).toString("base64");

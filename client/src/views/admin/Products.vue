@@ -58,7 +58,7 @@
                         <tr v-for="(product, index) in products" :key="product._id">
                             <th class="padded">{{++index}}</th>
                             <td class="padded">{{product.title}}</td>
-                            <td class="padded">{{product.price}}</td>
+                            <td class="padded">{{formatNumber(product.price)}}</td>
                             <td class="padded">{{product.quantity}}</td>
                             <td class="padded">
                                 <i class="fas fa-star" :class="{'checked' : getRating(1, product.rating.averageRating)}"></i>
@@ -160,6 +160,9 @@
                     this.page = page;
                     this.getProducts();
                 }
+            },
+            formatNumber(number) {
+                return helper.methods.formatNumber(number);
             },
             renderImage(image) {
                 return helper.methods.renderImage(image);
