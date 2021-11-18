@@ -44,7 +44,7 @@
                             <div class="checkout">
                                 <div class="checkoutInfo">
                                     <h3>Total: {{totalCost}}</h3>
-                                    <button type="button" class="btn btn-primary btn-lg checkoutButton" @click="openCheckout()">Checkout</button>
+                                    <button type="button" class="btn btn-primary btn-lg" @click="openCheckout()">Checkout</button>
                                 </div>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                 }
             },
             checkTotal() {
-                if(Number(this.totalCost.replaceAll(",", "").substring(0, this.totalCost.length - 2)) > 0) {
+                if(Number(this.totalCost.substring(0, this.totalCost.length - 2).replaceAll(",", "")) > 0) {
                     return true;
                 } else {
                     return false;
@@ -207,9 +207,6 @@
         display: inline-block;
         vertical-align: middle;
         line-height: normal;
-    }
-    .checkoutButton {
-        width: 100%;
     }
     .removeAll {
         width: 100%;
