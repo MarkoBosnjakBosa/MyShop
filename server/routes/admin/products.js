@@ -150,11 +150,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 					if((product.images.length + images.length) < 5) {
 						var update = {$push: {images: imagesObjects}};
 						Product.findOneAndUpdate(query, update, options).then(savedProduct => {
-							if(!validations.isEmpty(savedProduct)) {
-								response.status(200).json({edited: true, images: savedProduct.images}).end();
-							} else {
-								response.status(200).json({edited: false}).end(); 
-							}
+							response.status(200).json({edited: true, images: savedProduct.images}).end();
 						}).catch(error => console.log(error));
 					} else {
 						response.status(200).json({edited: false}).end();
