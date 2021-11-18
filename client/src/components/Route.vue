@@ -15,8 +15,8 @@
                 router.push("/registration");
             },
             openForgotCredentials() {
-				router.push("/forgot/credentials");
-			},
+                router.push("/forgot/credentials");
+            },
             openProfile() {
                 router.push("/profile");
             },
