@@ -34,9 +34,6 @@
     export default {
         name: "cart",
         methods: {
-            addToShoppingCart(product) {
-                this.$store.dispatch("addToShoppingCart", product);
-            },
             removeFromShoppingCart(productId) {
                 this.$store.dispatch("removeFromShoppingCart", productId);
             },
@@ -145,7 +142,7 @@
         margin-top: 10px;
     }
     .noProducts {
-        font-weight: bold;
         text-align: center;
+        font-weight: bold;
     }
 </style>
