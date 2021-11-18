@@ -39,6 +39,9 @@
                     </div>
                 </form>
                 <div class="row mb-3 products">
+                    <div v-if="!products.length" class="noProducts">
+                        There are no such products!
+                    </div>
                     <div v-for="product in products" :key="product._id" class="col-3">
                         <div class="card">
                             <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)">
@@ -165,6 +168,10 @@
     form, .products {
         margin: auto;
         max-width: 1000px;
+    }
+    .noProducts {
+        font-weight: bold;
+        text-align: center;
     }
     .card {
         margin-bottom: 10px;
