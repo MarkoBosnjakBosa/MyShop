@@ -13,7 +13,7 @@
                 </div>
                 <div class="tab-content">
                     <div id="orderTab" class="tab-pane fade active show" role="tabpanel">
-                        <table class="table table-secondary">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -44,7 +44,7 @@
                         <div class="mb-3">
                             <button v-if="!order.isDispatched" type="button" class="btn btn-primary" @click="dispatchOrder()">Dispatch</button>
                             <button v-else type="button" class="btn btn-success">Dispatched: {{new Date(order.dispatchedAt).toLocaleString("de-DE").replace(",", "")}}</button>
-                            <button type="button" class="btn btn-dark download" @click="downloadInvoice()">Download <i class="fas fa-file-download"></i></button>
+                            <button type="button" class="btn btn-dark download" @click="downloadInvoice()">Download <i id="download" class="fas fa-file-download"></i></button>
                             <button type="button" class="btn btn-dark next" @click="toggleTab('account')">Next <i class="fas fa-angle-double-right"></i></button>
                         </div>
                     </div>
@@ -52,25 +52,25 @@
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">Username:</label>
                             <div class="col-9">
-                                <input type="text" id="username" class="form-control" v-model="order.user.account.username" disabled>
+                                <input type="text" id="username" class="form-control" v-model="order.user.account.username" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">Email:</label>
                             <div class="col-9">
-                                <input type="text" id="email" class="form-control" v-model="order.user.account.email" disabled>
+                                <input type="text" id="email" class="form-control" v-model="order.user.account.email" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">First name:</label>
                             <div class="col-9">
-                                <input type="text" id="firstName" class="form-control" v-model="order.user.account.firstName" disabled>
+                                <input type="text" id="firstName" class="form-control" v-model="order.user.account.firstName" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">Last name:</label>
                             <div class="col-9">
-                                <input type="text" id="lastName" class="form-control" v-model="order.user.account.lastName" disabled>
+                                <input type="text" id="lastName" class="form-control" v-model="order.user.account.lastName" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -78,7 +78,7 @@
                             <div class="col-9">
                                 <div class="input-group">
                                     <div class="input-group-text countryCodePrefix">+</div>
-                                    <input type="text" id="mobileNumber" class="form-control" v-model="order.user.account.mobileNumber" disabled>
+                                    <input type="text" id="mobileNumber" class="form-control" v-model="order.user.account.mobileNumber" disabled/>
                                 </div>
                             </div>
                         </div>
@@ -91,31 +91,31 @@
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">Street:</label>
                             <div class="col-9">
-                                <input type="text" id="street" class="form-control" v-model="order.user.address.street" disabled>
+                                <input type="text" id="street" class="form-control" v-model="order.user.address.street" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">House number:</label>
                             <div class="col-9">
-                                <input type="text" id="houseNumber" class="form-control" v-model="order.user.address.houseNumber" disabled>
+                                <input type="text" id="houseNumber" class="form-control" v-model="order.user.address.houseNumber" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">City:</label>
                             <div class="col-9">
-                                <input type="text" id="city" class="form-control" v-model="order.user.address.city" disabled>
+                                <input type="text" id="city" class="form-control" v-model="order.user.address.city" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">ZIP code:</label>
                             <div class="col-9">
-                                <input type="text" id="zipCode" class="form-control" v-model="order.user.address.zipCode" disabled>
+                                <input type="text" id="zipCode" class="form-control" v-model="order.user.address.zipCode" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">Country:</label>
                             <div class="col-9">
-                                <input type="text" id="country" class="form-control" v-model="order.user.address.country" disabled>
+                                <input type="text" id="country" class="form-control" v-model="order.user.address.country" disabled/>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -155,6 +155,7 @@
             return {
                 orderId: "",
                 order: {
+                    _id: "",
                     orderNumber: "",
                     userId: "",
                     paymentType: "",
@@ -217,8 +218,12 @@
                 helper.methods.toggleTab(tab);
             },
             downloadInvoice() {
+                document.getElementById("download").classList.remove("fa-file-download");
+                document.getElementById("download").classList.add("fa-spinner", "fa-spin");
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + this.orderId).then(response => {
-                     if(response.data.downloaded) {
+                    if(response.data.downloaded) {
+                        document.getElementById("download").classList.remove("fa-spinner", "fa-spin");
+                        document.getElementById("download").classList.add("fa-file-download");
                         route.methods.downloadFile(response.data.fileName);
                     }
                 }).catch(error => console.log(error));
