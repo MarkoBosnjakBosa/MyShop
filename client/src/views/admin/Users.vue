@@ -48,7 +48,7 @@
                             <td>{{user.account.firstName + " " + user.account.lastName}}</td>
                             <td>{{user.account.username}}</td>
                             <td>{{user.account.email}}</td>
-                            <td>{{user.account.mobileNumber}}</td>
+                            <td>+{{user.account.mobileNumber}}</td>
                             <td>
                                 <i class="fas fa-external-link-square-alt" @click="openViewProfile(user._id)"></i>
                                 <i class="fas fa-trash" @click="deleteUser(user._id, user.account.username)"></i>
