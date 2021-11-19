@@ -74,7 +74,7 @@
                             </td>
                             <td>
                                 <i class="fas fa-external-link-square-alt icon" @click="openOrder(order._id)"></i>
-                                <i class="fas fa-file-download icon" @click="downloadInvoice(order._id)"></i>
+                                <i :id="'download_' + order._id" class="fas fa-file-download icon" @click="downloadInvoice(order._id)"></i>
                                 <i v-if="!order.isDispatched" class="fas fa-truck icon" @click="dispatchOrder(order._id, order.orderNumber)"></i>
                                 <i class="fas fa-trash icon" @click="deleteOrder(order._id, order.orderNumber)"></i>
                             </td>
@@ -151,6 +151,7 @@
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteOrder/" + orderId).then(response => {
                         if(response.data.deleted) {
                             this.orders = this.orders.filter(order => order._id != orderId);
+                            this.total = this.total - 1; 
                         }
                     }).catch(error => console.log(error));
                 }
@@ -171,8 +172,12 @@
                 }).catch(error => console.log(error));
             },
             downloadInvoice(orderId) {
+                document.getElementById("download_" + orderId).classList.remove("fa-file-download");
+                document.getElementById("download_" + orderId).classList.add("fa-spinner", "fa-spin");
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + orderId).then(response => {
-                     if(response.data.downloaded) {
+                    if(response.data.downloaded) {
+                        document.getElementById("download_" + orderId).classList.remove("fa-spinner", "fa-spin");
+                        document.getElementById("download_" + orderId).classList.add("fa-file-download");
                         route.methods.downloadFile(response.data.fileName);
                     }
                 }).catch(error => console.log(error));
