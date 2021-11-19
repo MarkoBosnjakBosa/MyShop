@@ -14,31 +14,31 @@
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">Street:</label>
                             <div class="col-9">
-                                <input type="text" id="street" class="form-control" v-model="address.street" disabled>
+                                <input type="text" id="street" class="form-control" v-model="address.street" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">House number:</label>
                             <div class="col-9">
-                                <input type="text" id="houseNumber" class="form-control" v-model="address.houseNumber" disabled>
+                                <input type="text" id="houseNumber" class="form-control" v-model="address.houseNumber" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">City:</label>
                             <div class="col-9">
-                                <input type="text" id="city" class="form-control" v-model="address.city" disabled>
+                                <input type="text" id="city" class="form-control" v-model="address.city" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">ZIP code:</label>
                             <div class="col-9">
-                                <input type="text" id="zipCode" class="form-control" v-model="address.zipCode" disabled>
+                                <input type="text" id="zipCode" class="form-control" v-model="address.zipCode" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">Country:</label>
                             <div class="col-9">
-                                <input type="text" id="country" class="form-control" v-model="address.country" disabled>
+                                <input type="text" id="country" class="form-control" v-model="address.country" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -46,14 +46,14 @@
                             <div class="col-9">
                                 <div class="input-group">
                                     <div class="input-group-text countryCodePrefix">+</div>
-                                    <input type="text" id="mobileNumber" class="form-control" v-model="address.mobileNumber" disabled>
+                                    <input type="text" id="mobileNumber" class="form-control" v-model="address.mobileNumber" disabled/>
                                 </div>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label">Email:</label>
                             <div class="col-9">
-                                <input type="text" id="email" class="form-control" v-model="address.email" disabled>
+                                <input type="text" id="email" class="form-control" v-model="address.email" disabled/>
                             </div>
                         </div>
                         <div class="mb-3 alert alert-dark" role="alert">
@@ -62,7 +62,7 @@
                         </div>
                         <div class="mb-3">
                             <button type="button" class="btn btn-secondary" @click="openProfile()">Update <i class="fas fa-pencil-alt"></i> </button>
-                            <button type="button" class="btn btn-secondary paymentButton" @click="toggleTab('payment')">Payment <i class="fas fa-cart-arrow-down"></i></button>
+                            <button type="button" class="btn btn-secondary payment" @click="toggleTab('payment')">Payment <i class="fas fa-cart-arrow-down"></i></button>
                         </div>
                     </div>
                     <div id="paymentTab" class="tab-pane fade" role="tabpanel">
@@ -118,6 +118,15 @@
             }
         },
         methods: {
+            checkShoppingCart() {
+                if(!this.products.length) {
+                    this.openCheckoutCancel();
+                } else {
+                    this.getUser();
+                    this.getTotalCost();
+                    this.includeStripeAndPayPal();
+                }
+            },
             getUser() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUser/" + this.username).then(response => {
                     this.address = response.data.address;
@@ -228,9 +237,7 @@
         },
         created() {
             checkLogin.methods.isLoggedIn();
-            this.getUser();
-            this.getTotalCost();
-            this.includeStripeAndPayPal();
+            this.checkShoppingCart();
         }
     }
 </script>
@@ -259,7 +266,7 @@
     h3 {
         margin-bottom: 10px;
     }
-    .paymentButton {
+    .payment {
         float: right;
     }
 </style>

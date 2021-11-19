@@ -8,7 +8,7 @@
                     Your payment has been successfully processed.<br>
                     Thank you for buying at MyShop.
                 </div>
-                <table v-if="paymentType" class="table table-secondary">
+                <table v-if="paymentType" class="table">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -31,7 +31,7 @@
                         <tr>
                             <th colspan="4">Total</th>
                             <th>{{getTotalCost()}}</th>
-                            <td><i class="fas fa-file-download" @click="downloadInvoice()"></i></td>
+                            <td><i id="download" class="fas fa-file-download" @click="downloadInvoice()"></i></td>
                         </tr>
                     </tbody>
                 </table>
@@ -99,8 +99,12 @@
                 return helper.methods.formatNumber(number);
             },
             downloadInvoice() {
+                document.getElementById("download").classList.remove("fa-file-download");
+                document.getElementById("download").classList.add("fa-spinner", "fa-spin");
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + this.orderId).then(response => {
                      if(response.data.downloaded) {
+                        document.getElementById("download").classList.remove("fa-spinner", "fa-spin");
+                        document.getElementById("download").classList.add("fa-file-download");
                         route.methods.downloadFile(response.data.fileName);
                     }
                 }).catch(error => console.log(error));

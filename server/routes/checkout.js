@@ -20,7 +20,7 @@ module.exports = function(app, models, stripe, ejs, pdf, fs, path, emailEvents, 
 			user.account.password = null;
 			user.account.isAdmin = null;
 			var orderQuery = {};
-			var orderSort = {"orderNumber": -1};
+			var orderSort = {orderNumber: -1};
 			Order.findOne(orderQuery).sort(orderSort).then(order => {
 				var orderNumber = 1;
 				if(!validations.isEmpty(order)) {
