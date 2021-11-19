@@ -13,8 +13,8 @@
                         <h2 class="accordion-header" :id="'heading_' + order._id">
                             <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="'#collapse_' + order._id" aria-expanded="false">
                                 Order #<b>{{order.orderNumber}}</b>
-                                <span v-if="order.isDispatched" class="badge bg-success text-light dispatchButton">Dispatched: {{new Date(order.dispatchedAt).toLocaleString("en-US")}}</span>
-                                <span v-else class="badge bg-danger text-light dispatchButton">Not dispatched</span>
+                                <span v-if="order.isDispatched" class="badge bg-success text-light dispatch">Dispatched: {{new Date(order.dispatchedAt).toLocaleString("en-US")}}</span>
+                                <span v-else class="badge bg-danger text-light dispatch">Not dispatched</span>
                             </button>
                         </h2>
                         <div :id="'order_' + order._id" class="accordion">
@@ -26,12 +26,12 @@
                                     </div>
                                     <div class="col-4">
                                         <i class="fas fa-external-link-square-alt icon" @click="openViewOrder(order._id)"></i>
-                                        <i class="fas fa-file-download icon" @click="downloadInvoice(order._id)"></i><br>
+                                        <i :id="'download_' + order._id" class="fas fa-file-download icon" @click="downloadInvoice(order._id)"></i><br>
                                         <span v-if="order.isDispatched" class="badge bg-success text-light dispatchAccordion">Dispatched: {{new Date(order.dispatchedAt).toLocaleString("en-US")}}</span>
                                         <span v-else class="badge bg-danger text-light dispatchAccordion">Not dispatched</span>
                                     </div>
                                 </div>
-                                <table class="table table-secondary">
+                                <table class="table">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -109,8 +109,12 @@
                 return helper.methods.formatNumber(number);
             },
             downloadInvoice(orderId) {
+                document.getElementById("download_" + orderId).classList.remove("fa-file-download");
+                document.getElementById("download_" + orderId).classList.add("fa-spinner", "fa-spin");
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + orderId).then(response => {
                      if(response.data.downloaded) {
+                        document.getElementById("download_" + orderId).classList.remove("fa-spinner", "fa-spin");
+                        document.getElementById("download_" + orderId).classList.add("fa-file-download");
                         route.methods.downloadFile(response.data.fileName);
                     }
                 }).catch(error => console.log(error));
@@ -141,7 +145,7 @@
         max-width: 800px;
         margin-top: 20px;
     }
-    .dispatchButton {
+    .dispatch {
         margin-left: 10px;
     }
     .dispatchAccordion {
