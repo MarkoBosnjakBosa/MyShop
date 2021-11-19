@@ -20,8 +20,6 @@
                                 <option value="usernameDesc">Username &#129047;</option>
                                 <option value="emailAsc">Email &#129045;</option>
                                 <option value="emailDesc">Email &#129047;</option>
-                                <option value="mobileNumberAsc">Mobile number &#129045;</option>
-                                <option value="mobileNumberDesc">Mobile number &#129047;</option>
                             </select>
                         </div>
                         <div class="btn-group mb-3 col-2">

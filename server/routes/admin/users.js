@@ -21,12 +21,6 @@ module.exports = function(app, models, validations) {
 			case "emailDesc":
 				sort = {"account.email": -1};
 				break;
-			case "mobileNumberAsc":
-				sort = {"account.mobileNumber": 1};
-				break;
-			case "mobileNumberDesch":
-				sort = {"account.mobileNumber": -1};
-				break;
 			default:
 				sort = {};
 		}
@@ -55,20 +49,16 @@ module.exports = function(app, models, validations) {
 	});
 	app.delete("/deleteUser/:userId", (request, response) => {
 		var userId = request.params.userId;
-		if(userId) {
-			var userQuery = {_id: userId};
-			User.findOneAndRemove(userQuery).then(user => {
-				if(!validations.isEmpty(user)) {
-					var messagesQuery = {chatId: user.account.username};
-					Message.deleteMany(messagesQuery).then(messages => {
-						response.status(200).json({deleted: true}).end();
-					}).catch(error => console.log(error));
-				} else {
-					response.status(200).json({deleted: false}).end(); 
-				}
-			}).catch(error => console.log(error));
-		} else {
-			response.status(200).json({deleted: false}).end();
-		}
+		var userQuery = {_id: userId};
+		User.findOneAndRemove(userQuery).then(user => {
+			if(!validations.isEmpty(user)) {
+				var messagesQuery = {chatId: user.account.username};
+				Message.deleteMany(messagesQuery).then(messages => {
+					response.status(200).json({deleted: true}).end();
+				}).catch(error => console.log(error));
+			} else {
+				response.status(200).json({deleted: false}).end(); 
+			}
+		}).catch(error => console.log(error));
 	});
 }
