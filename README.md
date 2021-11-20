@@ -12,7 +12,7 @@ Export of PDF and CSV files
 File upload (single and multiple) by using multer (through middleware)  
 Integration with Stripe  
 Integration with PayPal  
-Integration with Google Maps (with the use of Geolocation)  
+Integration with Google Maps (coordinates by using Geolocation)  
 Integration with TinyMCE  
 Frontend customizations by using Vue.js, Bootstrap and Font Awesome icons  
 Web pages routing by using Vue Router  
