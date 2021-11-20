@@ -1,3 +1,25 @@
-MyShop - application for online shopping
+MyShop - application for online shopping (Node.js, Vue.js)
 
-Technologies: Node.js (Express.js, Socket.io, Mongoose, JWT, Bcrypt.js, Cron, Multer, Nodemailer, Moment.js), Vue.js (VueRouter, Vuex, Axios), MongoDB, JavaScript, HTML, CSS, Bootstrap
+Features:  
+REST API by using express.js  
+Login system by using JsonWebToken  
+Every REST call has an authorization - Bearer token  
+Two-factor authentication - sending PIN codes via SMS messages by using the Vonage API  
+Chat by using Socket.IO  
+Cron job for creating a backup of the database every day at midnight  
+Password encryption by using bcryprjs  
+Export of PDF and CSV files  
+File upload (single and multiple) by using multer (through middleware)  
+Integration with Stripe  
+Integration with PayPal  
+Integration with Google Maps  
+Integration with TinyMCE  
+Frontend customizations by using Vue.js, Bootstrap and Font Awesome icons  
+Web pages routing by using Vue Router  
+Shopping cart and authentication by using sessions with Vuex  
+Frontend custom form validations  
+Backend custom form validations (through middleware)  
+Form validation by using reCaptcha v2 and reCaptcha v3  
+Sending emails by using node mailer  
+Using Node.js events for sending emails and SMS messages  
+MongoDB and mongoose (queries, limits, sorts, pagings)
