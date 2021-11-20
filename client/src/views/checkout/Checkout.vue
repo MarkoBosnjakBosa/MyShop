@@ -61,8 +61,8 @@
                             If everything fits, you can proceed with your payment.
                         </div>
                         <div class="mb-3">
-                            <button type="button" class="btn btn-secondary" @click="openProfile()">Update <i class="fas fa-pencil-alt"></i> </button>
-                            <button type="button" class="btn btn-secondary payment" @click="toggleTab('payment')">Payment <i class="fas fa-cart-arrow-down"></i></button>
+                            <button type="button" class="btn btn-dark" @click="openProfile()">Update <i class="fas fa-pencil-alt"></i> </button>
+                            <button type="button" class="btn btn-dark payment" @click="toggleTab('payment')">Payment <i class="fas fa-cart-arrow-down"></i></button>
                         </div>
                     </div>
                     <div id="paymentTab" class="tab-pane fade" role="tabpanel">
@@ -77,7 +77,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <button type="button" class="btn btn-secondary" @click="toggleTab('address')">Address <i class="fas fa-address-book"></i></button>
+                            <button type="button" class="btn btn-dark" @click="toggleTab('address')">Address <i class="fas fa-address-book"></i></button>
                         </div>
                     </div>
                 </div>
@@ -119,12 +119,12 @@
         },
         methods: {
             checkShoppingCart() {
-                if(!this.products.length) {
-                    this.openCheckoutCancel();
-                } else {
+                if(this.products.length) {
                     this.getUser();
                     this.getTotalCost();
                     this.includeStripeAndPayPal();
+                } else {
+                    this.openCheckoutCancel();
                 }
             },
             getUser() {
