@@ -62,7 +62,8 @@ module.exports = function(app, io, models, validations) {
             if(validations.validateMessage(message.message)) {
                 var query = {_id: message._id};
                 var update = {message: message.message};
-                Message.findOneAndUpdate(query, update, {new: true}).then(foundMessage => {
+                var options = {new: true};
+                Message.findOneAndUpdate(query, update, options).then(foundMessage => {
                     if(!validations.isEmpty(foundMessage)) {
                         var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
                         if(foundIndex > -1) {

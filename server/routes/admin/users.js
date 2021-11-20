@@ -53,7 +53,7 @@ module.exports = function(app, models, validations) {
 		User.findOneAndRemove(userQuery).then(user => {
 			if(!validations.isEmpty(user)) {
 				var messagesQuery = {chatId: user.account.username};
-				Message.deleteMany(messagesQuery).then(messages => {
+				Message.delete(messagesQuery).then(messages => {
 					response.status(200).json({deleted: true}).end();
 				}).catch(error => console.log(error));
 			} else {
