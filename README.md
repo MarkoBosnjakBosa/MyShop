@@ -12,7 +12,7 @@ Export of PDF and CSV files
 File upload (single and multiple) by using multer (through middleware)  
 Integration with Stripe  
 Integration with PayPal  
-Integration with Google Maps  
+Integration with Google Maps (with the use of Geolocation)  
 Integration with TinyMCE  
 Frontend customizations by using Vue.js, Bootstrap and Font Awesome icons  
 Web pages routing by using Vue Router  
@@ -21,5 +21,5 @@ Frontend custom form validations
 Backend custom form validations (through middleware)  
 Form validation by using reCaptcha v2 and reCaptcha v3  
 Sending emails by using node mailer  
-Using Node.js events for sending emails and SMS messages  
+Using Node.js events for triggering the sending of emails and SMS messages  
 MongoDB and mongoose (queries, limits, sorts, pagings)
