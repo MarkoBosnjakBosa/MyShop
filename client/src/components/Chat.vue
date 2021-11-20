@@ -10,9 +10,9 @@
                         </li>
                     </ul>
                     <h3 class="findUser">Find user</h3>
-                    <form autocomplete="off" @submit.prevent="findUser()">
+                    <form autocomplete="off" @submit.prevent="findUser()" novalidate>
                         <div class="input-group">
-                            <input type="text" id="findUser" class="form-control" :class="{'errorField' : errors.foundUserError}" placeholder="Find user..." v-model="foundUser" @focus="clearFoundUserStatus()" @keypress="clearFoundUserStatus()">
+                            <input type="text" id="findUser" class="form-control" :class="{'errorField' : errors.foundUserError}" placeholder="Find user..." v-model="foundUser" @focus="clearFoundUserStatus()" @keypress="clearFoundUserStatus()"/>
                             <button type="submit" class="btn btn-primary">Find</button>
                         </div>
                     </form>
@@ -50,9 +50,9 @@
                         </div>
                     </div>
                     <small v-if="typing" class="typing"><b>{{typing}}</b> is typing...</small>
-                    <form autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()">
+                    <form autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()" novalidate>
                         <div class="input-group">
-                            <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
+                            <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"/>
                             <button type="submit" class="btn btn-primary">Send</button>
                             <button type="button" class="btn btn-dark" @click="scrollDown('adminMessages')"><i id="adminScrollDownIcon" class="fas fa-arrow-down"></i></button>
                         </div>
@@ -80,9 +80,9 @@
                         <div class="userDate">{{renderDate(message.date)}}<i v-if="message.username == userData.username" class="fas fa-times deleteMessage" @click="deleteMessage(message._id)"></i></div>
                     </div>
                 </div>
-                <form v-if="adminOnline" autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()">
+                <form v-if="adminOnline" autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()" novalidate>
                     <div class="input-group">
-                        <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()">
+                        <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"/>
                         <button type="submit" class="btn btn-primary">Send</button>
                         <button type="button" class="btn btn-secondary"><i id="messageStatus" class="fa fa-eye"></i></button>
                         <button type="button" class="btn btn-dark" @click="scrollDown('messages')"><i id="scrollDownIcon" class="fas fa-arrow-down"></i></button>
