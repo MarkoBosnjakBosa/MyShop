@@ -37,7 +37,7 @@
                                 <div v-if="product.quantity" class="col-6">
                                     <form autocomplete="off" @submit.prevent="addToShoppingCart()" novalidate>
                                         <div class="mb-3 input-group">
-                                            <input type="number" id="selectedQuantity" min="1" :max="product.quantity" class="form-control" :class="{'errorField' : !Number.isInteger(product.selectedQuantity) || product.selectedQuantity < 1 || product.selectedQuantity > product.quantity}" v-model="product.selectedQuantity"/>
+                                            <input type="number" id="selectedQuantity" min="1" :max="product.quantity" onkeydown="if(event.key == '.') event.preventDefault();" class="form-control" :class="{'errorField' : !Number.isInteger(product.selectedQuantity) || product.selectedQuantity < 1 || product.selectedQuantity > product.quantity}" v-model="product.selectedQuantity"/>
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-primary" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'">Add to cart</button>
                                             </div>
