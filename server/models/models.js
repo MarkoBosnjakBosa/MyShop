@@ -50,7 +50,7 @@ module.exports = function(mongoose) {
 		icon: {type: String, required: true}
 	});
 	const orderScheme = new mongoose.Schema({
-		orderNumber: {type: String, required: true, index: {unique: true}},
+		orderNumber: {type: Number, required: true, index: {unique: true}},
 		userId: {type: String, required: true},
 		paymentType: {type: String, required: true},
 		products: {type: Array, required: true},
