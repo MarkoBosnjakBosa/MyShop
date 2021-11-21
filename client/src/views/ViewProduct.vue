@@ -280,6 +280,8 @@
                 }
             },
             addToShoppingCart() {
+                var selectedQuantity = this.product.selectedQuantity.toString().replace(/^0+/, "");
+                this.product.selectedQuantity = Number(selectedQuantity);
                 if(Number.isInteger(this.product.selectedQuantity) && this.product.selectedQuantity > 0 && this.product.selectedQuantity <= this.product.quantity) {
                     var product = {};
                     product._id = this.product._id;

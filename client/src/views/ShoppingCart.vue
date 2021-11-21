@@ -84,7 +84,7 @@
         },
         methods: {
             updateSelectedQuantity(event, productId) {
-                var selectedQuantity = event.target.value;
+                var selectedQuantity = event.target.value.replace(/^0+/, "");
                 this.$store.dispatch("updateSelectedQuantity", {productId, selectedQuantity});
             },
             removeFromShoppingCart(product) {
