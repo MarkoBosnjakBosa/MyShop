@@ -131,7 +131,7 @@
     }
     .categoryIcon {
         float: left;
-        width: 10%;
+        width: 12%;
     }
     @media (min-width: 768px) {
         #sidebar {
