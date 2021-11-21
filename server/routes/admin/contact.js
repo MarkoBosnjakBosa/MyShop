@@ -81,7 +81,7 @@ module.exports = function(app, models, emailEvents, validations) {
     app.delete("/deleteContact/:contactId", (request, response) => {
         var contactId = request.params.contactId;
         var query = {_id: contactId};
-        Contact.findOneAndRemove(query).then(contact => {
+        Contact.findOneAndDelete(query).then(contact => {
             if(!validations.isEmpty(contact)) {
                 response.status(200).json({deleted: true}).end();
             } else {

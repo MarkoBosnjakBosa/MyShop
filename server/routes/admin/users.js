@@ -50,7 +50,7 @@ module.exports = function(app, models, validations) {
 	app.delete("/deleteUser/:userId", (request, response) => {
 		var userId = request.params.userId;
 		var userQuery = {_id: userId};
-		User.findOneAndRemove(userQuery).then(user => {
+		User.findOneAndDelete(userQuery).then(user => {
 			if(!validations.isEmpty(user)) {
 				var messagesQuery = {chatId: user.account.username};
 				Message.deleteMany(messagesQuery).then(messages => {

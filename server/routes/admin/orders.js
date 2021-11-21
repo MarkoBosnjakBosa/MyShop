@@ -193,7 +193,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 	app.delete("/deleteOrder/:orderId", (request, response) => {
 		var orderId = request.params.orderId;
 		var query = {_id: orderId};
-		Order.findOneAndRemove(query).then(order => {
+		Order.findOneAndDelete(query).then(order => {
 			if(!validations.isEmpty(order)) {
 				response.status(200).json({deleted: true}).end();
 			} else {

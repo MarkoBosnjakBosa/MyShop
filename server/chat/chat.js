@@ -77,7 +77,7 @@ module.exports = function(app, io, models, validations) {
         });
         socket.on("deleteMessage", (chatId, isAdmin, messageId) => {
             var query = {_id: messageId};
-            Message.findOneAndRemove(query).then(message => {
+            Message.findOneAndDelete(query).then(message => {
                 if(!validations.isEmpty(message)) {
                     var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
                     if(foundIndex > -1) {

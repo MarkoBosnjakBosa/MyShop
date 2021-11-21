@@ -30,7 +30,7 @@ module.exports = function(app, models, validations) {
     app.delete("/deleteTechnicalInformation/:technicalInformationId", (request, response) => {
         var technicalInformationId = request.params.technicalInformationId;
         var query = {_id: technicalInformationId};
-        TechnicalInformation.findOneAndRemove(query).then(technicalInformation => {
+        TechnicalInformation.findOneAndDelete(query).then(technicalInformation => {
             if(!validations.isEmpty(technicalInformation)) {
                 response.status(200).json({deleted: true}).end();
             } else {

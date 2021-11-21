@@ -175,7 +175,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 	app.delete("/deleteProduct/:productId", (request, response) => {
 		var productId = request.params.productId;
 		var query = {_id: productId};
-		Product.findOneAndRemove(query).then(product => {
+		Product.findOneAndDelete(query).then(product => {
 			if(!validations.isEmpty(product)) {
 				response.status(200).json({deleted: true}).end();
 			} else {
@@ -260,7 +260,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 		var reviewId = request.params.reviewId;
 		var username = request.params.username;
 		var query = {_id: reviewId, username: username};
-		Review.findOneAndRemove(query).then(review => {
+		Review.findOneAndDelete(query).then(review => {
 			if(!validations.isEmpty(review)) {
 				response.status(200).json({deleted: true}).end();
 			} else {
