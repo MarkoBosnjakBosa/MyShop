@@ -417,7 +417,7 @@
         margin-top: 5px;
     }
     .action {
-        margin-left: 5px;
+        margin-right: 5px;
         cursor: pointer;
     }
     .editReview {
