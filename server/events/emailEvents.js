@@ -23,7 +23,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/resetPassword.html"), "UTF-8"));
 		var html = compiledHtml({firstName: account.firstName, username: account.username, resetPasswordToken: resetPasswordToken, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
 		var mailOptions = {
-			from: process.env.EMAIL_USER,
+			from: process.env.EMAIL_USERNAME,
 			to: account.email,
 			subject: "Reset password",
 			html: html
@@ -34,7 +34,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/forgotUsername.html"), "UTF-8"));
 		var html = compiledHtml({firstName: account.firstName, username: account.username});
 		var mailOptions = {
-			from: process.env.EMAIL_USER,
+			from: process.env.EMAIL_USERNAME,
 			to: account.email,
 			subject: "Retrieve username",
 			html: html
@@ -45,7 +45,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/confirmation.html"), "UTF-8"));
 		var html = compiledHtml({firstName: account.firstName, username: account.username, confirmationToken: confirmationToken, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
 		var mailOptions = {
-			from: process.env.EMAIL_USER,
+			from: process.env.EMAIL_USERNAME,
 			to: account.email,
 			subject: "Confirm registration",
 			html: html
@@ -56,7 +56,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/invoice.html"), "UTF-8"));
 		var html = compiledHtml({firstName: account.firstName});
 		var mailOptions = {
-			from: process.env.EMAIL_USER,
+			from: process.env.EMAIL_USERNAME,
 			to: account.email,
 			subject: "Invoice " + orderNumber,
 			attachments: [{filename: "Invoice_" + orderNumber, path: path.join(__dirname, "../temporary/Invoice_" + orderNumber + ".pdf"), contentType: "application/pdf"}],
@@ -68,7 +68,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/orderDispatched.html"), "UTF-8"));
 		var html = compiledHtml({firstName: account.firstName, orderNumber: orderNumber, orderId: orderId, baseUrl: process.env.BASE_URL, clientPort: process.env.CLIENT_PORT});
 		var mailOptions = {
-			from: process.env.EMAIL_USER,
+			from: process.env.EMAIL_USERNAME,
 			to: account.email,
 			subject: "Order #" + orderNumber + " dispatched",
 			html: html
@@ -79,7 +79,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var compiledHtml = ejs.compile(fs.readFileSync(path.join(__dirname, "../templates/email/contact.html"), "UTF-8"));
 		var html = compiledHtml({firstName: contact.firstName});
 		var mailOptions = {
-			from: process.env.EMAIL_USER,
+			from: process.env.EMAIL_USERNAME,
 			to: contact.email,
 			subject: "Contact",
 			html: html
