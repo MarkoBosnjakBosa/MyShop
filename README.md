@@ -24,4 +24,4 @@ Form validation by using reCaptcha v2 and reCaptcha v3
 Forms with multiple steps  
 Sending emails by using node mailer  
 Using Node.js events for triggering the sending of emails and SMS messages  
-MongoDB and mongoose (queries, limits, sorts, pagess)
+MongoDB and mongoose (queries, limits, sorts, pages)
