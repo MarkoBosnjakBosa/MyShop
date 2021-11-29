@@ -58,8 +58,8 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 			var resetPasswordToken = request.body.resetPasswordToken;
 			query = {$and: [{"account.username": username}, {"confirmation.resetPasswordToken": resetPasswordToken}]};
 		} 
-		bcryptjs.genSalt(10, (firstError, salt) => {
-			bcryptjs.hash(password, salt, (secondError, hashedPassword) => {
+		bcryptjs.genSalt(10, (error, salt) => {
+			bcryptjs.hash(password, salt, (error, hashedPassword) => {
 				var update = {"account.password": hashedPassword, "confirmation.resetPasswordToken": ""};
 				var options = {new: true};
 				User.findOneAndUpdate(query, update, options).then(user => {

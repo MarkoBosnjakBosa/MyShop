@@ -20,8 +20,8 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
                 var confirmation = {confirmed: false, confirmationToken: Math.floor(100000 + Math.random() * 900000), authenticationEnabled: true, authenticationToken: "", authenticationEnablingToken: "", resetPasswordToken: ""};
                 account.isAdmin = false;
                 var newUser = getUserScheme(User, account, address, confirmation);
-                bcryptjs.genSalt(10, (firstError, salt) => {
-                    bcryptjs.hash(newUser.account.password, salt, (secondError, hashedPassword) => {
+                bcryptjs.genSalt(10, (error, salt) => {
+                    bcryptjs.hash(newUser.account.password, salt, (error, hashedPassword) => {
                         newUser.account.password = hashedPassword;
                         newUser.save().then(createdUser => {
                             emailEvents.emit("sendConfirmationEmail", createdUser.account, createdUser.confirmation.confirmationToken);
