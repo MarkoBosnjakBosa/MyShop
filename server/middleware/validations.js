@@ -59,7 +59,7 @@ function validateLogin(request, response, next) {
         errors = [...errors, "password"];
     }
     if(!errors.length) next();
-    else response.status(200).json({authentication: false, valid: false, allowed: false, errors: errors}).end();
+    else response.status(200).json({authentication: false, valid: false, found: false, errors: errors}).end();
 }
 
 function validateAuthentication(request, response, next) {
