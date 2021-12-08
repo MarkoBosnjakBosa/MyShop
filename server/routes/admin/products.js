@@ -128,7 +128,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			var options = {new: true};
 			Product.findOneAndUpdate(query, update, options).then(product => {
 				if(!validations.isEmpty(product)) {
-					response.status(200).json({edited: true, primaryImage: primaryImageObject}).end();
+					response.status(200).json({edited: true, primaryImage: product.primaryImage}).end();
 				} else {
 					response.status(200).json({edited: false}).end();
 				}
