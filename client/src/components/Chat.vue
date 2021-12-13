@@ -367,11 +367,9 @@
                 if(date) {
                     var transformedDate = new Date(date).toLocaleString("en-US").replace(",", "");
                     var dateAndTime = transformedDate.split(" ");
-                    var temporaryDateArray = dateAndTime[0].split("/");
-                    var temporaryDate = temporaryDateArray[2] + "-" + temporaryDateArray[1] + "-" + temporaryDateArray[0];
-                    var parsedDate = moment(temporaryDate);
+                    var convertedDate = moment(date);
                     var currentDate = moment().startOf("day");
-                    if(parsedDate.isBefore(currentDate)) {
+                    if(convertedDate.isBefore(currentDate)) {
                         return dateAndTime[0];
                     } else {
                         return dateAndTime[1] + " " + dateAndTime[2];
