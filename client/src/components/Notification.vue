@@ -14,21 +14,9 @@
     export default {
         name: "notification",
         props: {
-            product: {
-                _id: "",
-                title: "",
-                description: "",
-                price: "",
-                quantity: 0,
-                category: "",
-                technicalData: [],
-                primaryImage: "",
-                images: [],
-                rating: {},
-                selectedQuantity: 1
-            },
-            message: "",
-            type: ""
+            product: Object,
+            message: String,
+            type: String
         },
         methods: {
             hideNotification() { this.$emit("hide"); }
