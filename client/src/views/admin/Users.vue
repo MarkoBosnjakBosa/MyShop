@@ -112,7 +112,7 @@
             loadPage(page) {
                 if(page > 0 && page <= this.pagesNumber) {
                     this.page = page;
-                    this.getProducts();
+                    this.getUsers();
                 }
             },
             openViewProfile(userId) {
