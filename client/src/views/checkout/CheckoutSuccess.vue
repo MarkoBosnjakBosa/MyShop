@@ -61,13 +61,12 @@
             return {
                 username: this.$store.getters.getUser,
                 orderId: "",
-                paymentType: "",
+                paymentType: this.$store.getters.getCheckout,
                 products: []
             }
         },
         methods: {
             finalizePayment() {
-                this.paymentType = this.$store.getters.getCheckout;
                 if(this.paymentType) {
                     this.products = this.$store.getters.getShoppingCart;
                     var products = this.products.map(product => {
