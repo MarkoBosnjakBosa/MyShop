@@ -17,8 +17,11 @@
                         </div>
                     </form>
                     <ul class="list-group offlineUsers">
-                        <li v-for="offlineUser in offlineUsers" :key="offlineUser" class="list-group-item d-flex justify-content-between align-items-center" @click="loadMessages(offlineUser.user)">
-                            {{offlineUser.user}}<i class="fa fa-times" @click="removeUser(offlineUser.user)"></i>
+                        <li v-for="offlineUser in offlineUsers" :key="offlineUser" class="list-group-item">
+                            <div class="row">
+                                <div class="col-11" @click="loadMessages(offlineUser.user)">{{offlineUser.user}}</div>
+                                <div class="col-1 removeUser"><i class="fa fa-times" @click="removeUser(offlineUser.user)"></i></div>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -315,10 +318,13 @@
                 }).catch(error => console.log(error));
             },
             removeUser(user) {
-                axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/removeUser/" + user).then(response => {
-                    this.users = this.users.filter(user => user.user != response.data.user);
-                    this.message = "";
-                }).catch(error => console.log(error));
+                var confirmed = confirm("Remove user " + user + "?");
+                if(confirmed) {
+                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/removeUser/" + user).then(response => {
+                        this.users = this.users.filter(user => user.user != response.data.user);
+                        this.message = "";
+                    }).catch(error => console.log(error));
+                }
             },
             clearData() {
                 this.message = "";
@@ -572,6 +578,9 @@
     }
     .offlineUsers {
         margin-top: 10px;
+    }
+    .removeUser {
+        padding-left: 0px;
     }
     .errorField {
         border: 1px solid #ff0000;
