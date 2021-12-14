@@ -31,7 +31,7 @@
                         <tr>
                             <th colspan="4">Total</th>
                             <th>{{getTotalCost()}}</th>
-                            <td><i id="download" class="fas fa-file-download" @click="downloadInvoice()"></i></td>
+                            <td><i v-if="orderId" id="download" class="fas fa-file-download" @click="downloadInvoice()"></i></td>
                         </tr>
                     </tbody>
                 </table>
