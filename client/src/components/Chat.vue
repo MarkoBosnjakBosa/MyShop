@@ -17,11 +17,8 @@
                         </div>
                     </form>
                     <ul class="list-group offlineUsers">
-                        <li v-for="offlineUser in offlineUsers" :key="offlineUser" class="list-group-item">
-                            <div class="row">
-                                <div class="col-11" @click="loadMessages(offlineUser.user)">{{offlineUser.user}}</div>
-                                <div class="col-1 removeUser"><i class="fa fa-times" @click="removeUser(offlineUser.user)"></i></div>
-                            </div>
+                        <li v-for="offlineUser in offlineUsers" :key="offlineUser" class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="removeUser" @click="loadMessages(offlineUser.user)">{{offlineUser.user}}</span><i class="fa fa-times" @click="removeUser(offlineUser.user)"></i>
                         </li>
                     </ul>
                 </div>
@@ -580,7 +577,7 @@
         margin-top: 10px;
     }
     .removeUser {
-        padding-left: 0px;
+        width: 100%;
     }
     .errorField {
         border: 1px solid #ff0000;
