@@ -119,7 +119,7 @@
                                 <button v-if="page < pagesNumber" type="button" class="btn btn-dark page" @click="loadPage(page + 1)"><i class="fas fa-angle-double-right"></i></button>
                             </div>
                         </div>
-                        <notification :product="product" :message="message" :type="'success'" @hide="hideNotification()"></notification>
+                        <notification :product="product" :message="message" :type="'success'" @hide="hideNotification"></notification>
                     </div>
                 </div>
             </div>

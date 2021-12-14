@@ -56,7 +56,7 @@
                         There are no products in the shopping cart!
                     </div>
                 </div>
-                <notification :product="{title: 'Quantity change(s)'}" :message="message" :type="'success'" @hide="hideNotification()"></notification>
+                <notification :product="{title: 'Quantity change(s)'}" :message="message" :type="'success'" @hide="hideNotification"></notification>
             </div>
         </div>
     </div>
