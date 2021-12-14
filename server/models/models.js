@@ -101,10 +101,10 @@ module.exports = function(mongoose) {
 		date: {type: Number, required: true}
 	});
 	const messageScheme = new mongoose.Schema({
-		chatId: {type: String},
-		username: {type: String},
-		message: {type: String},
-		date: {type: Number}
+		chatId: {type: String, required: true},
+		username: {type: String, required: true},
+		message: {type: String, required: true},
+		date: {type: Number, required: true}
 	});
 	const models = {
 		User: mongoose.model("User", userScheme),
