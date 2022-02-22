@@ -45,7 +45,7 @@ function validateRegistration(request, response, next) {
         errors = [...errors, "reCaptchaToken"];
     }
     if(!errors.length) next();
-    else response.status(200).json({created: false, alreadyExists: false, errors: errors}).end();
+    else response.status(200).json({registered: false, alreadyExists: false, errors: errors}).end();
 }
 
 function validateLogin(request, response, next) {

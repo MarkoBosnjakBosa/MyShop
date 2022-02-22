@@ -54,7 +54,7 @@
                         <div class="input-group">
                             <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"/>
                             <button type="submit" class="btn btn-primary">Send</button>
-                            <button type="button" class="btn btn-dark" @click="scrollDown('adminMessages')"><i id="adminScrollDownIcon" class="fas fa-arrow-down"></i></button>
+                            <button type="button" class="btn btn-dark" @click="scrollDown('adminMessages')"><i class="fas fa-arrow-down"></i></button>
                         </div>
                     </form>
                 </div>
@@ -85,7 +85,7 @@
                         <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"/>
                         <button type="submit" class="btn btn-primary">Send</button>
                         <button type="button" class="btn btn-secondary"><i id="messageStatus" class="fa fa-eye"></i></button>
-                        <button type="button" class="btn btn-dark" @click="scrollDown('messages')"><i id="scrollDownIcon" class="fas fa-arrow-down"></i></button>
+                        <button type="button" class="btn btn-dark" @click="scrollDown('messages')"><i class="fas fa-arrow-down"></i></button>
                     </div>
                 </form>
                 <div v-else>The admin is not online.</div>

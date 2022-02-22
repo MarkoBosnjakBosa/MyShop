@@ -84,7 +84,7 @@ export default new Vuex.Store({
 		},
 		logout: ({commit}) => {
 			commit("RESET");
-			location.href = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT + "/login";
+			window.location.href = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT + "/login";
 		}
 	}
 });

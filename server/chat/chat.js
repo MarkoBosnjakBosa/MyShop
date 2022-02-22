@@ -33,14 +33,13 @@ module.exports = function(app, io, models, validations) {
                         users = [...users, {socketId: socket.id, user: user, messages: messages, isOnline: true}];
                         socket.broadcast.emit("userOnline", {isAdmin: true, exists: false, user: {user: user, messages: messages, isOnline: true}});
                     }
-                });
+                }).catch(error => console.log(error));
             }
         });
         socket.on("sendMessage", (chatId, isAdmin, user, message) => {
             if(chatId && validations.validateMessage(message)) {
-                var newMessage;
                 var date = new Date().getTime();
-                newMessage = getMessageScheme(Message, chatId, user, message, date);
+                var newMessage = getMessageScheme(Message, chatId, user, message, date);
                 newMessage.save().then(message => {
                     var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
                     if(foundIndex > -1) {
