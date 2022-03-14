@@ -91,7 +91,7 @@
                                         <th class="padded">{{index + 1}}</th>
                                         <td class="padded">{{technicalInformation.title}}</td>
                                         <td><textarea rows="1" class="form-control" v-model="product.technicalData[index].value"></textarea></td>
-                                        <td class="padded"><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
+                                        <td class="paddedIcon"><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -219,7 +219,7 @@
             },
             editProduct(type) {
                 var allowEdit = true;
-                if(type == "main") {
+                if(type === "main") {
                     this.submittings.mainSubmitting = true;
                     this.clearTitleStatus();
                     this.clearDescriptionStatus();
@@ -264,7 +264,7 @@
                             this.edits.mainEdited = false;
                         }
                     }).catch(error => console.log(error));
-                } else if(type == "technicalData") {
+                } else if(type === "technicalData") {
                     var body = {productId: this.productId, type: "technicalData", technicalData: JSON.stringify(this.product.technicalData)};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editProduct", body).then(response => {
                         if(response.data.edited) {
@@ -275,11 +275,11 @@
             },
             selectTechnicalInformation() {
                 var technicalInformationTitle = document.getElementById("technicalData").value;
-                if(technicalInformationTitle != "") {
+                if(technicalInformationTitle) {
                     if(document.getElementsByTagName("tbody")[0]) {
                         var rows = document.getElementsByTagName("tbody")[0].rows;
                         for(var row = 0; row < rows.length; row++) {
-                            if(rows[row].cells[1].innerText == technicalInformationTitle) {
+                            if(rows[row].cells[1].innerText === technicalInformationTitle) {
                                 document.getElementById("technicalData").value = "";
                                 return;
                             }
@@ -291,12 +291,12 @@
                 }
             },
             removeTechnicalInformation(currentIndex) {
-                this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index != currentIndex);
+                this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index !== currentIndex);
             },
             uploadImages(event, type) {
                 var files = event.target.files;
                 if(files && files.length) {
-                    if(type == "primaryImage") {
+                    if(type === "primaryImage") {
                         this.errors.primaryImageError = false;
                         var file = files[0];
                         if(file.type.match("image.*")) {
@@ -358,7 +358,7 @@
                     var body = {productId: this.productId, imageId: imageId};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteProductImage", body).then(response => {
                         if(response.data.deleted) {
-                            this.product.images = this.product.images.filter(image => image._id != imageId);
+                            this.product.images = this.product.images.filter(image => image._id !== imageId);
                             this.errors.imagesError = false;
                         } else {
                             this.errors.imagesError = true;
@@ -381,7 +381,7 @@
                 document.getElementById("dropzone").classList.remove("onDragOver");
             },
             closeEditAlert(type) { 
-                if(type == "main") this.edits.mainEdited = false;
+                if(type === "main") this.edits.mainEdited = false;
                 else this.edits.technicalDataEdited = false;
             },
             renderImage(image) { return helper.methods.renderImage(image); },
@@ -401,12 +401,22 @@
             invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.productId = this.$route.params.productId;
-            this.getProduct();
-            this.getCategories();
-            this.getTechnicalData();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) {
+                            temp.productId = temp.$route.params.productId;
+                            temp.getProduct();
+                            temp.getCategories();
+                            temp.getTechnicalData();
+                        }
+                        else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>
@@ -426,6 +436,9 @@
         text-align: center;
     }
     .padded {
+        padding-top: 15px;
+    }
+    .paddedIcon {
         padding-top: 12px;
     }
     #previewPrimaryImage {
