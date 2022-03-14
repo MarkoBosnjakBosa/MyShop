@@ -59,6 +59,7 @@
     import checkLogin from "../../components/CheckLogin.vue";
     import navigation from "../../components/Navigation.vue";
     import sidebar from "../../components/Sidebar.vue";
+    import route from "../../components/Route.vue";
     const axios = require("axios");
 
     export default {
@@ -92,7 +93,7 @@
                 var confirmed = confirm("Delete contact: " + fullName + "?");
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteContact/" + contactId).then(response => {
-                        this.contacts = this.contacts.filter(contact => contact._id != contactId);
+                        this.contacts = this.contacts.filter(contact => contact._id !== contactId);
                         this.total = this.total - 1;
                     }).catch(error => console.log(error));
                 }
@@ -105,9 +106,17 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.getContacts();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) temp.getContacts();
+                        else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>
