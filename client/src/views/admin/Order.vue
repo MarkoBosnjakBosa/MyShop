@@ -153,7 +153,6 @@
         },
         data() {
             return {
-                orderId: "",
                 order: {
                     _id: "",
                     orderNumber: "",
@@ -185,14 +184,14 @@
         },
         methods: {
             getOrder() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getOrder/" + this.orderId).then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getOrder/" + this.order._id).then(response => {
                     this.order = response.data.order;
                 }).catch(error => route.methods.openPageNotFound());
             },
             dispatchOrder() {
                 var confirmed = confirm("Dispatch order #" + this.order.orderNumber + "?");
                 if(confirmed) {
-                    var body = {orderId: this.orderId};
+                    var body = {orderId: this.order._id};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/dispatchOrder", body).then(response => {
                         if(response.data.isDispatched) {
                             this.order.isDispatched = response.data.isDispatched;
@@ -204,7 +203,7 @@
             deleteOrder() {
                 var confirmed = confirm("Delete order #" + this.order.orderNumber + "?");
                 if(confirmed) {
-                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteOrder/" + this.orderId).then(response => {
+                    axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteOrder/" + this.order._id).then(response => {
                         if(response.data.deleted) {
                             route.methods.openOrders();
                         }
@@ -220,7 +219,7 @@
             downloadInvoice() {
                 document.getElementById("download").classList.remove("fa-file-download");
                 document.getElementById("download").classList.add("fa-spinner", "fa-spin");
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + this.orderId).then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + this.order._id).then(response => {
                     if(response.data.downloaded) {
                         document.getElementById("download").classList.remove("fa-spinner", "fa-spin");
                         document.getElementById("download").classList.add("fa-file-download");
@@ -230,10 +229,20 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.orderId = this.$route.params.orderId;
-            this.getOrder();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) {
+                            temp.order._id = temp.$route.params.orderId;
+                            temp.getOrder(); 
+                        }
+                        else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>

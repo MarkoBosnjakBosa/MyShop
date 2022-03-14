@@ -133,7 +133,7 @@
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/dispatchOrder", body).then(response => {
                         if(response.data.isDispatched) {
                             this.orders = this.orders.map(order => {
-                                if(order._id == orderId) {
+                                if(order._id === orderId) {
                                     order.isDispatched = response.data.isDispatched;
                                     order.dispatchedAt = response.data.dispatchedAt;
                                     return order;
@@ -150,7 +150,7 @@
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteOrder/" + orderId).then(response => {
                         if(response.data.deleted) {
-                            this.orders = this.orders.filter(order => order._id != orderId);
+                            this.orders = this.orders.filter(order => order._id !== orderId);
                             this.total = this.total - 1; 
                         }
                     }).catch(error => console.log(error));
@@ -190,9 +190,17 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.getOrders();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) temp.getOrders();
+                        else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>
