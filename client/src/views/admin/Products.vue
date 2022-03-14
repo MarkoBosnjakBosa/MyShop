@@ -141,7 +141,7 @@
                 var confirmed = confirm("Delete product " + productTitle + "?");
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteProduct/" + productId).then(response => {
-                        this.products = this.products.filter(product => product._id != productId);
+                        this.products = this.products.filter(product => product._id !== productId);
                         this.total = this.total - 1; 
                     }).catch(error => console.log(error));
                 }
@@ -175,10 +175,19 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.getProducts();
-            this.getCategories();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) {
+                            temp.getProducts();
+                            temp.getCategories();
+                        } else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>
