@@ -77,6 +77,7 @@
     import checkLogin from "../../components/CheckLogin.vue";
     import navigation from "../../components/Navigation.vue";
     import sidebar from "../../components/Sidebar.vue";
+    import route from "../../components/Route.vue";
     import validation from "../../components/Validation.vue";
     const axios = require("axios");
 	
@@ -228,9 +229,17 @@
             invalidEmail() { return validation.methods.invalidEmail(this.contactSettings.email); }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.getContactSettings();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) temp.getContactSettings();
+                        else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>
@@ -257,7 +266,6 @@
     }
     .contactSettingsSaved {
         color: #008000;
-        margin-bottom: 10px;
     }
     .errorField {
         border: 1px solid #ff0000;
