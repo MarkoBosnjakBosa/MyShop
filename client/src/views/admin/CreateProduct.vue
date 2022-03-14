@@ -83,7 +83,7 @@
                                         <th class="padded">{{index + 1}}</th>
                                         <td class="padded">{{technicalInformation.title}}</td>
                                         <td><textarea rows="1" class="form-control" v-model="product.technicalData[index].value"></textarea></td>
-                                        <td class="padded"><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
+                                        <td class="paddedIcon"><i class="fas fa-times fa-2x" @click="removeTechnicalInformation(index)"></i></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -139,6 +139,7 @@
     import navigation from "../../components/Navigation.vue";
     import sidebar from "../../components/Sidebar.vue";
     import helper from "../../components/Helper.vue";
+    import route from "../../components/Route.vue";
     import validation from "../../components/Validation.vue";
     import notification from "../../components/Notification.vue";
     const axios = require("axios");
@@ -235,7 +236,7 @@
                 var temp = this;
                 grecaptcha.ready(function() {
                     grecaptcha.execute(process.env.VUE_APP_RECAPTCHA_v3_SITE_KEY, {action: "submit"}).then(function(reCaptchaToken) {
-                        if(reCaptchaToken != "" && reCaptchaToken != undefined && reCaptchaToken != null) {
+                        if(reCaptchaToken !== "" && reCaptchaToken !== undefined && reCaptchaToken !== null) {
                             var formData = new FormData();
                             formData.append("title", temp.product.title);
                             formData.append("description", temp.product.description);
@@ -272,11 +273,11 @@
             },
             selectTechnicalInformation() {
                 var technicalInformationTitle = document.getElementById("technicalData").value;
-                if(technicalInformationTitle != "") {
+                if(technicalInformationTitle) {
                     if(document.getElementsByTagName("tbody")[0]) {
                         var rows = document.getElementsByTagName("tbody")[0].rows;
                         for(var row = 0; row < rows.length; row++) {
-                            if(rows[row].cells[1].innerText == technicalInformationTitle) {
+                            if(rows[row].cells[1].innerText === technicalInformationTitle) {
                                 document.getElementById("technicalData").value = "";
                                 this.message = "You have already selected the technical information!";
                                 return;
@@ -289,13 +290,13 @@
                 }
             },
             removeTechnicalInformation(currentIndex) {
-                this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index != currentIndex);
+                this.product.technicalData = this.product.technicalData.filter((technicalInformation, index) => index !== currentIndex);
             },
             selectImages(event, type) {
                 var files = event.target.files;
                 var temp = this;
                 if(files && files.length) {
-                    if(type == "primaryImage") {
+                    if(type === "primaryImage") {
                         temp.errors.primaryImageError = false;
                         var file = files[0];
                         var previewPrimaryImage = document.getElementById("previewPrimaryImage");
@@ -333,7 +334,7 @@
                 }
             },
             removeImage(currentIndex) {
-                this.product.images = this.product.images.filter((image, index) => index != currentIndex);
+                this.product.images = this.product.images.filter((image, index) => index !== currentIndex);
                 this.errors.imagesError = false;
             },
             addDragOver() {
@@ -379,12 +380,21 @@
             this.displayReCaptcha(false);
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.getCategories();
-            this.getTechnicalData();
-            this.loadReCaptcha();
-            this.displayReCaptcha(true);
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) {                         
+                            temp.getCategories();
+                            temp.getTechnicalData();
+                            temp.loadReCaptcha();
+                            temp.displayReCaptcha(true);
+                        } else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>
@@ -401,6 +411,9 @@
         margin-top: 20px;
     }
     .padded {
+        padding-top: 15px;
+    }
+    .paddedIcon {
         padding-top: 12px;
     }
     #previewPrimaryImage {
