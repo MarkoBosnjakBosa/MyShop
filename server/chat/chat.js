@@ -23,7 +23,7 @@ module.exports = function(app, io, models, validations) {
                 var query = {chatId: user};
                 Message.find(query).then(messages => {
                     socket.emit("userOnline", {isAdmin: false, adminOnline: adminOnline, messages: messages});
-                    var foundIndex = users.findIndex(foundUser => foundUser.user == user);
+                    var foundIndex = users.findIndex(foundUser => foundUser.user === user);
                     if(foundIndex > -1) {
                         socket.broadcast.to(users[foundIndex].socketId).emit("closeTab");
                         users[foundIndex].socketId = socket.id;
@@ -41,7 +41,7 @@ module.exports = function(app, io, models, validations) {
                 var date = new Date().getTime();
                 var newMessage = getMessageScheme(Message, chatId, user, message, date);
                 newMessage.save().then(message => {
-                    var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
+                    var foundIndex = users.findIndex(foundUser => foundUser.user === chatId);
                     if(foundIndex > -1) {
                         users[foundIndex].messages = [...users[foundIndex].messages, message];
                         if(isAdmin) {
@@ -64,9 +64,9 @@ module.exports = function(app, io, models, validations) {
                 var options = {new: true};
                 Message.findOneAndUpdate(query, update, options).then(foundMessage => {
                     if(!validations.isEmpty(foundMessage)) {
-                        var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
+                        var foundIndex = users.findIndex(foundUser => foundUser.user === chatId);
                         if(foundIndex > -1) {
-                            users[foundIndex].messages = users[foundIndex].messages.map(message => String(message._id) == String(foundMessage._id) ? foundMessage : message);
+                            users[foundIndex].messages = users[foundIndex].messages.map(message => String(message._id) === String(foundMessage._id) ? foundMessage : message);
                             socket.emit("messageEdited", {user: chatId, isAdmin: true, message: message});
                             socket.broadcast.to(users[foundIndex].socketId).emit("messageEdited", {user: "", isAdmin: false, message: message});
                         }
@@ -78,9 +78,9 @@ module.exports = function(app, io, models, validations) {
             var query = {_id: messageId};
             Message.findOneAndDelete(query).then(message => {
                 if(!validations.isEmpty(message)) {
-                    var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
+                    var foundIndex = users.findIndex(foundUser => foundUser.user === chatId);
                     if(foundIndex > -1) {
-                        users[foundIndex].messages = users[foundIndex].messages.filter(message => message._id != messageId);
+                        users[foundIndex].messages = users[foundIndex].messages.filter(message => message._id !== messageId);
                         if(isAdmin) {
                             socket.emit("messageDeleted", {user: chatId, isAdmin: true, messageId: messageId});
                             socket.broadcast.to(users[foundIndex].socketId).emit("messageDeleted", {user: "", isAdmin: false, messageId: messageId});
@@ -95,7 +95,7 @@ module.exports = function(app, io, models, validations) {
             }).catch(error => console.log(error));
         });
         socket.on("readMessage", (chatId, isAdmin, username) => {
-            var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
+            var foundIndex = users.findIndex(foundUser => foundUser.user === chatId);
             if(foundIndex > -1) {
                 if(isAdmin) {
                     socket.broadcast.to(users[foundIndex].socketId).emit("messageRead", {user: username});
@@ -105,7 +105,7 @@ module.exports = function(app, io, models, validations) {
             }
         });
         socket.on("startTyping", (chatId, isAdmin, username) => {
-            var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
+            var foundIndex = users.findIndex(foundUser => foundUser.user === chatId);
             if(foundIndex > -1) {
                 if(isAdmin) {
                     socket.broadcast.to(users[foundIndex].socketId).emit("typingStarted", {user: username});
@@ -115,7 +115,7 @@ module.exports = function(app, io, models, validations) {
             }
         });
         socket.on("stopTyping", (chatId, isAdmin, username) => {
-            var foundIndex = users.findIndex(foundUser => foundUser.user == chatId);
+            var foundIndex = users.findIndex(foundUser => foundUser.user === chatId);
             if(foundIndex > -1) {
                 if(isAdmin) {
                     socket.broadcast.to(users[foundIndex].socketId).emit("typingStopped", {user: username});
@@ -130,8 +130,8 @@ module.exports = function(app, io, models, validations) {
                 admin = {};
                 users.forEach(user => socket.broadcast.to(user.socketId).emit("adminOffline"));
             } else {
-                var userOffline = users.filter(user => user.socketId == socket.id);
-                users = users.filter(user => user.socketId != socket.id);
+                var userOffline = users.filter(user => user.socketId === socket.id);
+                users = users.filter(user => user.socketId !== socket.id);
                 if(Object.keys(admin).length && Object.keys(userOffline).length) {
                     socket.broadcast.to(admin.socketId).emit("userOffline", {user: userOffline[0].user});
                 }
@@ -156,7 +156,7 @@ module.exports = function(app, io, models, validations) {
     });
     app.delete("/removeUser/:username", (request, response) => {
         var username = request.params.username;
-        users = users.filter(user => user.socketId != "socketId_" + username);
+        users = users.filter(user => user.socketId !== "socketId_" + username);
         response.status(200).json({user: username}).end();
     });
 
