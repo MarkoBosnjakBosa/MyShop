@@ -170,7 +170,6 @@
         created() {
             var temp = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
-                console.log(isLoggedIn);
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
                         if(isAdmin) temp.getCategories();

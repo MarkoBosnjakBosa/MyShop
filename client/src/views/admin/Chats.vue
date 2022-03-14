@@ -15,6 +15,7 @@
     import checkLogin from "../../components/CheckLogin.vue";
     import navigation from "../../components/Navigation.vue";
     import sidebar from "../../components/Sidebar.vue";
+    import route from "../../components/Route.vue"; 
     import chat from "../../components/Chat.vue";
 
     export default {
@@ -25,8 +26,15 @@
             chat
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(!isAdmin) route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>
