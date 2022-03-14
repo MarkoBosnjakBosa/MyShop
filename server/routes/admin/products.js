@@ -60,7 +60,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			response.status(404).end();
 		});
 	});
-	app.post("/createProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validations.validateProductCreation, (request, response) => {
+	app.post("/createProduct", [uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validations.validateProductCreation], (request, response) => {
 		var title = request.body.title;
 		var description = request.body.description;
 		var price = request.body.price;
@@ -89,7 +89,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			response.status(200).json({created: true}).end();
 		}).catch(error => console.log(error));
 	});
-	app.put("/editProduct", uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validations.validateProductEdit, (request, response) => {
+	app.put("/editProduct", [uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validations.validateProductEdit], (request, response) => {
 		var productId = request.body.productId;
 		var query = {_id: productId};
 		var options = {new: true};
