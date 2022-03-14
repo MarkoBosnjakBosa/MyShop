@@ -236,8 +236,9 @@
                         if(isAdmin) {
                             temp.order._id = temp.$route.params.orderId;
                             temp.getOrder(); 
+                        } else {
+                            route.methods.openHome();
                         }
-                        else route.methods.openHome();
                     });
                 } else {
                     route.methods.openLogin();

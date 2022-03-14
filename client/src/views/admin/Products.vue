@@ -182,7 +182,9 @@
                         if(isAdmin) {
                             temp.getProducts();
                             temp.getCategories();
-                        } else route.methods.openHome();
+                        } else {
+                            route.methods.openHome();
+                        }
                     });
                 } else {
                     route.methods.openLogin();

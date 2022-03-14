@@ -104,7 +104,7 @@
                 var confirmed = confirm("Delete user " + username + "?");
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteUser/" + userId).then(response => {
-                        this.users = this.users.filter(user => user._id != userId);
+                        this.users = this.users.filter(user => user._id !== userId);
                         this.total = this.total - 1; 
                     }).catch(error => console.log(error));
                 }
@@ -120,9 +120,17 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.getUsers();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) temp.getUsers();
+                        else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>

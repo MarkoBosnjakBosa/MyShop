@@ -159,10 +159,21 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.userId = this.$route.params.userId;
-            this.getUser();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) {
+                            temp.userId = temp.$route.params.userId;
+                            temp.getUser();
+                        } else {
+                            route.methods.openHome();
+                        }
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>

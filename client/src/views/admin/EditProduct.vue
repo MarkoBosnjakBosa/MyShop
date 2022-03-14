@@ -410,8 +410,9 @@
                             temp.getProduct();
                             temp.getCategories();
                             temp.getTechnicalData();
+                        } else {
+                            route.methods.openHome();
                         }
-                        else route.methods.openHome();
                     });
                 } else {
                     route.methods.openLogin();

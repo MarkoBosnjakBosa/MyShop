@@ -389,7 +389,9 @@
                             temp.getTechnicalData();
                             temp.loadReCaptcha();
                             temp.displayReCaptcha(true);
-                        } else route.methods.openHome();
+                        } else {
+                            route.methods.openHome();
+                        }
                     });
                 } else {
                     route.methods.openLogin();
