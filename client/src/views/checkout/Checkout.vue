@@ -236,8 +236,11 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            this.checkShoppingCart();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) temp.checkShoppingCart();
+                else route.methods.openLogin();
+            });
         }
     }
 </script>

@@ -116,8 +116,11 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            this.finalizePayment();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) temp.finalizePayment();
+                else route.methods.openLogin();
+            });
         }
     }
 </script>

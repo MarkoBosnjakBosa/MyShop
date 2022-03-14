@@ -33,7 +33,9 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(!isLoggedIn) route.methods.openLogin();
+            });
         }
     }
 </script>
