@@ -30,10 +30,10 @@
                             <td colspan="3" class="noTechnicalData">No technical data found!</td>
                         </tr>
                         <tr v-for="(technicalInformation, index) in technicalData" :key="technicalInformation._id">
-                            <th>{{++index}}</th>
-                            <td v-if="editing == technicalInformation._id"><input type="text" class="form-control" v-model="technicalInformation.title"/></td>
+                            <th :class="{'padded': editing === technicalInformation._id}">{{++index}}</th>
+                            <td v-if="editing === technicalInformation._id"><input type="text" class="form-control" v-model="technicalInformation.title"/></td>
                             <td v-else>{{technicalInformation.title}}</td>
-                            <td v-if="editing == technicalInformation._id" class="padded">
+                            <td v-if="editing === technicalInformation._id" class="padded">
                                 <i class="far fa-check-circle editTechnicalInformation" @click="editTechnicalInformation(technicalInformation)"></i>
                                 <i class="far fa-times-circle disableEditing" @click="disableEditing(technicalInformation)"></i>
                             </td>
@@ -53,6 +53,7 @@
     import checkLogin from "../../components/CheckLogin.vue";
     import navigation from "../../components/Navigation.vue";
     import sidebar from "../../components/Sidebar.vue";
+    import route from "../../components/Route.vue";
     import validation from "../../components/Validation.vue";
     const axios = require("axios");
 	
@@ -102,6 +103,7 @@
                 }).catch(error => console.log(error));
             },
             enableEditing(technicalInformation) {
+                if(this.editing !== null) return;
                 this.cachedTechnicalInformation = Object.assign({}, technicalInformation);
                 this.editing = technicalInformation._id;
             },
@@ -114,7 +116,7 @@
                     var body = {technicalInformationId: updatedTechnicalInformation._id, title: updatedTechnicalInformation.title};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editTechnicalInformation", body).then(response => {
                         if(response.data.edited) {
-                            this.technicalData = this.technicalData.map(technicalInformation => technicalInformation._id == updatedTechnicalInformation._id ? updatedTechnicalInformation : technicalInformation);
+                            this.technicalData = this.technicalData.map(technicalInformation => technicalInformation._id === updatedTechnicalInformation._id ? updatedTechnicalInformation : technicalInformation);
                             this.editing = null;
                         }
                     }).catch(error => console.log(error));
@@ -125,7 +127,7 @@
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteTechnicalInformation/" + technicalInformationId).then(response => {
                         if(response.data.deleted) {
-                            this.technicalData = this.technicalData.filter(technicalInformation => technicalInformation._id != technicalInformationId);
+                            this.technicalData = this.technicalData.filter(technicalInformation => technicalInformation._id !== technicalInformationId);
                         }
                     }).catch(error => console.log(error));
                 }
@@ -136,9 +138,17 @@
             invalidTitle() { return validation.methods.invalidTitle(this.title); }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.getTechnicalData();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) temp.getTechnicalData();
+                        else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>
@@ -173,7 +183,6 @@
     }
     .creationSuccessful {
         color: #008000;
-        margin-bottom: 10px;
     }
     .errorField {
         border: 1px solid #ff0000;
