@@ -36,7 +36,7 @@ export default new Vuex.Store({
 		SET_USERNAME: (state, username) => { state.authentication.username = username; },
 		CLEAR_USERNAME: state => { state.authentication.username = ""; },
 		ADD_TO_SHOPPING_CART: (state, product) => {
-			var foundIndex = state.products.findIndex(foundProduct => foundProduct._id == product._id);
+			var foundIndex = state.products.findIndex(foundProduct => foundProduct._id === product._id);
 			if(foundIndex > -1) {
 				state.products[foundIndex].selectedQuantity = Number(state.products[foundIndex].selectedQuantity) + Number(product.selectedQuantity);
 			} else {
@@ -44,12 +44,12 @@ export default new Vuex.Store({
 			}
 		},
 		UPDATE_SELECTED_QUANTITY: (state, {productId, selectedQuantity}) => {
-			var foundIndex = state.products.findIndex(foundProduct => foundProduct._id == productId);
+			var foundIndex = state.products.findIndex(foundProduct => foundProduct._id === productId);
 			if(foundIndex > -1) {
 				state.products[foundIndex].selectedQuantity = selectedQuantity;
 			}
 		},
-		REMOVE_FROM_SHOPPING_CART: (state, productId) => { state.products = state.products.filter(product => product._id != productId); },
+		REMOVE_FROM_SHOPPING_CART: (state, productId) => { state.products = state.products.filter(product => product._id !== productId); },
 		CLEAR_SHOPPING_CART: state => { state.products = []; },
 		SET_CHECKOUT: (state, checkout) => { state.checkout = checkout; },
 		RESET: state => { Object.assign(state, getDefaultState()); }
