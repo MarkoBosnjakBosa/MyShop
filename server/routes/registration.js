@@ -5,12 +5,12 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
         var account = user.account;
         var address = user.address;
         var query = {$or: [{"account.username": account.username}, {"account.email": account.email}, {"account.mobileNumber": account.mobileNumber}]};
-        User.findOne(query).then(user => {
-            if(!validations.isEmpty(user)) {
+        User.findOne(query).then(foundUser => {
+            if(!validations.isEmpty(foundUser)) {
                 var error = {registered: false, alreadyExists: true, field: ""};
-                if(user.account.username == account.username) {
+                if(foundUser.account.username == account.username) {
                     error.field = "username";
-                } else if(user.account.email == account.email) {
+                } else if(foundUser.account.email == account.email) {
                     error.field = "email";
                 } else {
                     error.field = "mobileNumber";

@@ -112,9 +112,9 @@
 						</div>
 						<div id="checkTab" class="tab-pane fade">
 							<div v-if="errors.account.usernameError || errors.account.emailError || errors.account.passwordError || errors.account.firstNameError || errors.account.lastNameError || errors.account.mobileNumberError || errors.address.streetError || errors.address.houseNumberError || errors.address.cityError || errors.address.zipCodeError || errors.address.countryError || errors.reCaptchaTokenError" class="alert alert-danger" role="alert">Please insert missing data!</div>
-							<div v-if="alreadyExists == 'username'" class="alert alert-danger" role="alert">Username already exists!</div>
-							<div v-if="alreadyExists == 'email'" class="alert alert-danger" role="alert">Email already exists!</div>
-							<div v-if="alreadyExists == 'mobileNumber'" class="alert alert-danger" role="alert">Mobile number already exists!</div>
+							<div v-if="alreadyExists === 'username'" class="alert alert-danger" role="alert">Username already exists!</div>
+							<div v-if="alreadyExists === 'email'" class="alert alert-danger" role="alert">Email already exists!</div>
+							<div v-if="alreadyExists === 'mobileNumber'" class="alert alert-danger" role="alert">Mobile number already exists!</div>
 							<p :class="{'errorInput' : errors.reCaptchaTokenError && submitting}">Please confirm that you are not a robot.</p>
 							<div class="mb-3 recaptcha">
 								<div class="g-recaptcha" :data-sitekey="reCaptchaSiteKey"></div>
@@ -247,7 +247,7 @@
 					this.errors.address.countryError = true;
 					allowRegistration = false;
 				}
-				if(grecaptcha.getResponse() == "" || grecaptcha.getResponse() == undefined || grecaptcha.getResponse() == null) {
+				if(grecaptcha.getResponse() === "" || grecaptcha.getResponse() === undefined || grecaptcha.getResponse() === null) {
 					this.errors.reCaptchaTokenError = true;
 					allowRegistration = false;
 				}
@@ -273,9 +273,9 @@
 						} else {
 							var errors = response.data.errors;
 							errors.forEach(element => {
-								if(element == "username" || element == "email" || element == "password" || element == "firstName" || element == "lastName" || element == "mobileNumber") {
+								if(element === "username" || element === "email" || element === "password" || element === "firstName" || element === "lastName" || element === "mobileNumber") {
 									this.errors.account[element + "Error"] = true;
-								} else if(element == "street" || element == "houseNumber" || element == "city" || element == "zipCode" || element == "country") {
+								} else if(element === "street" || element === "houseNumber" || element === "city" || element === "zipCode" || element === "country") {
 									this.errors.address[element + "Error"] = true;
 								} else {
 									this.errors.reCaptchaTokenError = true;

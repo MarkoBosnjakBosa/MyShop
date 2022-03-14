@@ -1,26 +1,17 @@
 <script>
-    import router from "../router/index.js";
     import store from "../store/index.js";
     const axios = require("axios");
     
     export default {
         name: "checkLogin",
         methods: {
-            isLoggedIn() {
+            isLoggedIn(callback) {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => {
-                    if(!response.data.isLoggedIn) {
-                        router.push("/login");
-                    }
+                    return callback(response.data.isLoggedIn);
                 }).catch(error => console.log(error));
             },
-            isAdmin() {
-                if(store.getters.isLoggedIn) {
-                    if(!store.getters.isAdmin) {
-                        router.push("/home");
-                    }
-                } else {
-                    router.push("/login");
-                }
+            isAdmin(callback) {
+                return callback(store.getters.isAdmin);
             },
             getUserData() {
                 if(store.getters.isLoggedIn) {
