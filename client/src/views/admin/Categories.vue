@@ -38,12 +38,12 @@
                             <td colspan="4" class="noCategories">No categories found!</td>
                         </tr>
                         <tr v-for="(category, index) in categories" :key="category._id">
-                            <th>{{++index}}</th>
-                            <td v-if="editing == category._id"><input type="text" class="form-control" v-model="category.title"/></td>
+                            <th :class="{'padded': editing === category._id}">{{++index}}</th>
+                            <td v-if="editing === category._id"><input type="text" class="form-control" v-model="category.title"/></td>
                             <td v-else>{{category.title}}</td>
-                            <td v-if="editing == category._id"><input type="text" class="form-control" v-model="category.icon"/></td>
+                            <td v-if="editing === category._id"><input type="text" class="form-control" v-model="category.icon"/></td>
                             <td v-else><i :class="category.icon"></i></td>
-                            <td v-if="editing == category._id" class="padded">
+                            <td v-if="editing === category._id" class="padded">
                                 <i class="far fa-check-circle editCategory" @click="editCategory(category)"></i>
                                 <i class="far fa-times-circle disableEditing" @click="disableEditing(category)"></i>
                             </td>
@@ -63,6 +63,7 @@
     import checkLogin from "../../components/CheckLogin.vue";
     import navigation from "../../components/Navigation.vue";
     import sidebar from "../../components/Sidebar.vue";
+    import route from "../../components/Route.vue"; 
     import validation from "../../components/Validation.vue";
     const axios = require("axios");
 	
@@ -130,6 +131,7 @@
                 }).catch(error => console.log(error));
             },
             enableEditing(category) {
+                if(this.editing !== null) return;
                 this.cachedCategory = Object.assign({}, category);
                 this.editing = category._id;
             },
@@ -166,9 +168,18 @@
             invalidIcon() { return validation.methods.invalidIcon(this.category.icon); }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.getCategories();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                console.log(isLoggedIn);
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) temp.getCategories();
+                        else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>
@@ -206,7 +217,6 @@
     }
     .creationSuccessful {
         color: #008000;
-        margin-bottom: 10px;
     }
     .errorField {
         border: 1px solid #ff0000;
