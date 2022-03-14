@@ -67,6 +67,7 @@
     import navigation from "../../components/Navigation.vue";
     import sidebar from "../../components/Sidebar.vue";
     import helper from "../../components/Helper.vue";
+    import route from "../../components/Route.vue";
     import validation from "../../components/Validation.vue";
     import tinymce from "@tinymce/tinymce-vue";
     const axios = require("axios");
@@ -122,8 +123,8 @@
                 var files = event.target.files;
                 if(files && files.length && ((files.length + this.homeSettings.images.length) < 5)) {
                     var images = [];
-                    for (var i = 0, file; file = files[i]; i++) {
-                        if (!file.type.match("image.*")) {
+                    for(var i = 0, file; file = files[i]; i++) {
+                        if(!file.type.match("image.*")) {
                             continue;
                         }
                         images = [...images, file];
@@ -159,7 +160,7 @@
                     var body = {homeSettingsId: this.homeSettings._id, imageId: imageId};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteHomeSettingsImage", body).then(response => {
                         if(response.data.deleted) {
-                            this.homeSettings.images = this.homeSettings.images.filter(image => image._id != imageId);
+                            this.homeSettings.images = this.homeSettings.images.filter(image => image._id !== imageId);
                             this.errors.imagesError = false;
                         } else {
                             this.errors.imagesError = true;
@@ -188,9 +189,17 @@
             invalidMessage() { return validation.methods.invalidMessage(this.homeSettings.message); }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            checkLogin.methods.isAdmin();
-            this.getHomeSettings();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    checkLogin.methods.isAdmin(function(isAdmin) {
+                        if(isAdmin) temp.getHomeSettings();
+                        else route.methods.openHome();
+                    });
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>
