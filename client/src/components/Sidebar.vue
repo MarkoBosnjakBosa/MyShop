@@ -43,6 +43,9 @@
         methods: {
             getUserData() {
                 this.userData = checkLogin.methods.getUserData();
+                if(!this.userData.isAdmin) {
+                    this.getCategories();
+                }
             },
             getCategories() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getCategories").then(response => {
@@ -88,9 +91,6 @@
         },
         created() {
             this.getUserData();
-            if(!this.userData.isAdmin) {
-                this.getCategories();
-            }
         }
     }
 </script>

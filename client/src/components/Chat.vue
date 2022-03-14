@@ -26,11 +26,11 @@
                     <h3 class="chat">{{chatId}}</h3>
                     <div id="adminMessages" @click="readMessage()">
                         <div v-if="!displayMessages.length" class="noMessages">No messages yet.</div>
-                        <div v-for="message in displayMessages" :key="message._id" class="card" :class="message.username == userData.username ? 'adminMessage' : 'userMessage'">
+                        <div v-for="message in displayMessages" :key="message._id" class="card" :class="message.username === userData.username ? 'adminMessage' : 'userMessage'">
                             <div class="card-header">
-                                <div v-if="message.username != userData.username" class="username">{{message.username}}</div>
+                                <div v-if="message.username !== userData.username" class="username">{{message.username}}</div>
                                 <div v-else class="actions">
-                                    <div v-if="editing != message._id">
+                                    <div v-if="editing !== message._id">
                                         <i class="fas fa-pencil-alt enableEditing" @click="enableEditing(message)"></i>
                                         <i class="fas fa-times-circle deleteMessage" @click="deleteMessage(message._id)"></i>
                                     </div>
@@ -42,7 +42,7 @@
                                 <div class="date">{{renderDate(message.date)}}</div>
                             </div>
                             <div class="card-body">
-                                <div v-if="editing == message._id">
+                                <div v-if="editing === message._id">
                                     <input type="text" class="form-control" v-model="message.message"/>	
                                 </div>
                                 <div v-else>{{message.message}}</div>
@@ -75,9 +75,9 @@
                 <hr>
                 <div id="messages" @click="readMessage()">
                     <div v-if="!messages.length" class="noMessages">No messages yet.</div>
-                    <div v-for="message in messages" :key="message._id" class="message" :class="message.username == userData.username ? 'myMessage' : 'otherMessage'">
+                    <div v-for="message in messages" :key="message._id" class="message" :class="message.username === userData.username ? 'myMessage' : 'otherMessage'">
                         <div>{{message.message}}</div>
-                        <div class="userDate">{{renderDate(message.date)}}<i v-if="message.username == userData.username" class="fas fa-times deleteMessage" @click="deleteMessage(message._id)"></i></div>
+                        <div class="userDate">{{renderDate(message.date)}}<i v-if="message.username === userData.username" class="fas fa-times deleteMessage" @click="deleteMessage(message._id)"></i></div>
                     </div>
                 </div>
                 <form v-if="adminOnline" autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()" novalidate>
@@ -127,9 +127,12 @@
             }
         },
         methods: {
+            getUserData() {
+                this.userData = checkLogin.methods.getUserData();
+            },
             displayChatBox() {
                 var chatBox = document.getElementById("chatBox");
-                if(chatBox.style.display == "none") {
+                if(chatBox.style.display === "none") {
                     chatBox.style.display = "block";
                     this.$forceUpdate();
                     this.readMessage();
@@ -167,7 +170,7 @@
                 this.socket.on("userOnline", (data) => {
                     if(data.isAdmin) {
                         if(data.exists) {
-                            var foundIndex = this.users.findIndex(foundUser => foundUser.user == data.user);
+                            var foundIndex = this.users.findIndex(foundUser => foundUser.user === data.user);
                             if(foundIndex > -1) {
                                 this.users[foundIndex].isOnline = true;
                             }
@@ -180,12 +183,12 @@
                     }
                 });
                 this.socket.on("userOffline", (data) => {
-                    this.users = this.users.filter(user => user.user != data.user);
+                    this.users = this.users.filter(user => user.user !== data.user);
                     this.clearData();
                 });
                 this.socket.on("messageSent", (data) => {
                     if(data.isAdmin) {
-                        var foundIndex = this.users.findIndex(foundUser => foundUser.user == data.user);
+                        var foundIndex = this.users.findIndex(foundUser => foundUser.user === data.user);
                         if(foundIndex > -1) {
                             this.users[foundIndex].messages = [...this.users[foundIndex].messages, data.message];
                         } else {
@@ -207,28 +210,28 @@
                 });
                 this.socket.on("messageEdited", (data) => {
                     if(data.isAdmin) {
-                        var foundIndex = this.users.findIndex(foundUser => foundUser.user == data.user);
+                        var foundIndex = this.users.findIndex(foundUser => foundUser.user === data.user);
                         if(foundIndex > -1) {
-                            this.users[foundIndex].messages = this.users[foundIndex].messages.map(message => message._id == data.message._id ? data.message : message);
+                            this.users[foundIndex].messages = this.users[foundIndex].messages.map(message => message._id === data.message._id ? data.message : message);
                             this.editing = null;
                         }
                     } else {
-                        this.messages = this.messages.map(message => message._id == data.message._id ? data.message : message);
+                        this.messages = this.messages.map(message => message._id === data.message._id ? data.message : message);
                     }
                 });
                 this.socket.on("messageDeleted", (data) => {
                     if(data.isAdmin) {
-                        var foundIndex = this.users.findIndex(foundUser => foundUser.user == data.user);
+                        var foundIndex = this.users.findIndex(foundUser => foundUser.user === data.user);
                         if(foundIndex > -1) {
-                            this.users[foundIndex].messages = this.users[foundIndex].messages.filter(message => message._id != data.messageId);
+                            this.users[foundIndex].messages = this.users[foundIndex].messages.filter(message => message._id !== data.messageId);
                         }
                     } else {
-                        this.messages = this.messages.filter(message => message._id != data.messageId);
+                        this.messages = this.messages.filter(message => message._id !== data.messageId);
                     }
                 });
                 this.socket.on("messageRead", (data) => {
                     if(this.userData.isAdmin) {
-                        if(this.chatId == data.user) {
+                        if(this.chatId === data.user) {
                             this.toggleMessageStatus("read", data.user);
                         }
                     } else {
@@ -237,7 +240,7 @@
                 });
                 this.socket.on("typingStarted", (data) => {
                     if(this.userData.isAdmin) {
-                        if(this.chatId == data.user) {
+                        if(this.chatId === data.user) {
                             this.typing = data.user;
                         }
                     } else {
@@ -246,7 +249,7 @@
                 });
                 this.socket.on("typingStopped", (data) => {
                     if(this.userData.isAdmin) {
-                        if(this.chatId == data.user) {
+                        if(this.chatId === data.user) {
                             this.typing = "";
                         }
                     } else {
@@ -318,7 +321,7 @@
                 var confirmed = confirm("Remove user " + user + "?");
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/removeUser/" + user).then(response => {
-                        this.users = this.users.filter(user => user.user != response.data.user);
+                        this.users = this.users.filter(user => user.user !== response.data.user);
                         this.message = "";
                     }).catch(error => console.log(error));
                 }
@@ -341,7 +344,7 @@
                         statusClass = document.getElementById("messageStatus").className;
                     }
                 }
-                if(status == "read") {
+                if(status === "read") {
                     if(statusClass.includes("fa-eye-slash")) {
                         if(this.userData.isAdmin) {
                             document.getElementById("messageStatus_" + user).classList.remove("fa-eye-slash");
@@ -380,6 +383,7 @@
                 }
             },
             enableEditing(message) {
+                if(this.editing !== null) return;
                 this.cachedMessage = Object.assign({}, message);
                 this.editing = message._id;
             },
@@ -416,7 +420,7 @@
             },
             displayMessages() {
                 if(this.chatId) {
-                    var foundIndex = this.users.findIndex(foundUser => foundUser.user == this.chatId);
+                    var foundIndex = this.users.findIndex(foundUser => foundUser.user === this.chatId);
                     if(foundIndex > -1) {
                         return this.users[foundIndex].messages;
                     }
@@ -437,9 +441,13 @@
             this.socket.emit("userLeaving");
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            this.userData = checkLogin.methods.getUserData();
-            this.joinChat();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    temp.getUserData();
+                    temp.joinChat();
+                }
+            });
         }
     }
 </script>
