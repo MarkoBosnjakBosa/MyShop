@@ -55,6 +55,7 @@
     import checkLogin from "../components/CheckLogin.vue";
     import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";  
+    import route from "../components/Route.vue";  
     import validation from "../components/Validation.vue";
     const axios = require("axios");
 	
@@ -117,8 +118,11 @@
             invalidAuthenticationEnablingToken() { return validation.methods.invalidAuthenticationToken(this.authenticationEnablingToken); }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            this.getAuthentication();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) temp.getAuthentication();
+                else route.methods.openLogin();
+            });
         }
     }
 </script>

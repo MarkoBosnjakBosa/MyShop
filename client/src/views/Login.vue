@@ -130,7 +130,7 @@
 							this.openHome();
 						} else {
 							if(response.data.found) {
-								if(response.data.error == "notConfirmed") {
+								if(response.data.error === "notConfirmed") {
 									this.errors.notConfirmed = true;
 								} else {
 									this.errors.noPasswordMatch = true;

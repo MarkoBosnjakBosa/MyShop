@@ -23,7 +23,7 @@
                                 <div class="row margin">
                                     <label class="col-3 col-form-label">Quantity:</label>
                                     <div class="col-9">
-                                        <input type="number" min="1" :max="product.quantity" onkeydown="if(event.key == '.') event.preventDefault();" class="form-control quantity" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'" :value="product.selectedQuantity" @change="updateSelectedQuantity($event, product._id)"/>
+                                        <input type="number" min="1" :max="product.quantity" onkeydown="if(event.key === '.') event.preventDefault();" class="form-control quantity" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'" :value="product.selectedQuantity" @change="updateSelectedQuantity($event, product._id)"/>
                                     </div>
                                 </div>
                                 <div class="row margin">
@@ -154,7 +154,9 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(!isLoggedIn) route.methods.openLogin();
+            });
         }
     }
 </script>

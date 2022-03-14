@@ -37,7 +37,7 @@
                                 <div v-if="product.quantity" class="col-6">
                                     <form autocomplete="off" @submit.prevent="addToShoppingCart()" novalidate>
                                         <div class="mb-3 input-group">
-                                            <input type="number" id="selectedQuantity" min="1" :max="product.quantity" onkeydown="if(event.key == '.') event.preventDefault();" class="form-control" :class="{'errorField' : !Number.isInteger(product.selectedQuantity) || product.selectedQuantity < 1 || product.selectedQuantity > product.quantity}" v-model="product.selectedQuantity"/>
+                                            <input type="number" id="selectedQuantity" min="1" :max="product.quantity" onkeydown="if(event.key === '.') event.preventDefault();" class="form-control" :class="{'errorField' : !Number.isInteger(product.selectedQuantity) || product.selectedQuantity < 1 || product.selectedQuantity > product.quantity}" v-model="product.selectedQuantity"/>
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-primary" data-toggle="tooltip" :title="'Value can not be greater than ' + product.quantity + '.'">Add to cart</button>
                                             </div>
@@ -93,7 +93,7 @@
                                         </button>
                                     </h2>
                                     <div :id="'collapse_' + review._id" class="accordion-collapse collapse" :aria-labelledby="'heading_' + review._id" data-bs-parent="#reviews">
-                                        <div v-if="editing == review._id" class="accordion-body">
+                                        <div v-if="editing === review._id" class="accordion-body">
                                             <div class="row">
                                                 <div class="editMessage">
                                                     <textarea class="form-control" rows="5" v-model="reviews[index].review"></textarea>
@@ -105,7 +105,7 @@
                                             </div>
                                         </div>
                                         <div v-else class="accordion-body">{{review.review}}
-                                            <div v-if="review.username == username && editing != review._id" class="action">
+                                            <div v-if="review.username === username && editing !== review._id" class="action">
                                                 <i class="fas fa-edit action" @click="enableEditing(review)"></i>
                                                 <i class="fas fa-trash action" @click="deleteReview(review._id)"></i>
                                             </div>
@@ -145,7 +145,6 @@
         },
         data() {
             return {
-                productId: "",
                 username: this.$store.getters.getUser,
                 product: {
                     _id: "",
@@ -170,7 +169,7 @@
         },
         methods: {
             getProduct() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProduct/" + this.productId).then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getProduct/" + this.product._id).then(response => {
                     this.product = response.data.product;
                     if(this.product.quantity < 1) this.product.quantity = 0;
                     this.product.selectedQuantity = 1;
@@ -185,14 +184,14 @@
                 }
             },
             getUserRating(usersRatings) {
-                var foundIndex = usersRatings.findIndex(userRating => userRating.username == this.username);
+                var foundIndex = usersRatings.findIndex(userRating => userRating.username === this.username);
                 if(foundIndex > -1) {
                     this.rateProduct(usersRatings[foundIndex].rating, "load");
                 }
             },
             rateProduct(rating, type) {
                 if((rating && rating < 6)) {
-                    if(type == "load") {
+                    if(type === "load") {
                         for(var index = 1; index < 6; index ++) {
                             if(index <= rating) {
                                 document.getElementById("rating_" + index).classList.add("checked");
@@ -201,7 +200,7 @@
                             }
                         }
                     } else {
-                        var body = {productId: this.productId, username: this.username, rating: rating};
+                        var body = {productId: this.product._id, username: this.username, rating: rating};
                         axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/rateProduct", body).then(response => {
                             if(response.data.rated) {
                                 for(var index = 1; index < 6; index ++) {
@@ -219,7 +218,7 @@
                 }
             },
             getReviews() {
-                var body = {productId: this.productId, page: this.page};
+                var body = {productId: this.product._id, page: this.page};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getReviews", body).then(response => {
                     this.reviews = response.data.reviews;  
                     this.pagesNumber = response.data.pagesNumber;  
@@ -242,7 +241,7 @@
             },
             writeReview() {
                 if(this.review) {
-                    var body = {productId: this.productId, username: this.username, review: this.review};
+                    var body = {productId: this.product._id, username: this.username, review: this.review};
                     axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/writeReview", body).then(response => {
                         if(response.data.written) {
                             this.review = "";
@@ -259,7 +258,7 @@
                     var body = {reviewId: updatedReview._id, username: this.username, review: updatedReview.review};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editReview", body).then(response => {
                         if(response.data.edited) {
-                            this.reviews = this.reviews.map(review => review._id == response.data.review._id ? response.data.review : review);
+                            this.reviews = this.reviews.map(review => review._id === response.data.review._id ? response.data.review : review);
                             this.editing = null;
                             this.message = "You have successfully edited a review for this product!";
                         }
@@ -271,7 +270,7 @@
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteReview/" + reviewId + "/" + this.username).then(response => {
                         if(response.data.deleted) {
-                            this.reviews = this.reviews.filter(review => review._id != reviewId);
+                            this.reviews = this.reviews.filter(review => review._id !== reviewId);
                             this.page = 1;
                             this.getReviews();
                             this.message = "You have successfully deleted a review for this product!";
@@ -295,10 +294,11 @@
                 }
             },
             enableEditing(review) {
+                if(this.editing !== null) return; 
                 this.cachedReview = Object.assign({}, review);
                 this.editing = review._id;
             },
-            disableEditing(review) { 
+            disableEditing(review) {
                 Object.assign(review, this.cachedReview);
                 this.editing = null;
             },
@@ -319,10 +319,16 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            this.productId = this.$route.params.productId;
-            this.getProduct();
-            this.getReviews();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) {
+                    temp.product._id = temp.$route.params.productId;
+                    temp.getProduct();
+                    temp.getReviews();
+                } else {
+                    route.methods.openLogin();
+                }
+            });
         }
     }
 </script>

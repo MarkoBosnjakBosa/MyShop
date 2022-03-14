@@ -124,8 +124,11 @@
             }
         },
         created() {
-            checkLogin.methods.isLoggedIn();
-            this.getOrders();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) temp.getOrders();
+                else route.methods.openLogin();
+            });
         }
     }
 </script>
