@@ -48,7 +48,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			var pagesNumber = 1;
 			if(total >= limit) pagesNumber = Math.ceil(total / limit);
 			response.status(200).json({products: results[0], total: total, pagesNumber: pagesNumber}).end();
-		});
+		}).catch(error => console.log(error));
 	});
 	app.get("/getProduct/:productId", (request, response) => {
 		var productId = request.params.productId;
@@ -228,7 +228,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			var pagesNumber = 1;
 			if(total >= limit) pagesNumber = Math.ceil(total / limit);
 			response.status(200).json({reviews: results[0], total: total, pagesNumber: pagesNumber}).end();
-		});
+		}).catch(error => console.log(error));
 	});
 	app.post("/writeReview", validations.validateReviewWriting, (request, response) => {
 		var productId = request.body.productId;
