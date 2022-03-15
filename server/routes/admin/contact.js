@@ -73,8 +73,8 @@ module.exports = function(app, models, emailEvents, validations) {
         var message = contact.message;
         var date = new Date().getTime();
         var newContact = getContactScheme(Contact, firstName, lastName, email, mobileNumber, message, date);
-        newContact.save().then(contact => {
-            emailEvents.emit("sendContactEmail", contact);
+        newContact.save().then(createdContact => {
+            emailEvents.emit("sendContactEmail", createdContact);
             response.status(200).json({submitted: true}).end();
         }).catch(error => console.log(error));
     });

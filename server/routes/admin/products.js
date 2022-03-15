@@ -94,7 +94,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 		var query = {_id: productId};
 		var options = {new: true};
 		var type = request.body.type;
-		if(type == "main") {
+		if(type === "main") {
 			var title = request.body.title;
 			var description = request.body.description;
 			var price = request.body.price;
@@ -108,7 +108,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 					response.status(200).json({edited: false}).end();
 				}
 			}).catch(error => console.log(error));
-		} else if(type == "technicalData") {
+		} else if(type === "technicalData") {
 			var technicalData = JSON.parse(request.body.technicalData);
 			var update = {technicalData: technicalData};
 			Product.findOneAndUpdate(query, update, options).then(product => {
@@ -118,7 +118,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 					response.status(200).json({edited: false}).end();
 				}
 			}).catch(error => console.log(error));
-		} else if(type == "primaryImage") {
+		} else if(type === "primaryImage") {
 			var primaryImage = request.files["primaryImage"][0];
 			var primaryImageRead = fs.readFileSync(primaryImage.path);
 			var encodedPrimaryImage = primaryImageRead.toString("base64");
@@ -133,7 +133,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 					response.status(200).json({edited: false}).end();
 				}
 			}).catch(error => console.log(error));
-		} else if(type == "images") {
+		} else if(type === "images") {
 			var images = request.files["images"];
 			var imagesObjects = [];
 			if(images && images.length && images.length < 5) {
@@ -193,7 +193,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 				var votes = Number(product.rating.votes);
 				var totalRating = Number(product.rating.totalRating);
 				var usersRatings = product.rating.usersRatings;
-				var foundIndex = usersRatings.findIndex(userRating => userRating.username == username);
+				var foundIndex = usersRatings.findIndex(userRating => userRating.username === username);
 				if(foundIndex > -1) {
 					totalRating = totalRating - Number(usersRatings[foundIndex].rating) + rating;
 					usersRatings[foundIndex].rating = rating;
@@ -236,8 +236,8 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 		var review = request.body.review;
 		var date = new Date().getTime();
 		var newReview = getReviewScheme(Review, productId, username, review, date);
-		newReview.save().then(review => {
-			response.status(200).json({written: true, review: review}).end();
+		newReview.save().then(createdReview => {
+			response.status(200).json({written: true, review: createdReview}).end();
 		}).catch(error => console.log(error));
 	});
 	app.put("/editReview", validations.validateReviewEdit, (request, response) => {
@@ -248,9 +248,9 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 		var query = {_id: reviewId, username: username};
 		var update = {review: review, date: date};
 		var options = {new: true};
-		Review.findOneAndUpdate(query, update, options).then(review => {
-			if(!validations.isEmpty(review)) {
-				response.status(200).json({edited: true, review: review}).end();
+		Review.findOneAndUpdate(query, update, options).then(updatedReview => {
+			if(!validations.isEmpty(updatedReview)) {
+				response.status(200).json({edited: true, review: updatedReview}).end();
 			} else {
 				response.status(200).json({edited: false}).end();
 			}
