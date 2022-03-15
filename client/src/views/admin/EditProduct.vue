@@ -103,7 +103,7 @@
                         </form>
                     </div>
                     <div id="imagesTab" class="tab-pane fade" role="tabpanel">
-                        <form enctype="multipart/form-data">
+                        <form autocomplete="off" enctype="multipart/form-data" novalidate>
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span for="primaryImage" class="input-group-text">Primary image</span>
