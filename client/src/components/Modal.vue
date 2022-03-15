@@ -47,10 +47,6 @@
         animation-name: zoom;
         animation-duration: 0.6s;
     }
-    @keyframes zoom {
-        from {transform:scale(0)} 
-        to {transform:scale(1)}
-    }
     .close {
         position: absolute;
         top: 15px;
@@ -60,6 +56,10 @@
         font-weight: bold;
         transition: 0.3s;
         cursor: pointer;
+    }
+    @keyframes zoom {
+        from {transform:scale(0)} 
+        to {transform:scale(1)}
     }
     @media only screen and (max-width: 700px) {
         .modalImage {
