@@ -193,7 +193,6 @@
 	}
 	.loginFailed {
 		color: #ff0000;
-		margin-bottom: 10px;
 	}
 	.errorField {
 		border: 1px solid #ff0000;
