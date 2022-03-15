@@ -1,5 +1,5 @@
 <template>
-    <div id="notification" class="position-fixed bottom-0 end-0" :class="type == 'success' ? 'p-3' : 'margin'">
+    <div id="notification" class="position-fixed bottom-0 end-0" :class="type === 'success' ? 'p-3' : 'margin'">
         <div class="toast" :class="message ? 'show' : 'hide'" role="alert">
             <div class="toast-header">
                 <strong class="me-auto title">{{product.title ? product.title : "Product"}}</strong>
