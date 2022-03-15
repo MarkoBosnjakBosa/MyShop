@@ -33,7 +33,7 @@ module.exports = function(app, models, validations) {
 			var pagesNumber = 1;
 			if(total >= limit) pagesNumber = Math.ceil(total / limit);
 			response.status(200).json({users: results[0], total: total, pagesNumber: pagesNumber}).end();
-		});
+		}).catch(error => console.log(error));
 	});
 	app.get("/getUserById/:userId", (request, response) => {
 		var userId = request.params.userId;
