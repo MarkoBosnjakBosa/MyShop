@@ -126,7 +126,7 @@ module.exports = function(app, io, models, validations) {
         });
         socket.on("userLeaving", () => socket.disconnect());
         socket.on("disconnect", () => {
-            if(admin.socketId == socket.id) {
+            if(admin.socketId === socket.id) {
                 admin = {};
                 users.forEach(user => socket.broadcast.to(user.socketId).emit("adminOffline"));
             } else {
