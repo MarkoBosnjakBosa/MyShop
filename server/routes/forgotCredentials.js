@@ -6,7 +6,7 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 		var query = {"account.email": email}; 
 		User.findOne(query).then(user => {
 			if(!validations.isEmpty(user)) {
-				if(option == "password") {
+				if(option === "password") {
 					var resetPasswordToken = Math.floor(100000 + Math.random() * 900000);
 					var update = {"confirmation.resetPasswordToken": resetPasswordToken};
 					var options = {new: true};
@@ -14,7 +14,7 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 						emailEvents.emit("sendResetPasswordEmail", updatedUser.account, updatedUser.confirmation.resetPasswordToken);
 						setTimeout(function() { deleteToken("resetPasswordToken", user.account.username); }, 5 * 60 * 1000);
 					}).catch(error => console.log(error));
-				} else if(option == "username") {
+				} else if(option === "username") {
 					emailEvents.emit("sendForgotUsernameEmail", user.account);
 				} else {
 					var confirmationToken = Math.floor(100000 + Math.random() * 900000);
@@ -76,11 +76,12 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 	function deleteToken(type, username) {
 		var query = {"account.username": username};
 		var update;
-		if(type == "resetPasswordToken") {
+		if(type === "resetPasswordToken") {
 			update = {"confirmation.resetPasswordToken": ""};
 		} else {
 			update = {"confirmation.confirmationToken": ""};
 		}
-		User.findOneAndUpdate(query, update, {new: true}).then().catch(error => console.log(error));
+		var options = {new: true};
+		User.findOneAndUpdate(query, update, options).then().catch(error => console.log(error));
 	}
 }

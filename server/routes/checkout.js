@@ -27,10 +27,10 @@ module.exports = function(app, models, stripe, ejs, pdf, fs, path, emailEvents, 
 					orderNumber += Number(order.orderNumber);
 				}
 				var newOrder = getOrderScheme(Order, orderNumber, user._id, paymentType, products, totalPrice, createdAt, false, 0, {account: user.account, address: user.address});
-				newOrder.save().then(newOrder => {
-					createInvoice(newOrder, user);
+				newOrder.save().then(createdOrder => {
+					createInvoice(createdOrder, user);
 					updateQuantities(products);
-					response.status(200).json({finalized: true, orderId: newOrder._id}).end();
+					response.status(200).json({finalized: true, orderId: createdOrder._id}).end();
 				}).catch(error => console.error(error));
 			}).catch(error => console.error(error));
 		}).catch(error => console.error(error));

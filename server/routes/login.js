@@ -56,7 +56,7 @@ module.exports = function(app, models, jwt, bcryptjs, smsEvents, checkStatus, va
 			if(!validations.isEmpty(user)) {
 				if(request.headers["authentication"]) {
 					var authenticationToken = request.headers["authentication"];
-					if(authenticationToken == user.confirmation.authenticationToken) {
+					if(authenticationToken === user.confirmation.authenticationToken) {
 						var token = jwt.sign({userId: user._id, username: user.account.username}, process.env.JWT_SECRET_KEY);
 						var update = {"confirmation.authenticationToken": ""};
 						var options = {new: true};

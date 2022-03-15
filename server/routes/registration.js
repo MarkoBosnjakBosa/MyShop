@@ -8,9 +8,9 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
         User.findOne(query).then(foundUser => {
             if(!validations.isEmpty(foundUser)) {
                 var error = {registered: false, alreadyExists: true, field: ""};
-                if(foundUser.account.username == account.username) {
+                if(foundUser.account.username === account.username) {
                     error.field = "username";
-                } else if(foundUser.account.email == account.email) {
+                } else if(foundUser.account.email === account.email) {
                     error.field = "email";
                 } else {
                     error.field = "mobileNumber";

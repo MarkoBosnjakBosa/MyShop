@@ -16,7 +16,7 @@ module.exports = function(app, models, smsEvents, validations) {
         if(authenticationEnabled) {
             User.findOne(query).then(user => {
                 var authenticationEnablingToken = request.body.authenticationEnablingToken;
-                if(authenticationEnablingToken == user.confirmation.authenticationEnablingToken) {
+                if(authenticationEnablingToken === user.confirmation.authenticationEnablingToken) {
                     update = {"confirmation.authenticationEnabled": authenticationEnabled, "confirmation.authenticationEnablingToken": ""};
                     User.findOneAndUpdate(query, update, options).then(updatedUser => {
                         response.status(200).json({valid: true, authenticationEnabled: updatedUser.confirmation.authenticationEnabled}).end();
