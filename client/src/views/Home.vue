@@ -8,7 +8,7 @@
                     <h1>MyShop</h1>
                     <div id="imagesCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-indicators">
-                            <button v-for="(image, index) in homeSettings.images" :key="image._id" type="button" data-bs-target="#imagesCarousel" :data-bs-slide-to="index" :class="{'active' : index == 0}" data-bs-interval="2000"></button>
+                            <button v-for="(image, index) in homeSettings.images" :key="image._id" type="button" data-bs-target="#imagesCarousel" :data-bs-slide-to="index" :class="{'active' : index === 0}" data-bs-interval="2000"></button>
                         </div>
                         <div v-if="homeSettings.images.length" class="carousel-inner">
                             <div v-for="(image, index) in homeSettings.images" :key="image._id" class="carousel-item" :class="{'active' : index === 0}">
