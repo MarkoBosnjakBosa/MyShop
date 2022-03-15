@@ -12,7 +12,7 @@
                 <div class="tab-content">
                     <div id="imagesTab" class="tab-pane fade active show" role="tabpanel">
                         <h3>Images</h3>
-                        <form enctype="multipart/form-data">
+                        <form autocomplete="off" enctype="multipart/form-data" novalidate>
                             <div class="mb-3">
                                 <div id="dropzone" @dragover.prevent="addDragOver()" @dragleave.prevent="removeDragOver()" @drop="removeDragOver()" @change="uploadImages($event)">
                                     <div id="dropzoneDescription">
@@ -45,8 +45,7 @@
                                     menubar: 'file edit view insert format tools table help',
                                     plugins: ['advlist autolink lists link image charmap print preview anchor', 'searchreplace visualblocks code fullscreen', 'insertdatetime media table paste code help wordcount'],
                                     toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
-                                }"
-                                v-model="homeSettings.message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"/>
+                                }" v-model="homeSettings.message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"></tinymce>
                                 <small v-if="errors.messageError" class="form-text errorInput">Please provide a valid message!</small>
                                 <small v-if="messageSaved" class="form-text messageSaved">Message has been successfully saved!</small>
                             </div>
