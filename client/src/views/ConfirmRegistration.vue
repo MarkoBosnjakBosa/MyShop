@@ -6,7 +6,7 @@
                 <navigation></navigation>
                 <div v-if="registrationConfirmed" class="confirmation">
                     <div class="alert alert-success" role="alert">Your registration has been confirmed!</div>
-                    <button type="button" class="btn btn-dark"  @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
+                    <button type="button" class="btn btn-dark" @click="openLogin()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
                 </div>
                 <div v-if="emailSent" class="confirmation">
                     <div class="alert alert-success" role="alert">Confirmation email sent!</div>
