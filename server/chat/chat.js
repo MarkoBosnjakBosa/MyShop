@@ -40,18 +40,18 @@ module.exports = function(app, io, models, validations) {
             if(chatId && validations.validateMessage(message)) {
                 var date = new Date().getTime();
                 var newMessage = getMessageScheme(Message, chatId, user, message, date);
-                newMessage.save().then(message => {
+                newMessage.save().then(createdMessage => {
                     var foundIndex = users.findIndex(foundUser => foundUser.user === chatId);
                     if(foundIndex > -1) {
-                        users[foundIndex].messages = [...users[foundIndex].messages, message];
+                        users[foundIndex].messages = [...users[foundIndex].messages, createdMessage];
                         if(isAdmin) {
-                            socket.emit("messageSent", {user: chatId, isAdmin: true, message: message, myself: true});
-                            socket.broadcast.to(users[foundIndex].socketId).emit("messageSent", {user: "", isAdmin: false, message: message, myself: false});
+                            socket.emit("messageSent", {user: chatId, isAdmin: true, message: createdMessage, myself: true});
+                            socket.broadcast.to(users[foundIndex].socketId).emit("messageSent", {user: "", isAdmin: false, message: createdMessage, myself: false});
                         } else {
                             if(Object.keys(admin).length) {
-                                socket.broadcast.to(admin.socketId).emit("messageSent", {user: chatId, isAdmin: true, message: message, myself: false});
+                                socket.broadcast.to(admin.socketId).emit("messageSent", {user: chatId, isAdmin: true, message: createdMessage, myself: false});
                             }
-                            socket.emit("messageSent", {user: "", isAdmin: false, message: message, myself: true});
+                            socket.emit("messageSent", {user: "", isAdmin: false, message: createdMessage, myself: true});
                         }
                     }
                 }).catch(error => console.log(error));
