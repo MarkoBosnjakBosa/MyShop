@@ -62,7 +62,7 @@ module.exports = function(app, models, emailEvents, validations) {
             var pagesNumber = 1;
             if(total >= limit) pagesNumber = Math.ceil(total / limit);
             response.status(200).json({contacts: results[0], total: total, pagesNumber: pagesNumber}).end();
-        });
+        }).catch(error => console.log(error));
     });
     app.post("/newContact", validations.validateContact, (request, response) => {
         var contact = request.body.contact;
