@@ -11,7 +11,7 @@
                     <b>{{product.selectedQuantity}} x {{formatNumber(product.price)}} = {{formatNumber(Number(product.selectedQuantity) * Number(product.price))}}</b><br>
                     <i class="fas fa-external-link-square-alt" @click="openViewProduct(product._id)"></i>
                 </div>
-                <i class="fas fa-times productRemoval" :class="index == 0 ? 'firstRemoval' : 'otherRemovals'" @click="removeFromShoppingCart(product._id)"></i>
+                <i class="fas fa-times productRemoval" :class="index === 0 ? 'firstRemoval' : 'otherRemovals'" @click="removeFromShoppingCart(product._id)"></i>
             </li>
             <li v-if="products.length" class="container product lowerProduct">
                 <div class="totalCost">
