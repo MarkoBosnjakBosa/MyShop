@@ -225,7 +225,7 @@ function validateProductEdit(request, response, next) {
     var productId = request.body.productId;
     if(productId) {
         var type = request.body.type;
-        if(type == "main") {
+        if(type === "main") {
             var title = request.body.title;
             if(validations.invalidTitle(title)) {
                 errors = [...errors, "title"];
@@ -248,9 +248,9 @@ function validateProductEdit(request, response, next) {
             }
             if(!errors.length) next();
             else response.status(200).json({edited: false, errors: errors}).end();
-        } else if(type == "technicalData") {
+        } else if(type === "technicalData") {
             next();
-        } else if(type == "primaryImage") {
+        } else if(type === "primaryImage") {
             if(request.files["primaryImage"] && request.files["primaryImage"][0]) {
                 var primaryImage = request.files["primaryImage"][0];
                 if(!validations.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) {
@@ -261,7 +261,7 @@ function validateProductEdit(request, response, next) {
             } else{
                 response.status(200).json({edited: false, errors: ["primaryImage"]}).end();
             }
-        } else if(type == "images") {
+        } else if(type === "images") {
             next();
         } else {
             response.status(200).json({edited: false}).end();
