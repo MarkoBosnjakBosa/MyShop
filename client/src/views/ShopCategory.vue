@@ -33,9 +33,7 @@
                     </div>
                 </form>
                 <div class="row mb-3 products">
-                    <div v-if="!products.length" class="noProducts">
-                        No products found!
-                    </div>
+                    <div v-if="!products.length" class="noProducts">No products found!</div>
                     <div v-for="product in products" :key="product._id" class="col-3">
                         <div class="card">
                             <img :src="renderImage(product.primaryImage)" :alt="product.primaryImage.name" class="card-img-top" @click="openModal($event)"/>
