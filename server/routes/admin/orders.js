@@ -63,7 +63,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			var pagesNumber = 1;
 			if(total >= limit) pagesNumber = Math.ceil(total / limit);
 			response.status(200).json({orders: results[0], total: total, pagesNumber: pagesNumber}).end();
-		});
+		}).catch(error => console.log(error));
 	});
 	app.post("/getUserOrders", (request, response) => {
 		var username = request.body.username;
@@ -81,7 +81,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 				var pagesNumber = 1;
 				if(total >= limit) pagesNumber = Math.ceil(total / limit);
 				response.status(200).json({orders: results[0], total: total, pagesNumber: pagesNumber}).end();
-			});
+			}).catch(error => console.log(error));
 		}).catch(error => console.log(error));
 	});
 	app.post("/downloadOrders", (request, response) => {
