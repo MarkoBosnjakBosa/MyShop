@@ -144,7 +144,7 @@
                     var body = {categoryId: updatedCategory._id, title: updatedCategory.title, icon: updatedCategory.icon};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editCategory", body).then(response => {
                         if(response.data.edited) {
-                            this.categories = this.categories.map(category => category._id == updatedCategory._id ? updatedCategory : category);
+                            this.categories = this.categories.map(category => category._id === updatedCategory._id ? updatedCategory : category);
                             this.editing = null;
                         }
                     }).catch(error => console.log(error));
@@ -155,7 +155,7 @@
                 if(confirmed) {
                     axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteCategory/" + categoryId).then(response => {
                         if(response.data.deleted) {
-                            this.categories = this.categories.filter(category => category._id != categoryId);
+                            this.categories = this.categories.filter(category => category._id !== categoryId);
                         }
                     }).catch(error => console.log(error));
                 }
