@@ -222,45 +222,50 @@ function validateProductCreation(request, response, next) {
 
 function validateProductEdit(request, response, next) {
     var errors = [];
-    var type = request.body.type;
-    if(type == "main") {
-        var title = request.body.title;
-        if(validations.invalidTitle(title)) {
-            errors = [...errors, "title"];
-        }
-        var description = request.body.description;
-        if(validations.invalidDescription(description)) {
-            errors = [...errors, "description"];
-        }
-        var price = request.body.price;
-        if(validations.invalidPrice(price)) {
-            errors = [...errors, "price"];
-        }
-        var quantity = request.body.quantity;
-        if(validations.invalidQuantity(quantity)) {
-            errors = [...errors, "quantity"];
-        }
-        var category = request.body.category;
-        if(validations.invalidCategory(category)) {
-            errors = [...errors, "category"];
-        }
-        if(!errors.length) next();
-        else response.status(200).json({edited: false, errors: errors}).end();
-    } else if(type == "technicalData") {
-        next();
-    } else if(type == "primaryImage") {
-        if(request.files["primaryImage"] && request.files["primaryImage"][0]) {
-            var primaryImage = request.files["primaryImage"][0];
-            if(!validations.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) {
-                next();
-            } else {
+    var productId = request.body.productId;
+    if(productId) {
+        var type = request.body.type;
+        if(type == "main") {
+            var title = request.body.title;
+            if(validations.invalidTitle(title)) {
+                errors = [...errors, "title"];
+            }
+            var description = request.body.description;
+            if(validations.invalidDescription(description)) {
+                errors = [...errors, "description"];
+            }
+            var price = request.body.price;
+            if(validations.invalidPrice(price)) {
+                errors = [...errors, "price"];
+            }
+            var quantity = request.body.quantity;
+            if(validations.invalidQuantity(quantity)) {
+                errors = [...errors, "quantity"];
+            }
+            var category = request.body.category;
+            if(validations.invalidCategory(category)) {
+                errors = [...errors, "category"];
+            }
+            if(!errors.length) next();
+            else response.status(200).json({edited: false, errors: errors}).end();
+        } else if(type == "technicalData") {
+            next();
+        } else if(type == "primaryImage") {
+            if(request.files["primaryImage"] && request.files["primaryImage"][0]) {
+                var primaryImage = request.files["primaryImage"][0];
+                if(!validations.invalidPrimaryImage(primaryImage) && !request.extensionValidationError) {
+                    next();
+                } else {
+                    response.status(200).json({edited: false, errors: ["primaryImage"]}).end();
+                }
+            } else{
                 response.status(200).json({edited: false, errors: ["primaryImage"]}).end();
             }
-        } else{
-            response.status(200).json({edited: false, errors: ["primaryImage"]}).end();
+        } else if(type == "images") {
+            next();
+        } else {
+            response.status(200).json({edited: false}).end();
         }
-    } else if(type == "images") {
-        next();
     } else {
         response.status(200).json({edited: false}).end();
     }
