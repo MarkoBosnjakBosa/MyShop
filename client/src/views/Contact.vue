@@ -76,6 +76,7 @@
 </template>
 
 <script>
+    import checkLogin from "../components/CheckLogin.vue";
     import navigation from "../components/Navigation.vue";
     import sidebar from "../components/Sidebar.vue";
     import helper from "../components/Helper.vue";  
@@ -90,6 +91,7 @@
         },
         data() {
             return {
+                username: this.$store.getters.getUser,
                 map: null,
                 contactSettings: {
                     _id: "",
@@ -130,6 +132,15 @@
                     this.loadGoogleMaps();
                 }).catch(error => console.log(error));
             },
+            getUser() {
+				axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUser/" + this.username).then(response => {
+                    var account = response.data.account;
+                    this.contact.firstName = account.firstName;
+                    this.contact.lastName = account.lastName;
+                    this.contact.email = account.email;
+                    this.contact.mobileNumber = account.mobileNumber;
+				}).catch(error => console.log(error));
+			},
             submitMessage() {
                 this.submitting = true;
                 this.clearFirstNameStatus();
@@ -224,6 +235,10 @@
         },
         created() {
             this.getContactSettings();
+            var temp = this;
+            checkLogin.methods.isLoggedIn(function(isLoggedIn) {
+                if(isLoggedIn) temp.getUser();
+            });
         }
     }
 </script>

@@ -25,7 +25,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var mailOptions = {
 			from: process.env.EMAIL_USERNAME,
 			to: account.email,
-			subject: "Reset password",
+			subject: "MyShop - Reset password",
 			html: html
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
@@ -36,7 +36,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var mailOptions = {
 			from: process.env.EMAIL_USERNAME,
 			to: account.email,
-			subject: "Retrieve username",
+			subject: "MyShop - Retrieve username",
 			html: html
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
@@ -47,7 +47,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var mailOptions = {
 			from: process.env.EMAIL_USERNAME,
 			to: account.email,
-			subject: "Confirm registration",
+			subject: "MyShop - Confirm registration",
 			html: html
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
@@ -58,7 +58,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var mailOptions = {
 			from: process.env.EMAIL_USERNAME,
 			to: account.email,
-			subject: "Invoice " + orderNumber,
+			subject: "MyShop - Invoice " + orderNumber,
 			attachments: [{filename: "Invoice_" + orderNumber, path: path.join(__dirname, "../temporary/Invoice_" + orderNumber + ".pdf"), contentType: "application/pdf"}],
 			html: html
 		};
@@ -70,7 +70,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var mailOptions = {
 			from: process.env.EMAIL_USERNAME,
 			to: account.email,
-			subject: "Order #" + orderNumber + " dispatched",
+			subject: "MyShop - Order #" + orderNumber + " dispatched",
 			html: html
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
@@ -81,7 +81,7 @@ module.exports = function(EventEmitter, ejs, fs, path, transporter) {
 		var mailOptions = {
 			from: process.env.EMAIL_USERNAME,
 			to: contact.email,
-			subject: "Contact",
+			subject: "MyShop - Contact",
 			html: html
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
