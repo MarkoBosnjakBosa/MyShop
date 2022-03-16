@@ -89,85 +89,6 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			}).catch(error => console.log(error));
 		}).catch(error => console.log(error));
 	});
-	app.post("/downloadOrders", (request, response) => {
-		var search = request.body.search;
-		var type = request.body.type;
-		var page = Number(request.body.page) - 1; 
-		var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
-		var skip = page * limit;
-		var orderBy = request.body.orderBy;
-		var sort = {};
-		switch(orderBy) {
-			case "orderNumberAsc":
-				sort = {orderNumber: 1};
-				break;
-			case "orderNumberDesc":
-				sort = {orderNumber: -1};
-				break;
-			case "paymentTypeAsc":
-				sort = {paymentType: 1};
-				break;
-			case "paymentTypeDesc":
-				sort = {paymentType: -1};
-				break;
-			case "createdAtAsc":
-				sort = {createdAt: 1};
-				break;
-			case "createdAtDesc":
-				sort = {createdAt: -1};
-				break;
-			case "dispatchedAtAsc":
-				sort = {dispatchedAt: 1};
-				break;
-			case "dispatchedAtDesc":
-				sort = {dispatchedAt: -1};
-				break;
-			default:
-				sort = {};
-		}
-		var typeQuery = {};
-		switch(type) {
-			case "dispatched":
-				typeQuery = {isDispatched: true};
-				break;
-			case "notDispatched":
-				typeQuery = {isDispatched: false};
-				break;
-			case "creditCard":
-				typeQuery = {paymentType: "Credit card"};
-				break;
-			case "payPal":
-				typeQuery = {paymentType: "PayPal"};
-				break;
-			default:
-				typeQuery = {};
-		}
-		var query;
-		if(isNaN(search)) {
-			query = search ? {$and: [typeQuery, {$or: [{"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
-		} else {
-			query = search ? {$and: [typeQuery, {orderNumber: search}]} : typeQuery;
-		}
-		Order.find(query).sort(sort).skip(skip).limit(limit).then(orders => {
-			if(!validations.isEmpty(orders)) {
-				var fields = ["_id", "orderNumber", "userId", "paymentType", "totalPrice", "createdAt", "isDispatched", "dispatchedAt"];
-				var csv;
-				try {
-					csv = json2csv(orders, {fields});
-					var timestamp = new Date().getTime();
-					var filePath = path.join(__dirname, "../../temporary/Orders_" + timestamp + ".csv");
-					fs.promises.writeFile(filePath, csv).then(csvFile => {
-						setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
-						response.status(200).json({downloaded: true, fileName: "Orders_" + timestamp + ".csv"});
-					}).catch(error => console.log(error));
-				} catch(error) {
-					response.status(200).json({downloaded: false}).end(); 
-				}
-			} else {
-				response.status(200).json({downloaded: false}).end(); 
-			}
-		}).catch(error => console.log(error));
-	});
 	app.get("/getOrder/:orderId", (request, response) => {
 		var orderId = request.params.orderId;
 		var query = {_id: orderId};
@@ -244,6 +165,85 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 				}).catch(error => console.log(error));
 			} else {
 				response.status(200).json({downloaded: false}).end();
+			}
+		}).catch(error => console.log(error));
+	});
+	app.post("/downloadOrders", (request, response) => {
+		var search = request.body.search;
+		var type = request.body.type;
+		var page = Number(request.body.page) - 1; 
+		var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
+		var skip = page * limit;
+		var orderBy = request.body.orderBy;
+		var sort = {};
+		switch(orderBy) {
+			case "orderNumberAsc":
+				sort = {orderNumber: 1};
+				break;
+			case "orderNumberDesc":
+				sort = {orderNumber: -1};
+				break;
+			case "paymentTypeAsc":
+				sort = {paymentType: 1};
+				break;
+			case "paymentTypeDesc":
+				sort = {paymentType: -1};
+				break;
+			case "createdAtAsc":
+				sort = {createdAt: 1};
+				break;
+			case "createdAtDesc":
+				sort = {createdAt: -1};
+				break;
+			case "dispatchedAtAsc":
+				sort = {dispatchedAt: 1};
+				break;
+			case "dispatchedAtDesc":
+				sort = {dispatchedAt: -1};
+				break;
+			default:
+				sort = {};
+		}
+		var typeQuery = {};
+		switch(type) {
+			case "dispatched":
+				typeQuery = {isDispatched: true};
+				break;
+			case "notDispatched":
+				typeQuery = {isDispatched: false};
+				break;
+			case "creditCard":
+				typeQuery = {paymentType: "Credit card"};
+				break;
+			case "payPal":
+				typeQuery = {paymentType: "PayPal"};
+				break;
+			default:
+				typeQuery = {};
+		}
+		var query;
+		if(isNaN(search)) {
+			query = search ? {$and: [typeQuery, {$or: [{"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
+		} else {
+			query = search ? {$and: [typeQuery, {orderNumber: search}]} : typeQuery;
+		}
+		Order.find(query).sort(sort).skip(skip).limit(limit).then(orders => {
+			if(!validations.isEmpty(orders)) {
+				var fields = ["_id", "orderNumber", "userId", "paymentType", "totalPrice", "createdAt", "isDispatched", "dispatchedAt"];
+				var csv;
+				try {
+					csv = json2csv(orders, {fields});
+					var timestamp = new Date().getTime();
+					var filePath = path.join(__dirname, "../../temporary/Orders_" + timestamp + ".csv");
+					fs.promises.writeFile(filePath, csv).then(csvFile => {
+						setTimeout(function() { fs.unlinkSync(filePath); }, 30000);
+						response.status(200).json({downloaded: true, fileName: "Orders_" + timestamp + ".csv"});
+					}).catch(error => console.log(error));
+				} catch(error) {
+					response.status(200).json({downloaded: false}).end(); 
+				}
+			} else {
+				response.status(200).json({downloaded: false}).end(); 
 			}
 		}).catch(error => console.log(error));
 	});
