@@ -258,7 +258,7 @@ function validateProductEdit(request, response, next) {
                 } else {
                     response.status(200).json({edited: false, errors: ["primaryImage"]}).end();
                 }
-            } else{
+            } else {
                 response.status(200).json({edited: false, errors: ["primaryImage"]}).end();
             }
         } else if(type === "images") {
