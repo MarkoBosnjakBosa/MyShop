@@ -52,7 +52,7 @@
                     <small v-if="typing" class="typing"><b>{{typing}}</b> is typing...</small>
                     <form autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()" novalidate>
                         <div class="input-group">
-                            <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"/>
+                            <input type="text" id="adminMessage" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"/>
                             <button type="submit" class="btn btn-primary">Send</button>
                             <button type="button" class="btn btn-dark" @click="scrollDown('adminMessages')"><i class="fas fa-arrow-down"></i></button>
                         </div>
@@ -82,7 +82,7 @@
                 </div>
                 <form v-if="adminOnline" autocomplete="off" @submit.prevent="sendMessage()" @click="readMessage()" novalidate>
                     <div class="input-group">
-                        <input type="text" id="message" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"/>
+                        <input type="text" id="userMessage" class="form-control" :class="{'errorField' : errors.messageError}" placeholder="New message..." v-model="message" @focus="clearMessageStatus()" @keypress="clearMessageStatus()"/>
                         <button type="submit" class="btn btn-primary">Send</button>
                         <button type="button" class="btn btn-secondary"><i id="messageStatus" class="fa fa-eye"></i></button>
                         <button type="button" class="btn btn-dark" @click="scrollDown('messages')"><i class="fas fa-arrow-down"></i></button>
@@ -553,6 +553,10 @@
         padding: 10px;
         background-color: #4d4dff;
         color: #fff;
+    }
+    #adminMessage, #userMessage {
+        outline: none;
+        box-shadow: none;
     }
     .noMessages {
         text-align: center;
