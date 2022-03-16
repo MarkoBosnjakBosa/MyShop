@@ -54,7 +54,12 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			default:
 				typeQuery = {};
 		}
-		var query = search ? {$and: [typeQuery, {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
+		var query;
+		if(isNaN(search)) {
+			query = search ? {$and: [typeQuery, {$or: [{"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
+		} else {
+			query = search ? {$and: [typeQuery, {orderNumber: search}]} : typeQuery;
+		}
 		var ordersQuery = Order.find(query).sort(sort).skip(skip).limit(limit);
 		var totalQuery = Order.find(query).countDocuments();
 		var queries = [ordersQuery, totalQuery];
@@ -137,7 +142,12 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			default:
 				typeQuery = {};
 		}
-		var query = search ? {$and: [typeQuery, {$or: [{orderNumber: {$regex: search, $options: "i" }}, {"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
+		var query;
+		if(isNaN(search)) {
+			query = search ? {$and: [typeQuery, {$or: [{"user.account.username": {$regex: search, $options: "i" }}, {"user.account.email": {$regex: search, $options: "i"}}, {"user.account.firstName": {$regex: search, $options: "i"}}, {"user.account.lastName": {$regex: search, $options: "i"}}, {"user.account.mobileNumber": {$regex: search, $options: "i" }}]}]} : typeQuery;
+		} else {
+			query = search ? {$and: [typeQuery, {orderNumber: search}]} : typeQuery;
+		}
 		Order.find(query).sort(sort).skip(skip).limit(limit).then(orders => {
 			if(!validations.isEmpty(orders)) {
 				var fields = ["_id", "orderNumber", "userId", "paymentType", "totalPrice", "createdAt", "isDispatched", "dispatchedAt"];
