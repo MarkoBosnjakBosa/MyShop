@@ -10,7 +10,7 @@
                     <li class="nav-item">
                         <a href="#" class="nav-link" @click="openHome()">Home</a>
                     </li>
-                    <li v-if="!userData.isLoggedIn" class="nav-item">
+                    <li v-if="!userData.isAdmin" class="nav-item">
                         <a href="#" class="nav-link" @click="openContact()">Contact</a>
                     </li>
                     <li v-if="!userData.isLoggedIn" class="nav-item">
