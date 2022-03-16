@@ -24,4 +24,4 @@ Backend custom form validations (middleware)
 Form validation by using reCaptcha v2 and reCaptcha v3  
 Sending emails by using Nodemailer  
 Using Node.js events for triggering the sending of emails and SMS messages  
-MongoDB and Mongoose (queries, limits, sorts, pagess)
+MongoDB and Mongoose (queries, limits, sorts, pages)
