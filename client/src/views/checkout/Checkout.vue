@@ -61,7 +61,7 @@
                             If everything fits, you can proceed with your payment.
                         </div>
                         <div class="mb-3">
-                            <button type="button" class="btn btn-dark" @click="openProfile()">Update <i class="fas fa-pencil-alt"></i> </button>
+                            <button type="button" class="btn btn-dark" @click="openProfile()">Update <i class="fas fa-pencil-alt"></i></button>
                             <button type="button" class="btn btn-dark payment" @click="toggleTab('payment')">Payment <i class="fas fa-cart-arrow-down"></i></button>
                         </div>
                     </div>
