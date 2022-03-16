@@ -157,7 +157,7 @@
                 }
             },
             loadPage(page) {
-                if(page > 0 && page <= this.pagesNumber) {
+                if(page > 0) {
                     this.page = page;
                     this.getOrders();
                 }
