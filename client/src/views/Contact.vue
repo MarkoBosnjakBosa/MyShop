@@ -133,14 +133,14 @@
                 }).catch(error => console.log(error));
             },
             getUser() {
-				axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUser/" + this.username).then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUser/" + this.username).then(response => {
                     var account = response.data.account;
                     this.contact.firstName = account.firstName;
                     this.contact.lastName = account.lastName;
                     this.contact.email = account.email;
                     this.contact.mobileNumber = account.mobileNumber;
-				}).catch(error => console.log(error));
-			},
+                }).catch(error => console.log(error));
+            },
             submitMessage() {
                 this.submitting = true;
                 this.clearFirstNameStatus();
