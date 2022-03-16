@@ -113,10 +113,10 @@
                 document.getElementById("download_" + orderId).classList.add("fa-spinner", "fa-spin");
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + orderId).then(response => {
                     if(response.data.downloaded) {
-                        document.getElementById("download_" + orderId).classList.remove("fa-spinner", "fa-spin");
-                        document.getElementById("download_" + orderId).classList.add("fa-file-download");
                         route.methods.downloadFile(response.data.fileName);
                     }
+                    document.getElementById("download_" + orderId).classList.remove("fa-spinner", "fa-spin");
+                    document.getElementById("download_" + orderId).classList.add("fa-file-download");
                 }).catch(error => console.log(error));
             },
             openViewOrder(orderId) {
