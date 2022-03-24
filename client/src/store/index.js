@@ -59,6 +59,7 @@ export default new Vuex.Store({
 			commit("SET_USER", user);
 			commit("SET_TOKEN", token);
 			commit("SET_ADMIN", isAdmin);
+			Axios.defaults.headers.common["Application-User"] = user;
 			Axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 		},
 		authenticate: ({commit}, username) => {
