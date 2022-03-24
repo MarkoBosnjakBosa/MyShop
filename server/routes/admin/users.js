@@ -1,7 +1,7 @@
-module.exports = function(app, models, validations) {
+module.exports = function(app, models, checkStatus, checkPermission, validations) {
 	const User = models.User;
 	const Message = models.Message;
-	app.post("/getUsers", (request, response) => {
+	app.post("/getUsers", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
 		var search = request.body.search;
 		var page = Number(request.body.page) - 1; 
 		var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
@@ -35,7 +35,7 @@ module.exports = function(app, models, validations) {
 			response.status(200).json({users: results[0], total: total, pagesNumber: pagesNumber}).end();
 		}).catch(error => console.log(error));
 	});
-	app.get("/getUserById/:userId", (request, response) => {
+	app.get("/getUserById/:userId", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
 		var userId = request.params.userId;
 		var query = {_id: userId};
 		User.findOne(query).then(user => {
@@ -47,7 +47,7 @@ module.exports = function(app, models, validations) {
 			response.status(404).end();
 		});
 	});
-	app.delete("/deleteUser/:userId", (request, response) => {
+	app.delete("/deleteUser/:userId", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
 		var userId = request.params.userId;
 		var userQuery = {_id: userId};
 		User.findOneAndDelete(userQuery).then(user => {

@@ -1,4 +1,4 @@
-module.exports = function(app, models, validations) {
+module.exports = function(app, models, checkStatus, checkPermission, validations) {
     const Category = models.Category;
     app.get("/getCategories", (request, response) => {
         var query = {};
@@ -16,7 +16,7 @@ module.exports = function(app, models, validations) {
             response.status(404).end();
         });
     });
-    app.post("/createCategory", validations.validateCategoryCreation, (request, response) => {
+    app.post("/createCategory", [checkStatus.isLoggedIn, checkPermission.isAdmin, validations.validateCategoryCreation], (request, response) => {
         var title = request.body.title;
         var icon = request.body.icon;
         var newCategory = getCategoryScheme(Category, title, icon);
@@ -24,7 +24,7 @@ module.exports = function(app, models, validations) {
             response.status(200).json({created: true, category: category}).end();
         }).catch(error => console.log(error));
     });
-    app.put("/editCategory", validations.validateCategoryEdit, (request, response) => {
+    app.put("/editCategory", [checkStatus.isLoggedIn, checkPermission.isAdmin, validations.validateCategoryEdit], (request, response) => {
         var categoryId = request.body.categoryId;
         var title = request.body.title;
         var icon = request.body.icon;
@@ -39,7 +39,7 @@ module.exports = function(app, models, validations) {
             }
         }).catch(error => console.log(error));
     });
-    app.delete("/deleteCategory/:categoryId", (request, response) => {
+    app.delete("/deleteCategory/:categoryId", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
         var categoryId = request.params.categoryId;
         var query = {_id: categoryId};
         Category.findOneAndDelete(query).then(category => {

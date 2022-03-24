@@ -40,12 +40,12 @@ const profile = require("./routes/profile.js")(app, models, checkStatus, validat
 const setup = require("./routes/setup.js")(app, models, smsEvents, checkStatus, validations);
 const checkout = require("./routes/checkout.js")(app, models, stripe, ejs, pdf, fs, path, emailEvents, checkStatus, validations);
 const products = require("./routes/admin/products.js")(app, models, json2csv, fs, path, uploadImages, checkStatus, checkPermission, validations);
-const categories = require("./routes/admin/categories.js")(app, models, validations);
-const technicalData = require("./routes/admin/technicalData.js")(app, models, validations);
+const categories = require("./routes/admin/categories.js")(app, models, checkStatus, checkPermission, validations);
+const technicalData = require("./routes/admin/technicalData.js")(app, models, checkStatus, checkPermission, validations);
 const orders = require("./routes/admin/orders.js")(app, models, json2csv, ejs, pdf, fs, path, emailEvents, validations);
-const homeSettings = require("./routes/admin/homeSettings.js")(app, models, fs, uploadImages, validations);
-const contact = require("./routes/admin/contact.js")(app, models, emailEvents, validations);
-const users = require("./routes/admin/users.js")(app, models, validations);
+const homeSettings = require("./routes/admin/homeSettings.js")(app, models, fs, uploadImages, checkStatus, checkPermission, validations);
+const contact = require("./routes/admin/contact.js")(app, models, emailEvents, checkStatus, checkPermission, validations);
+const users = require("./routes/admin/users.js")(app, models, checkStatus, checkPermission, validations);
 const chat = require("./chat/chat.js")(app, io, models, validations);
 const backup = require("./database/backup.js")(spawn, cron, moment, fs, path);
 

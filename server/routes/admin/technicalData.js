@@ -1,19 +1,19 @@
-module.exports = function(app, models, validations) {
+module.exports = function(app, models, checkStatus, checkPermission, validations) {
     const TechnicalInformation = models.TechnicalInformation;
-    app.get("/getTechnicalData", (request, response) => {
+    app.get("/getTechnicalData", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
         var query = {};
         TechnicalInformation.find(query).then(technicalData => {
             response.status(200).json({technicalData: technicalData}).end();
         }).catch(error => console.log(error));
     });
-    app.post("/createTechnicalInformation", validations.validateTechnicalInformationCreation, (request, response) => {
+    app.post("/createTechnicalInformation", [checkStatus.isLoggedIn, checkPermission.isAdmin, validations.validateTechnicalInformationCreation], (request, response) => {
         var title = request.body.title;
         var newTechnicalInformation = getTechnicalInformationScheme(TechnicalInformation, title);
         newTechnicalInformation.save().then(technicalInformation => {
             response.status(200).json({created: true, technicalInformation: technicalInformation}).end();
         }).catch(error => console.log(error));
     });
-    app.put("/editTechnicalInformation", validations.validateTechnicalInformationEdit, (request, response) => {
+    app.put("/editTechnicalInformation", [checkStatus.isLoggedIn, checkPermission.isAdmin, validations.validateTechnicalInformationEdit], (request, response) => {
         var technicalInformationId = request.body.technicalInformationId;
         var title = request.body.title;
         var query = {_id: technicalInformationId};
@@ -27,7 +27,7 @@ module.exports = function(app, models, validations) {
             }
         }).catch(error => console.log(error));
     });
-    app.delete("/deleteTechnicalInformation/:technicalInformationId", (request, response) => {
+    app.delete("/deleteTechnicalInformation/:technicalInformationId", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
         var technicalInformationId = request.params.technicalInformationId;
         var query = {_id: technicalInformationId};
         TechnicalInformation.findOneAndDelete(query).then(technicalInformation => {

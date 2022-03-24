@@ -1,4 +1,4 @@
-module.exports = function(app, models, fs, uploadImages, validations) {
+module.exports = function(app, models, fs, uploadImages, checkStatus, checkPermission, validations) {
     const HomeSettings = models.HomeSettings;
     app.get("/getHomeSettings", (request, response) => {
         var query = {};
@@ -10,7 +10,7 @@ module.exports = function(app, models, fs, uploadImages, validations) {
             }
         }).catch(error => console.log(error));
     });
-    app.post("/saveHomeSettingsMessage", validations.validateHomeSettingsMessage, (request, response) => {
+    app.post("/saveHomeSettingsMessage", [checkStatus.isLoggedIn, checkPermission.isAdmin, validations.validateHomeSettingsMessage], (request, response) => {
         var homeSettingsId = request.body.homeSettingsId;
         var message = request.body.message;
         if(homeSettingsId) {
@@ -28,7 +28,7 @@ module.exports = function(app, models, fs, uploadImages, validations) {
             }).catch(error => console.log(error));
         }
     });
-    app.post("/saveHomeSettingsImages",  uploadImages.array("images", 4), (request, response) => {
+    app.post("/saveHomeSettingsImages", [checkStatus.isLoggedIn, checkPermission.isAdmin, uploadImages.array("images", 4)], (request, response) => {
         var homeSettingsId = request.body.homeSettingsId;
         var images = request.files;
         if(images && images.length && images.length < 5) {
@@ -72,7 +72,7 @@ module.exports = function(app, models, fs, uploadImages, validations) {
             response.status(200).json({saved: false}).end();
         }
     });
-    app.put("/deleteHomeSettingsImage", (request, response) => {
+    app.put("/deleteHomeSettingsImage", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
         var homeSettingsId = request.body.homeSettingsId;
         var imageId = request.body.imageId;
         var query = {_id: homeSettingsId};

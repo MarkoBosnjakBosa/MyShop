@@ -1,7 +1,7 @@
-module.exports = function(app, models, emailEvents, validations) {
+module.exports = function(app, models, emailEvents, checkStatus, checkPermission, validations) {
     const ContactSettings = models.ContactSettings;
     const Contact = models.Contact;
-    app.get("/getContactSettings", (request, response) => {
+    app.get("/getContactSettings", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
         var query = {};
         ContactSettings.findOne(query).then(contactSettings => {
             if(!validations.isEmpty(contactSettings)) {
@@ -11,7 +11,7 @@ module.exports = function(app, models, emailEvents, validations) {
             }
         }).catch(error => console.log(error));
     });
-    app.post("/saveContactSettings", validations.validateContactSettings, (request, response) => {
+    app.post("/saveContactSettings", [checkStatus.isLoggedIn, checkPermission.isAdmin, validations.validateContactSettings], (request, response) => {
         var contactSettings = request.body.contactSettings;
         var contactSettingsId = contactSettings._id;
         var coordinates = contactSettings.coordinates;
@@ -36,7 +36,7 @@ module.exports = function(app, models, emailEvents, validations) {
             }).catch(error => console.log(error));
         }
     });
-    app.post("/getContacts", (request, response) => {
+    app.post("/getContacts", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
         var search = request.body.search;
         var page = Number(request.body.page) - 1;
         var limit = (Number.isInteger(request.body.limit) && Number(request.body.limit) > 0) ? Number(request.body.limit) : 1;
@@ -78,7 +78,7 @@ module.exports = function(app, models, emailEvents, validations) {
             response.status(200).json({submitted: true}).end();
         }).catch(error => console.log(error));
     });
-    app.delete("/deleteContact/:contactId", (request, response) => {
+    app.delete("/deleteContact/:contactId", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
         var contactId = request.params.contactId;
         var query = {_id: contactId};
         Contact.findOneAndDelete(query).then(contact => {
