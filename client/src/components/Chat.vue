@@ -441,11 +441,11 @@
             this.socket.emit("userLeaving");
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
-                    temp.getUserData();
-                    temp.joinChat();
+                    vm.getUserData();
+                    vm.joinChat();
                 }
             });
         }
