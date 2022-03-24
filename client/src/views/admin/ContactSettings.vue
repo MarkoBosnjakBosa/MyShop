@@ -229,11 +229,11 @@
             invalidEmail() { return validation.methods.invalidEmail(this.contactSettings.email); }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
-                        if(isAdmin) temp.getContactSettings();
+                        if(isAdmin) vm.getContactSettings();
                         else route.methods.openHome();
                     });
                 } else {

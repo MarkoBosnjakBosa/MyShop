@@ -120,11 +120,11 @@
             }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
-                        if(isAdmin) temp.getUsers();
+                        if(isAdmin) vm.getUsers();
                         else route.methods.openHome();
                     });
                 } else {

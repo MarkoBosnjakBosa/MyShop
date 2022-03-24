@@ -175,13 +175,13 @@
             }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
                         if(isAdmin) {
-                            temp.getProducts();
-                            temp.getCategories();
+                            vm.getProducts();
+                            vm.getCategories();
                         } else {
                             route.methods.openHome();
                         }

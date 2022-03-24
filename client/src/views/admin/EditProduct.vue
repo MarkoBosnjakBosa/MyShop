@@ -401,15 +401,15 @@
             invalidPrimaryImage() { return validation.methods.invalidPrimaryImage(this.product.primaryImage); }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
                         if(isAdmin) {
-                            temp.productId = temp.$route.params.productId;
-                            temp.getProduct();
-                            temp.getCategories();
-                            temp.getTechnicalData();
+                            vm.productId = vm.$route.params.productId;
+                            vm.getProduct();
+                            vm.getCategories();
+                            vm.getTechnicalData();
                         } else {
                             route.methods.openHome();
                         }

@@ -159,13 +159,13 @@
             }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
                         if(isAdmin) {
-                            temp.userId = temp.$route.params.userId;
-                            temp.getUser();
+                            vm.userId = vm.$route.params.userId;
+                            vm.getUser();
                         } else {
                             route.methods.openHome();
                         }

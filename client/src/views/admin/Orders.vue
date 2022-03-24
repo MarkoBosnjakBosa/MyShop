@@ -190,11 +190,11 @@
             }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
-                        if(isAdmin) temp.getOrders();
+                        if(isAdmin) vm.getOrders();
                         else route.methods.openHome();
                     });
                 } else {

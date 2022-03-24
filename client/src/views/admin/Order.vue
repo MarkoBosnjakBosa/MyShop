@@ -229,13 +229,13 @@
             }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
                         if(isAdmin) {
-                            temp.order._id = temp.$route.params.orderId;
-                            temp.getOrder(); 
+                            vm.order._id = vm.$route.params.orderId;
+                            vm.getOrder(); 
                         } else {
                             route.methods.openHome();
                         }

@@ -233,38 +233,38 @@
                     this.productCreated = false;
                     return;
                 }
-                var temp = this;
+                var vm = this;
                 grecaptcha.ready(function() {
                     grecaptcha.execute(process.env.VUE_APP_RECAPTCHA_v3_SITE_KEY, {action: "submit"}).then(function(reCaptchaToken) {
                         if(reCaptchaToken !== "" && reCaptchaToken !== undefined && reCaptchaToken !== null) {
                             var formData = new FormData();
-                            formData.append("title", temp.product.title);
-                            formData.append("description", temp.product.description);
-                            formData.append("price", temp.product.price);
-                            formData.append("quantity", temp.product.quantity);
-                            formData.append("category", temp.product.category);
-                            formData.append("technicalData", JSON.stringify(temp.product.technicalData));
-                            formData.append("primaryImage", temp.product.primaryImage);
-                            for(var image = 0; image < temp.product.images.length; image++) {
-                                formData.append("images", temp.product.images[image].file);
+                            formData.append("title", vm.product.title);
+                            formData.append("description", vm.product.description);
+                            formData.append("price", vm.product.price);
+                            formData.append("quantity", vm.product.quantity);
+                            formData.append("category", vm.product.category);
+                            formData.append("technicalData", JSON.stringify(vm.product.technicalData));
+                            formData.append("primaryImage", vm.product.primaryImage);
+                            for(var image = 0; image < vm.product.images.length; image++) {
+                                formData.append("images", vm.product.images[image].file);
                             }
                             formData.append("reCaptchaToken", reCaptchaToken);
                             axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createProduct", formData).then(response => {
                                 if(response.data.created) {
-                                    temp.product = {title: "", description: "", price: "", quantity: 0, category: "", technicalData: [], primaryImage: "", images: []};
+                                    vm.product = {title: "", description: "", price: "", quantity: 0, category: "", technicalData: [], primaryImage: "", images: []};
                                     document.getElementById("primaryImage").value = "";
                                     document.getElementById("previewPrimaryImage").innerText = "";
                                     document.getElementById("images").value = "";
-                                    temp.errors = {titleError: false, descriptionError: false, priceError: false, quantityError: false, categoryError: false, primaryImageError: false};
-                                    temp.submiting = false;
-                                    temp.productCreated = true;
-                                    temp.toggleTab("main");
+                                    vm.errors = {titleError: false, descriptionError: false, priceError: false, quantityError: false, categoryError: false, primaryImageError: false};
+                                    vm.submiting = false;
+                                    vm.productCreated = true;
+                                    vm.toggleTab("main");
                                 } else {
                                     var errors = response.data.errors;
                                     errors.forEach(element => {
-                                        temp.errors[element + "Error"] = true;
+                                        vm.errors[element + "Error"] = true;
                                     });
-                                    temp.productCreated = false;
+                                    vm.productCreated = false;
                                 }
                             }).catch(error => console.log(error));
                         }
@@ -294,10 +294,10 @@
             },
             selectImages(event, type) {
                 var files = event.target.files;
-                var temp = this;
+                var vm = this;
                 if(files && files.length) {
                     if(type === "primaryImage") {
-                        temp.errors.primaryImageError = false;
+                        vm.errors.primaryImageError = false;
                         var file = files[0];
                         var previewPrimaryImage = document.getElementById("previewPrimaryImage");
                         if(file.type.match("image.*")) {
@@ -312,8 +312,8 @@
                             previewPrimaryImage.innerHTML = "";
                         }
                     } else {
-                        temp.errors.imagesError = false;
-                        if((files.length + temp.product.images.length) < 5) {
+                        vm.errors.imagesError = false;
+                        if((files.length + vm.product.images.length) < 5) {
                             for(var i = 0, file; file = files[i]; i++) {
                                 if(!file.type.match("image.*")) {
                                     continue;
@@ -322,13 +322,13 @@
                                 fileReader.onload = (function(specificFile) {
                                     return function(e) {
                                         var newImage = {name: specificFile.name, src: e.target.result, file: specificFile};
-                                        temp.product.images = [...temp.product.images, newImage];
+                                        vm.product.images = [...vm.product.images, newImage];
                                     };
                                 })(file);
                                 fileReader.readAsDataURL(file);
                             }
                         } else {
-                            temp.errors.imagesError = true;
+                            vm.errors.imagesError = true;
                         }
                     }
                 }
@@ -380,15 +380,15 @@
             this.displayReCaptcha(false);
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
                         if(isAdmin) {                         
-                            temp.getCategories();
-                            temp.getTechnicalData();
-                            temp.loadReCaptcha();
-                            temp.displayReCaptcha(true);
+                            vm.getCategories();
+                            vm.getTechnicalData();
+                            vm.loadReCaptcha();
+                            vm.displayReCaptcha(true);
                         } else {
                             route.methods.openHome();
                         }

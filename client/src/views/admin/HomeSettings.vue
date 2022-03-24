@@ -188,11 +188,11 @@
             invalidMessage() { return validation.methods.invalidMessage(this.homeSettings.message); }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
-                        if(isAdmin) temp.getHomeSettings();
+                        if(isAdmin) vm.getHomeSettings();
                         else route.methods.openHome();
                     });
                 } else {

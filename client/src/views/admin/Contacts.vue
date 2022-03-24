@@ -106,11 +106,11 @@
             }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
-                        if(isAdmin) temp.getContacts();
+                        if(isAdmin) vm.getContacts();
                         else route.methods.openHome();
                     });
                 } else {

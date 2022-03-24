@@ -168,11 +168,11 @@
             invalidIcon() { return validation.methods.invalidIcon(this.category.icon); }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
-                        if(isAdmin) temp.getCategories();
+                        if(isAdmin) vm.getCategories();
                         else route.methods.openHome();
                     });
                 } else {

@@ -138,11 +138,11 @@
             invalidTitle() { return validation.methods.invalidTitle(this.title); }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
                     checkLogin.methods.isAdmin(function(isAdmin) {
-                        if(isAdmin) temp.getTechnicalData();
+                        if(isAdmin) vm.getTechnicalData();
                         else route.methods.openHome();
                     });
                 } else {
