@@ -1,6 +1,6 @@
-module.exports = function(app, models, validations) {
+module.exports = function(app, models, checkStatus, validations) {
     const User = models.User;
-    app.get("/getUser/:username", (request, response) => {
+    app.get("/getUser/:username", checkStatus.isLoggedIn, (request, response) => {
         var username = request.params.username;
         var query = {"account.username": username};
         User.findOne(query).then(user => {
@@ -9,7 +9,7 @@ module.exports = function(app, models, validations) {
             response.status(200).json({account: user.account, address: user.address}).end();
         }).catch(error => console.log(error));
     });
-    app.put("/editAccount", validations.validateAccountEdit, (request, response) => {
+    app.put("/editAccount", [checkStatus.isLoggedIn, validations.validateAccountEdit], (request, response) => {
         var account = request.body.account;
         var username = account.username;
         var email = account.email;
@@ -23,7 +23,7 @@ module.exports = function(app, models, validations) {
             response.status(200).json({edited: true}).end();
         }).catch(error => console.log(error));
     });
-    app.put("/editAddress", validations.validateAddressEdit, (request, response) => {
+    app.put("/editAddress", [checkStatus.isLoggedIn, validations.validateAddressEdit], (request, response) => {
         var username = request.body.username;
         var address = request.body.address;
         var street = address.street;

@@ -1,13 +1,13 @@
-module.exports = function(app, models, smsEvents, validations) {
+module.exports = function(app, models, smsEvents, checkStatus, validations) {
     const User = models.User;
-    app.get("/getAuthentication/:username", (request, response) => {
+    app.get("/getAuthentication/:username", checkStatus.isLoggedIn, (request, response) => {
         var username = request.params.username;
         var query = {"account.username": username};
         User.findOne(query).then(user => {
             response.status(200).json({authenticationEnabled: user.confirmation.authenticationEnabled}).end();
         }).catch(error => console.log(error));
     });
-    app.put("/setAuthentication", validations.validateAuthenticationEnabling, (request, response) => {
+    app.put("/setAuthentication", [checkStatus.isLoggedIn, validations.validateAuthenticationEnabling], (request, response) => {
         var username = request.body.username;
         var authenticationEnabled = request.body.authenticationEnabled;
         var query = {"account.username": username};
@@ -32,7 +32,7 @@ module.exports = function(app, models, smsEvents, validations) {
             }).catch(error => console.log(error));
         }
     });
-    app.put("/sendAuthenticationEnablingToken", (request, response) => {
+    app.put("/sendAuthenticationEnablingToken", checkStatus.isLoggedIn, (request, response) => {
         var username = request.body.username;
         var query = {"account.username": username};
         var authenticationEnablingToken = Math.floor(100000 + Math.random() * 900000);

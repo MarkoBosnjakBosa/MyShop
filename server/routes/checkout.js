@@ -1,15 +1,15 @@
-module.exports = function(app, models, stripe, ejs, pdf, fs, path, emailEvents, validations) {
+module.exports = function(app, models, stripe, ejs, pdf, fs, path, emailEvents, checkStatus, validations) {
 	const Order = models.Order;
 	const User = models.User;
 	const Product = models.Product;
-	app.post("/stripe/checkout", (request, response) => {
+	app.post("/stripe/checkout", checkStatus.isLoggedIn, (request, response) => {
 		var line_items = JSON.parse(request.body.line_items);
 		var options = {payment_method_types: ["card"], line_items: line_items, mode: "payment", success_url: process.env.CHECKOUT_SUCCESS, cancel_url: process.env.CHECKOUT_CANCEL};
 		stripe.checkout.sessions.create(options).then(session => {
 			response.status(200).json({sessionId: session.id}).end();
 		});
 	});
-	app.post("/finalizePayment", (request, response) => {
+	app.post("/finalizePayment", checkStatus.isLoggedIn, (request, response) => {
 		var username = request.body.username;
 		var paymentType = request.body.paymentType;
 		var products = request.body.products;
