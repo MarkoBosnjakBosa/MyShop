@@ -46,7 +46,7 @@
         },
         methods: {
             checkLogin() {
-                if(!this.username) route.methods.openLogin(); 
+                if(validation.methods.invalidUsername(this.username)) route.methods.openLogin(); 
             },
             authenticateUser() {
                 this.clearAuthenticationTokenStatus();

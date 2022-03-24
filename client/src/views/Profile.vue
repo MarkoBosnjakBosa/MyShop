@@ -354,9 +354,9 @@
 			invalidPassword() { return validation.methods.invalidPassword(this.user.password); }
 		},
 		created() {
-			var temp = this;
+			var vm = this;
 			checkLogin.methods.isLoggedIn(function(isLoggedIn) {
-				if(isLoggedIn) temp.getUser();
+				if(isLoggedIn) vm.getUser();
 				else route.methods.openLogin();
 			});
 		}

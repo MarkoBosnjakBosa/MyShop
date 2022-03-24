@@ -26,7 +26,7 @@
 					<div class="mb-3 forgotCredentials">
 						<a href="#" @click="openForgotCredentials()">Forgot credentials?</a>
 					</div>
-					<div class="mb-3 submit">
+					<div class="mb-3">
 						<button type="submit" class="btn btn-primary submit">Log in</button>
 					</div>
 					<div class="mb-3 register">Not a member? <a href="#" @click="openRegistration()">Register</a></div>

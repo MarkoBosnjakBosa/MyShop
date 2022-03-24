@@ -319,12 +319,12 @@
             }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
                 if(isLoggedIn) {
-                    temp.product._id = temp.$route.params.productId;
-                    temp.getProduct();
-                    temp.getReviews();
+                    vm.product._id = vm.$route.params.productId;
+                    vm.getProduct();
+                    vm.getReviews();
                 } else {
                     route.methods.openLogin();
                 }

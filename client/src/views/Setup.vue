@@ -118,9 +118,9 @@
             invalidAuthenticationEnablingToken() { return validation.methods.invalidAuthenticationToken(this.authenticationEnablingToken); }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
-                if(isLoggedIn) temp.getAuthentication();
+                if(isLoggedIn) vm.getAuthentication();
                 else route.methods.openLogin();
             });
         }
