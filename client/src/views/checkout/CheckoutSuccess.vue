@@ -116,9 +116,9 @@
             }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
-                if(isLoggedIn) temp.finalizePayment();
+                if(isLoggedIn) vm.finalizePayment();
                 else route.methods.openLogin();
             });
         }

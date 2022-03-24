@@ -236,9 +236,9 @@
             }
         },
         created() {
-            var temp = this;
+            var vm = this;
             checkLogin.methods.isLoggedIn(function(isLoggedIn) {
-                if(isLoggedIn) temp.checkShoppingCart();
+                if(isLoggedIn) vm.checkShoppingCart();
                 else route.methods.openLogin();
             });
         }
