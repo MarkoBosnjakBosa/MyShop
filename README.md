@@ -3,11 +3,11 @@ MyShop - application for online shopping (Node.js, Vue.js)
 Features:  
 REST API by using Express.js  
 Login system by using JsonWebToken  
-Every REST call has an authorization - Bearer token (middleware check)  
-Two-factor authentication - sending PIN codes via SMS messages by using the Vonage API  
+REST calls have authorization - Bearer token and permission (middleware checks)  
+Two-factor authentication via PIN codes (sending SMS messages) by using the Vonage API  
 Chat by using Socket.IO  
 Cron job for creating a backup of the database every day at midnight  
-Password encryption by using Bcryprjs  
+Password encryption by using Bcryptjs  
 Export of PDF and CSV files  
 File upload (single and multiple - Drag and Drop API) by using Multer (middleware)  
 Integration with Stripe  

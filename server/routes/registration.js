@@ -19,10 +19,10 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
             } else {
                 var confirmation = {confirmed: false, confirmationToken: Math.floor(100000 + Math.random() * 900000), authenticationEnabled: true, authenticationToken: "", authenticationEnablingToken: "", resetPasswordToken: ""};
                 account.isAdmin = false;
-                var newUser = getUserScheme(User, account, address, confirmation);
                 bcryptjs.genSalt(10, (error, salt) => {
-                    bcryptjs.hash(newUser.account.password, salt, (error, hashedPassword) => {
-                        newUser.account.password = hashedPassword;
+                    bcryptjs.hash(account.password, salt, (error, hashedPassword) => {
+                        account.password = hashedPassword;
+                        var newUser = getUserScheme(User, account, address, confirmation);
                         newUser.save().then(createdUser => {
                             emailEvents.emit("sendConfirmationEmail", createdUser.account, createdUser.confirmation.confirmationToken);
                             setTimeout(function() { deleteConfirmationToken(createdUser.account.username); }, 5 * 60 * 1000);

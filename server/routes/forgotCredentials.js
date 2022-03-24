@@ -12,7 +12,7 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 					var options = {new: true};
 					User.findOneAndUpdate(query, update, options).then(updatedUser => {
 						emailEvents.emit("sendResetPasswordEmail", updatedUser.account, updatedUser.confirmation.resetPasswordToken);
-						setTimeout(function() { deleteToken("resetPasswordToken", user.account.username); }, 5 * 60 * 1000);
+						setTimeout(function() { deleteToken("resetPasswordToken", updatedUser.account.username); }, 5 * 60 * 1000);
 					}).catch(error => console.log(error));
 				} else if(option === "username") {
 					emailEvents.emit("sendForgotUsernameEmail", user.account);
@@ -22,7 +22,7 @@ module.exports = function(app, models, bcryptjs, emailEvents, validations) {
 					var options = {new: true};
 					User.findOneAndUpdate(query, update, options).then(updatedUser => {
 						emailEvents.emit("sendConfirmationEmail", updatedUser.account, updatedUser.confirmation.confirmationToken);
-						setTimeout(function() { deleteToken("confirmationToken", user.account.username); }, 5 * 60 * 1000);
+						setTimeout(function() { deleteToken("confirmationToken", updatedUser.account.username); }, 5 * 60 * 1000);
 					}).catch(error => console.log(error));
 				}
 				response.status(200).json({sent: true}).end();

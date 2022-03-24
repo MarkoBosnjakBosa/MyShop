@@ -58,7 +58,7 @@ module.exports = function(app, io, models, validations) {
             }
         });
         socket.on("editMessage", (chatId, message) => {
-            if(validations.validateMessage(message.message)) {
+            if(message._id && validations.validateMessage(message.message)) {
                 var query = {_id: message._id};
                 var update = {message: message.message};
                 var options = {new: true};
