@@ -2,7 +2,7 @@ module.exports = function(models, validations) {
     const User = models.User;
     function isAdmin(request, response, next) {
         var username = request.headers["application-user"];
-        if(!validations.invalidUsername(username)) {
+        if(username) {
             var query = {username: username};
             User.findOne(query).then(user => {
                 if(!validations.isEmpty(user)) {

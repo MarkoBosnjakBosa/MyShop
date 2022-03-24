@@ -1,4 +1,4 @@
-module.exports = function(app, models, json2csv, fs, path, uploadImages, validations) {
+module.exports = function(app, models, json2csv, fs, path, uploadImages, checkStatus, checkPermission, validations) {
 	const Product = models.Product;
 	const Review = models.Review;
 	app.post("/getProducts", (request, response) => {
@@ -50,7 +50,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			response.status(200).json({products: results[0], total: total, pagesNumber: pagesNumber}).end();
 		}).catch(error => console.log(error));
 	});
-	app.get("/getProduct/:productId", (request, response) => {
+	app.get("/getProduct/:productId", checkStatus.isLoggedIn, (request, response) => {
 		var productId = request.params.productId;
 		var query = {_id: productId};
 		Product.findOne(query).then(product => {
@@ -60,7 +60,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			response.status(404).end();
 		});
 	});
-	app.post("/createProduct", [uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validations.validateProductCreation], (request, response) => {
+	app.post("/createProduct", [checkStatus.isLoggedIn, checkPermission.isAdmin, uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validations.validateProductCreation], (request, response) => {
 		var title = request.body.title;
 		var description = request.body.description;
 		var price = request.body.price;
@@ -89,7 +89,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			response.status(200).json({created: true}).end();
 		}).catch(error => console.log(error));
 	});
-	app.put("/editProduct", [uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validations.validateProductEdit], (request, response) => {
+	app.put("/editProduct", [checkStatus.isLoggedIn, checkPermission.isAdmin, uploadImages.fields([{name: "primaryImage"}, {name: "images", maxCount: 4}]), validations.validateProductEdit], (request, response) => {
 		var productId = request.body.productId;
 		var query = {_id: productId};
 		var options = {new: true};
@@ -159,7 +159,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			}).catch(error => console.log(error));
 		}
 	});
-	app.put("/deleteProductImage", (request, response) => {
+	app.put("/deleteProductImage", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
 		var productId = request.body.productId;
 		var imageId = request.body.imageId;
 		var query = {_id: productId};
@@ -172,7 +172,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			}
 		}).catch(error => console.log(error));
 	});
-	app.delete("/deleteProduct/:productId", (request, response) => {
+	app.delete("/deleteProduct/:productId", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
 		var productId = request.params.productId;
 		var query = {_id: productId};
 		Product.findOneAndDelete(query).then(product => {
@@ -183,7 +183,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			}
 		}).catch(error => console.log(error));
 	});
-	app.put("/rateProduct", validations.validateRating, (request, response) => {
+	app.put("/rateProduct", [checkStatus.isLoggedIn, validations.validateRating], (request, response) => {
 		var productId = request.body.productId;
 		var username = request.body.username;
 		var rating = Number(request.body.rating);
@@ -213,7 +213,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			}
 		}).catch(error => console.log(error));
 	});
-	app.post("/getReviews", (request, response) => {
+	app.post("/getReviews", checkStatus.isLoggedIn, (request, response) => {
 		var productId = request.body.productId;
 		var query = {product: productId};
 		var page = Number(request.body.page) - 1;
@@ -230,7 +230,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			response.status(200).json({reviews: results[0], total: total, pagesNumber: pagesNumber}).end();
 		}).catch(error => console.log(error));
 	});
-	app.post("/writeReview", validations.validateReviewWriting, (request, response) => {
+	app.post("/writeReview", [checkStatus.isLoggedIn, validations.validateReviewWriting], (request, response) => {
 		var productId = request.body.productId;
 		var username = request.body.username;
 		var review = request.body.review;
@@ -240,7 +240,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			response.status(200).json({written: true, review: createdReview}).end();
 		}).catch(error => console.log(error));
 	});
-	app.put("/editReview", validations.validateReviewEdit, (request, response) => {
+	app.put("/editReview", [checkStatus.isLoggedIn, validations.validateReviewEdit], (request, response) => {
 		var reviewId = request.body.reviewId;
 		var username = request.body.username;
 		var review = request.body.review;
@@ -256,7 +256,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			}
 		}).catch(error => console.log(error));
 	});
-	app.delete("/deleteReview/:reviewId/:username", (request, response) => {
+	app.delete("/deleteReview/:reviewId/:username", checkStatus.isLoggedIn, (request, response) => {
 		var reviewId = request.params.reviewId;
 		var username = request.params.username;
 		var query = {_id: reviewId, username: username};
@@ -268,7 +268,7 @@ module.exports = function(app, models, json2csv, fs, path, uploadImages, validat
 			}
 		}).catch(error => console.log(error));
 	});
-	app.post("/downloadProducts", (request, response) => {
+	app.post("/downloadProducts", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
 		var search = request.body.search;
 		var category = request.body.category;
 		var page = Number(request.body.page) - 1; 
