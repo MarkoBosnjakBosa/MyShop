@@ -1,7 +1,7 @@
-module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents, validations) {
+module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents, checkStatus, checkPermission, validations) {
 	const Order = models.Order;
 	const User = models.User;
-	app.post("/getOrders", (request, response) => {
+	app.post("/getOrders", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
 		var search = request.body.search;
 		var type = request.body.type;
 		var page = Number(request.body.page) - 1;
@@ -70,7 +70,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			response.status(200).json({orders: results[0], total: total, pagesNumber: pagesNumber}).end();
 		}).catch(error => console.log(error));
 	});
-	app.post("/getUserOrders", (request, response) => {
+	app.post("/getUserOrders", checkStatus.isLoggedIn, (request, response) => {
 		var username = request.body.username;
 		var userQuery = {"account.username": username};
 		User.findOne(userQuery).then(user => {
@@ -89,7 +89,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			}).catch(error => console.log(error));
 		}).catch(error => console.log(error));
 	});
-	app.get("/getOrder/:orderId", (request, response) => {
+	app.get("/getOrder/:orderId", checkStatus.isLoggedIn, (request, response) => {
 		var orderId = request.params.orderId;
 		var query = {_id: orderId};
 		Order.findOne(query).then(order => {
@@ -99,7 +99,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			response.status(404).end();
 		});
 	});
-	app.put("/dispatchOrder",(request, response) => {
+	app.put("/dispatchOrder", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
 		var orderId = request.body.orderId;
 		var dispatchedAt = new Date().getTime();
 		var orderQuery = {_id: orderId};
@@ -121,7 +121,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			}
 		}).catch(error => console.log(error));
 	});
-	app.delete("/deleteOrder/:orderId", (request, response) => {
+	app.delete("/deleteOrder/:orderId", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
 		var orderId = request.params.orderId;
 		var query = {_id: orderId};
 		Order.findOneAndDelete(query).then(order => {
@@ -132,7 +132,7 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 			}
 		}).catch(error => console.log(error));
 	});
-	app.get("/downloadInvoice/:orderId", (request, response) => {
+	app.get("/downloadInvoice/:orderId", checkStatus.isLoggedIn, (request, response) => {
 		var orderId = request.params.orderId;
 		var orderQuery = {_id: orderId};
 		Order.findOne(orderQuery).then(order => {
@@ -145,30 +145,23 @@ module.exports = function(app, models, json2csv, ejs, pdf, fs, path, emailEvents
 					updatedProduct.totalPrice = formatNumber(product.price * product.selectedQuantity);
 					return updatedProduct;
 				});
-				var userQuery = {_id: order.userId};
-				User.findOne(userQuery).then(user => {
-					if(!validations.isEmpty(user)) {
-						var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../../templates/invoice/invoice.html"), "UTF-8"));
-						var html = htmlCompiled({order: order, products: products, user: user});
-						var filePath = path.join(__dirname, "../../temporary/Invoice_" + order.orderNumber + ".pdf");
-						pdf.create(html).toFile(filePath, function(error, result) {
-							setTimeout(function() { 
-								if(fs.existsSync(filePath)) {
-									fs.unlinkSync(filePath);
-								}
-							}, 30000);
-							response.status(200).json({downloaded: true, fileName: "Invoice_" + order.orderNumber + ".pdf"}).end();
-						});
-					} else {
-						response.status(200).json({downloaded: false}).end();
-					}
-				}).catch(error => console.log(error));
+				var htmlCompiled = ejs.compile(fs.readFileSync(path.join(__dirname, "../../templates/invoice/invoice.html"), "UTF-8"));
+				var html = htmlCompiled({order: order, products: products});
+				var filePath = path.join(__dirname, "../../temporary/Invoice_" + order.orderNumber + ".pdf");
+				pdf.create(html).toFile(filePath, function(error, result) {
+					setTimeout(function() { 
+						if(fs.existsSync(filePath)) {
+							fs.unlinkSync(filePath);
+						}
+					}, 30000);
+					response.status(200).json({downloaded: true, fileName: "Invoice_" + order.orderNumber + ".pdf"}).end();
+				});
 			} else {
 				response.status(200).json({downloaded: false}).end();
 			}
 		}).catch(error => console.log(error));
 	});
-	app.post("/downloadOrders", (request, response) => {
+	app.post("/downloadOrders", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
 		var search = request.body.search;
 		var type = request.body.type;
 		var page = Number(request.body.page) - 1; 

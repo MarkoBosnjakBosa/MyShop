@@ -64,14 +64,14 @@
 			<table>
 				<tr>
 					<td class="address">
-						<%= user.address.street %> <%= user.address.houseNumber %><br>
-						<%= user.address.zipCode %> <%= user.address.city %><br>
-						<%= user.address.country %>
+						<%= order.user.address.street %> <%= order.user.address.houseNumber %><br>
+						<%= order.user.address.zipCode %> <%= order.user.address.city %><br>
+						<%= order.user.address.country %>
 					</td>
 					<td class="information">
-						<%= user.account.firstName %> <%= user.account.lastName %><br>
-						+<%= user.account.mobileNumber %><br>
-						<%= user.account.email %>
+						<%= order.user.account.firstName %> <%= order.user.account.lastName %><br>
+						+<%= order.user.account.mobileNumber %><br>
+						<%= order.user.account.email %>
 					</td>
 				</tr>
 			</table>
