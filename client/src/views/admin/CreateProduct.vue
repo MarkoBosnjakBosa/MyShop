@@ -253,7 +253,7 @@
                                 if(response.data.created) {
                                     vm.product = {title: "", description: "", price: "", quantity: 0, category: "", technicalData: [], primaryImage: "", images: []};
                                     document.getElementById("primaryImage").value = "";
-                                    document.getElementById("previewPrimaryImage").innerText = "";
+                                    document.getElementById("previewPrimaryImage").textContent = "";
                                     document.getElementById("images").value = "";
                                     vm.errors = {titleError: false, descriptionError: false, priceError: false, quantityError: false, categoryError: false, primaryImageError: false};
                                     vm.submiting = false;
