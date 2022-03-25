@@ -1,7 +1,7 @@
 module.exports = function(app, models, emailEvents, checkStatus, checkPermission, validations) {
     const ContactSettings = models.ContactSettings;
     const Contact = models.Contact;
-    app.get("/getContactSettings", [checkStatus.isLoggedIn, checkPermission.isAdmin], (request, response) => {
+    app.get("/getContactSettings", (request, response) => {
         var query = {};
         ContactSettings.findOne(query).then(contactSettings => {
             if(!validations.isEmpty(contactSettings)) {
