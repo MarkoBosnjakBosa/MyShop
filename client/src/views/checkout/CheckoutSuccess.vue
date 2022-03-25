@@ -102,10 +102,10 @@
                 document.getElementById("download").classList.add("fa-spinner", "fa-spin");
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/downloadInvoice/" + this.orderId).then(response => {
                     if(response.data.downloaded) {
-                        document.getElementById("download").classList.remove("fa-spinner", "fa-spin");
-                        document.getElementById("download").classList.add("fa-file-download");
                         route.methods.downloadFile(response.data.fileName);
                     }
+                    document.getElementById("download").classList.remove("fa-spinner", "fa-spin");
+                    document.getElementById("download").classList.add("fa-file-download");
                 }).catch(error => console.log(error));
             },
             openViewProduct(productId) {
