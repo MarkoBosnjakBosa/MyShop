@@ -43,7 +43,7 @@
                                 </div>
                                 <small v-if="errors.messageError && submitting" class="form-text errorInput">Please provide a valid message!</small>
                             </div>
-                            <div v-if="messageSubmitted" class="mb-3 submissionSuccessful">Your message has been successfully submitted!</div>
+                            <div v-if="messageSubmitted" class="mb-3 messageSubmitted">Your message has been successfully submitted!</div>
                             <div class="mb-3">
                                 <button type="button" class="btn btn-danger" @click="resetMessage()">Reset</button>
                                 <button type="button" class="btn btn-dark next" @click="toggleTab('map')">Next <i class="fas fa-angle-double-right"></i></button>               
@@ -268,7 +268,7 @@
         height: 500px;
         margin-bottom: 20px;
     }
-    .submissionSuccessful {
+    .messageSubmitted {
         color: #008000;
     }
     .errorField {
