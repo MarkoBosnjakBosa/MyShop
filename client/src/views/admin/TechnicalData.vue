@@ -15,7 +15,7 @@
                             <button type="submit" class="btn btn-primary">Create</button>
                         </div>
                     </div>
-                    <div v-if="technicalInformationCreated" class="mb-3 creationSuccessful">Technical information has been successfully created!</div>
+                    <div v-if="technicalInformationCreated" class="mb-3 technicalInformationCreated">Technical information has been successfully created!</div>
                 </form>
                 <table class="table">
                     <thead>
@@ -181,7 +181,7 @@
     .disableEditing {
         color: #ff0000;
     }
-    .creationSuccessful {
+    .technicalInformationCreated {
         color: #008000;
     }
     .errorField {

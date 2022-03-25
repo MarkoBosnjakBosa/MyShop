@@ -22,7 +22,7 @@
                             <button type="submit" class="btn btn-primary">Create</button>
                         </div>
                     </div>
-                    <div v-if="categoryCreated" class="mb-3 creationSuccessful">Category has been successfully created!</div>
+                    <div v-if="categoryCreated" class="mb-3 categoryCreated">Category has been successfully created!</div>
                 </form>
                 <table class="table">
                     <thead>
@@ -214,7 +214,7 @@
     .disableEditing {
         color: #ff0000;
     }
-    .creationSuccessful {
+    .categoryCreated {
         color: #008000;
     }
     .errorField {
