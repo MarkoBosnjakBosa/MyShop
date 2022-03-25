@@ -42,7 +42,7 @@ function invalidReCaptchaToken(reCaptchaSecretKey, reCaptchaToken, remoteIp) {
         axios.get(reCaptchaVerificationUrl).then(reCaptchaResponse => {
             if(reCaptchaResponse.data.success) return false;
             else return true;
-        });
+        }).catch(error => console.log(error));
     }
 }
 function invalidAuthenticationToken(authenticationToken) {
