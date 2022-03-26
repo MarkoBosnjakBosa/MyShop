@@ -1,6 +1,7 @@
 const validations = require("../helpers/validations.js");
 const reCaptcha_v2_SecretKey = process.env.RECAPTCHA_v2_SECRET_KEY;
 const reCaptcha_v3_SecretKey = process.env.RECAPTCHA_v3_SECRET_KEY;
+const axios = require("axios");
 
 function validateRegistration(request, response, next) {
     var errors = [];
@@ -41,11 +42,21 @@ function validateRegistration(request, response, next) {
     if(validations.invalidCountry(address.country)) {
         errors = [...errors, "country"];
     }
-    if(validations.invalidReCaptchaToken(reCaptcha_v2_SecretKey, reCaptchaToken, request.connection.remoteAddress)) {
+    if(reCaptchaToken === "" || reCaptchaToken === undefined || reCaptchaToken === null) {
         errors = [...errors, "reCaptchaToken"];
+    } 
+    if(errors.length) response.status(200).json({registered: false, alreadyExists: false, errors: errors}).end();
+    else {
+        var reCaptchaVerificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + reCaptcha_v2_SecretKey + "&response=" + reCaptchaToken + "&remoteip=" + request.connection.remoteAddress;
+        axios.get(reCaptchaVerificationUrl).then(reCaptchaResponse => {
+            if(reCaptchaResponse.data.success) {
+                next();
+            } else {
+                errors = [...errors, "reCaptchaToken"];
+                response.status(200).json({registered: false, alreadyExists: false, errors: errors}).end();
+            }
+        }).catch(error => console.log(error));
     }
-    if(!errors.length) next();
-    else response.status(200).json({registered: false, alreadyExists: false, errors: errors}).end();
 }
 
 function validateLogin(request, response, next) {
@@ -213,11 +224,20 @@ function validateProductCreation(request, response, next) {
         errors = [...errors, "primaryImage"]; 
     }
     var reCaptchaToken = request.body.reCaptchaToken;
-    if(validations.invalidReCaptchaToken(reCaptcha_v3_SecretKey, reCaptchaToken, request.connection.remoteAddress)) {
+    if(reCaptchaToken === "" || reCaptchaToken === undefined || reCaptchaToken === null) {
         errors = [...errors, "reCaptchaToken"];
+    } 
+    if(errors.length) response.status(200).json({created: false, errors: errors}).end();
+    else {
+        var reCaptchaVerificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + reCaptcha_v3_SecretKey + "&response=" + reCaptchaToken + "&remoteip=" + request.connection.remoteAddress;
+        axios.get(reCaptchaVerificationUrl).then(reCaptchaResponse => {
+            if(reCaptchaResponse.data.success) {
+                next();
+            } else {
+                response.status(200).json({created: false}).end();
+            }
+        }).catch(error => console.log(error));
     }
-    if(!errors.length) next();
-    else response.status(200).json({created: false, errors: errors}).end();
 }
 
 function validateProductEdit(request, response, next) {
